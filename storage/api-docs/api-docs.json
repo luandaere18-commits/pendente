@@ -1,0 +1,2276 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Centros",
+        "description": "Documentação da API de Centros, incluindo operações de CRUD e relacionamentos.",
+        "version": "1.1.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "API principal"
+        }
+    ],
+    "paths": {
+        "/categorias": {
+            "get": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Listar categorias",
+                "description": "Retorna uma lista de categorias, com filtro opcional por tipo.",
+                "operationId": "9bd4c5d463ba7b15843eebef947ed231",
+                "parameters": [
+                    {
+                        "name": "tipo",
+                        "in": "query",
+                        "description": "Filtrar por tipo (loja ou snack)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de categorias",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Categoria"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Criar categoria",
+                "description": "Cria uma nova categoria.",
+                "operationId": "33561abcf774ce0a7d668f231512afd9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoriaInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Categoria criada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/categorias/{id}": {
+            "get": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Exibir categoria",
+                "description": "Exibe uma categoria pelo ID.",
+                "operationId": "0ddbcef186a80938088c691755aee7fe",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoria encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoria não encontrada"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Atualizar categoria",
+                "description": "Atualiza uma categoria existente.",
+                "operationId": "3cb64fbc825d55fb192dc610c8ce7a48",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CategoriaInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Categoria atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categoria não encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Categorias"
+                ],
+                "summary": "Excluir categoria",
+                "description": "Exclui uma categoria pelo ID.",
+                "operationId": "5c8248a20636e938f3e6b20513b1d664",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Categoria excluída com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Categoria não encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/centros": {
+            "get": {
+                "tags": [
+                    "Centros"
+                ],
+                "summary": "Listar todos os centros",
+                "operationId": "b51ec8c659378cd0561a10d6a6ac0522",
+                "responses": {
+                    "200": {
+                        "description": "Lista de centros",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Centro"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Centros"
+                ],
+                "summary": "Criar um novo centro",
+                "operationId": "a58e977e93fc6924791d82cb4d2fc781",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CentroInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Centro criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Centro"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/centros/{id}": {
+            "get": {
+                "tags": [
+                    "Centros"
+                ],
+                "summary": "Buscar centro por ID",
+                "operationId": "9d949b35eb79adc43e59923eb70f5686",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Centro encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Centro"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Centro não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Centros"
+                ],
+                "summary": "Atualizar centro",
+                "operationId": "ef17826017a578d79d9bfb338be5935e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CentroInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Centro atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Centro"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Centro não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Centros"
+                ],
+                "summary": "Deletar centro",
+                "operationId": "415235a399d7ee1d84f3c17d343064e1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Centro deletado"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Centro não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cursos": {
+            "get": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Listar todos os cursos",
+                "operationId": "b96eabc1969edbe2bb0436759523b3a8",
+                "parameters": [
+                    {
+                        "name": "busca",
+                        "in": "query",
+                        "description": "Busca textual em múltiplos campos",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de cursos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Curso"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Criar um novo curso",
+                "operationId": "42b1ddb43b31bbb9a34efa2b3139705f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CursoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Curso criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Curso"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cursos/{id}": {
+            "get": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Buscar curso por ID",
+                "operationId": "ed0d731f1b789a70f4d96e0bb9d5f514",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Curso encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Curso"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Curso não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Atualizar curso",
+                "operationId": "849c138fd3bc31cfda377dfa5d800a52",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CursoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Curso atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Curso"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Curso não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cursos"
+                ],
+                "summary": "Deletar curso",
+                "operationId": "e91b06abf738357c0960664a6507552b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Curso deletado"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Curso não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/formadores": {
+            "get": {
+                "tags": [
+                    "Formadores"
+                ],
+                "summary": "Listar todos os formadores",
+                "operationId": "904bf7e097f7a3ec3126089c8af27f43",
+                "parameters": [
+                    {
+                        "name": "busca",
+                        "in": "query",
+                        "description": "Busca textual em nome, especialidade ou bio",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de formadores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Formador"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Formadores"
+                ],
+                "summary": "Criar um novo formador",
+                "operationId": "358489cd3e00c6d0c8005b83ad354849",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FormadorInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Formador criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Formador"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/formadores/{id}": {
+            "get": {
+                "tags": [
+                    "Formadores"
+                ],
+                "summary": "Buscar formador por ID",
+                "operationId": "0f3a04185a92e4dffe1f0bbc63e8d54f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Formador encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Formador"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Formador não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Formadores"
+                ],
+                "summary": "Atualizar formador",
+                "operationId": "47f30ee76b43a8e553be88d470080771",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/FormadorInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Formador atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Formador"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Formador não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Formadores"
+                ],
+                "summary": "Deletar formador",
+                "operationId": "c3b3a0df83a21bda91501bae58822409",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Formador deletado"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Formador não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/horarios": {
+            "get": {
+                "tags": [
+                    "Horários"
+                ],
+                "summary": "Listar todos os horários",
+                "operationId": "8dcfbcbf2264d56095e7f5ea2dd36450",
+                "responses": {
+                    "200": {
+                        "description": "Lista de horários",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Horario"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Horários"
+                ],
+                "summary": "Criar um novo horário",
+                "operationId": "dcb0d05c43776ff8a494539fd4088b1c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/HorarioInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Horário criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Horario"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/horarios/{id}": {
+            "get": {
+                "tags": [
+                    "Horários"
+                ],
+                "summary": "Buscar horário por ID",
+                "operationId": "4b59aaf0c35778d3f84c2003f8746c65",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Horário encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Horario"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Horário não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Horários"
+                ],
+                "summary": "Atualizar horário (não permite editar curso_id e centro_id)",
+                "operationId": "5438beb885fe7049a2f6fbcbe9bbdcd1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/HorarioUpdateInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Horário atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Horario"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Horário não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Horários"
+                ],
+                "summary": "Deletar horário",
+                "operationId": "79039ed9290e3544523504ec4e85e7f8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Horário deletado"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Horário não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pre-inscricoes": {
+            "get": {
+                "tags": [
+                    "Pré-inscrições"
+                ],
+                "summary": "Listar todas as pré-inscrições",
+                "operationId": "0c5003dd459f7f6da31baef278d72314",
+                "responses": {
+                    "200": {
+                        "description": "Lista de pré-inscrições",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PreInscricao"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Pré-inscrições"
+                ],
+                "summary": "Realizar uma nova pré-inscrição",
+                "operationId": "acdf02d2794da64d6e124ab9bc209279",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PreInscricaoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pré-inscrição realizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PreInscricao"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pre-inscricoes/{id}": {
+            "get": {
+                "tags": [
+                    "Pré-inscrições"
+                ],
+                "summary": "Buscar pré-inscrição por ID",
+                "operationId": "a23c806c7228ecb74e0cab5ebbf48271",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pré-inscrição encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PreInscricao"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pré-inscrição não encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Pré-inscrições"
+                ],
+                "summary": "Atualizar status da pré-inscrição (apenas status)",
+                "operationId": "6578938d922d5c5dc7fb27bafd41d26b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PreInscricaoStatusInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PreInscricao"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pré-inscrição não encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Pré-inscrições"
+                ],
+                "summary": "Deletar pré-inscrição",
+                "operationId": "9d089f4f9b6046b11bc19d8251357341",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pré-inscrição deletada"
+                    },
+                    "404": {
+                        "description": "Pré-inscrição não encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/produtos": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Listar produtos",
+                "description": "Retorna uma lista de produtos, com filtros opcionais por categoria, tipo, destaque e ativos.",
+                "operationId": "6a5405867c96fc1f274b0fcd379441e3",
+                "parameters": [
+                    {
+                        "name": "categoria_id",
+                        "in": "query",
+                        "description": "Filtrar por ID da categoria",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tipo",
+                        "in": "query",
+                        "description": "Filtrar por tipo da categoria (loja ou snack)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "em_destaque",
+                        "in": "query",
+                        "description": "Filtrar apenas produtos em destaque",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "incluir_inativos",
+                        "in": "query",
+                        "description": "Incluir produtos inativos (apenas para admin)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de produtos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Produto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Criar produto",
+                "description": "Cria um novo produto.",
+                "operationId": "9c3a31cb5c64ba3c23f9ce329cea097c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProdutoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produto criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Produto"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/produtos/{id}": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Exibir produto",
+                "description": "Exibe um produto pelo ID.",
+                "operationId": "835c169c4456d1a590e63c69a530aeed",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Produto"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Atualizar produto",
+                "description": "Atualiza um produto existente.",
+                "operationId": "c45ef52a7b159513ec0c8878561a6c38",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProdutoInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produto atualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Produto"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Produto não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Excluir produto",
+                "description": "Exclui um produto pelo ID.",
+                "operationId": "0ec9ccb50e373a2fd27969575616164a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto excluído com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "404": {
+                        "description": "Produto não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "required": [
+                    "id",
+                    "name",
+                    "email"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Admin"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "admin@site.com"
+                    },
+                    "email_verified_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Centro": {
+                "required": [
+                    "nome",
+                    "localizacao",
+                    "contactos"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "localizacao": {
+                        "type": "string"
+                    },
+                    "contactos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CentroInput": {
+                "required": [
+                    "nome",
+                    "localizacao",
+                    "contactos"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "localizacao": {
+                        "type": "string"
+                    },
+                    "contactos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "nome": "Centro de Formação Profissional",
+                    "localizacao": "Rua das Flores, 123, Luanda",
+                    "contactos": [
+                        "923456789",
+                        "912345678"
+                    ],
+                    "email": "contato@centro.com"
+                }
+            },
+            "Curso": {
+                "required": [
+                    "nome",
+                    "descricao",
+                    "modalidade",
+                    "ativo",
+                    "centros"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "descricao": {
+                        "type": "string"
+                    },
+                    "programa": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "area": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "nullable": true
+                    },
+                    "modalidade": {
+                        "type": "string",
+                        "enum": [
+                            "presencial",
+                            "online"
+                        ]
+                    },
+                    "imagem_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "ativo": {
+                        "type": "boolean"
+                    },
+                    "centros": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "centro_id": {
+                                    "type": "integer"
+                                },
+                                "preco": {
+                                    "type": "number",
+                                    "minimum": 0
+                                },
+                                "duracao": {
+                                    "type": "string"
+                                },
+                                "data_arranque": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "formadores": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "nome": "Curso de Informática",
+                    "descricao": "Curso completo de informática básica e avançada.",
+                    "programa": "Módulo 1: Windows\\nMódulo 2: Office\\nMódulo 3: Internet",
+                    "area": "Tecnologia",
+                    "modalidade": "presencial",
+                    "imagem_url": "https://exemplo.com/imagem.jpg",
+                    "ativo": true,
+                    "centros": [
+                        {
+                            "centro_id": 1,
+                            "preco": 50000,
+                            "duracao": "3 meses",
+                            "data_arranque": "2025-08-01"
+                        }
+                    ],
+                    "formadores": [
+                        1,
+                        2
+                    ]
+                }
+            },
+            "CursoInput": {
+                "required": [
+                    "nome",
+                    "descricao",
+                    "modalidade",
+                    "ativo",
+                    "centros"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "descricao": {
+                        "type": "string"
+                    },
+                    "programa": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "area": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "nullable": true
+                    },
+                    "modalidade": {
+                        "type": "string",
+                        "enum": [
+                            "presencial",
+                            "online"
+                        ]
+                    },
+                    "imagem_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "ativo": {
+                        "type": "boolean"
+                    },
+                    "centros": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "centro_id": {
+                                    "type": "integer"
+                                },
+                                "preco": {
+                                    "type": "number",
+                                    "minimum": 0
+                                },
+                                "duracao": {
+                                    "type": "string"
+                                },
+                                "data_arranque": {
+                                    "type": "string",
+                                    "format": "date",
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "formadores": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "nome": "Curso de Informática",
+                    "descricao": "Curso completo de informática básica e avançada.",
+                    "programa": "Módulo 1: Windows\\nMódulo 2: Office\\nMódulo 3: Internet",
+                    "area": "Tecnologia",
+                    "modalidade": "presencial",
+                    "imagem_url": "https://exemplo.com/imagem.jpg",
+                    "ativo": true,
+                    "centros": [
+                        {
+                            "centro_id": 1,
+                            "preco": 50000,
+                            "duracao": "3 meses",
+                            "data_arranque": "2025-08-01"
+                        }
+                    ],
+                    "formadores": [
+                        1,
+                        2
+                    ]
+                }
+            },
+            "Formador": {
+                "required": [
+                    "nome",
+                    "contactos"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "contactos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "especialidade": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "nullable": true
+                    },
+                    "bio": {
+                        "type": "string",
+                        "maxLength": 500,
+                        "nullable": true
+                    },
+                    "foto_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "cursos": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "centros": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "nome": "João Silva",
+                    "email": "joao@exemplo.com",
+                    "contactos": [
+                        "923456789",
+                        "912345678"
+                    ],
+                    "especialidade": "Informática",
+                    "bio": "Formador com experiência em cursos de tecnologia.",
+                    "foto_url": "https://exemplo.com/foto.jpg",
+                    "cursos": [
+                        1,
+                        2
+                    ],
+                    "centros": [
+                        1
+                    ]
+                }
+            },
+            "FormadorInput": {
+                "required": [
+                    "nome",
+                    "contactos"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "nullable": true
+                    },
+                    "contactos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "especialidade": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "nullable": true
+                    },
+                    "bio": {
+                        "type": "string",
+                        "maxLength": 500,
+                        "nullable": true
+                    },
+                    "foto_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "nullable": true
+                    },
+                    "cursos": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "centros": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "nome": "João Silva",
+                    "email": "joao@exemplo.com",
+                    "contactos": [
+                        "923456789",
+                        "912345678"
+                    ],
+                    "especialidade": "Informática",
+                    "bio": "Formador com experiência em cursos de tecnologia.",
+                    "foto_url": "https://exemplo.com/foto.jpg",
+                    "cursos": [
+                        1,
+                        2
+                    ],
+                    "centros": [
+                        1
+                    ]
+                }
+            },
+            "Horario": {
+                "required": [
+                    "id",
+                    "curso_id",
+                    "centro_id",
+                    "dia_semana",
+                    "periodo",
+                    "hora_inicio",
+                    "hora_fim"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "curso_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "centro_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "dia_semana": {
+                        "type": "string",
+                        "example": "Segunda"
+                    },
+                    "periodo": {
+                        "type": "string",
+                        "example": "manhã"
+                    },
+                    "hora_inicio": {
+                        "type": "string",
+                        "example": "08:00"
+                    },
+                    "hora_fim": {
+                        "type": "string",
+                        "example": "10:00"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-31T08:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-31T08:00:00Z"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "curso_id": 2,
+                    "centro_id": 3,
+                    "dia_semana": "Segunda",
+                    "periodo": "manhã",
+                    "hora_inicio": "08:00",
+                    "hora_fim": "10:00",
+                    "created_at": "2025-07-31T08:00:00Z",
+                    "updated_at": "2025-07-31T08:00:00Z"
+                }
+            },
+            "HorarioInput": {
+                "required": [
+                    "curso_id",
+                    "centro_id",
+                    "dia_semana",
+                    "periodo",
+                    "hora_inicio",
+                    "hora_fim"
+                ],
+                "properties": {
+                    "curso_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "centro_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "dia_semana": {
+                        "type": "string",
+                        "example": "Segunda"
+                    },
+                    "periodo": {
+                        "type": "string",
+                        "example": "manhã"
+                    },
+                    "hora_inicio": {
+                        "type": "string",
+                        "example": "08:00"
+                    },
+                    "hora_fim": {
+                        "type": "string",
+                        "example": "10:00"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "curso_id": 2,
+                    "centro_id": 3,
+                    "dia_semana": "Segunda",
+                    "periodo": "manhã",
+                    "hora_inicio": "08:00",
+                    "hora_fim": "10:00"
+                }
+            },
+            "HorarioUpdateInput": {
+                "required": [
+                    "dia_semana",
+                    "periodo",
+                    "hora_inicio",
+                    "hora_fim"
+                ],
+                "properties": {
+                    "dia_semana": {
+                        "type": "string",
+                        "example": "Segunda"
+                    },
+                    "periodo": {
+                        "type": "string",
+                        "example": "manhã"
+                    },
+                    "hora_inicio": {
+                        "type": "string",
+                        "example": "08:00"
+                    },
+                    "hora_fim": {
+                        "type": "string",
+                        "example": "10:00"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "dia_semana": "Segunda",
+                    "periodo": "manhã",
+                    "hora_inicio": "08:00",
+                    "hora_fim": "10:00"
+                }
+            },
+            "PreInscricao": {
+                "required": [
+                    "id",
+                    "curso_id",
+                    "centro_id",
+                    "nome_completo",
+                    "contactos",
+                    "status"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "curso_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "centro_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "horario_id": {
+                        "type": "integer",
+                        "example": 4,
+                        "nullable": true
+                    },
+                    "nome_completo": {
+                        "type": "string",
+                        "example": "Maria dos Santos"
+                    },
+                    "contactos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "maria@email.com",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pendente",
+                            "confirmado",
+                            "cancelado"
+                        ],
+                        "example": "pendente"
+                    },
+                    "observacoes": {
+                        "type": "string",
+                        "example": "Precisa de material especial",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-31T08:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-31T08:00:00Z"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "curso_id": 2,
+                    "centro_id": 3,
+                    "horario_id": 4,
+                    "nome_completo": "Maria dos Santos",
+                    "contactos": [
+                        "923456789",
+                        "912345678"
+                    ],
+                    "email": "maria@email.com",
+                    "status": "pendente",
+                    "observacoes": "Precisa de material especial",
+                    "created_at": "2025-07-31T08:00:00Z",
+                    "updated_at": "2025-07-31T08:00:00Z"
+                }
+            },
+            "PreInscricaoInput": {
+                "required": [
+                    "curso_id",
+                    "centro_id",
+                    "nome_completo",
+                    "contactos"
+                ],
+                "properties": {
+                    "curso_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "centro_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "horario_id": {
+                        "type": "integer",
+                        "example": 4,
+                        "nullable": true
+                    },
+                    "nome_completo": {
+                        "type": "string",
+                        "example": "Maria dos Santos"
+                    },
+                    "contactos": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "maria@email.com",
+                        "nullable": true
+                    },
+                    "observacoes": {
+                        "type": "string",
+                        "example": "Precisa de material especial",
+                        "nullable": true
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "curso_id": 2,
+                    "centro_id": 3,
+                    "horario_id": 4,
+                    "nome_completo": "Maria dos Santos",
+                    "contactos": [
+                        "923456789",
+                        "912345678"
+                    ],
+                    "email": "maria@email.com",
+                    "observacoes": "Precisa de material especial"
+                }
+            },
+            "PreInscricaoStatusInput": {
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pendente",
+                            "confirmado",
+                            "cancelado"
+                        ],
+                        "example": "pendente"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "status": "pendente"
+                }
+            },
+            "Produto": {
+                "required": [
+                    "nome",
+                    "preco",
+                    "categoria_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "nome": {
+                        "type": "string"
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "preco": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "imagem": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "categoria_id": {
+                        "type": "integer"
+                    },
+                    "ativo": {
+                        "type": "boolean"
+                    },
+                    "em_destaque": {
+                        "type": "boolean"
+                    },
+                    "categoria": {
+                        "$ref": "#/components/schemas/Categoria"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ProdutoInput": {
+                "required": [
+                    "nome",
+                    "preco",
+                    "categoria_id"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string"
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "preco": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "imagem": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "categoria_id": {
+                        "type": "integer"
+                    },
+                    "ativo": {
+                        "type": "boolean"
+                    },
+                    "em_destaque": {
+                        "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "Categoria": {
+                "required": [
+                    "id",
+                    "nome",
+                    "tipo"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nome": {
+                        "type": "string",
+                        "example": "Bebidas"
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "example": "Categoria de bebidas",
+                        "nullable": true
+                    },
+                    "tipo": {
+                        "type": "string",
+                        "enum": [
+                            "loja",
+                            "snack"
+                        ],
+                        "example": "loja"
+                    },
+                    "ativo": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-31T08:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-31T08:00:00Z"
+                    }
+                },
+                "type": "object",
+                "example": {
+                    "id": 1,
+                    "nome": "Bebidas",
+                    "descricao": "Categoria de bebidas",
+                    "tipo": "loja",
+                    "ativo": true,
+                    "created_at": "2025-07-31T08:00:00Z",
+                    "updated_at": "2025-07-31T08:00:00Z"
+                }
+            },
+            "CategoriaInput": {
+                "required": [
+                    "nome",
+                    "tipo"
+                ],
+                "properties": {
+                    "nome": {
+                        "type": "string",
+                        "example": "Bebidas"
+                    },
+                    "descricao": {
+                        "type": "string",
+                        "example": "Categoria de bebidas",
+                        "nullable": true
+                    },
+                    "tipo": {
+                        "type": "string",
+                        "enum": [
+                            "loja",
+                            "snack"
+                        ],
+                        "example": "loja"
+                    },
+                    "ativo": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Categorias",
+            "description": "Operações relacionadas a categorias de produtos"
+        },
+        {
+            "name": "Centros",
+            "description": "Operações relacionadas aos centros"
+        },
+        {
+            "name": "Cursos",
+            "description": "Operações relacionadas aos cursos"
+        },
+        {
+            "name": "Formadores",
+            "description": "Operações relacionadas aos formadores"
+        },
+        {
+            "name": "Horários",
+            "description": "Operações relacionadas aos horários de cursos"
+        },
+        {
+            "name": "Pré-inscrições",
+            "description": "Operações relacionadas às pré-inscrições de cursos"
+        },
+        {
+            "name": "Produtos",
+            "description": "Operações relacionadas a produtos"
+        }
+    ]
+}
