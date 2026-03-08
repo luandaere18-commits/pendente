@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Centro;
+use App\Helpers\PhoneValidator;
 use Illuminate\Http\Request;
 
 /**
@@ -78,17 +79,24 @@ class CentroController extends Controller
             'contactos.*' => [
                 'required',
                 'string',
-                'regex:/^9\d{8}$/'
+                function($attribute, $value, $fail) {
+                    if (!PhoneValidator::isValid($value)) {
+                        $fail('O valor de ' . $attribute . ' deve ser um número de telefone válido de Angola (ex: 923111111, 923 111 111, +244923111111)');
+                    }
+                }
             ],
             'email' => [
                 'nullable',
                 'email',
-                'max:100'
+                'max:100',
+                'unique:centros,email'
             ]
         ]);
 
-        // Formatar dados
-        $validated['contactos'] = array_map('strval', $validated['contactos']);
+        // Normalizar telefones para formato padrão (9 dígitos)
+        $validated['contactos'] = array_map(function($phone) {
+            return PhoneValidator::normalize($phone);
+        }, $validated['contactos']);
         
         // Normalizar email para lowercase se fornecido
         if (!empty($validated['email'])) {
@@ -211,17 +219,24 @@ class CentroController extends Controller
             'contactos.*' => [
                 'required',
                 'string',
-                'regex:/^9\d{8}$/'
+                function($attribute, $value, $fail) {
+                    if (!PhoneValidator::isValid($value)) {
+                        $fail('O valor de ' . $attribute . ' deve ser um número de telefone válido de Angola (ex: 923111111, 923 111 111, +244923111111)');
+                    }
+                }
             ],
             'email' => [
                 'nullable',
                 'email',
-                'max:100'
+                'max:100',
+                'unique:centros,email,' . $centro->id
             ]
         ]);
 
-        // Formatar dados
-        $validated['contactos'] = array_map('strval', $validated['contactos']);
+        // Normalizar telefones para formato padrão (9 dígitos)
+        $validated['contactos'] = array_map(function($phone) {
+            return PhoneValidator::normalize($phone);
+        }, $validated['contactos']);
         
         // Normalizar email para lowercase se fornecido
         if (!empty($validated['email'])) {

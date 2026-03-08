@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('centros', function (Blueprint $table) {
             $table->id();
-            $table->string('nome')->unique();
-            $table->string('localizacao');
-            $table->json('contactos');
-            $table->string('email')->nullable();
+            $table->string('nome')->unique();  // Nome único do centro
+            $table->string('localizacao');  // Endereço/localização
+            $table->json('contactos');  // Armazena contactos em JSON (array)
+            $table->string('email')->nullable()->unique();  // Email único e opcional
             $table->timestamps();
         });
     }

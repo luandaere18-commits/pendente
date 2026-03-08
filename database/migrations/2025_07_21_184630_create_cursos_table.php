@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('cursos', function (Blueprint $table) {
             $table->id();
-            $table->string('nome', 100);
-            $table->text('descricao')->nullable();
-            $table->text('programa')->nullable();
-            $table->string('area', 100);
-            $table->enum('modalidade', ['presencial', 'online']);
-            $table->string('imagem_url')->nullable();
-            $table->boolean('ativo')->default(true);
+            $table->string('nome', 100);  // Nome do curso
+            $table->text('descricao')->nullable();  // Descrição detalhada
+            $table->text('programa')->nullable();  // Programa/Módulos
+            $table->string('area', 100);  // Área de conhecimento
+            $table->enum('modalidade', ['presencial', 'online', 'hibrido']);  // Tipo de entrega (presencial, online ou híbrido)
+            $table->string('imagem_url')->nullable();  // URL da imagem do curso
+            $table->boolean('ativo')->default(true);  // Status ativo/inativo
             $table->timestamps();
         });
     }

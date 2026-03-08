@@ -152,11 +152,11 @@ class CursoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nome' => 'required|string|max:100',
+            'nome' => 'required|string|max:255',  // Aumentado de 100 para 255
             'descricao' => 'required|string',
             'programa' => 'nullable|string',
             'area' => 'nullable|string|max:100',
-            'modalidade' => 'required|in:presencial,online',
+            'modalidade' => 'required|in:presencial,online,hibrido',  // Adicionado 'hibrido'
             'imagem_url' => 'nullable|url|max:255',
             'ativo' => 'boolean',
             'centros' => 'required|array|min:1',
@@ -289,11 +289,11 @@ class CursoController extends Controller
         }
 
         $validated = $request->validate([
-            'nome' => 'required|string|max:100',
+            'nome' => 'required|string|max:255',  // Aumentado de 100 para 255
             'descricao' => 'required|string',
             'programa' => 'nullable|string',
             'area' => 'nullable|string|max:100',
-            'modalidade' => 'required|in:presencial,online',
+            'modalidade' => 'required|in:presencial,online,hibrido',  // Adicionado 'hibrido'
             'imagem_url' => 'nullable|url|max:255',
             'ativo' => 'boolean',
             'centros' => 'required|array|min:1',

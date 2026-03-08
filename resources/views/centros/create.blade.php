@@ -65,7 +65,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small">Valor</label>
-                                        <input type="text" class="form-control contacto-valor" name="contacto_valor[]" placeholder="Ex: +351 912 345 678">
+                                        <input type="text" class="form-control contacto-valor" name="contacto_valor[]" placeholder="Ex: 923 111 111 ou +244 923 111 111" title="Número de telefone de Angola">
                                     </div>
                                     <div class="col-md-2">
                                         <button type="button" class="btn btn-outline-danger btn-sm remover-contacto" disabled>

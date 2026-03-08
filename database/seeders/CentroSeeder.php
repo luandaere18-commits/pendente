@@ -31,9 +31,9 @@ class CentroSeeder extends Seeder
 
     $now = now();
     Centro::insert([
-        ['nome' => 'MC1', 'localizacao' => 'Luanda', 'contactos' => json_encode(['923111111']), 'email' => 'alpha@centro.com', 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'MC2', 'localizacao' => 'Benguela', 'contactos' => json_encode(['923222222']), 'email' => 'beta@centro.com', 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'MC3', 'localizacao' => 'Huambo', 'contactos' => json_encode(['923333333']), 'email' => 'gama@centro.com', 'created_at' => $now, 'updated_at' => $now],
+        ['nome' => 'Centro de Formação Luanda', 'localizacao' => 'Avenida Príncipe Nero, Talatona, Luanda', 'contactos' => json_encode(['923111222']), 'email' => 'luanda@centro.ao', 'created_at' => $now, 'updated_at' => $now],
+        ['nome' => 'Instituto Técnico Benguela', 'localizacao' => 'Av. 21 de Janeiro, Benguela', 'contactos' => json_encode(['931222333']), 'email' => 'benguela@instituto.ao', 'created_at' => $now, 'updated_at' => $now],
+        ['nome' => 'Academia Huambo', 'localizacao' => 'Rua da Independência, Huambo', 'contactos' => json_encode(['943333444']), 'email' => 'huambo@academia.ao', 'created_at' => $now, 'updated_at' => $now],
     ]);
 
     }
