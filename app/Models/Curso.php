@@ -25,8 +25,7 @@ class Curso extends Model
     public function centros()
     {
         return $this->belongsToMany(Centro::class, 'centro_curso')
-        ->withPivot(['preco', 'duracao', 'data_arranque'])
-        ->withTimestamps();
+        ->withPivot(['preco', 'duracao', 'data_arranque']);
     }
 
     // Um curso tem muitos horários

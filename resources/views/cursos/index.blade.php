@@ -33,11 +33,11 @@
                         <tr>
                             <th>ID</th>
                             <th>Nome</th>
-                            <th>Área</th>
                             <th>Modalidade</th>
+                            <th>Centro</th>
+                            <th>Preço</th>
+                            <th>Data Arranque</th>
                             <th>Status</th>
-                            <th>Imagem</th>
-                            <th>Data Criação</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -98,13 +98,20 @@ function carregarCursos() {
                 
                 const modalidadeBadge = curso.modalidade === 'online' 
                     ? '<span class="badge bg-info">Online</span>' 
-                    : '<span class="badge bg-warning text-dark">Presencial</span>';
+                    : curso.modalidade === 'presencial'
+                    ? '<span class="badge bg-warning text-dark">Presencial</span>'
+                    : '<span class="badge bg-primary">Híbrido</span>';
                 
-                const imagem = curso.imagem_url 
-                    ? `<img src="${curso.imagem_url}" alt="Imagem do curso" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">` 
-                    : '<span class="text-muted"><i class="fas fa-image"></i></span>';
-                
-                const dataFormatada = new Date(curso.created_at).toLocaleDateString('pt-PT');
+                // Extrair informações do primeiro centro
+                let centroCells = '';
+                if (curso.centros && curso.centros.length > 0) {
+                    const centro = curso.centros[0];
+                    const preco = centro.pivot.preco;
+                    const dataArranque = new Date(centro.pivot.data_arranque).toLocaleDateString('pt-PT');
+                    centroCells = `<td>${centro.nome}</td><td>${parseFloat(preco).toLocaleString('pt-PT', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</td><td>${dataArranque}</td>`;
+                } else {
+                    centroCells = `<td colspan="3" class="text-muted"><i class="fas fa-times"></i> N/A</td>`;
+                }
                 
                 html += `
                     <tr>
@@ -113,11 +120,9 @@ function carregarCursos() {
                             <strong>${curso.nome}</strong>
                             ${curso.descricao ? `<br><small class="text-muted">${curso.descricao.substring(0, 50)}...</small>` : ''}
                         </td>
-                        <td>${curso.area}</td>
                         <td>${modalidadeBadge}</td>
+                        ${centroCells}
                         <td>${statusBadge}</td>
-                        <td class="text-center">${imagem}</td>
-                        <td>${dataFormatada}</td>
                         <td>
                             <div class="btn-group" role="group">
                                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="visualizarCurso(${curso.id})" title="Visualizar">
@@ -148,6 +153,9 @@ function carregarCursos() {
             responsive: true,
             pageLength: 25,
             order: [[0, 'desc']],
+            columnDefs: [
+                { targets: 7, orderable: false }
+            ],
             lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
             dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
             '<"row"<"col-sm-12"tr>>' +

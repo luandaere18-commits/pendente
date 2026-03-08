@@ -51,21 +51,11 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Contactos</label>
+                            <label class="form-label">Contactos <span class="text-danger">*</span></label>
                             <div id="contactosContainer">
                                 <div class="contacto-item row align-items-end mb-2">
-                                    <div class="col-md-4">
-                                        <label class="form-label small">Tipo de Contacto</label>
-                                        <select class="form-select contacto-tipo" name="contacto_tipo[]">
-                                            <option value="telefone">Telefone</option>
-                                            <option value="telemovel">Telemóvel</option>
-                                            <option value="fax">Fax</option>
-                                            <option value="whatsapp">WhatsApp</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small">Valor</label>
-                                        <input type="text" class="form-control contacto-valor" name="contacto_valor[]" placeholder="Ex: 923 111 111 ou +244 923 111 111" title="Número de telefone de Angola">
+                                    <div class="col-md-10">
+                                        <input type="tel" class="form-control contacto-valor" name="contactos[]" placeholder="Ex: 923212399" title="Telefone de Angola (9 dígitos)" required>
                                     </div>
                                     <div class="col-md-2">
                                         <button type="button" class="btn btn-outline-danger btn-sm remover-contacto" disabled>
@@ -75,9 +65,9 @@
                                 </div>
                             </div>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="adicionarContacto">
-                                <i class="fas fa-plus me-2"></i>Adicionar Contacto
+                                <i class="fas fa-plus me-2"></i>Adicionar Telefone
                             </button>
-                            <div class="form-text">Adicione os contactos do centro (pelo menos um é recomendado)</div>
+                            <div class="form-text">Adicione até 5 direitos telefónicos do centro (pelo menos um é obrigatório)</div>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
@@ -134,15 +124,6 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
-    // Configurar headers AJAX globalmente
-    $.ajaxSetup({
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-    
     // Preview em tempo real
     $('#centroForm input, #centroForm select').on('input change', function() {
         atualizarPreview();
@@ -167,7 +148,7 @@ $(document).ready(function() {
     });
 
     // Atualizar preview quando contactos mudarem
-    $(document).on('input change', '.contacto-tipo, .contacto-valor', function() {
+    $(document).on('input change', '.contacto-valor', function() {
         atualizarPreview();
     });
 });
@@ -175,18 +156,8 @@ $(document).ready(function() {
 function adicionarContacto() {
     const novoContacto = `
         <div class="contacto-item row align-items-end mb-2">
-            <div class="col-md-4">
-                <label class="form-label small">Tipo de Contacto</label>
-                <select class="form-select contacto-tipo" name="contacto_tipo[]">
-                    <option value="telefone">Telefone</option>
-                    <option value="telemovel">Telemóvel</option>
-                    <option value="fax">Fax</option>
-                    <option value="whatsapp">WhatsApp</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label small">Valor</label>
-                <input type="text" class="form-control contacto-valor" name="contacto_valor[]" placeholder="Ex: +351 912 345 678">
+            <div class="col-md-10">
+                <input type="tel" class="form-control contacto-valor" name="contactos[]" placeholder="Ex: 923212399" title="Telefone de Angola (9 dígitos)" required>
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn btn-outline-danger btn-sm remover-contacto">
@@ -213,11 +184,10 @@ function atualizarPreview() {
     if (nome || localizacao) {
         // Coletar contactos
         let contactosHtml = '';
-        $('.contacto-item').each(function() {
-            const tipo = $(this).find('.contacto-tipo').val();
-            const valor = $(this).find('.contacto-valor').val();
+        $('.contacto-valor').each(function() {
+            const valor = $(this).val().trim();
             if (valor) {
-                contactosHtml += `<small class="d-block"><strong>${tipo}:</strong> ${valor}</small>`;
+                contactosHtml += `<small class="d-block">📱 ${valor}</small>`;
             }
         });
 
@@ -239,29 +209,53 @@ function atualizarPreview() {
 }
 
 function criarCentro() {
-    // Coletar contactos
-    const contactos = {};
-    $('.contacto-item').each(function() {
-        const tipo = $(this).find('.contacto-tipo').val();
-        const valor = $(this).find('.contacto-valor').val();
+    // Coletar contactos como array simples
+    const contactos = [];
+    $('.contacto-valor').each(function() {
+        const valor = $(this).val().trim();
         if (valor) {
-            contactos[tipo] = valor;
+            contactos.push(valor);
         }
     });
 
-    const formData = {
-        nome: $('#nome').val(),
-        localizacao: $('#localizacao').val(),
-        email: $('#email').val() || null,
-        contactos: contactos
-    };
+    if (contactos.length === 0) {
+        Swal.fire({
+            title: 'Erro!',
+            text: 'Por favor, adicione pelo menos um telefone!',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    // Transformar array em FormData
+    const formDataObj = new FormData();
+    formDataObj.append('nome', $('#nome').val());
+    formDataObj.append('localizacao', $('#localizacao').val());
+    
+    const email = $('#email').val();
+    if (email) {
+        formDataObj.append('email', email);
+    }
+    
+    // Array de contactos
+    contactos.forEach((tel, index) => {
+        formDataObj.append(`contactos[${index}]`, tel);
+    });
+    
+    // Adicionar CSRF token
+    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+    console.log('CSRF Token:', csrfToken);
+    formDataObj.append('_token', csrfToken);
 
     $.ajax({
-        url: '/api/centros',
+        url: '/centros',
         method: 'POST',
-        data: JSON.stringify(formData),
-        contentType: 'application/json',
-        beforeSend: function() {
+        data: formDataObj,
+        processData: false,
+        contentType: false,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
             $('#centroForm button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Guardando...');
         },
         success: function(response) {
@@ -276,25 +270,52 @@ function criarCentro() {
         },
         error: function(xhr) {
             console.error('Erro ao criar centro:', xhr);
+            console.log('Response Text:', xhr.responseText);
+            console.log('Response JSON:', xhr.responseJSON);
+            console.log('Status:', xhr.status);
             
             if (xhr.status === 401) {
-                localStorage.removeItem('auth_token');
-                window.location.href = '/login';
+                Swal.fire({
+                    title: 'Não Autorizado!',
+                    text: 'Você precisa estar logado para criar centros. Redirecionando para login...',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = '/login';
+                });
+                return;
+            }
+            
+            if (xhr.status === 419) {
+                Swal.fire({
+                    title: 'Sessão Expirada!',
+                    text: 'Por favor, recarregue a página e tente novamente.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
                 return;
             }
             
             let message = 'Ocorreu um erro ao criar o centro.';
+            let detailMessage = '';
             
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                message = xhr.responseJSON.message;
-            } else if (xhr.responseJSON && xhr.responseJSON.errors) {
-                const errors = Object.values(xhr.responseJSON.errors).flat();
-                message = errors.join('<br>');
+            if (xhr.responseJSON) {
+                if (xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                if (xhr.responseJSON.errors) {
+                    const errors = Object.values(xhr.responseJSON.errors).flat();
+                    detailMessage = errors.join('<br>');
+                }
+            } else if (xhr.responseText) {
+                detailMessage = xhr.responseText.substring(0, 200);
             }
 
             Swal.fire({
                 title: 'Erro!',
-                html: message,
+                html: message + (detailMessage ? '<br><small class="text-muted">' + detailMessage + '</small>' : ''),
                 icon: 'error',
                 confirmButtonText: 'OK'
             });

@@ -26,8 +26,7 @@ class Centro extends Model
     public function cursos()
     {
         return $this->belongsToMany(Curso::class, 'centro_curso')
-        ->withPivot(['preco', 'duracao', 'data_arranque'])
-        ->withTimestamps();
+        ->withPivot(['preco', 'duracao', 'data_arranque']);
     }
 
     // Relacionamento N:N com formadores

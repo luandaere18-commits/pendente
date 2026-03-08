@@ -26,14 +26,34 @@ class CursoController extends Controller
             'programa' => 'nullable|string',
             'area' => 'required|string|max:100',
             'modalidade' => 'required|in:presencial,online,hibrido',
-            'imagem_url' => 'nullable|url|max:255',
-            'ativo' => 'nullable'
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ativo' => 'nullable',
+            'centros' => 'required|array|min:1',
+            'centros.*.centro_id' => 'required|integer|exists:centros,id',
+            'centros.*.preco' => 'required|numeric|min:0',
+            'centros.*.duracao' => 'required|string|max:100',
+            'centros.*.data_arranque' => 'required|date|after_or_equal:today'
         ]);
         
         // Garantir que ativo seja boolean
         $validated['ativo'] = $request->input('ativo', '1') == '1' ? true : false;
         
+        // Separar dados do curso dos dados dos centros
+        $centrosData = $validated['centros'];
+        unset($validated['centros']);
+        
+        // Criar o curso
         $curso = Curso::create($validated);
+        
+        // Adicionar centros ao curso (muitos-para-muitos)
+        foreach ($centrosData as $centroDado) {
+            $curso->centros()->attach($centroDado['centro_id'], [
+                'preco' => $centroDado['preco'],
+                'duracao' => $centroDado['duracao'],
+                'data_arranque' => $centroDado['data_arranque'] ?? null
+            ]);
+        }
+        
         return redirect()->route('cursos.index')->with('success', 'Curso criado com sucesso!');
     }
 
@@ -56,14 +76,44 @@ class CursoController extends Controller
             'programa' => 'nullable|string',
             'area' => 'required|string|max:100',
             'modalidade' => 'required|in:presencial,online,hibrido',
-            'imagem_url' => 'nullable|url|max:255',
-            'ativo' => 'nullable'
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ativo' => 'nullable',
+            'centros' => 'required|array|min:1',
+            'centros.*.centro_id' => 'required|integer|exists:centros,id',
+            'centros.*.preco' => 'required|numeric|min:0',
+            'centros.*.duracao' => 'required|string|max:100',
+            'centros.*.data_arranque' => 'required|date|after_or_equal:today'
         ]);
         
         // Garantir que ativo seja boolean
         $validated['ativo'] = $request->input('ativo', '1') == '1' ? true : false;
         
+        // Processar upload de imagem
+        if ($request->hasFile('imagem')) {
+            $file = $request->file('imagem');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('cursos', $filename, 'public');
+            $validated['imagem_url'] = '/storage/' . $path;
+        }
+        
+        // Separar dados do curso dos dados dos centros
+        $centrosData = $validated['centros'];
+        unset($validated['centros']);
+        
+        // Atualizar o curso
         $curso->update($validated);
+        
+        // Atualizar centros (remover todos e adicionar novamente)
+        $curso->centros()->detach();
+        
+        foreach ($centrosData as $centroDado) {
+            $curso->centros()->attach($centroDado['centro_id'], [
+                'preco' => $centroDado['preco'],
+                'duracao' => $centroDado['duracao'],
+                'data_arranque' => $centroDado['data_arranque'] ?? null
+            ]);
+        }
+        
         return redirect()->route('cursos.index')->with('success', 'Curso atualizado com sucesso!');
     }
 

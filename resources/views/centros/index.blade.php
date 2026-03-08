@@ -36,7 +36,6 @@
                             <th>Localização</th>
                             <th>Email</th>
                             <th>Contactos</th>
-                            <th>Data Criação</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -50,13 +49,12 @@
                                 <td>
                                     @if($centro->contactos && is_array($centro->contactos))
                                         @foreach($centro->contactos as $contacto)
-                                            <small class="d-block"><strong>Contacto:</strong> {{ $contacto }}</small>
+                                            <small class="d-block"><strong>📱</strong> {{ $contacto }}</small>
                                         @endforeach
                                     @else
                                         <small class="text-muted">Não definido</small>
                                     @endif
                                 </td>
-                                <td>{{ $centro->created_at->format('d/m/Y') }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
                                         <button type="button" class="btn btn-outline-info btn-sm" onclick="visualizarCentro({{ $centro->id }})" title="Visualizar">
@@ -73,7 +71,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted">Nenhum centro encontrado</td>
+                                <td colspan="6" class="text-center text-muted">Nenhum centro encontrado</td>
                             </tr>
                         @endforelse
                     </tbody>
