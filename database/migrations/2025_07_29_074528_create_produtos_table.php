@@ -21,6 +21,10 @@ return new class extends Migration
             $table->boolean('ativo')->default(true);
             $table->boolean('em_destaque')->default(false);
             $table->timestamps();
+            
+            // Índices para performance em queries
+            $table->index('categoria_id');
+            $table->index('em_destaque');
         });
     }
 

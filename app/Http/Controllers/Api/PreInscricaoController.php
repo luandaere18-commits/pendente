@@ -61,6 +61,25 @@ class PreInscricaoController extends Controller
                 'mensagem' => 'O curso selecionado não está disponível no centro escolhido.'
             ], 422);
         }
+        
+        // Validação: Se horario_id fornecido, deve pertencer ao curso e centro selecionados
+        if ($validated['horario_id']) {
+            $horario = \App\Models\Horario::find($validated['horario_id']);
+            
+            if (!$horario) {
+                return response()->json([
+                    'status' => 'erro',
+                    'mensagem' => 'Horário não encontrado.'
+                ], 404);
+            }
+            
+            if ($horario->curso_id !== $validated['curso_id'] || $horario->centro_id !== $validated['centro_id']) {
+                return response()->json([
+                    'status' => 'erro',
+                    'mensagem' => 'O horário selecionado não pertence ao curso/centro escolhido.'
+                ], 422);
+            }
+        }
 
         // Processar contactos - vem como JSON string do frontend
         try {

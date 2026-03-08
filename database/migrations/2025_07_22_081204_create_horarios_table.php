@@ -20,6 +20,10 @@ return new class extends Migration
             $table->time('hora_inicio')->nullable();   // Hora de início da aula
             $table->time('hora_fim')->nullable();      // Hora de fim da aula
             $table->timestamps();
+            
+            // Índices para performance em queries
+            $table->index('curso_id');
+            $table->index('centro_id');
         });
     }
 

@@ -22,6 +22,11 @@ return new class extends Migration
             $table->enum('status', ['pendente', 'confirmado', 'cancelado'])->default('pendente');
             $table->text('observacoes')->nullable();
             $table->timestamps();
+            
+            // Índices para performance em queries
+            $table->index('curso_id');
+            $table->index('centro_id');
+            $table->index('horario_id');
         });
     }
 

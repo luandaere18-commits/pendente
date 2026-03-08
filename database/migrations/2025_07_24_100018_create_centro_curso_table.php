@@ -21,6 +21,9 @@ return new class extends Migration
             $table->timestamps();
             
             $table->unique(['centro_id', 'curso_id']);
+            
+            // Índices para performance em queries
+            $table->index(['centro_id', 'curso_id']);
         });
     }
 

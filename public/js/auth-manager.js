@@ -40,11 +40,7 @@ class AuthManager {
     init() {
         this.setupAjaxDefaults();
         this.setupInterceptors();
-        
-        // Verifica autenticação apenas em páginas protegidas
-        if (this.isProtectedPage()) {
-            this.checkAuthentication();
-        }
+
     }
 
     /**
