@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             CentroSeeder::class,
             CursoSeeder::class,
             FormadorSeeder::class,
-            HorarioSeeder::class,
+            CronogramaSeeder::class,
             CentroCursoSeeder::class, 
             CentroFormadorSeeder::class,
             CursoFormadorSeeder::class,

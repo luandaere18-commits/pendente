@@ -17,8 +17,8 @@ class PreInscricaoController extends Controller
     {
         $cursos = \App\Models\Curso::all();
         $centros = \App\Models\Centro::all();
-        $horarios = \App\Models\Horario::all();
-        return view('pre-inscricoes.create', compact('cursos', 'centros', 'horarios'));
+        $cronogramas = \App\Models\Cronograma::all();
+        return view('pre-inscricoes.create', compact('cursos', 'centros', 'cronogramas'));
     }
 
     public function store(Request $request)
@@ -26,7 +26,7 @@ class PreInscricaoController extends Controller
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
             'centro_id' => 'required|exists:centros,id',
-            'horario_id' => 'nullable|exists:horarios,id',
+            'cronograma_id' => 'nullable|exists:cronogramas,id',
             'nome_completo' => 'required|string|max:100',
             'contactos' => 'required|array|min:1',
             'contactos.*' => 'required|string',
@@ -55,8 +55,8 @@ class PreInscricaoController extends Controller
     {
         $cursos = \App\Models\Curso::all();
         $centros = \App\Models\Centro::all();
-        $horarios = \App\Models\Horario::all();
-        return view('pre-inscricoes.edit', compact('preInscricao', 'cursos', 'centros', 'horarios'));
+        $cronogramas = \App\Models\Cronograma::all();
+        return view('pre-inscricoes.edit', compact('preInscricao', 'cursos', 'centros', 'cronogramas'));
     }
 
     public function update(Request $request, PreInscricao $preInscricao)
@@ -64,7 +64,7 @@ class PreInscricaoController extends Controller
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
             'centro_id' => 'required|exists:centros,id',
-            'horario_id' => 'nullable|exists:horarios,id',
+            'cronograma_id' => 'nullable|exists:cronogramas,id',
             'nome_completo' => 'required|string|max:100',
             'contactos' => 'required|array|min:1',
             'contactos.*' => 'required|string',

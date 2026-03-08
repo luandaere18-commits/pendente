@@ -202,9 +202,9 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="horario_id" class="form-label">Horário (opcional)</label>
-                            <select class="form-select" id="horario_id">
-                                <option value="">Selecione um horário</option>
+                            <label for="cronograma_id" class="form-label">Cronograma (opcional)</label>
+                            <select class="form-select" id="cronograma_id">
+                                <option value="">Selecione um cronograma</option>
                             </select>
                         </div>
                     </div>
@@ -223,7 +223,7 @@
                     <form id="inscricaoForm">
                         <input type="hidden" id="curso_id" name="curso_id">
                         <input type="hidden" id="selected_centro_id" name="centro_id">
-                        <input type="hidden" id="selected_horario_id" name="horario_id">
+                        <input type="hidden" id="selected_cronograma_id" name="cronograma_id">
                         
                         <div class="row">
                             <div class="col-md-8 mb-3">
@@ -326,7 +326,7 @@
         let centroSelecionado = null;
         let cursos = [];
         let centros = [];
-        let horarios = [];
+        let cronogramas = [];
 
         $(document).ready(function() {
             // Setup CSRF token
@@ -354,9 +354,9 @@
                 preencherSelectCentros();
             });
 
-            // Carregar horários
-            $.get('/api/horarios', function(data) {
-                horarios = data;
+            // Carregar cronogramas
+            $.get('/api/cronogramas', function(data) {
+                cronogramas = data;
             });
         }
 
@@ -449,7 +449,8 @@
             // Carregar centros disponíveis para este curso
             carregarCentrosParaCurso(cursoId);
             
-            // Habilitar botão próximo
+            // Carregar cronogramas para este curso
+            carregarCronogramas();
             $('#btnProximo').prop('disabled', false);
         }
 
@@ -468,7 +469,6 @@
                     centroSelecionado = centros.find(c => c.id == centroId);
                     $('#selected_centro_id').val(centroId);
                     mostrarInfoCentro();
-                    carregarHorarios();
                 }
             });
 
@@ -499,7 +499,7 @@
                     return;
                 }
                 passoAtual = 3;
-                $('#selected_horario_id').val($('#horario_id').val());
+                $('#selected_cronograma_id').val($('#cronograma_id').val());
             }
             
             atualizarPasso();
@@ -562,24 +562,23 @@
             }
         }
 
-        function carregarHorarios() {
+        function carregarCronogramas() {
             const cursoId = $('#curso_id').val();
-            const centroId = $('#centro_id').val();
             
-            const horariosDisponiveis = horarios.filter(h => 
-                h.curso_id == cursoId && h.centro_id == centroId
+            const cronogramasDisponiveis = cronogramas.filter(c => 
+                c.curso_id == cursoId
             );
 
-            $('#horario_id').html('<option value="">Selecione um horário</option>');
+            $('#cronograma_id').html('<option value="">Selecione um cronograma</option>');
             
-            horariosDisponiveis.forEach(horario => {
-                const horaTexto = horario.hora_inicio && horario.hora_fim 
-                    ? ` (${horario.hora_inicio} - ${horario.hora_fim})`
+            cronogramasDisponiveis.forEach(cronograma => {
+                const horaTexto = cronograma.hora_inicio && cronograma.hora_fim 
+                    ? ` (${cronograma.hora_inicio} - ${cronograma.hora_fim})`
                     : '';
                 
-                $('#horario_id').append(`
-                    <option value="${horario.id}">
-                        ${horario.dia_semana} - ${horario.periodo}${horaTexto}
+                $('#cronograma_id').append(`
+                    <option value="${cronograma.id}">
+                        ${cronograma.dia_semana} - ${cronograma.periodo}${horaTexto}
                     </option>
                 `);
             });

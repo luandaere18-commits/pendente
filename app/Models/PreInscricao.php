@@ -15,7 +15,7 @@ class PreInscricao extends Model
     protected $fillable = [
         'curso_id',
         'centro_id',
-        'horario_id',
+        'cronograma_id',
         'nome_completo',
         'contactos',
         'email',
@@ -38,8 +38,8 @@ class PreInscricao extends Model
         return $this->belongsTo(Centro::class);
     }
 
-    public function horario()
+    public function cronograma()
     {
-        return $this->belongsTo(Horario::class);
+        return $this->belongsTo(Cronograma::class);
     }
 }

@@ -199,8 +199,8 @@
             <a class="nav-link {{ request()->routeIs('formadores.*') ? 'active' : '' }}" href="{{ route('formadores.index') }}">
                 <i class="fas fa-chalkboard-teacher me-2"></i>Formadores
             </a>
-            <a class="nav-link {{ request()->routeIs('horarios.*') ? 'active' : '' }}" href="{{ route('horarios.index') }}">
-                <i class="fas fa-clock me-2"></i>Horários
+            <a class="nav-link {{ request()->routeIs('cronogramas.*') ? 'active' : '' }}" href="{{ route('cronogramas.index') }}">
+                <i class="fas fa-clock me-2"></i>Cronogramas
             </a>
             <a class="nav-link {{ request()->routeIs('pre-inscricoes.*') ? 'active' : '' }}" href="{{ route('pre-inscricoes.index') }}">
                 <i class="fas fa-user-plus me-2"></i>Pré-Inscrições

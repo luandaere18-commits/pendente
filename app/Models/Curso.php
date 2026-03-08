@@ -28,10 +28,10 @@ class Curso extends Model
         ->withPivot(['preco', 'duracao', 'data_arranque']);
     }
 
-    // Um curso tem muitos horários
-    public function horarios()
+    // Um curso tem muitos cronogramas
+    public function cronogramas()
     {
-        return $this->hasMany(Horario::class);
+        return $this->hasMany(Cronograma::class);
     }
 
     // N:N com formadores

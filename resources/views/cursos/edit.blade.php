@@ -187,14 +187,21 @@ $(document).ready(function() {
         atualizarPreview();
     });
 
-    // Validação antes de submit
+    // Validação e submissão AJAX
     $('#cursoForm').on('submit', function(e) {
+        e.preventDefault();
+        
         const centrosCount = $('.centro-item').length;
         if (centrosCount === 0) {
-            e.preventDefault();
-            alert('Por favor, adicione pelo menos um centro!');
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Por favor, adicione pelo menos um centro!',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
             return false;
         }
+        atualizarCurso();
     });
 });
 
@@ -312,6 +319,94 @@ function atualizarPreview() {
     } else {
         $('#previewCard').hide();
     }
+}
+
+function atualizarCurso() {
+    const cursoId = {{ $curso->id }};
+    
+    // Validar que pelo menos um centro foi adicionado
+    const centrosCount = $('.centro-item').length;
+    if (centrosCount === 0) {
+        Swal.fire({
+            title: 'Erro!',
+            text: 'Por favor, adicione pelo menos um centro!',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    // Criar FormData do formulário
+    const formDataObj = new FormData($('#cursoForm')[0]);
+    
+    // Adicionar CSRF token
+    const csrfToken = $('meta[name="csrf-token"]').attr('content');
+    formDataObj.append('_token', csrfToken);
+
+    $.ajax({
+        url: `/cursos/${cursoId}`,
+        method: 'POST',
+        data: formDataObj,
+        processData: false,
+        contentType: false,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            $('#cursoForm button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Atualizando...');
+        },
+        success: function(response) {
+            Swal.fire({
+                title: 'Sucesso!',
+                text: 'Curso atualizado com sucesso!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.location.href = '{{ route("cursos.index") }}';
+            });
+        },
+        error: function(xhr) {
+            console.error('Erro ao atualizar curso:', xhr);
+            
+            if (xhr.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            if (xhr.status === 419) {
+                Swal.fire({
+                    title: 'Sessão Expirada!',
+                    text: 'Por favor, recarregue a página e tente novamente.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+                return;
+            }
+            
+            let message = 'Ocorreu um erro ao atualizar o curso.';
+            let detailMessage = '';
+            
+            if (xhr.responseJSON) {
+                if (xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                if (xhr.responseJSON.errors) {
+                    const errors = Object.values(xhr.responseJSON.errors).flat();
+                    detailMessage = errors.join('<br>');
+                }
+            }
+
+            Swal.fire({
+                title: 'Erro!',
+                html: message + (detailMessage ? '<br><small class="text-muted">' + detailMessage + '</small>' : ''),
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        },
+        complete: function() {
+            $('#cursoForm button[type="submit"]').prop('disabled', false).html('<i class="fas fa-save me-2"></i>Atualizar Curso');
+        }
+    });
 }
 </script>
 @endsection

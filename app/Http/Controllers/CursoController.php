@@ -9,7 +9,7 @@ class CursoController extends Controller
 {
     public function index()
     {
-        $cursos = Curso::with(['centros', 'formadores', 'horarios', 'preInscricoes'])->get();
+        $cursos = Curso::with(['centros', 'formadores', 'cronogramas', 'preInscricoes'])->get();
         return view('cursos.index', compact('cursos'));
     }
 
@@ -59,7 +59,7 @@ class CursoController extends Controller
 
     public function show(Curso $curso)
     {
-        $curso->load(['centros', 'formadores', 'horarios', 'preInscricoes']);
+        $curso->load(['centros', 'formadores', 'cronogramas', 'preInscricoes']);
         return view('cursos.show', compact('curso'));
     }
 
