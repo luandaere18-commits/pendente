@@ -292,6 +292,22 @@ class CentroController extends Controller
             ], 404); // 404 = Not Found
         }
 
+        // Verificar se o centro tem cursos associados
+        if ($centro->cursos()->count() > 0) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Não é possível apagar este centro porque possui ' . $centro->cursos()->count() . ' curso(s) associado(s). Remova os cursos ou suas associações primeiro.'
+            ], 409); // 409 = Conflict
+        }
+
+        // Verificar se o centro tem formadores associados
+        if ($centro->formadores()->count() > 0) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Não é possível apagar este centro porque possui ' . $centro->formadores()->count() . ' formador(es) associado(s). Remova as associações primeiro.'
+            ], 409); // 409 = Conflict
+        }
+
         // Deletar o centro
         $centro->delete();
 

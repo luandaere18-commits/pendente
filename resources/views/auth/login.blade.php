@@ -292,20 +292,29 @@
                 $('#loginError').addClass('d-none').text('');
                 
                 $.ajax({
-                    url: '/api/login',
+                    url: '/api/web-login',
                     method: 'POST',
-                    data: {
+                    contentType: 'application/json',
+                    data: JSON.stringify({
                         email: email,
                         password: password,
                         remember: $('#remember').is(':checked')
-                    },
+                    }),
                     success: function(response) {
-                        localStorage.setItem('auth_token', response.token);
-                        window.location.href = '/dashboard';
+                        if (response.token) {
+                            localStorage.setItem('auth_token', response.token);
+                        }
+                        window.location.href = response.redirect || '/dashboard';
                     },
                     error: function(xhr) {
                         let msg = 'Erro ao autenticar. Verifique suas credenciais.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                        if (xhr.status === 401) {
+                            msg = 'Email ou senha inválidos.';
+                        } else if (xhr.status === 422) {
+                            const errors = xhr.responseJSON?.errors || {};
+                            const errorMessages = Object.values(errors).flat();
+                            msg = errorMessages.length > 0 ? errorMessages.join(', ') : 'Por favor, preencha todos os campos corretamente.';
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
                             msg = xhr.responseJSON.message;
                         }
                         $('#loginError').removeClass('d-none').text(msg);

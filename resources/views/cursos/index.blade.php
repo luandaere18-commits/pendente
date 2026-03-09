@@ -110,7 +110,7 @@ function carregarCursos() {
                     const dataArranque = new Date(centro.pivot.data_arranque).toLocaleDateString('pt-PT');
                     centroCells = `<td>${centro.nome}</td><td>${parseFloat(preco).toLocaleString('pt-PT', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</td><td>${dataArranque}</td>`;
                 } else {
-                    centroCells = `<td colspan="3" class="text-muted"><i class="fas fa-times"></i> N/A</td>`;
+                    centroCells = `<td class="text-muted"><i class="fas fa-times"></i> N/A</td><td class="text-muted">N/A</td><td class="text-muted">N/A</td>`;
                 }
                 
                 html += `

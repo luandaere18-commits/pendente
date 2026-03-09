@@ -208,9 +208,9 @@
                             </a>
                         </div>
                         <div class="col-lg-3 col-md-6 mb-3">
-                            <a href="{{ route('horarios.create') }}" class="btn btn-warning w-100 py-3">
+                            <a href="{{ route('cronogramas.create') }}" class="btn btn-warning w-100 py-3">
                                 <i class="fas fa-clock fa-2x mb-2 d-block"></i>
-                                Novo Horário
+                                Novo Cronograma
                             </a>
                         </div>
                     </div>

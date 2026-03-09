@@ -148,20 +148,20 @@
                 const formData = {
                     email: $('#email').val(),
                     password: $('#password').val(),
-                    remember: $('#remember').is(':checked'),
-                    _token: $('meta[name="csrf-token"]').attr('content')
+                    remember: $('#remember').is(':checked')
                 };
 
                 console.log('Attempting login with:', formData);
 
                 $.ajax({
-                    url: '/login',
+                    url: '/api/web-login',
                     method: 'POST',
-                    data: formData,
+                    data: JSON.stringify(formData),
+                    contentType: 'application/json',
                     success: function(response) {
                         console.log('Login successful:', response);
                         // Redirecionar para dashboard
-                        window.location.href = '/dashboard';
+                        window.location.href = response.redirect || '/dashboard';
                     },
                     error: function(xhr, status, error) {
                         console.error('Login error:', {xhr, status, error});
@@ -171,7 +171,9 @@
                         if (xhr.status === 401) {
                             msg = 'Email ou senha inválidos.';
                         } else if (xhr.status === 422) {
-                            msg = 'Por favor, preencha todos os campos corretamente.';
+                            const errors = xhr.responseJSON?.errors || {};
+                            const errorMessages = Object.values(errors).flat();
+                            msg = errorMessages.length > 0 ? errorMessages.join(', ') : 'Por favor, preencha todos os campos corretamente.';
                         } else if (xhr.status === 429) {
                             msg = 'Muitas tentativas. Por favor, aguarde alguns minutos.';
                         } else if (xhr.responseJSON && xhr.responseJSON.message) {

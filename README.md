@@ -85,7 +85,7 @@ A API utiliza autenticação Bearer Token. Para obter um token:
 ```bash
 curl -X POST http://localhost:8000/api/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@admin.com","password":"password"}'
+  -d '{"email":"admin@site.com","password":"senha123"}'
 ```
 
 2. Use o token retornado nos headers das requisições:
@@ -98,7 +98,7 @@ Authorization: Bearer seu_token_aqui
 - Centros de Formação (CRUD)
 - Cursos (CRUD)
 - Formadores (CRUD)
-- Horários (CRUD)
+- Cronogramas - Horários de Aulas (CRUD)
 - Produtos (CRUD)
 - Categorias (CRUD)
 - Pré-inscrições
@@ -110,7 +110,7 @@ O projeto utiliza as seguintes tabelas principais:
 - centros
 - cursos
 - formadores
-- horarios
+- cronogramas (horários de aulas)
 - produtos
 - categorias
 - pre_inscricoes

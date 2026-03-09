@@ -72,6 +72,21 @@ class CentroController extends Controller
     public function destroy($id)
     {
         $centro = Centro::findOrFail($id);
+        
+        // Verificar se o centro tem cursos associados
+        if ($centro->cursos()->count() > 0) {
+            return redirect()->route('centros.index')->with('error', 
+                'Não é possível apagar este centro porque possui ' . $centro->cursos()->count() . ' curso(s) associado(s). Remova os cursos primeiro.'
+            );
+        }
+        
+        // Verificar se o centro tem formadores associados
+        if ($centro->formadores()->count() > 0) {
+            return redirect()->route('centros.index')->with('error', 
+                'Não é possível apagar este centro porque possui ' . $centro->formadores()->count() . ' formador(es) associado(s). Remova as associações primeiro.'
+            );
+        }
+        
         $centro->delete();
         return redirect()->route('centros.index')->with('success', 'Centro deletado com sucesso!');
     }
