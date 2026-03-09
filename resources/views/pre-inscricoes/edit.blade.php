@@ -123,12 +123,15 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="horario_id" class="form-label">Horário</label>
-                                <select class="form-select" id="horario_id" name="horario_id">
-                                    <option value="">Selecione o horário (opcional)</option>
-                                    @foreach($horarios as $horario)
-                                        <option value="{{ $horario->id }}" {{ $preInscricao->horario_id == $horario->id ? 'selected' : '' }}>
-                                            {{ $horario->descricao }}
+                                <label for="cronograma_id" class="form-label">Cronograma</label>
+                                <select class="form-select" id="cronograma_id" name="cronograma_id">
+                                    <option value="">Selecione o cronograma (opcional)</option>
+                                    @foreach($cronogramas as $cronograma)
+                                        <option value="{{ $cronograma->id }}" {{ $preInscricao->cronograma_id == $cronograma->id ? 'selected' : '' }}>
+                                            {{ $cronograma->dia_semana }} - {{ $cronograma->periodo }}
+                                            @if($cronograma->hora_inicio && $cronograma->hora_fim)
+                                                ({{ $cronograma->hora_inicio }} - {{ $cronograma->hora_fim }})
+                                            @endif
                                         </option>
                                     @endforeach
                                 </select>

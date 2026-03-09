@@ -134,9 +134,9 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Horário Preferido</label>
-                        <select class="form-select" name="horario_id" id="modal_horarios">
-                            <option value="">Selecionar horário (opcional)</option>
+                        <label class="form-label">Cronograma Preferido</label>
+                        <select class="form-select" name="cronograma_id" id="modal_cronogramas">
+                            <option value="">Selecionar cronograma (opcional)</option>
                         </select>
                     </div>
                     
@@ -200,7 +200,7 @@
 <script>
 let centroAtual = null;
 let cursosDisponiveis = [];
-let horariosDisponiveis = [];
+let cronogramasDisponiveis = [];
 
 $(document).ready(function() {
     const centroId = {{ $centro->id ?? 'null' }};
@@ -208,7 +208,7 @@ $(document).ready(function() {
     if (centroId) {
         carregarCentro(centroId);
         carregarCursos(centroId);
-        carregarHorarios(centroId);
+        carregarCronogramas();
     } else {
         window.location.href = '{{ route("site.centros") }}';
     }
@@ -344,9 +344,10 @@ function carregarCursos(centroId) {
     });
 }
 
-function carregarHorarios(centroId) {
-    $.get('/api/horarios', function(horarios) {
-        horariosDisponiveis = horarios.filter(h => h.centro_id == centroId);
+function carregarCronogramas() {
+    $.get('/api/cronogramas', function(cronogramas) {
+        cronogramasDisponiveis = cronogramas;
+        // Preencher select com todos os cronogramas quando modal abrir
     });
 }
 
@@ -459,18 +460,18 @@ function abrirPreInscricao(cursoId, cursoNome) {
     $('#modal_curso_nome').text(cursoNome || 'Curso');
     $('#modal_centro_nome').text(centroAtual.nome || 'Centro');
     
-    // Carregar horários para este curso
-    const horariosEste = horariosDisponiveis.filter(h => h.curso_id == cursoId);
-    let horariosHtml = '<option value="">Selecionar horário (opcional)</option>';
+    // Carregar cronogramas para este curso
+    const cronogramasEste = cronogramasDisponiveis.filter(c => c.curso_id == cursoId);
+    let cronogramasHtml = '<option value="">Selecionar cronograma (opcional)</option>';
     
-    horariosEste.forEach(horario => {
-        const horaTexto = horario.hora_inicio && horario.hora_fim 
-            ? ` (${horario.hora_inicio} - ${horario.hora_fim})`
+    cronogramasEste.forEach(cronograma => {
+        const horaTexto = cronograma.hora_inicio && cronograma.hora_fim 
+            ? ` (${cronograma.hora_inicio} - ${cronograma.hora_fim})`
             : '';
-        horariosHtml += `<option value="${horario.id}">${horario.dia_semana} - ${horario.periodo}${horaTexto}</option>`;
+        cronogramasHtml += `<option value="${cronograma.id}">${cronograma.dia_semana} - ${cronograma.periodo}${horaTexto}</option>`;
     });
     
-    $('#modal_horarios').html(horariosHtml);
+    $('#modal_cronogramas').html(cronogramasHtml);
     
     // Limpar form
     $('#preInscricaoForm')[0].reset();
@@ -540,7 +541,7 @@ function submeterPreInscricao() {
     const dados = {
         curso_id: parseInt(cursoId),
         centro_id: parseInt(centroId),
-        horario_id: $('#modal_horarios').val() ? parseInt($('#modal_horarios').val()) : null,
+        cronograma_id: $('#modal_cronogramas').val() ? parseInt($('#modal_cronogramas').val()) : null,
         nome_completo: nomeCompleto.trim(),
         email: $('input[name="email"]').val()?.trim() || null,
         contactos: JSON.stringify(contactos),

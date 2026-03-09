@@ -88,8 +88,8 @@
                                 <td>{{ $preInscricao->curso->nome ?? 'Curso não encontrado' }}</td>
                                 <td>{{ $preInscricao->centro->nome ?? 'Centro não encontrado' }}</td>
                                 <td>
-                                    @if($preInscricao->horario)
-                                        {{ $preInscricao->horario->dia_semana }} - {{ $preInscricao->horario->periodo }}
+                                    @if($preInscricao->cronograma)
+                                        {{ $preInscricao->cronograma->dia_semana }} - {{ $preInscricao->cronograma->periodo }}
                                     @else
                                         <span class="text-muted">Não definido</span>
                                     @endif
@@ -202,7 +202,7 @@ function visualizarPreInscricao(id) {
                     <div class="col-md-6">
                         <p class="mb-2"><strong>Curso:</strong> ${preInscricao.curso ? preInscricao.curso.nome : '<span class="text-muted">N/A</span>'}</p>
                         <p class="mb-2"><strong>Centro:</strong> ${preInscricao.centro ? preInscricao.centro.nome : '<span class="text-muted">N/A</span>'}</p>
-                        <p class="mb-2"><strong>Horário:</strong> ${preInscricao.horario ? preInscricao.horario.descricao : '<span class="text-muted">N/A</span>'}</p>
+                        <p class="mb-2"><strong>Cronograma:</strong> ${preInscricao.cronograma ? preInscricao.cronograma.dia_semana + ' - ' + preInscricao.cronograma.periodo : '<span class="text-muted">N/A</span>'}</p>
                     </div>
                 </div>
                 

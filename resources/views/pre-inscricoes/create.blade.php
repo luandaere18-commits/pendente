@@ -121,9 +121,9 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="horario_id" class="form-label">Horário</label>
-                                <select class="form-select" id="horario_id" name="horario_id">
-                                    <option value="">Selecione o horário (opcional)</option>
+                                <label for="cronograma_id" class="form-label">Cronograma</label>
+                                <select class="form-select" id="cronograma_id" name="cronograma_id">
+                                    <option value="">Selecione o cronograma (opcional)</option>
                                 </select>
                             </div>
                             
@@ -205,7 +205,7 @@
 $(document).ready(function() {
     carregarCursos();
     carregarCentros();
-    carregarHorarios();
+    carregarCronogramas();
 
     // Preview em tempo real
     $('#preInscricaoForm input, #preInscricaoForm select, #preInscricaoForm textarea').on('input change', function() {
@@ -218,9 +218,9 @@ $(document).ready(function() {
         criarPreInscricao();
     });
 
-    // Atualizar horários quando centro mudar
-    $('#centro_id').on('change', function() {
-        carregarHorarios();
+    // Atualizar cronogramas quando curso mudar
+    $('#curso_id').on('change', function() {
+        carregarCronogramas();
     });
 });
 
@@ -248,20 +248,23 @@ function carregarCentros() {
     });
 }
 
-function carregarHorarios() {
-    const centroId = $('#centro_id').val();
-    let url = '/api/horarios';
+function carregarCronogramas() {
+    const cursoId = $('#curso_id').val();
+    let url = '/api/cronogramas';
     
-    if (centroId) {
-        url += `?centro_id=${centroId}`;
+    if (cursoId) {
+        url += `?curso_id=${cursoId}`;
     }
 
     $.get(url, function(data) {
-        let options = '<option value="">Selecione o horário (opcional)</option>';
-        data.forEach(function(horario) {
-            options += `<option value="${horario.id}">${horario.descricao}</option>`;
+        let options = '<option value="">Selecione o cronograma (opcional)</option>';
+        data.forEach(function(cronograma) {
+            const horaTexto = cronograma.hora_inicio && cronograma.hora_fim 
+                ? ` (${cronograma.hora_inicio} - ${cronograma.hora_fim})`
+                : '';
+            options += `<option value="${cronograma.id}">${cronograma.dia_semana} - ${cronograma.periodo}${horaTexto}</option>`;
         });
-        $('#horario_id').html(options);
+        $('#cronograma_id').html(options);
     });
 }
 
@@ -385,7 +388,7 @@ function criarPreInscricao() {
         email: $('#email').val() || null,
         curso_id: parseInt($('#curso_id').val()),
         centro_id: parseInt($('#centro_id').val()),
-        horario_id: $('#horario_id').val() ? parseInt($('#horario_id').val()) : null,
+        cronograma_id: $('#cronograma_id').val() ? parseInt($('#cronograma_id').val()) : null,
         status: $('#status').val(),
         contactos: Object.keys(contactos).length > 0 ? contactos : null,
         observacoes: $('#observacoes').val() || null

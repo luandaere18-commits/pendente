@@ -107,7 +107,7 @@
                                         <option value="">Selecione um assunto</option>
                                         <option value="informacoes">Informações sobre cursos</option>
                                         <option value="inscricao">Pré-inscrição</option>
-                                        <option value="horarios">Horários e localização</option>
+                                        <option value="cronogramas">Cronogramas e localização</option>
                                         <option value="certificacao">Certificação</option>
                                         <option value="outro">Outro</option>
                                     </select>

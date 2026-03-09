@@ -634,7 +634,7 @@
             const dados = {
                 curso_id: parseInt($('#curso_id').val()),
                 centro_id: parseInt($('#selected_centro_id').val()),
-                horario_id: $('#selected_horario_id').val() ? parseInt($('#selected_horario_id').val()) : null,
+                cronograma_id: $('#selected_cronograma_id').val() ? parseInt($('#selected_cronograma_id').val()) : null,
                 nome_completo: $('#nome_completo').val(),
                 email: $('#email').val() || null,
                 contactos: JSON.stringify(contactos),

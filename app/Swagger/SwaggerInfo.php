@@ -222,77 +222,13 @@ namespace App\Swagger;
  * )
 
  * @OA\Schema(
- *     schema="Horario",
- *     type="object",
- *     required={"id", "curso_id", "centro_id", "dia_semana", "periodo", "hora_inicio", "hora_fim"},
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="curso_id", type="integer", example=2),
- *     @OA\Property(property="centro_id", type="integer", example=3),
- *     @OA\Property(property="dia_semana", type="string", example="Segunda"),
- *     @OA\Property(property="periodo", type="string", example="manhã"),
- *     @OA\Property(property="hora_inicio", type="string", example="08:00"),
- *     @OA\Property(property="hora_fim", type="string", example="10:00"),
- *     @OA\Property(property="created_at", type="string", format="date-time", example="2025-07-31T08:00:00Z"),
- *     @OA\Property(property="updated_at", type="string", format="date-time", example="2025-07-31T08:00:00Z"),
- *     example={
- *         "id": 1,
- *         "curso_id": 2,
- *         "centro_id": 3,
- *         "dia_semana": "Segunda",
- *         "periodo": "manhã",
- *         "hora_inicio": "08:00",
- *         "hora_fim": "10:00",
- *         "created_at": "2025-07-31T08:00:00Z",
- *         "updated_at": "2025-07-31T08:00:00Z"
- *     }
- * )
-
- * @OA\Schema(
- *     schema="HorarioInput",
- *     type="object",
- *     required={"curso_id", "centro_id", "dia_semana", "periodo", "hora_inicio", "hora_fim"},
- *     @OA\Property(property="curso_id", type="integer", example=2),
- *     @OA\Property(property="centro_id", type="integer", example=3),
- *     @OA\Property(property="dia_semana", type="string", example="Segunda"),
- *     @OA\Property(property="periodo", type="string", example="manhã"),
- *     @OA\Property(property="hora_inicio", type="string", example="08:00"),
- *     @OA\Property(property="hora_fim", type="string", example="10:00"),
- *     example={
- *         "curso_id": 2,
- *         "centro_id": 3,
- *         "dia_semana": "Segunda",
- *         "periodo": "manhã",
- *         "hora_inicio": "08:00",
- *         "hora_fim": "10:00"
- *     }
- * )
-
- * @OA\Schema(
- *     schema="HorarioUpdateInput",
- *     type="object",
- *     required={"dia_semana", "periodo", "hora_inicio", "hora_fim"},
- *     @OA\Property(property="dia_semana", type="string", example="Segunda"),
- *     @OA\Property(property="periodo", type="string", example="manhã"),
- *     @OA\Property(property="hora_inicio", type="string", example="08:00"),
- *     @OA\Property(property="hora_fim", type="string", example="10:00"),
- *     example={
- *         "dia_semana": "Segunda",
- *         "periodo": "manhã",
- *         "hora_inicio": "08:00",
- *         "hora_fim": "10:00"
- *     }
- * )
- * 
- * 
-
- * @OA\Schema(
  *     schema="PreInscricao",
  *     type="object",
  *     required={"id", "curso_id", "centro_id", "nome_completo", "contactos", "status"},
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="curso_id", type="integer", example=2),
  *     @OA\Property(property="centro_id", type="integer", example=3),
- *     @OA\Property(property="horario_id", type="integer", nullable=true, example=4),
+ *     @OA\Property(property="cronograma_id", type="integer", nullable=true, example=4),
  *     @OA\Property(property="nome_completo", type="string", example="Maria dos Santos"),
  *     @OA\Property(property="contactos", type="array", @OA\Items(type="string")),
  *     @OA\Property(property="email", type="string", format="email", nullable=true, example="maria@email.com"),
@@ -304,7 +240,7 @@ namespace App\Swagger;
  *         "id": 1,
  *         "curso_id": 2,
  *         "centro_id": 3,
- *         "horario_id": 4,
+ *         "cronograma_id": 4,
  *         "nome_completo": "Maria dos Santos",
  *         "contactos": {"923456789", "912345678"},
  *         "email": "maria@email.com",
@@ -321,7 +257,7 @@ namespace App\Swagger;
  *     required={"curso_id", "centro_id", "nome_completo", "contactos"},
  *     @OA\Property(property="curso_id", type="integer", example=2),
  *     @OA\Property(property="centro_id", type="integer", example=3),
- *     @OA\Property(property="horario_id", type="integer", nullable=true, example=4),
+ *     @OA\Property(property="cronograma_id", type="integer", nullable=true, example=4),
  *     @OA\Property(property="nome_completo", type="string", example="Maria dos Santos"),
  *     @OA\Property(property="contactos", type="array", @OA\Items(type="string")),
  *     @OA\Property(property="email", type="string", format="email", nullable=true, example="maria@email.com"),
@@ -329,7 +265,7 @@ namespace App\Swagger;
  *     example={
  *         "curso_id": 2,
  *         "centro_id": 3,
- *         "horario_id": 4,
+ *         "cronograma_id": 4,
  *         "nome_completo": "Maria dos Santos",
  *         "contactos": {"923456789", "912345678"},
  *         "email": "maria@email.com",

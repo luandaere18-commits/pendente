@@ -12,7 +12,7 @@ class PreInscricaoSeeder extends Seeder
         // PreInscricao::create([
         //     'curso_id' => 1,
         //     'centro_id' => 1,
-        //     'horario_id' => 1,
+        //     'cronograma_id' => 1,
         //     'nome_completo' => 'João Pedro',
         //     'contactos' => ['923456789'],
         //     'email' => 'joao@email.com',
@@ -23,7 +23,7 @@ class PreInscricaoSeeder extends Seeder
         // PreInscricao::create([
         //     'curso_id' => 2,
         //     'centro_id' => 2,
-        //     'horario_id' => 3,
+        //     'cronograma_id' => 3,
         //     'nome_completo' => 'Maria Luísa',
         //     'contactos' => ['951456700'],
         //     'email' => 'maria@email.com',
