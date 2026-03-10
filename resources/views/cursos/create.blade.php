@@ -284,33 +284,61 @@
 
 @section('scripts')
 <script>
+// Verificar se Bootstrap está carregado
+if (typeof bootstrap === 'undefined') {
+    console.error('Bootstrap não foi carregado!');
+    alert('Erro: Bootstrap não foi carregado. Recarregue a página.');
+} else {
+    console.log('Bootstrap carregado com sucesso');
+}
+
 let centroCount = 0;
 let cronogramaCount = 0;
 
 $(document).ready(function() {
+    console.log('Document ready - inicializando cursos form');
+    
     // Adicionar primeiro centro e cronograma
     adicionarCentro();
     adicionarCronograma();
 
     // Eventos
-    $(document).on('click', '#adicionarCentroBtn', adicionarCentro);
-    $(document).on('click', '#adicionarCronogramaBtn', adicionarCronograma);
+    $(document).on('click', '#adicionarCentroBtn', function(e) {
+        e.preventDefault();
+        adicionarCentro();
+    });
+    $(document).on('click', '#adicionarCronogramaBtn', function(e) {
+        e.preventDefault();
+        adicionarCronograma();
+    });
     $(document).on('click', '.remover-centro', removerCentro);
     $(document).on('click', '.remover-cronograma', removerCronograma);
 });
 
 function adicionarCentro() {
-    const template = document.getElementById('centroTemplate');
-    const clone = template.content.cloneNode(true);
-    
-    const html = clone.innerHTML
-        .replace(/INDEX/g, centroCount)
-        .replace('numero-centro">1<', `numero-centro">${centroCount + 1}<`);
-    
-    $('#centrosContainer').append('<div class="centro-wrapper-' + centroCount + '">' + html + '</div>');
-    centroCount++;
-    
-    atualizarBotoesRemover();
+    try {
+        const template = document.getElementById('centroTemplate');
+        if (!template) {
+            console.error('Template centroTemplate não encontrado!');
+            return;
+        }
+        
+        // Converter template content para string
+        const tempDiv = document.createElement('div');
+        const clone = template.content.cloneNode(true);
+        tempDiv.appendChild(clone);
+        
+        let html = tempDiv.innerHTML
+            .replace(/INDEX/g, centroCount)
+            .replace(/numero-centro">1</g, `numero-centro">${centroCount + 1}<`);
+        
+        $('#centrosContainer').append('<div class="centro-wrapper-' + centroCount + '">' + html + '</div>');
+        centroCount++;
+        
+        atualizarBotoesRemover();
+    } catch(e) {
+        console.error('Erro ao adicionar centro:', e);
+    }
 }
 
 function removerCentro(e) {
@@ -320,17 +348,29 @@ function removerCentro(e) {
 }
 
 function adicionarCronograma() {
-    const template = document.getElementById('cronogramaTemplate');
-    const clone = template.content.cloneNode(true);
-    
-    const html = clone.innerHTML
-        .replace(/INDEX/g, cronogramaCount)
-        .replace('numero-cronograma">1<', `numero-cronograma">${cronogramaCount + 1}<`);
-    
-    $('#cronogramasContainer').append('<div class="cronograma-wrapper-' + cronogramaCount + '">' + html + '</div>');
-    cronogramaCount++;
-    
-    atualizarBotoesRemover();
+    try {
+        const template = document.getElementById('cronogramaTemplate');
+        if (!template) {
+            console.error('Template cronogramaTemplate não encontrado!');
+            return;
+        }
+        
+        // Converter template content para string
+        const tempDiv = document.createElement('div');
+        const clone = template.content.cloneNode(true);
+        tempDiv.appendChild(clone);
+        
+        let html = tempDiv.innerHTML
+            .replace(/INDEX/g, cronogramaCount)
+            .replace(/numero-cronograma">1</g, `numero-cronograma">${cronogramaCount + 1}<`);
+        
+        $('#cronogramasContainer').append('<div class="cronograma-wrapper-' + cronogramaCount + '">' + html + '</div>');
+        cronogramaCount++;
+        
+        atualizarBotoesRemover();
+    } catch(e) {
+        console.error('Erro ao adicionar cronograma:', e);
+    }
 }
 
 function removerCronograma(e) {
