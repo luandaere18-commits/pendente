@@ -32,6 +32,9 @@ class CronogramaController extends Controller
         // Validar hora_inicio com base no periodo
         $this->validarHoraComPeriodo($validated);
         
+        // Validar que hora_fim > hora_inicio
+        $this->validarHoraFimMaiorQueHoraInicio($validated);
+        
         $cronograma = Cronograma::create($validated);
         return redirect()->route('cronogramas.index')->with('success', 'Cronograma criado com sucesso!');
     }
@@ -60,6 +63,9 @@ class CronogramaController extends Controller
         
         // Validar hora_inicio com base no periodo
         $this->validarHoraComPeriodo($validated);
+        
+        // Validar que hora_fim > hora_inicio
+        $this->validarHoraFimMaiorQueHoraInicio($validated);
         
         $cronograma->update($validated);
         return redirect()->route('cronogramas.index')->with('success', 'Cronograma atualizado com sucesso!');
@@ -98,6 +104,26 @@ class CronogramaController extends Controller
             if ($hora < $horaMin || $hora >= $horaMax) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'hora_inicio' => "A hora de início deve estar entre {$horaMin} e " . date('H:i', strtotime($horaMax) - 60) . " para o período de {$periodo}."
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Validar que hora_fim é maior que hora_inicio
+     * 
+     * @param array $data
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function validarHoraFimMaiorQueHoraInicio(&$data)
+    {
+        // Se ambas as horas estão preenchidas, validar
+        if (isset($data['hora_inicio']) && isset($data['hora_fim']) && 
+            !empty($data['hora_inicio']) && !empty($data['hora_fim'])) {
+            
+            if ($data['hora_fim'] <= $data['hora_inicio']) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'hora_fim' => 'A hora de fim deve ser maior que a hora de início.'
                 ]);
             }
         }

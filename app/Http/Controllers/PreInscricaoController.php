@@ -26,7 +26,7 @@ class PreInscricaoController extends Controller
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
             'centro_id' => 'required|exists:centros,id',
-            'cronograma_id' => 'nullable|exists:cronogramas,id',
+            'cronograma_id' => 'required|exists:cronogramas,id',
             'nome_completo' => 'required|string|max:100',
             'contactos' => 'required|array|min:1',
             'contactos.*' => 'required|string',
@@ -64,7 +64,7 @@ class PreInscricaoController extends Controller
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
             'centro_id' => 'required|exists:centros,id',
-            'cronograma_id' => 'nullable|exists:cronogramas,id',
+            'cronograma_id' => 'required|exists:cronogramas,id',
             'nome_completo' => 'required|string|max:100',
             'contactos' => 'required|array|min:1',
             'contactos.*' => 'required|string',
