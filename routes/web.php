@@ -47,7 +47,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 Route::post('/api/web-login', [AuthenticatedSessionController::class, 'apiLogin'])->name('api.web.login');
 
 Route::get('/debug-routes', function() {
-    $routes = collect(\Route::getRoutes())->map(function ($route) {
+    $routes = collect(Route::getRoutes())->map(function ($route) {
         return [
             'method' => implode('|', $route->methods()),
             'uri' => $route->uri(),

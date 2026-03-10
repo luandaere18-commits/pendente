@@ -73,14 +73,10 @@ class AuthenticatedSessionController extends Controller
 
             // Obtém o usuário autenticado
             $user = Auth::user();
-            
-            // Cria um token de API para uso futuro se necessário
-            $token = $user->createToken('web-session')->plainTextToken;
 
             // Retorna resposta JSON com sucesso
             return response()->json([
                 'success' => true,
-                'token' => $token,
                 'user' => $user,
                 'redirect' => '/dashboard'
             ]);

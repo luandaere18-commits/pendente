@@ -181,8 +181,8 @@ function getPeriodoBadge(periodo) {
 }
 
 /**
- * Formata o nome do dia da semana
- * @param {string} dia - Dia da semana abreviado
+ * Formata o nome do dia da semana ou array de dias
+ * @param {string|array} dia - Dia da semana ou array de dias
  * @returns {string} Nome completo do dia da semana
  */
 function getDiaSemanaFormatado(dia) {
@@ -195,6 +195,22 @@ function getDiaSemanaFormatado(dia) {
         'Sábado': 'Sábado',
         'Domingo': 'Domingo'
     };
+    
+    // Se é um array, converter para string separada por vírgula
+    if (Array.isArray(dia)) {
+        return dia.map(d => dias[d] || d).join(', ');
+    }
+    
+    // Se é uma string JSON, fazer parse
+    if (typeof dia === 'string' && dia.startsWith('[')) {
+        try {
+            const array = JSON.parse(dia);
+            return array.map(d => dias[d] || d).join(', ');
+        } catch (e) {
+            return dias[dia] || dia;
+        }
+    }
+    
     return dias[dia] || dia;
 }
 

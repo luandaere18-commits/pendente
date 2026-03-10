@@ -85,27 +85,40 @@
             </div>
             
             <div class="login-body">
-                <div id="loginError" class="alert alert-danger d-none"></div>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        @foreach ($errors->all() as $error)
+                            <div>{{ $error }}</div>
+                        @endforeach
+                    </div>
+                @endif
                 
-                <form id="loginForm" onsubmit="return false;">
+                <form method="POST" action="{{ route('login.store') }}">
+                    @csrf
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                            <input type="email" class="form-control" id="email" required>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
                         </div>
+                        @error('email')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     
                     <div class="mb-3">
                         <label for="password" class="form-label">Senha</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control" id="password" required>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
                         </div>
+                        @error('password')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                     
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="remember">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
                         <label class="form-check-label" for="remember">Manter sessão iniciada</label>
                     </div>
                     
@@ -118,81 +131,5 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Configuração global do AJAX
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                    'Accept': 'application/json'
-                }
-            });
-
-            // Limpar token antigo ao carregar a página
-            localStorage.removeItem('auth_token');
-            
-            $('#loginForm').on('submit', function(e) {
-                e.preventDefault();
-                
-                const $submitBtn = $(this).find('button[type="submit"]');
-                const originalText = $submitBtn.html();
-                
-                // Desabilitar botão e mostrar loading
-                $submitBtn.prop('disabled', true)
-                    .html('<i class="fas fa-spinner fa-spin"></i> Aguarde...');
-                
-                // Esconder mensagem de erro anterior
-                $('#loginError').addClass('d-none');
-                
-                const formData = {
-                    email: $('#email').val(),
-                    password: $('#password').val(),
-                    remember: $('#remember').is(':checked')
-                };
-
-                console.log('Attempting login with:', formData);
-
-                $.ajax({
-                    url: '/api/web-login',
-                    method: 'POST',
-                    data: JSON.stringify(formData),
-                    contentType: 'application/json',
-                    success: function(response) {
-                        console.log('Login successful:', response);
-                        // Redirecionar para dashboard
-                        window.location.href = response.redirect || '/dashboard';
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Login error:', {xhr, status, error});
-                        
-                        let msg = 'Erro ao autenticar. Verifique suas credenciais.';
-                        
-                        if (xhr.status === 401) {
-                            msg = 'Email ou senha inválidos.';
-                        } else if (xhr.status === 422) {
-                            const errors = xhr.responseJSON?.errors || {};
-                            const errorMessages = Object.values(errors).flat();
-                            msg = errorMessages.length > 0 ? errorMessages.join(', ') : 'Por favor, preencha todos os campos corretamente.';
-                        } else if (xhr.status === 429) {
-                            msg = 'Muitas tentativas. Por favor, aguarde alguns minutos.';
-                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                            msg = xhr.responseJSON.message;
-                        }
-                        
-                        $('#loginError').removeClass('d-none').text(msg);
-                        $submitBtn.prop('disabled', false).html(originalText);
-                    }
-                });
-                
-                return false;
-            });
-
-            // Função para remover mensagem de erro quando o usuário começa a digitar
-            $('#email, #password').on('input', function() {
-                $('#loginError').addClass('d-none');
-            });
-        });
-    </script>
 </body>
 </html>

@@ -23,7 +23,8 @@ class CronogramaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
-            'dia_semana' => 'required|string|max:50',
+            'dia_semana' => 'required|array|min:1',
+            'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i'
@@ -55,7 +56,8 @@ class CronogramaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
-            'dia_semana' => 'required|string|max:50',
+            'dia_semana' => 'required|array|min:1',
+            'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i'
@@ -93,7 +95,7 @@ class CronogramaController extends Controller
         $periodo = $data['periodo'];
 
         $validacoes = [
-            'manhã' => ['08:00', '12:00'],   // 08:00 até 11:59
+            'manhã' => ['07:00', '12:00'],   // 07:00 até 11:59
             'tarde' => ['12:00', '18:00'],   // 12:00 até 17:59
             'noite' => ['18:00', '22:00'],   // 18:00 até 21:59
         ];

@@ -19,6 +19,10 @@ class Cronograma extends Model
 
     protected $table = 'cronogramas';
 
+    protected $casts = [
+        'dia_semana' => 'array',
+    ];
+
     // Um cronograma pertence a um curso
     public function curso()
     {

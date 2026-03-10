@@ -41,48 +41,39 @@ class CronogramaSeeder extends Seeder
         $cronogramas = [];
         
         if (isset($cursoIds[0])) {
-            // Curso 1 - Multiple schedules
-            $cronogramas[] = ['curso_id' => $cursoIds[0], 'dia_semana' => 'Segunda', 'periodo' => 'manhã', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[0], 'dia_semana' => 'Quarta', 'periodo' => 'manhã', 'hora_inicio' => '08:30', 'hora_fim' => '10:30', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[0], 'dia_semana' => 'Sexta', 'periodo' => 'manhã', 'hora_inicio' => '09:00', 'hora_fim' => '11:00', 'created_at' => $now, 'updated_at' => $now];
+            // Curso 1 - Multiple schedules (seg, qua, sex)
+            $cronogramas[] = ['curso_id' => $cursoIds[0], 'dia_semana' => json_encode(['Segunda', 'Quarta', 'Sexta']), 'periodo' => 'manhã', 'hora_inicio' => '07:30', 'hora_fim' => '09:30', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[1])) {
-            // Curso 2 - Afternoon schedule
-            $cronogramas[] = ['curso_id' => $cursoIds[1], 'dia_semana' => 'Terça', 'periodo' => 'tarde', 'hora_inicio' => '14:00', 'hora_fim' => '16:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[1], 'dia_semana' => 'Quinta', 'periodo' => 'tarde', 'hora_inicio' => '13:00', 'hora_fim' => '15:00', 'created_at' => $now, 'updated_at' => $now];
+            // Curso 2 - Afternoon schedule (ter, qui)
+            $cronogramas[] = ['curso_id' => $cursoIds[1], 'dia_semana' => json_encode(['Terça', 'Quinta']), 'periodo' => 'tarde', 'hora_inicio' => '13:00', 'hora_fim' => '15:00', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[2])) {
-            // Curso 3 - Night schedule
-            $cronogramas[] = ['curso_id' => $cursoIds[2], 'dia_semana' => 'Segunda', 'periodo' => 'noite', 'hora_inicio' => '19:00', 'hora_fim' => '21:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[2], 'dia_semana' => 'Quarta', 'periodo' => 'noite', 'hora_inicio' => '18:00', 'hora_fim' => '20:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[2], 'dia_semana' => 'Sexta', 'periodo' => 'noite', 'hora_inicio' => '20:00', 'hora_fim' => '21:30', 'created_at' => $now, 'updated_at' => $now];
+            // Curso 3 - Night schedule (seg, qua, sex)
+            $cronogramas[] = ['curso_id' => $cursoIds[2], 'dia_semana' => json_encode(['Segunda', 'Quarta', 'Sexta']), 'periodo' => 'noite', 'hora_inicio' => '18:30', 'hora_fim' => '20:30', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[3])) {
-            // Curso 4
-            $cronogramas[] = ['curso_id' => $cursoIds[3], 'dia_semana' => 'Terça', 'periodo' => 'manhã', 'hora_inicio' => '10:00', 'hora_fim' => '12:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[3], 'dia_semana' => 'Quinta', 'periodo' => 'manhã', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'created_at' => $now, 'updated_at' => $now];
+            // Curso 4 - Morning schedule (ter, qui)
+            $cronogramas[] = ['curso_id' => $cursoIds[3], 'dia_semana' => json_encode(['Terça', 'Quinta']), 'periodo' => 'manhã', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[4])) {
-            // Curso 5
-            $cronogramas[] = ['curso_id' => $cursoIds[4], 'dia_semana' => 'Segunda', 'periodo' => 'tarde', 'hora_inicio' => '15:00', 'hora_fim' => '17:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[4], 'dia_semana' => 'Quarta', 'periodo' => 'tarde', 'hora_inicio' => '12:00', 'hora_fim' => '14:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[4], 'dia_semana' => 'Sexta', 'periodo' => 'tarde', 'hora_inicio' => '15:30', 'hora_fim' => '17:30', 'created_at' => $now, 'updated_at' => $now];
+            // Curso 5 - Afternoon schedule (seg, qua, sex)
+            $cronogramas[] = ['curso_id' => $cursoIds[4], 'dia_semana' => json_encode(['Segunda', 'Quarta', 'Sexta']), 'periodo' => 'tarde', 'hora_inicio' => '12:30', 'hora_fim' => '14:30', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[5])) {
-            // Curso 6
-            $cronogramas[] = ['curso_id' => $cursoIds[5], 'dia_semana' => 'Sábado', 'periodo' => 'manhã', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[5], 'dia_semana' => 'Sábado', 'periodo' => 'tarde', 'hora_inicio' => '14:00', 'hora_fim' => '16:00', 'created_at' => $now, 'updated_at' => $now];
+            // Curso 6 - Weekend schedule (sábado)
+            $cronogramas[] = ['curso_id' => $cursoIds[5], 'dia_semana' => json_encode(['Sábado']), 'periodo' => 'manhã', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'created_at' => $now, 'updated_at' => $now];
+            $cronogramas[] = ['curso_id' => $cursoIds[5], 'dia_semana' => json_encode(['Sábado']), 'periodo' => 'tarde', 'hora_inicio' => '14:00', 'hora_fim' => '16:00', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[6])) {
-            // Curso 7
-            $cronogramas[] = ['curso_id' => $cursoIds[6], 'dia_semana' => 'Domingo', 'periodo' => 'manhã', 'hora_inicio' => '10:00', 'hora_fim' => '12:00', 'created_at' => $now, 'updated_at' => $now];
-            $cronogramas[] = ['curso_id' => $cursoIds[6], 'dia_semana' => 'Domingo', 'periodo' => 'tarde', 'hora_inicio' => '14:00', 'hora_fim' => '16:00', 'created_at' => $now, 'updated_at' => $now];
+            // Curso 7 - Weekend schedule (domingo)
+            $cronogramas[] = ['curso_id' => $cursoIds[6], 'dia_semana' => json_encode(['Domingo']), 'periodo' => 'manhã', 'hora_inicio' => '10:00', 'hora_fim' => '12:00', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (!empty($cronogramas)) {
