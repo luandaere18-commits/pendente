@@ -132,6 +132,15 @@
                                 <label for="programa" class="form-label small">Programa do Curso</label>
                                 <textarea class="form-control form-control-sm" id="programa" name="programa" maxlength="5000" style="min-height: 80px;">{{ old('programa') }}</textarea>
                             </div>
+
+                            <div class="col-md-6">
+                                <label for="imagem" class="form-label small">Imagem do Curso</label>
+                                <input type="file" class="form-control form-control-sm @error('imagem') is-invalid @enderror" id="imagem" name="imagem" accept="image/*">
+                                <small class="text-muted">JPEG, PNG, JPG ou GIF (máx 2MB)</small>
+                                @error('imagem')
+                                    <div class="invalid-feedback small">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -187,7 +196,7 @@
             <a href="{{ route('cursos.index') }}" class="btn btn-sm btn-secondary">
                 <i class="fas fa-times me-2"></i>Cancelar
             </a>
-            <button type="submit" class="btn btn-sm btn-primary">
+            <button type="submit" class="btn btn-sm btn-primary" id="submitBtn">
                 <i class="fas fa-save me-2"></i>Guardar Curso
             </button>
         </div>
@@ -313,6 +322,26 @@ $(document).ready(function() {
     });
     $(document).on('click', '.remover-centro', removerCentro);
     $(document).on('click', '.remover-cronograma', removerCronograma);
+
+    // Handle form submit
+    $('#cursoSetupForm').on('submit', function(e) {
+        const $submitBtn = $('#submitBtn');
+        const originalHtml = $submitBtn.html();
+        
+        // Mostrar spinner e desabilitar botão
+        $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Guardando...');
+        
+        // Mostrar SweetAlert
+        Swal.fire({
+            title: 'Processando...',
+            text: 'Por favor aguarde enquanto guardamos os dados.',
+            icon: 'info',
+            allowOutsideClick: false,
+            didOpen: (modal) => {
+                Swal.showLoading();
+            }
+        });
+    });
 });
 
 function adicionarCentro() {

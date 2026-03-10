@@ -35,6 +35,7 @@ class CursoController extends Controller
             'programa' => 'nullable|string',
             'area' => 'required|string|max:100',
             'modalidade' => 'required|in:presencial,online,hibrido',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ativo' => 'nullable',
             
             // Centro-Curso
@@ -64,6 +65,14 @@ class CursoController extends Controller
                 'modalidade' => $validated['modalidade'],
                 'ativo' => $request->input('ativo', '1') == '1' ? true : false,
             ];
+
+            // Processar upload de imagem
+            if ($request->hasFile('imagem')) {
+                $file = $request->file('imagem');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('cursos', $filename, 'public');
+                $cursoData['imagem_url'] = '/storage/' . $path;
+            }
 
             // 1. Criar o Curso
             $curso = Curso::create($cursoData);
@@ -113,7 +122,12 @@ class CursoController extends Controller
 
     public function edit(Curso $curso)
     {
-        return view('cursos.edit', compact('curso'));
+        $curso->load(['centros', 'cronogramas']);
+        $centros = Centro::all();
+        $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+        $periodos = ['manhã', 'tarde', 'noite'];
+        
+        return view('cursos.edit', compact('curso', 'centros', 'diasSemana', 'periodos'));
     }
 
     public function update(Request $request, Curso $curso)
@@ -126,43 +140,83 @@ class CursoController extends Controller
             'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ativo' => 'nullable',
-            'centros' => 'required|array|min:1',
-            'centros.*.centro_id' => 'required|integer|exists:centros,id',
-            'centros.*.preco' => 'required|numeric|min:0',
-            'centros.*.duracao' => 'required|string|max:100',
-            'centros.*.data_arranque' => 'required|date|after_or_equal:today'
+            
+            // Centro-Curso
+            'centro_curso' => 'required|array|min:1',
+            'centro_curso.*.centro_id' => 'required|integer|exists:centros,id',
+            'centro_curso.*.preco' => 'required|numeric|min:0',
+            'centro_curso.*.duracao' => 'required|string|max:100',
+            'centro_curso.*.data_arranque' => 'required|date|after_or_equal:today',
+            
+            // Cronogramas
+            'cronogramas' => 'required|array|min:1',
+            'cronogramas.*.dia_semana' => 'required|array|min:1',
+            'cronogramas.*.dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
+            'cronogramas.*.periodo' => 'required|in:manhã,tarde,noite',
+            'cronogramas.*.hora_inicio' => 'nullable|date_format:H:i',
+            'cronogramas.*.hora_fim' => 'nullable|date_format:H:i',
         ]);
-        
-        // Garantir que ativo seja boolean
-        $validated['ativo'] = $request->input('ativo', '1') == '1' ? true : false;
-        
-        // Processar upload de imagem
-        if ($request->hasFile('imagem')) {
-            $file = $request->file('imagem');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('cursos', $filename, 'public');
-            $validated['imagem_url'] = '/storage/' . $path;
-        }
-        
-        // Separar dados do curso dos dados dos centros
-        $centrosData = $validated['centros'];
-        unset($validated['centros']);
-        
-        // Atualizar o curso
-        $curso->update($validated);
-        
-        // Atualizar centros (remover todos e adicionar novamente)
-        $curso->centros()->detach();
-        
-        foreach ($centrosData as $centroDado) {
-            $curso->centros()->attach($centroDado['centro_id'], [
-                'preco' => $centroDado['preco'],
-                'duracao' => $centroDado['duracao'],
-                'data_arranque' => $centroDado['data_arranque'] ?? null
-            ]);
-        }
-        
-        return redirect()->route('cursos.index')->with('success', 'Curso atualizado com sucesso!');
+
+        // Executar tudo em uma transação
+        return DB::transaction(function () use ($validated, $request, $curso) {
+            // Preparar dados do curso
+            $cursoData = [
+                'nome' => $validated['nome'],
+                'descricao' => $validated['descricao'] ?? null,
+                'programa' => $validated['programa'] ?? null,
+                'area' => $validated['area'],
+                'modalidade' => $validated['modalidade'],
+                'ativo' => $request->input('ativo', '1') == '1' ? true : false,
+            ];
+
+            // Processar upload de imagem
+            if ($request->hasFile('imagem')) {
+                $file = $request->file('imagem');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('cursos', $filename, 'public');
+                $cursoData['imagem_url'] = '/storage/' . $path;
+            }
+
+            // 1. Atualizar o Curso
+            $curso->update($cursoData);
+
+            // 2. Atualizar Centro-Curso (relação muitos-para-muitos)
+            $curso->centros()->detach();
+            foreach ($validated['centro_curso'] as $centroDado) {
+                $curso->centros()->attach($centroDado['centro_id'], [
+                    'preco' => $centroDado['preco'],
+                    'duracao' => $centroDado['duracao'],
+                    'data_arranque' => $centroDado['data_arranque'] ?? null
+                ]);
+            }
+
+            // 3. Atualizar Cronogramas
+            $curso->cronogramas()->delete();
+            foreach ($validated['cronogramas'] as $cronoDado) {
+                // Validar hora_fim > hora_inicio
+                if (!empty($cronoDado['hora_inicio']) && !empty($cronoDado['hora_fim'])) {
+                    if ($cronoDado['hora_fim'] <= $cronoDado['hora_inicio']) {
+                        throw ValidationException::withMessages([
+                            'cronogramas.*.hora_fim' => 'A hora de fim deve ser maior que a hora de início.'
+                        ]);
+                    }
+                }
+
+                // Validar hora_inicio com base no período
+                $this->validarHoraComPeriodo($cronoDado);
+
+                Cronograma::create([
+                    'curso_id' => $curso->id,
+                    'dia_semana' => $cronoDado['dia_semana'], // Array de dias da semana
+                    'periodo' => $cronoDado['periodo'],
+                    'hora_inicio' => $cronoDado['hora_inicio'] ?? null,
+                    'hora_fim' => $cronoDado['hora_fim'] ?? null,
+                ]);
+            }
+
+            return redirect()->route('cursos.index')
+                ->with('success', 'Curso atualizado com sucesso!');
+        }, 5); // 5 tentativas em caso de deadlock
     }
 
     public function destroy(Curso $curso)
