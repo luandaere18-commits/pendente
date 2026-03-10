@@ -395,4 +395,85 @@ class CursoController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Associar um centro a um curso
+     */
+    public function attachCentro(Request $request, $id)
+    {
+        try {
+            $curso = Curso::findOrFail($id);
+
+            $validated = $request->validate([
+                'centro_id' => 'required|integer|exists:centros,id',
+                'preco' => 'required|numeric|min:0',
+                'duracao' => 'required|string|max:100',
+                'data_arranque' => 'required|date|after_or_equal:today',
+            ]);
+
+            // Verificar se centro já está associado
+            if ($curso->centros()->where('centro_id', $validated['centro_id'])->exists()) {
+                return response()->json([
+                    'status' => 'erro',
+                    'mensagem' => 'Este centro já está associado ao curso.'
+                ], 422);
+            }
+
+            // Associar centro
+            $curso->centros()->attach($validated['centro_id'], [
+                'preco' => $validated['preco'],
+                'duracao' => $validated['duracao'],
+                'data_arranque' => $validated['data_arranque']
+            ]);
+
+            return response()->json([
+                'status' => 'sucesso',
+                'mensagem' => 'Centro associado com sucesso!',
+                'dados' => $curso->load('centros')
+            ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Erro de validação',
+                'erros' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Erro ao associar centro: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Desassociar um centro de um curso
+     */
+    public function detachCentro($id, $centroId)
+    {
+        try {
+            $curso = Curso::findOrFail($id);
+
+            // Verificar se centro está associado
+            if (!$curso->centros()->where('centro_id', $centroId)->exists()) {
+                return response()->json([
+                    'status' => 'erro',
+                    'mensagem' => 'Este centro não está associado ao curso.'
+                ], 404);
+            }
+
+            // Desassociar centro
+            $curso->centros()->detach($centroId);
+
+            return response()->json([
+                'status' => 'sucesso',
+                'mensagem' => 'Centro desassociado com sucesso!',
+                'dados' => $curso->load('centros')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Erro ao desassociar centro: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

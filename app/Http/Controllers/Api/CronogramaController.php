@@ -58,24 +58,26 @@ class CronogramaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
-            'dia_semana' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
+            'dia_semana' => 'required|array|min:1',
+            'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manhã,tarde,noite',
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fim' => 'required|date_format:H:i|after:hora_inicio'
+            'hora_inicio' => 'nullable|date_format:H:i',
+            'hora_fim' => 'nullable|date_format:H:i'
         ]);
 
-        // Garantir formato correto das horas
-        $validated['hora_inicio'] = date('H:i', strtotime($validated['hora_inicio']));
-        $validated['hora_fim'] = date('H:i', strtotime($validated['hora_fim']));
+        // Validar hora_fim > hora_inicio se ambas estão preenchidas
+        if (!empty($validated['hora_inicio']) && !empty($validated['hora_fim'])) {
+            if ($validated['hora_fim'] <= $validated['hora_inicio']) {
+                return response()->json([
+                    'status' => 'erro',
+                    'mensagem' => 'A hora de fim deve ser maior que a hora de início.'
+                ], 422);
+            }
+        }
 
-        // Verificar conflitos de horário
-        $conflitos = $this->verificarConflitosHorario($validated);
-        if (!empty($conflitos)) {
-            return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Conflito de horário detectado!',
-                'conflitos' => $conflitos
-            ], 422);
+        // Garantir que dia_semana é um array
+        if (!is_array($validated['dia_semana'])) {
+            $validated['dia_semana'] = [$validated['dia_semana']];
         }
 
         $cronograma = Cronograma::create($validated);

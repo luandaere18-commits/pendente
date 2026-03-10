@@ -288,8 +288,19 @@
                 
                 const email = $('#email').val();
                 const password = $('#password').val();
+                const $submitBtn = $('button[type="submit"]');
                 
+                // Validação básica
+                if (!email || !password) {
+                    $('#loginError').removeClass('d-none').html('<i class="fas fa-exclamation-circle me-2"></i>Por favor, preencha todos os campos.');
+                    return;
+                }
+                
+                // Limpar mensagem de erro
                 $('#loginError').addClass('d-none').text('');
+                
+                // Desabilitar botão e mostrar loading
+                $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Conectando...');
                 
                 $.ajax({
                     url: '/api/web-login',
@@ -301,15 +312,26 @@
                         remember: $('#remember').is(':checked')
                     }),
                     success: function(response) {
-                        if (response.token) {
-                            localStorage.setItem('auth_token', response.token);
+                        if (response.success) {
+                            // Se houver token, armazena no localStorage
+                            if (response.token) {
+                                localStorage.setItem('auth_token', response.token);
+                            }
+                            // Redireciona para o dashboard
+                            window.location.href = response.redirect || '/dashboard';
+                        } else {
+                            // Se não for sucesso, mostra mensagem de erro
+                            const msg = response.message || 'Erro ao autenticar. Tente novamente.';
+                            $('#loginError').removeClass('d-none').html('<i class="fas fa-exclamation-circle me-2"></i>' + msg);
+                            // Reabilitar botão
+                            $submitBtn.prop('disabled', false).html('<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sessão');
                         }
-                        window.location.href = response.redirect || '/dashboard';
                     },
                     error: function(xhr) {
-                        let msg = 'Erro ao autenticar. Verifique suas credenciais.';
+                        let msg = 'Erro ao conectar ao servidor.';
+                        
                         if (xhr.status === 401) {
-                            msg = 'Email ou senha inválidos.';
+                            msg = 'Email ou palavra-passe inválidos.';
                         } else if (xhr.status === 422) {
                             const errors = xhr.responseJSON?.errors || {};
                             const errorMessages = Object.values(errors).flat();
@@ -317,7 +339,10 @@
                         } else if (xhr.responseJSON && xhr.responseJSON.message) {
                             msg = xhr.responseJSON.message;
                         }
-                        $('#loginError').removeClass('d-none').text(msg);
+                        
+                        $('#loginError').removeClass('d-none').html('<i class="fas fa-exclamation-circle me-2"></i>' + msg);
+                        // Reabilitar botão
+                        $submitBtn.prop('disabled', false).html('<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sessão');
                     }
                 });
             });

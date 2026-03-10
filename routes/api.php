@@ -74,6 +74,8 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::post('/cursos', [CursoController::class, 'store']);
     Route::put('/cursos/{id}', [CursoController::class, 'update']);
     Route::delete('/cursos/{id}', [CursoController::class, 'destroy']);
+    Route::post('/cursos/{id}/centros', [CursoController::class, 'attachCentro']);
+    Route::delete('/cursos/{id}/centros/{centroId}', [CursoController::class, 'detachCentro']);
 
     // Cronogramas
     Route::post('/cronogramas', [CronogramaController::class, 'store']);

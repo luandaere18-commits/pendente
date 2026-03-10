@@ -50,7 +50,7 @@
                 <h2 class="mb-1">
                     <i class="fas fa-edit me-2 text-primary"></i>Editar Curso: {{ $curso->nome }}
                 </h2>
-                <p class="text-muted small">Atualizar informações do curso, centros e cronogramas</p>
+                <p class="text-muted small">Atualizar informações do curso e centros. Cronogramas são gerenciados separadamente.</p>
             </div>
             <a href="{{ route('cursos.index') }}" class="btn btn-sm btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Voltar
@@ -173,27 +173,7 @@
                 </div>
             </div>
 
-            <!-- 3. Cronogramas -->
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colapsoCronogramas">
-                        <i class="fas fa-calendar-alt me-2"></i>3. Cronogramas (Dias e Horários)
-                    </button>
-                </h2>
-                <div id="colapsoCronogramas" class="accordion-collapse collapse" data-bs-parent="#cursoAccordion">
-                    <div class="accordion-body">
-                        <div id="cronogramasContainer"></div>
-                        
-                        <button type="button" class="btn btn-outline-warning btn-sm mt-2" id="adicionarCronogramaBtn">
-                            <i class="fas fa-plus me-2"></i>Adicionar Cronograma
-                        </button>
 
-                        @error('cronogramas')
-                            <div class="alert alert-danger mt-2 small">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Botões de Ação -->
@@ -247,86 +227,32 @@
     </div>
 </template>
 
-<template id="cronogramaTemplate">
-    <div class="cronograma-item border rounded p-2 mb-2">
-        <div class="d-flex justify-content-between align-items-start mb-2">
-            <small class="fw-bold">Cronograma <span class="numero-cronograma">1</span></small>
-            <button type="button" class="btn btn-sm btn-outline-danger remover-cronograma" title="Remover cronograma">
-                <i class="fas fa-trash"></i>
-            </button>
-        </div>
 
-        <div class="row g-2">
-            <div class="col-md-12">
-                <label class="form-label small">Dias da Semana <span class="text-danger">*</span></label>
-                <div class="dias-semana-checkboxes">
-                    @foreach ($diasSemana as $dia)
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input dia-checkbox" type="checkbox" name="cronogramas[INDEX][dia_semana][]" value="{{ $dia }}" id="dia_INDEX_{{ $dia }}">
-                            <label class="form-check-label small" for="dia_INDEX_{{ $dia }}">
-                                {{ substr($dia, 0, 3) }}
-                            </label>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label small">Período <span class="text-danger">*</span></label>
-                <select class="form-select form-select-sm" name="cronogramas[INDEX][periodo]" required>
-                    <option value="">Selecione</option>
-                    @foreach ($periodos as $periodo)
-                        <option value="{{ $periodo }}">{{ ucfirst($periodo) }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label small">Hora Início (HH:MM)</label>
-                <input type="time" class="form-control form-control-sm" name="cronogramas[INDEX][hora_inicio]">
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label small">Hora Fim (HH:MM)</label>
-                <input type="time" class="form-control form-control-sm" name="cronogramas[INDEX][hora_fim]">
-            </div>
-        </div>
-    </div>
-</template>
 
 @endsection
 
 @section('scripts')
 <script>
 let centroCount = 0;
-let cronogramaCount = 0;
 
 // Dados existentes do curso
 const cursoData = {!! json_encode([
-    'centros' => $curso->centros,
-    'cronogramas' => $curso->cronogramas
+    'centros' => $curso->centros
 ]) !!};
 
 $(document).ready(function() {
     // Carregar dados existentes
     carregarCentrosExistentes();
-    carregarCronogramasExistentes();
 
-    // Se não houver centros/cronogramas, adicione um em branco
+    // Se não houver centros, adicione um em branco
     if (centroCount === 0) adicionarCentro();
-    if (cronogramaCount === 0) adicionarCronograma();
 
     // Eventos
     $(document).on('click', '#adicionarCentroBtn', function(e) {
         e.preventDefault();
         adicionarCentro();
     });
-    $(document).on('click', '#adicionarCronogramaBtn', function(e) {
-        e.preventDefault();
-        adicionarCronograma();
-    });
     $(document).on('click', '.remover-centro', removerCentro);
-    $(document).on('click', '.remover-cronograma', removerCronograma);
 
     // Handle form submit
     $('#cursoEditForm').on('submit', function(e) {
@@ -388,39 +314,7 @@ function carregarCentrosExistentes() {
     });
 }
 
-function carregarCronogramasExistentes() {
-    cursoData.cronogramas.forEach((cronograma, index) => {
-        const tempDiv = document.createElement('div');
-        const template = document.getElementById('cronogramaTemplate');
-        const clone = template.content.cloneNode(true);
-        tempDiv.appendChild(clone);
-        
-        let html = tempDiv.innerHTML
-            .replace(/INDEX/g, index)
-            .replace(/numero-cronograma">1</g, `numero-cronograma">${index + 1}<`);
-        
-        $('#cronogramasContainer').append('<div class="cronograma-wrapper-' + index + '">' + html + '</div>');
-        
-        // Preencher com dados
-        $(`select[name="cronogramas[${index}][periodo]"]`).val(cronograma.periodo);
-        
-        // Converter horários para formato H:i (remover segundos)
-        let horaInicio = cronograma.hora_inicio ? cronograma.hora_inicio.substring(0, 5) : '';
-        let horaFim = cronograma.hora_fim ? cronograma.hora_fim.substring(0, 5) : '';
-        
-        $(`input[name="cronogramas[${index}][hora_inicio]"]`).val(horaInicio);
-        $(`input[name="cronogramas[${index}][hora_fim]"]`).val(horaFim);
-        
-        // Selecionar dias da semana
-        if (Array.isArray(cronograma.dia_semana)) {
-            cronograma.dia_semana.forEach(dia => {
-                $(`input[name="cronogramas[${index}][dia_semana][]"][value="${dia}"]`).prop('checked', true);
-            });
-        }
-        
-        cronogramaCount++;
-    });
-}
+
 
 function adicionarCentro() {
     try {
@@ -449,36 +343,8 @@ function removerCentro(e) {
     atualizarBotoesRemover();
 }
 
-function adicionarCronograma() {
-    try {
-        const template = document.getElementById('cronogramaTemplate');
-        if (!template) return;
-        
-        const tempDiv = document.createElement('div');
-        const clone = template.content.cloneNode(true);
-        tempDiv.appendChild(clone);
-        
-        let html = tempDiv.innerHTML
-            .replace(/INDEX/g, cronogramaCount)
-            .replace(/numero-cronograma">1</g, `numero-cronograma">${cronogramaCount + 1}<`);
-        
-        $('#cronogramasContainer').append('<div class="cronograma-wrapper-' + cronogramaCount + '">' + html + '</div>');
-        cronogramaCount++;
-        atualizarBotoesRemover();
-    } catch(e) {
-        console.error('Erro ao adicionar cronograma:', e);
-    }
-}
-
-function removerCronograma(e) {
-    e.preventDefault();
-    $(this).closest('[class*="cronograma-wrapper-"]').remove();
-    atualizarBotoesRemover();
-}
-
 function atualizarBotoesRemover() {
     $('.remover-centro').prop('disabled', $('.centro-item').length <= 1);
-    $('.remover-cronograma').prop('disabled', $('.cronograma-item').length <= 1);
 }
 </script>
 @endsection

@@ -54,22 +54,6 @@
     </div>
 </div>
 
-<!-- Modal de Visualização -->
-<div class="modal fade" id="viewModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-eye me-2"></i>Detalhes do Curso
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="viewModalContent">
-                <!-- Conteúdo será carregado via AJAX -->
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('scripts')
@@ -125,9 +109,9 @@ function carregarCursos() {
                         <td>${statusBadge}</td>
                         <td>
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="visualizarCurso(${curso.id})" title="Visualizar">
+                                <a href="/cursos/${curso.id}" class="btn btn-sm btn-outline-primary" title="Visualizar">
                                     <i class="fas fa-eye"></i>
-                                </button>
+                                </a>
                                 <a href="/cursos/${curso.id}/edit" class="btn btn-sm btn-outline-warning" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
@@ -165,70 +149,6 @@ function carregarCursos() {
         error: function(xhr) {
             console.error('Erro ao carregar cursos:', xhr);
             $('#cursosTable tbody').html('<tr><td colspan="8" class="text-center text-danger">Erro ao carregar os dados</td></tr>');
-        }
-    });
-}
-
-/**
- * Visualiza os detalhes de um curso específico
- * @param {number} id - ID do curso
- */
-function visualizarCurso(id) {
-    $.ajax({
-        url: `/api/cursos/${id}`,
-        method: 'GET',
-        success: function(response) {
-        // Se a resposta vem com status e dados, extrair dados
-        const curso = response.dados || response;
-        const statusBadge = curso.ativo 
-            ? '<span class="badge bg-success">Ativo</span>' 
-            : '<span class="badge bg-secondary">Inativo</span>';
-        
-        const modalidadeBadge = curso.modalidade === 'online' 
-            ? '<span class="badge bg-info">Online</span>' 
-            : '<span class="badge bg-warning text-dark">Presencial</span>';
-        
-        const imagem = curso.imagem_url 
-            ? `<img src="${curso.imagem_url}" alt="Imagem do curso" class="img-fluid rounded" style="max-height: 200px;">` 
-            : '<div class="alert alert-light text-center"><i class="fas fa-image fa-3x text-muted"></i><br>Sem imagem</div>';
-        
-        let html = `
-            <div class="row">
-                <div class="col-md-4 text-center mb-3">
-                    ${imagem}
-                </div>
-                <div class="col-md-8">
-                    <h4>${curso.nome}</h4>
-                    <p class="mb-2"><strong>Área:</strong> ${curso.area}</p>
-                    <p class="mb-2"><strong>Modalidade:</strong> ${modalidadeBadge}</p>
-                    <p class="mb-2"><strong>Status:</strong> ${statusBadge}</p>
-                    <p class="mb-2"><strong>Data de Criação:</strong> ${new Date(curso.created_at).toLocaleDateString('pt-PT')}</p>
-                </div>
-            </div>
-            
-            ${curso.descricao ? `
-                <div class="mt-3">
-                    <h6><strong>Descrição:</strong></h6>
-                    <p class="text-muted">${curso.descricao}</p>
-                </div>
-            ` : ''}
-            
-            ${curso.programa ? `
-                <div class="mt-3">
-                    <h6><strong>Programa:</strong></h6>
-                    <div class="bg-light p-3 rounded">
-                        <pre class="mb-0" style="white-space: pre-wrap;">${curso.programa}</pre>
-                    </div>
-                </div>
-            ` : ''}
-        `;
-        
-        $('#viewModalContent').html(html);
-        $('#viewModal').modal('show');
-        },
-        error: function(xhr) {
-            console.error('Erro ao carregar detalhes do curso:', xhr);
-            Swal.fire('Erro!', 'Erro ao carregar os detalhes do curso.', 'error');
         }
     });
 }

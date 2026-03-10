@@ -30,7 +30,17 @@ class CursoController extends Controller
     {
         // Validar dados do curso
         $validated = $request->validate([
-            'nome' => 'required|string|max:100|unique:cursos,nome',
+            'nome' => [
+                'required',
+                'string',
+                'max:100',
+                function ($attribute, $value, $fail) {
+                    // Verificar se curso com este nome já existe
+                    if (Curso::where('nome', $value)->exists()) {
+                        $fail('Um curso com este nome já existe.');
+                    }
+                },
+            ],
             'descricao' => 'nullable|string',
             'programa' => 'nullable|string',
             'area' => 'required|string|max:100',
@@ -44,18 +54,10 @@ class CursoController extends Controller
             'centro_curso.*.preco' => 'required|numeric|min:0',
             'centro_curso.*.duracao' => 'required|string|max:100',
             'centro_curso.*.data_arranque' => 'required|date|after_or_equal:today',
-            
-            // Cronogramas
-            'cronogramas' => 'required|array|min:1',
-            'cronogramas.*.dia_semana' => 'required|array|min:1',
-            'cronogramas.*.dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'cronogramas.*.periodo' => 'required|in:manhã,tarde,noite',
-            'cronogramas.*.hora_inicio' => 'nullable|date_format:H:i',
-            'cronogramas.*.hora_fim' => 'nullable|date_format:H:i',
         ]);
 
-        // Executar tudo em uma transação
-        return DB::transaction(function () use ($validated, $request) {
+        // 1. Criar Curso e Centro-Curso em transação atômica
+        $curso = DB::transaction(function () use ($validated, $request) {
             // Preparar dados do curso
             $cursoData = [
                 'nome' => $validated['nome'],
@@ -74,10 +76,10 @@ class CursoController extends Controller
                 $cursoData['imagem_url'] = '/storage/' . $path;
             }
 
-            // 1. Criar o Curso
+            // Criar o Curso
             $curso = Curso::create($cursoData);
 
-            // 2. Criar Centro-Curso (relação muitos-para-muitos)
+            // Criar Centro-Curso (relação muitos-para-muitos)
             foreach ($validated['centro_curso'] as $centroDado) {
                 $curso->centros()->attach($centroDado['centro_id'], [
                     'preco' => $centroDado['preco'],
@@ -86,38 +88,21 @@ class CursoController extends Controller
                 ]);
             }
 
-            // 3. Criar Cronogramas
-            foreach ($validated['cronogramas'] as $cronoDado) {
-                // Validar hora_fim > hora_inicio
-                if (!empty($cronoDado['hora_inicio']) && !empty($cronoDado['hora_fim'])) {
-                    if ($cronoDado['hora_fim'] <= $cronoDado['hora_inicio']) {
-                        throw ValidationException::withMessages([
-                            'cronogramas.*.hora_fim' => 'A hora de fim deve ser maior que a hora de início.'
-                        ]);
-                    }
-                }
-
-                // Validar hora_inicio com base no período
-                $this->validarHoraComPeriodo($cronoDado);
-
-                Cronograma::create([
-                    'curso_id' => $curso->id,
-                    'dia_semana' => $cronoDado['dia_semana'], // Array de dias da semana
-                    'periodo' => $cronoDado['periodo'],
-                    'hora_inicio' => $cronoDado['hora_inicio'] ?? null,
-                    'hora_fim' => $cronoDado['hora_fim'] ?? null,
-                ]);
-            }
-
-            return redirect()->route('cursos.index')
-                ->with('success', 'Curso, centros e cronogramas criados com sucesso!');
+            return $curso;
         }, 5); // 5 tentativas em caso de deadlock
+
+        // 2. Criar Cronogramas INDEPENDENTEMENTE (fora da transação)
+        // Removido - cronogramas são agora gerenciados independentemente
+
+        return redirect()->route('cursos.index')
+            ->with('success', 'Curso e centros criados com sucesso!');
     }
 
     public function show(Curso $curso)
     {
         $curso->load(['centros', 'formadores', 'cronogramas', 'preInscricoes']);
-        return view('cursos.show', compact('curso'));
+        $centros = Centro::all();
+        return view('cursos.show', compact('curso', 'centros'));
     }
 
     public function edit(Curso $curso)
@@ -147,18 +132,10 @@ class CursoController extends Controller
             'centro_curso.*.preco' => 'required|numeric|min:0',
             'centro_curso.*.duracao' => 'required|string|max:100',
             'centro_curso.*.data_arranque' => 'required|date|after_or_equal:today',
-            
-            // Cronogramas
-            'cronogramas' => 'required|array|min:1',
-            'cronogramas.*.dia_semana' => 'required|array|min:1',
-            'cronogramas.*.dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'cronogramas.*.periodo' => 'required|in:manhã,tarde,noite',
-            'cronogramas.*.hora_inicio' => 'nullable|date_format:H:i',
-            'cronogramas.*.hora_fim' => 'nullable|date_format:H:i',
         ]);
 
-        // Executar tudo em uma transação
-        return DB::transaction(function () use ($validated, $request, $curso) {
+        // 1. Atualizar Curso e Centro-Curso em transação atômica
+        DB::transaction(function () use ($validated, $request, $curso) {
             // Preparar dados do curso
             $cursoData = [
                 'nome' => $validated['nome'],
@@ -177,10 +154,10 @@ class CursoController extends Controller
                 $cursoData['imagem_url'] = '/storage/' . $path;
             }
 
-            // 1. Atualizar o Curso
+            // Atualizar o Curso
             $curso->update($cursoData);
 
-            // 2. Atualizar Centro-Curso (relação muitos-para-muitos)
+            // Atualizar Centro-Curso (relação muitos-para-muitos)
             $curso->centros()->detach();
             foreach ($validated['centro_curso'] as $centroDado) {
                 $curso->centros()->attach($centroDado['centro_id'], [
@@ -189,34 +166,13 @@ class CursoController extends Controller
                     'data_arranque' => $centroDado['data_arranque'] ?? null
                 ]);
             }
-
-            // 3. Atualizar Cronogramas
-            $curso->cronogramas()->delete();
-            foreach ($validated['cronogramas'] as $cronoDado) {
-                // Validar hora_fim > hora_inicio
-                if (!empty($cronoDado['hora_inicio']) && !empty($cronoDado['hora_fim'])) {
-                    if ($cronoDado['hora_fim'] <= $cronoDado['hora_inicio']) {
-                        throw ValidationException::withMessages([
-                            'cronogramas.*.hora_fim' => 'A hora de fim deve ser maior que a hora de início.'
-                        ]);
-                    }
-                }
-
-                // Validar hora_inicio com base no período
-                $this->validarHoraComPeriodo($cronoDado);
-
-                Cronograma::create([
-                    'curso_id' => $curso->id,
-                    'dia_semana' => $cronoDado['dia_semana'], // Array de dias da semana
-                    'periodo' => $cronoDado['periodo'],
-                    'hora_inicio' => $cronoDado['hora_inicio'] ?? null,
-                    'hora_fim' => $cronoDado['hora_fim'] ?? null,
-                ]);
-            }
-
-            return redirect()->route('cursos.index')
-                ->with('success', 'Curso atualizado com sucesso!');
         }, 5); // 5 tentativas em caso de deadlock
+
+        // 2. Atualizar Cronogramas INDEPENDENTEMENTE (fora da transação)
+        // Removido - cronogramas são agora gerenciados independentemente
+
+        return redirect()->route('cursos.index')
+            ->with('success', 'Curso atualizado com sucesso!');
     }
 
     public function destroy(Curso $curso)
@@ -231,33 +187,5 @@ class CursoController extends Controller
         $curso->save();
         return redirect()->route('cursos.index')->with('success', 'Status do curso alterado!');
     }
-
-    /**
-     * Validar hora de início com base no período
-     */
-    private function validarHoraComPeriodo(&$data)
-    {
-        if (!isset($data['hora_inicio']) || !isset($data['periodo']) || empty($data['hora_inicio'])) {
-            return;
-        }
-
-        $hora = $data['hora_inicio'];
-        $periodo = $data['periodo'];
-
-        $validacoes = [
-            'manhã' => ['07:00', '12:00'],
-            'tarde' => ['12:00', '18:00'],
-            'noite' => ['18:00', '22:00'],
-        ];
-
-        if (isset($validacoes[$periodo])) {
-            [$horaMin, $horaMax] = $validacoes[$periodo];
-
-            if ($hora < $horaMin || $hora >= $horaMax) {
-                throw ValidationException::withMessages([
-                    'cronogramas.*.hora_inicio' => "A hora de início deve estar entre {$horaMin} e " . date('H:i', strtotime($horaMax) - 60) . " para o período de {$periodo}."
-                ]);
-            }
-        }
-    }
 }
+
