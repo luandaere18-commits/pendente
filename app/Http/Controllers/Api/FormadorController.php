@@ -37,8 +37,8 @@ class FormadorController extends Controller
      */
     public function index(Request $request)
     {
-        // Busca todos os formadores, incluindo centros relacionados
-        $query = Formador::with(['centros']);
+        // Busca todos os formadores, incluindo centros e turmas relacionados
+        $query = Formador::with(['centros', 'turmas.curso']);
         // Permite busca textual por nome, especialidade ou bio
         if ($request->filled('busca')) {
             $busca = $request->busca;
@@ -50,7 +50,7 @@ class FormadorController extends Controller
         }
         $formadores = $query->get();
         // Retorna lista de formadores
-        return response()->json($formadores);
+        return response()->json(['data' => $formadores]);
     }
 
 
@@ -124,7 +124,7 @@ class FormadorController extends Controller
         return response()->json([
             'status' => 'sucesso',
             'mensagem' => 'Formador cadastrado com sucesso!',
-            'dados' => $formador->load(['cursos', 'centros'])
+            'data' => $formador->load(['centros', 'turmas.curso'])
         ], 201);
     }
 
@@ -154,8 +154,8 @@ class FormadorController extends Controller
      */
     public function show($id)
     {
-        // Busca formador por ID, incluindo centros
-        $formador = Formador::with(['centros'])->find($id);
+        // Busca formador por ID, incluindo centros e turmas
+        $formador = Formador::with(['centros', 'turmas.curso'])->find($id);
         if (!$formador) {
             // Retorna erro se não encontrado
             return response()->json([
@@ -164,7 +164,7 @@ class FormadorController extends Controller
             ], 404);
         }
         // Retorna dados do formador
-        return response()->json(['status' => 'sucesso', 'dados' => $formador]);
+        return response()->json(['data' => $formador]);
     }
 
 
@@ -262,7 +262,7 @@ class FormadorController extends Controller
         return response()->json([
             'status' => 'sucesso',
             'mensagem' => 'Formador atualizado com sucesso!',
-            'dados' => $formador->load(['centros'])
+            'data' => $formador->load(['centros', 'turmas.curso'])
         ]);
     }
 
