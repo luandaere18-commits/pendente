@@ -158,8 +158,6 @@
                                     <tr>
                                         <th><i class="fas fa-building me-1 text-muted"></i>Nome do Centro</th>
                                         <th><i class="fas fa-coins me-1 text-muted"></i>Preço (Kz)</th>
-                                        <th><i class="fas fa-clock me-1 text-muted"></i>Duração</th>
-                                        <th><i class="fas fa-calendar-day me-1 text-muted"></i>Data de Arranque</th>
                                         <th class="text-end">Ações</th>
                                     </tr>
                                 </thead>
@@ -174,15 +172,11 @@
                                                     {{ number_format($centro->pivot->preco, 2, ",", ".") }} Kz
                                                 </span>
                                             </td>
-                                            <td>{{ $centro->pivot->duracao }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($centro->pivot->data_arranque)->format("d/m/Y") }}</td>
                                             <td class="text-end">
                                                 <button class="btn btn-sm btn-outline-primary me-1 btn-editar-centro"
                                                         data-centro-id="{{ $centro->id }}"
                                                         data-centro-nome="{{ $centro->nome }}"
                                                         data-preco="{{ $centro->pivot->preco }}"
-                                                        data-duracao="{{ $centro->pivot->duracao }}"
-                                                        data-data-arranque="{{ $centro->pivot->data_arranque }}"
                                                         type="button"
                                                         title="Editar">
                                                     <i class="fas fa-edit"></i>
@@ -228,6 +222,7 @@
                                         <th><i class="fas fa-sun me-1 text-muted"></i>Período</th>
                                         <th><i class="fas fa-hourglass-start me-1 text-muted"></i>Hora Início</th>
                                         <th><i class="fas fa-hourglass-end me-1 text-muted"></i>Hora Fim</th>
+                                        <th><i class="fas fa-flag me-1 text-muted"></i>Status</th>
                                         <th class="text-end">Ações</th>
                                     </tr>
                                 </thead>
@@ -259,13 +254,35 @@
                                                     <span class="text-muted">—</span>
                                                 @endif
                                             </td>
+                                            <td>
+                                                @php
+                                                    $statusColors = [
+                                                        'planeada' => 'secondary',
+                                                        'inscricoes_abertas' => 'success',
+                                                        'em_andamento' => 'info',
+                                                        'concluida' => 'dark'
+                                                    ];
+                                                    $statusLabels = [
+                                                        'planeada' => 'Planeada',
+                                                        'inscricoes_abertas' => 'Inscrições Abertas',
+                                                        'em_andamento' => 'Em Andamento',
+                                                        'concluida' => 'Concluída'
+                                                    ];
+                                                @endphp
+                                                <span class="badge bg-{{ $statusColors[$turma->status] ?? 'secondary' }}-subtle text-{{ $statusColors[$turma->status] ?? 'secondary' }}">
+                                                    {{ $statusLabels[$turma->status] ?? $turma->status }}
+                                                </span>
+                                            </td>
                                             <td class="text-end">
                                                 <button class="btn btn-sm btn-outline-primary btn-editar-turma"
                                                         data-turma-id="{{ $turma->id }}"
                                                         data-dias="{{ json_encode($turma->dia_semana) }}"
+                                                        data-data-arranque="{{ $turma->data_arranque }}"
+                                                        data-formador-id="{{ $turma->formador_id }}"
                                                         data-periodo="{{ $turma->periodo }}"
                                                         data-hora-inicio="{{ $turma->hora_inicio }}"
                                                         data-hora-fim="{{ $turma->hora_fim }}"
+                                                        data-status="{{ $turma->status }}"
                                                         type="button"
                                                         title="Editar">
                                                     <i class="fas fa-edit"></i>
@@ -472,17 +489,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-12">
                             <label class="form-label fw-semibold">Preço (Kz) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" class="form-control" name="preco" required placeholder="0.00">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Duração <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="duracao" required placeholder="Ex: 120h">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Data de Arranque <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="data_arranque" required>
                         </div>
                     </div>
                 </div>
@@ -516,17 +525,9 @@
                 <input type="hidden" name="centro_id" id="editCentroId">
                 <div class="modal-body p-4">
                     <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Preço (€) <span class="text-danger">*</span></label>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Preço (Kz) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" class="form-control" name="preco" id="editCentroPreco" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Duração <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="duracao" id="editCentroDuracao" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Data de Arranque <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="data_arranque" id="editCentroDataArranque" required>
                         </div>
                     </div>
                 </div>
@@ -570,11 +571,24 @@
                         </div>
                     </div>
                     <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Data de Arranque <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="data_arranque" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Formador</label>
+                            <select class="form-select" name="formador_id">
+                                <option value="">Sem formador atribuído</option>
+                                @foreach ($formadores ?? [] as $formador)
+                                    <option value="{{ $formador->id }}">{{ $formador->nome }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="periodo" required>
                                 <option value="" disabled selected>Selecione</option>
-                                <option value="manha">Manhã</option>
+                                <option value="manhã">Manhã</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -586,6 +600,15 @@
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Hora Fim</label>
                             <input type="time" class="form-control" name="hora_fim">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select class="form-select" name="status">
+                                <option value="planeada">Planeada</option>
+                                <option value="inscricoes_abertas">Inscrições Abertas</option>
+                                <option value="em_andamento">Em Andamento</option>
+                                <option value="concluida">Concluída</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -630,7 +653,20 @@
                         </div>
                     </div>
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Data de Arranque <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="edit_data_arranque" id="editturmaDataArranque" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Formador</label>
+                            <select class="form-select" name="edit_formador_id" id="editturmaFormador">
+                                <option value="">Sem formador atribuído</option>
+                                @foreach ($formadores ?? [] as $formador)
+                                    <option value="{{ $formador->id }}">{{ $formador->nome }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="edit_periodo" id="editturmaPeriodo" required>
                                 <option value="">Selecione</option>
@@ -639,13 +675,22 @@
                                 <option value="noite">Noite</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label fw-semibold">Hora Início</label>
                             <input type="time" class="form-control" name="edit_hora_inicio" id="editturmaHoraInicio">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label fw-semibold">Hora Fim</label>
                             <input type="time" class="form-control" name="edit_hora_fim" id="editturmaHoraFim">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select class="form-select" name="edit_status" id="editturmaStatus">
+                                <option value="planeada">Planeada</option>
+                                <option value="inscricoes_abertas">Inscrições Abertas</option>
+                                <option value="em_andamento">Em Andamento</option>
+                                <option value="concluida">Concluída</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -800,9 +845,7 @@ $("#formAdicionarCentroAjax").on("submit", function(e) {
     const $form = $(this);
     const formData = {
         centro_id: parseInt($form.find("[name=\"centro_id\"]").val()),
-        preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", ".")),
-        duracao: $form.find("[name=\"duracao\"]").val().trim(),
-        data_arranque: $form.find("[name=\"data_arranque\"]").val().trim()
+        preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", "."))
     };
     
     if (!formData.centro_id) {
@@ -847,14 +890,10 @@ $(document).on("click", ".btn-editar-centro", function() {
     const id = $(this).data("centro-id");
     const nome = $(this).data("centro-nome");
     const preco = $(this).data("preco");
-    const duracao = $(this).data("duracao");
-    const dataArranque = $(this).data("data-arranque");
     
     $("#editCentroId").val(id);
     $("#editCentroNome").text(nome);
     $("#editCentroPreco").val(preco);
-    $("#editCentroDuracao").val(duracao);
-    $("#editCentroDataArranque").val(dataArranque);
     $("#modalEditarCentro").modal("show");
 });
 
@@ -872,13 +911,11 @@ $("#formEditarCentroAjax").on("submit", function(e) {
     }
     
     const formData = {
-        preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", ".")),
-        duracao: $form.find("[name=\"duracao\"]").val().trim(),
-        data_arranque: $form.find("[name=\"data_arranque\"]").val().trim()
+        preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", "."))
     };
     
-    if (!formData.preco || !formData.duracao || !formData.data_arranque) {
-        Swal.fire("Erro!", "Preencha todos os campos", "error");
+    if (!formData.preco) {
+        Swal.fire("Erro!", "Preencha o preço", "error");
         return;
     }
     
@@ -980,9 +1017,12 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
     const formData = {
         curso_id: cursoId,
         dia_semana: dias,
+        data_arranque: $form.find("input[name=\"data_arranque\"]").val(),
+        formador_id: $form.find("select[name=\"formador_id\"]").val() || null,
         periodo: $form.find("select[name=\"periodo\"]").val(),
         hora_inicio: $form.find("input[name=\"hora_inicio\"]").val() || null,
-        hora_fim: $form.find("input[name=\"hora_fim\"]").val() || null
+        hora_fim: $form.find("input[name=\"hora_fim\"]").val() || null,
+        status: $form.find("select[name=\"status\"]").val()
     };
     
     $.ajax({
@@ -1021,9 +1061,12 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
 $(document).on("click", ".btn-editar-turma", function() {
     const id = $(this).data("turma-id");
     let dias = $(this).data("dias");
+    const dataArranque = $(this).data("data-arranque");
     let periodo = $(this).data("periodo");
     const horaInicio = $(this).data("hora-inicio");
     const horaFim = $(this).data("hora-fim");
+    const formadorId = $(this).data("formador-id");
+    const status = $(this).data("status");
     
     if (typeof dias === "string") {
         dias = JSON.parse(dias);
@@ -1035,9 +1078,12 @@ $(document).on("click", ".btn-editar-turma", function() {
     }
     
     $("#editturmaId").val(id);
+    $("#editturmaDataArranque").val(dataArranque);
+    $("#editturmaFormador").val(formadorId || "");
     $("#editturmaPeriodo").val(periodo);
     $("#editturmaHoraInicio").val(horaInicio ? horaInicio.substring(0, 5) : "");
     $("#editturmaHoraFim").val(horaFim ? horaFim.substring(0, 5) : "");
+    $("#editturmaStatus").val(status);
     
     $("input[name=\"edit_dia_semana[]\"]").prop("checked", false).each(function() {
         if (dias && dias.includes($(this).val())) {
@@ -1070,10 +1116,13 @@ $("#formEditarturmaAjax").on("submit", function(e) {
     }
     
     const formData = {
+        data_arranque: $form.find("input[name=\"edit_data_arranque\"]").val(),
         dia_semana: dias,
         periodo: $form.find("select[name=\"edit_periodo\"]").val(),
+        formador_id: $form.find("select[name=\"edit_formador_id\"]").val() || null,
         hora_inicio: $form.find("input[name=\"edit_hora_inicio\"]").val() || null,
-        hora_fim: $form.find("input[name=\"edit_hora_fim\"]").val() || null
+        hora_fim: $form.find("input[name=\"edit_hora_fim\"]").val() || null,
+        status: $form.find("select[name=\"edit_status\"]").val()
     };
     
     $.ajax({

@@ -54,12 +54,15 @@ class TurmaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'formador_id' => 'nullable|exists:formadores,id',
+            'data_arranque' => 'required|date',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
-            'hora_fim' => 'nullable|date_format:H:i'
+            'hora_fim' => 'nullable|date_format:H:i',
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
 
         // Normalizar período (remover acento se houver)
@@ -163,12 +166,15 @@ class TurmaController extends Controller
         
         // Não permite editar curso_id
         $validated = $request->validate([
+            'formador_id' => 'nullable|exists:formadores,id',
+            'data_arranque' => 'nullable|date',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
-            'hora_fim' => 'nullable|date_format:H:i'
+            'hora_fim' => 'nullable|date_format:H:i',
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
         
         // Normalizar período (remover acento se houver)

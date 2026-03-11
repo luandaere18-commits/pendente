@@ -29,7 +29,8 @@ class TurmaController extends Controller
             'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
-            'data_arranque' => 'nullable|date'
+            'data_arranque' => 'required|date',
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
         
         // Validar hora_inicio com base no periodo
@@ -64,7 +65,8 @@ class TurmaController extends Controller
             'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
-            'data_arranque' => 'nullable|date'
+            'data_arranque' => 'required|date',
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
         
         // Validar hora_inicio com base no periodo

@@ -36,4 +36,10 @@ class Formador extends Model
     {
         return $this->belongsToMany(Centro::class, 'centro_formador')->withTimestamps();
     }
+
+    // 1:N com turmas (um formador leciona múltiplas turmas)
+    public function turmas()
+    {
+        return $this->hasMany(Turma::class);
+    }
 }

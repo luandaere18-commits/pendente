@@ -11,12 +11,14 @@ class Turma extends Model
 
     protected $fillable = [
         'curso_id',
+        'formador_id',
         'duracao_semanas',
         'dia_semana',
         'periodo',
         'hora_inicio', 
         'hora_fim',
-        'data_arranque'
+        'data_arranque',
+        'status'
     ];
 
     protected $table = 'turmas';
@@ -29,6 +31,12 @@ class Turma extends Model
     public function curso()
     {
         return $this->belongsTo(Curso::class);
+    }
+
+    // Uma turma pertence a um formador
+    public function formador()
+    {
+        return $this->belongsTo(Formador::class);
     }
 
     // Uma turma pode ter muitas pré-inscrições

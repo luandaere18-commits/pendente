@@ -297,8 +297,6 @@ function carregarCentrosExistentes() {
         // Preencher com dados
         $(`select[name="centro_curso[${index}][centro_id]"]`).val(centro.id);
         $(`input[name="centro_curso[${index}][preco]"]`).val(centro.pivot.preco);
-        $(`input[name="centro_curso[${index}][duracao]"]`).val(centro.pivot.duracao);
-        $(`input[name="centro_curso[${index}][data_arranque]"]`).val(centro.pivot.data_arranque);
         
         centroCount++;
     });

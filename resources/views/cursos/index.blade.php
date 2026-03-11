@@ -47,7 +47,6 @@
                             <th style="width:110px">Modalidade</th>
                             <th>Centro</th>
                             <th style="width:110px">Preço</th>
-                            <th style="width:120px">Data Arranque</th>
                             <th style="width:90px" class="text-center">Status</th>
                             <th style="width:120px" class="text-end pe-3">Ações</th>
                         </tr>
@@ -242,19 +241,9 @@
                             <option value="">Selecione</option>
                         </select>
                     </div>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <label class="form-label small mb-1 fw-medium">Preço (Kz) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" min="0" class="form-control form-control-sm preco-modal" placeholder="0,00" required>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label small mb-1 fw-medium">Duração <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control form-control-sm duracao-modal" placeholder="Ex: 3 meses" required>
-                        </div>
-                    </div>
                     <div>
-                        <label class="form-label small mb-1 fw-medium">Data de Arranque <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control form-control-sm data-arranque-modal" required>
+                        <label class="form-label small mb-1 fw-medium">Preço (Kz) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" min="0" class="form-control form-control-sm preco-modal" placeholder="0,00" required>
                     </div>
                 </div>
             </div>
@@ -321,17 +310,13 @@ function carregarDetalhesCurso(cursoId) {
             // Seção de Centros
             let centrosHtml = '';
             if (curso.centros && curso.centros.length > 0) {
-                centrosHtml = '<div class="mt-4"><h6 class="fw-semibold mb-3"><i class="fas fa-building me-2 text-primary"></i>Centros Associados</h6><div class="table-responsive"><table class="table table-sm table-hover"><thead class="table-light"><tr><th>Centro</th><th>Preço (Kz)</th><th>Duração</th><th>Data Arranque</th></tr></thead><tbody>';
+                centrosHtml = '<div class="mt-4"><h6 class="fw-semibold mb-3"><i class="fas fa-building me-2 text-primary"></i>Centros Associados</h6><div class="table-responsive"><table class="table table-sm table-hover"><thead class="table-light"><tr><th>Centro</th><th>Preço (Kz)</th></tr></thead><tbody>';
                 curso.centros.forEach(centro => {
                     const preco = centro.pivot?.preco ? parseFloat(centro.pivot.preco).toLocaleString('pt-PT') : 'N/A';
-                    const duracao = centro.pivot?.duracao || 'N/A';
-                    const data = centro.pivot?.data_arranque || 'N/A';
                     centrosHtml += `
                         <tr>
                             <td><strong>${centro.nome}</strong></td>
                             <td>${preco}</td>
-                            <td>${duracao}</td>
-                            <td>${data}</td>
                         </tr>
                     `;
                 });
@@ -503,17 +488,15 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     $('#centrosContainerModal').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
         const preco = $(this).find('.preco-modal').val();
-        const duracao = $(this).find('.duracao-modal').val();
-        const dataArranque = $(this).find('.data-arranque-modal').val();
 
-        if (!centroId || !preco || !duracao || !dataArranque) {
+        if (!centroId || !preco) {
             centroValido = false;
             return false;
         }
     });
 
     if (!centroValido) {
-        Swal.fire("Erro!", "Preencha todos os dados dos centros (Centro, Preço, Duração, Data de Arranque)", "error");
+        Swal.fire("Erro!", "Preencha todos os dados dos centros (Centro, Preço)", "error");
         return;
     }
 
@@ -534,13 +517,9 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     $('#centrosContainerModal').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
         const preco = $(this).find('.preco-modal').val();
-        const duracao = $(this).find('.duracao-modal').val();
-        const dataArranque = $(this).find('.data-arranque-modal').val();
 
         formData.append(`centros[${index}][centro_id]`, centroId);
         formData.append(`centros[${index}][preco]`, preco);
-        formData.append(`centros[${index}][duracao]`, duracao);
-        formData.append(`centros[${index}][data_arranque]`, dataArranque);
         index++;
     });
 
@@ -614,10 +593,9 @@ function carregarCursos() {
                     if (curso.centros && curso.centros.length > 0) {
                         const centro = curso.centros[0];
                         const preco = centro.pivot.preco;
-                        const dataArranque = new Date(centro.pivot.data_arranque).toLocaleDateString('pt-PT');
-                        centroCells = `<td><span class="fw-medium">${centro.nome}</span></td><td>${parseFloat(preco).toLocaleString('pt-PT', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</td><td><small>${dataArranque}</small></td>`;
+                        centroCells = `<td><span class="fw-medium">${centro.nome}</span></td><td>${parseFloat(preco).toLocaleString('pt-PT', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</td>`;
                     } else {
-                        centroCells = `<td class="text-muted"><small>N/A</small></td><td class="text-muted"><small>N/A</small></td><td class="text-muted"><small>N/A</small></td>`;
+                        centroCells = `<td class="text-muted"><small>N/A</small></td><td class="text-muted"><small>N/A</small></td>`;
                     }
 
                     html += `
@@ -660,7 +638,7 @@ function carregarCursos() {
                 pageLength: 25,
                 order: [[0, 'desc']],
                 columnDefs: [
-                    { targets: 7, orderable: false }
+                    { targets: 6, orderable: false }
                 ],
                 lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
                 dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +

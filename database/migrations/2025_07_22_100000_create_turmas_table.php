@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
             $table->unsignedInteger('duracao_semanas')->nullable();
-            $table->date('data_arranque')->nullable();
+            $table->date('data_arranque');
             $table->json('dia_semana', ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']);
             $table->enum('periodo', ['manhã', 'tarde', 'noite']);
             $table->time('hora_inicio')->nullable();   // Hora de início da aula

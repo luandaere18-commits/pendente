@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Curso;
 use App\Models\Centro;
+use App\Models\Formador;
 use App\Models\Turma;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;  
 use Illuminate\Validation\ValidationException;
 
 class CursoController extends Controller
@@ -98,7 +99,8 @@ class CursoController extends Controller
     {
         $curso->load(['centros', 'formadores', 'turmas', 'preInscricoes']);
         $centros = Centro::all();
-        return view('cursos.show', compact('curso', 'centros'));
+        $formadores = Formador::all();
+        return view('cursos.show', compact('curso', 'centros', 'formadores'));
     }
 
     public function edit(Curso $curso)
