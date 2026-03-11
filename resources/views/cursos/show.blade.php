@@ -144,7 +144,7 @@
                 {{-- ABA: CENTROS             --}}
                 {{-- ======================== --}}
                 <div class="tab-pane fade show active" id="centros" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold mb-0"><i class="fas fa-building me-2 text-primary"></i>Centros de Formação</h5>
                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionarCentro">
                             <i class="fas fa-plus me-1"></i>Associar Centro
@@ -157,7 +157,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th><i class="fas fa-building me-1 text-muted"></i>Nome do Centro</th>
-                                        <th><i class="fas fa-euro-sign me-1 text-muted"></i>Preço</th>
+                                        <th><i class="fas fa-coins me-1 text-muted"></i>Preço (Kz)</th>
                                         <th><i class="fas fa-clock me-1 text-muted"></i>Duração</th>
                                         <th><i class="fas fa-calendar-day me-1 text-muted"></i>Data de Arranque</th>
                                         <th class="text-end">Ações</th>
@@ -171,7 +171,7 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-success-subtle text-success px-2 py-1">
-                                                    {{ number_format($centro->pivot->preco, 2, ",", ".") }} €
+                                                    {{ number_format($centro->pivot->preco, 2, ",", ".") }} Kz
                                                 </span>
                                             </td>
                                             <td>{{ $centro->pivot->duracao }}</td>
@@ -190,7 +190,7 @@
                                                 <button class="btn btn-sm btn-outline-danger btn-remover-centro"
                                                         data-centro-id="{{ $centro->id }}"
                                                         type="button"
-                                                        title="Remover">
+                                                        title="Desassociar Centro">
                                                     <i class="fas fa-unlink"></i>
                                                 </button>
                                             </td>
@@ -211,7 +211,7 @@
                 {{-- ABA: CRONOGRAMAS         --}}
                 {{-- ======================== --}}
                 <div class="tab-pane fade" id="cronogramas" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold mb-0"><i class="fas fa-calendar-alt me-2 text-info"></i>Cronogramas</h5>
                         <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalAdicionarCronograma">
                             <i class="fas fa-plus me-1"></i>Novo Cronograma
@@ -288,8 +288,16 @@
                 {{-- ABA: PRÉ-INSCRIÇÕES      --}}
                 {{-- ======================== --}}
                 <div class="tab-pane fade" id="preinscricoes" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold mb-0"><i class="fas fa-user-plus me-2 text-warning"></i>Pré-inscrições</h5>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <select class="form-select form-select-sm" id="filtroStatusInscricoes" style="max-width: 200px;">
+                                <option value="">Todos os status</option>
+                                <option value="pendente">Pendentes</option>
+                                <option value="confirmado">Confirmados</option>
+                                <option value="cancelado">Cancelados</option>
+                            </select>
+                        </div>
                     </div>
 
                     @if($curso->preInscricoes->count() > 0)
@@ -298,6 +306,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th><i class="fas fa-user me-1 text-muted"></i>Nome</th>
+                                        <th><i class="fas fa-building me-1 text-muted"></i>Centro</th>
                                         <th><i class="fas fa-envelope me-1 text-muted"></i>Email</th>
                                         <th><i class="fas fa-phone me-1 text-muted"></i>Telefone</th>
                                         <th><i class="fas fa-calendar me-1 text-muted"></i>Data</th>
@@ -307,8 +316,9 @@
                                 </thead>
                                 <tbody>
                                     @foreach($curso->preInscricoes as $inscricao)
-                                        <tr>
+                                        <tr class="row-inscricao" data-status="{{ $inscricao->status }}">
                                             <td><strong>{{ $inscricao->nome_completo ?? $inscricao->nome }}</strong></td>
+                                            <td><span class="badge bg-light text-dark">{{ $inscricao->centro->nome ?? '—' }}</span></td>
                                             <td><a href="mailto:{{ $inscricao->email }}" class="text-decoration-none">{{ $inscricao->email }}</a></td>
                                             <td>
                                                 @if($inscricao->telefone ?? ($inscricao->contactos["telefone"] ?? null))
@@ -447,8 +457,8 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold">Preço (€) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" class="form-control" name="preco" required placeholder="0,00">
+                            <label class="form-label fw-semibold">Preço (Kz) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" class="form-control" name="preco" required placeholder="0.00">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Duração <span class="text-danger">*</span></label>
@@ -607,6 +617,7 @@
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="edit_periodo" id="editCronogramaPeriodo" required>
+                                <option value="">Selecione</option>
                                 <option value="manha">Manhã</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
@@ -849,13 +860,13 @@ $(document).on("click", ".btn-remover-centro", function() {
     }
     
     Swal.fire({
-        title: "Remover centro?",
-        text: "O centro será desassociado deste curso.",
+        title: "Desassociar centro?",
+        text: "O centro será desassociado deste curso. Os dados do centro permanecerão no sistema.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#dc2626",
         cancelButtonColor: "#64748b",
-        confirmButtonText: "Sim, remover!",
+        confirmButtonText: "Sim, desassociar!",
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
@@ -866,7 +877,7 @@ $(document).on("click", ".btn-remover-centro", function() {
                     "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
                 },
                 success: function() {
-                    Swal.fire("Removido!", "Centro desassociado com sucesso.", "success").then(() => location.reload());
+                    Swal.fire("Desassociado!", "Centro desassociado com sucesso.", "success").then(() => location.reload());
                 },
                 error: function(xhr) {
                     console.error("Erro:", xhr);
@@ -943,12 +954,17 @@ $("#formAdicionarCronogramaAjax").on("submit", function(e) {
 $(document).on("click", ".btn-editar-cronograma", function() {
     const id = $(this).data("cronograma-id");
     let dias = $(this).data("dias");
-    const periodo = $(this).data("periodo");
+    let periodo = $(this).data("periodo");
     const horaInicio = $(this).data("hora-inicio");
     const horaFim = $(this).data("hora-fim");
     
     if (typeof dias === "string") {
         dias = JSON.parse(dias);
+    }
+    
+    // Normalizar período: "manhã" -> "manha"
+    if (periodo === "manhã") {
+        periodo = "manha";
     }
     
     $("#editCronogramaId").val(id);
@@ -1021,6 +1037,20 @@ $("#formEditarCronogramaAjax").on("submit", function(e) {
             });
         }
     });
+});
+
+/**
+ * Filtro de Status - Pré-inscrições
+ */
+$("#filtroStatusInscricoes").on("change", function() {
+    const statusFiltro = $(this).val();
+    
+    if (statusFiltro === "") {
+        $(".row-inscricao").show();
+    } else {
+        $(".row-inscricao").hide();
+        $(".row-inscricao[data-status='" + statusFiltro + "']").show();
+    }
 });
 
 /**

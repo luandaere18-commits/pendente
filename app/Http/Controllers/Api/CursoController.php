@@ -152,31 +152,38 @@ class CursoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nome' => 'required|string|max:255',  // Aumentado de 100 para 255
-            'descricao' => 'required|string',
+            'nome' => 'required|string|max:255',
+            'descricao' => 'nullable|string',
             'programa' => 'nullable|string',
-            'area' => 'nullable|string|max:100',
-            'modalidade' => 'required|in:presencial,online,hibrido',  // Adicionado 'hibrido'
-            'imagem_url' => 'nullable|url|max:255',
-            'ativo' => 'boolean',
+            'area' => 'required|string|max:100',
+            'modalidade' => 'required|in:presencial,online,hibrido',
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'ativo' => 'nullable|boolean',
             'centros' => 'required|array|min:1',
             'centros.*.centro_id' => 'required|exists:centros,id',
             'centros.*.preco' => 'required|numeric|min:0',
             'centros.*.duracao' => 'required|string|max:50',
-            'centros.*.data_arranque' => 'nullable|date',
-            'formadores' => 'array'
+            'centros.*.data_arranque' => 'required|date',
+            'formadores' => 'nullable|array'
         ]);
 
         // Separe apenas os campos do curso
-        $cursoData = collect($validated)->only([
-            'nome',
-            'descricao',
-            'programa',
-            'area',
-            'modalidade',
-            'imagem_url',
-            'ativo'
-        ])->toArray();
+        $cursoData = [
+            'nome' => $validated['nome'],
+            'descricao' => $validated['descricao'] ?? null,
+            'programa' => $validated['programa'] ?? null,
+            'area' => $validated['area'],
+            'modalidade' => $validated['modalidade'],
+            'ativo' => $validated['ativo'] ?? 1,
+        ];
+
+        // Processar upload de imagem
+        if ($request->hasFile('imagem')) {
+            $file = $request->file('imagem');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('cursos', $filename, 'public');
+            $cursoData['imagem_url'] = '/storage/' . $path;
+        }
 
         $curso = Curso::create($cursoData);
 
@@ -186,7 +193,7 @@ class CursoController extends Controller
             $centrosPivot[$centro['centro_id']] = [
                 'preco' => $centro['preco'],
                 'duracao' => $centro['duracao'],
-                'data_arranque' => $centro['data_arranque'] ?? null,
+                'data_arranque' => $centro['data_arranque'],
             ];
         }
         $curso->centros()->sync($centrosPivot);
