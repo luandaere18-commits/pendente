@@ -214,6 +214,7 @@
                                         <th>#</th>
                                         <th><i class="fas fa-calendar-week me-1 text-muted"></i>Dias da Semana</th>
                                         <th><i class="fas fa-sun me-1 text-muted"></i>Período</th>
+                                        <th><i class="fas fa-chalkboard-teacher me-1 text-muted"></i>Formador</th>
                                         <th><i class="fas fa-hourglass-start me-1 text-muted"></i>Hora Início</th>
                                         <th><i class="fas fa-hourglass-end me-1 text-muted"></i>Hora Fim</th>
                                         <th><i class="fas fa-flag me-1 text-muted"></i>Status</th>
@@ -233,6 +234,15 @@
                                             </td>
                                             <td>
                                                 <span class="badge bg-primary-subtle text-primary">{{ ucfirst($turma->periodo) }}</span>
+                                            </td>
+                                            <td>
+                                                @if($turma->formador_id)
+                                                    <span class="text-success fw-semibold">{{ $turma->formador->nome ?? 'N/A' }}</span>
+                                                @else
+                                                    <span class="badge bg-warning-subtle text-warning">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>Sem formador
+                                                    </span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if($turma->hora_inicio)
@@ -272,6 +282,7 @@
                                                         data-turma-id="{{ $turma->id }}"
                                                         data-dias="{{ json_encode($turma->dia_semana) }}"
                                                         data-data-arranque="{{ $turma->data_arranque }}"
+                                                        data-duracao-semanas="{{ $turma->duracao_semanas }}"
                                                         data-formador-id="{{ $turma->formador_id }}"
                                                         data-periodo="{{ $turma->periodo }}"
                                                         data-hora-inicio="{{ $turma->hora_inicio }}"
@@ -570,6 +581,10 @@
                             <input type="date" class="form-control" name="data_arranque" required>
                         </div>
                         <div class="col-md-6">
+                            <label class="form-label fw-semibold">Duração (semanas)</label>
+                            <input type="number" class="form-control" name="duracao_semanas" min="1" placeholder="Ex: 4">
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Formador</label>
                             <select class="form-select" name="formador_id">
                                 <option value="">Sem formador atribuído</option>
@@ -650,6 +665,10 @@
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Data de Arranque <span class="text-danger">*</span></label>
                             <input type="date" class="form-control" name="edit_data_arranque" id="editturmaDataArranque" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Duração (semanas)</label>
+                            <input type="number" class="form-control" name="edit_duracao_semanas" id="editturmaDuracao" min="1" placeholder="Ex: 4">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Formador</label>
@@ -1012,8 +1031,9 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         curso_id: cursoId,
         dia_semana: dias,
         data_arranque: $form.find("input[name=\"data_arranque\"]").val(),
-        formador_id: $form.find("select[name=\"formador_id\"]").val() || null,
+        duracao_semanas: $form.find("input[name=\"duracao_semanas\"]").val() || null,
         periodo: $form.find("select[name=\"periodo\"]").val(),
+        formador_id: $form.find("select[name=\"formador_id\"]").val() || null,
         hora_inicio: $form.find("input[name=\"hora_inicio\"]").val() || null,
         hora_fim: $form.find("input[name=\"hora_fim\"]").val() || null,
         status: $form.find("select[name=\"status\"]").val()
@@ -1056,6 +1076,7 @@ $(document).on("click", ".btn-editar-turma", function() {
     const id = $(this).data("turma-id");
     let dias = $(this).data("dias");
     const dataArranque = $(this).data("data-arranque");
+    const duracaoSemanas = $(this).data("duracao-semanas");
     let periodo = $(this).data("periodo");
     const horaInicio = $(this).data("hora-inicio");
     const horaFim = $(this).data("hora-fim");
@@ -1073,6 +1094,7 @@ $(document).on("click", ".btn-editar-turma", function() {
     
     $("#editturmaId").val(id);
     $("#editturmaDataArranque").val(dataArranque);
+    $("#editturmaDuracao").val(duracaoSemanas || "");
     $("#editturmaFormador").val(formadorId || "");
     $("#editturmaPeriodo").val(periodo);
     $("#editturmaHoraInicio").val(horaInicio ? horaInicio.substring(0, 5) : "");
@@ -1111,6 +1133,7 @@ $("#formEditarturmaAjax").on("submit", function(e) {
     
     const formData = {
         data_arranque: $form.find("input[name=\"edit_data_arranque\"]").val(),
+        duracao_semanas: $form.find("input[name=\"edit_duracao_semanas\"]").val() || null,
         dia_semana: dias,
         periodo: $form.find("select[name=\"edit_periodo\"]").val(),
         formador_id: $form.find("select[name=\"edit_formador_id\"]").val() || null,
