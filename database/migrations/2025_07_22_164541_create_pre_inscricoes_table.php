@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
             $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
-            $table->foreignId('cronograma_id')->nullable()->constrained('cronogramas')->onDelete('set null');
+            $table->foreignId('turma_id')->constrained('turmas')->onDelete('cascade');
             $table->string('nome_completo', 100);
             $table->json('contactos');
             $table->string('email', 100)->nullable();
@@ -26,7 +26,9 @@ return new class extends Migration
             // Índices para performance em queries
             $table->index('curso_id');
             $table->index('centro_id');
-            $table->index('cronograma_id');
+            $table->index('turma_id');
+
+            
         });
     }
 

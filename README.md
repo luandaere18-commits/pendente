@@ -98,7 +98,7 @@ Authorization: Bearer seu_token_aqui
 - Centros de Formação (CRUD)
 - Cursos (CRUD)
 - Formadores (CRUD)
-- Cronogramas - Horários de Aulas (CRUD)
+- turmas - Horários de Aulas (CRUD)
 - Produtos (CRUD)
 - Categorias (CRUD)
 - Pré-inscrições
@@ -110,7 +110,7 @@ O projeto utiliza as seguintes tabelas principais:
 - centros
 - cursos
 - formadores
-- cronogramas (horários de aulas)
+- turmas (horários de aulas)
 - produtos
 - categorias
 - pre_inscricoes

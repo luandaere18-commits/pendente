@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Curso;
 use App\Models\Centro;
-use App\Models\Cronograma;
+use App\Models\Turma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -13,7 +13,7 @@ class CursoController extends Controller
 {
     public function index()
     {
-        $cursos = Curso::with(['centros', 'formadores', 'cronogramas', 'preInscricoes'])->get();
+        $cursos = Curso::with(['centros', 'formadores', 'turmas', 'preInscricoes'])->get();
         return view('cursos.index', compact('cursos'));
     }
 
@@ -52,8 +52,6 @@ class CursoController extends Controller
             'centro_curso' => 'required|array|min:1',
             'centro_curso.*.centro_id' => 'required|integer|exists:centros,id',
             'centro_curso.*.preco' => 'required|numeric|min:0',
-            'centro_curso.*.duracao' => 'required|string|max:100',
-            'centro_curso.*.data_arranque' => 'required|date|after_or_equal:today',
         ]);
 
         // 1. Criar Curso e Centro-Curso em transação atômica
@@ -82,17 +80,15 @@ class CursoController extends Controller
             // Criar Centro-Curso (relação muitos-para-muitos)
             foreach ($validated['centro_curso'] as $centroDado) {
                 $curso->centros()->attach($centroDado['centro_id'], [
-                    'preco' => $centroDado['preco'],
-                    'duracao' => $centroDado['duracao'],
-                    'data_arranque' => $centroDado['data_arranque'] ?? null
+                    'preco' => $centroDado['preco']
                 ]);
             }
 
             return $curso;
         }, 5); // 5 tentativas em caso de deadlock
 
-        // 2. Criar Cronogramas INDEPENDENTEMENTE (fora da transação)
-        // Removido - cronogramas são agora gerenciados independentemente
+        // 2. Criar turmas INDEPENDENTEMENTE (fora da transação)
+        // Removido - turmas são agora gerenciados independentemente
 
         return redirect()->route('cursos.index')
             ->with('success', 'Curso e centros criados com sucesso!');
@@ -100,14 +96,14 @@ class CursoController extends Controller
 
     public function show(Curso $curso)
     {
-        $curso->load(['centros', 'formadores', 'cronogramas', 'preInscricoes']);
+        $curso->load(['centros', 'formadores', 'turmas', 'preInscricoes']);
         $centros = Centro::all();
         return view('cursos.show', compact('curso', 'centros'));
     }
 
     public function edit(Curso $curso)
     {
-        $curso->load(['centros', 'cronogramas']);
+        $curso->load(['centros', 'turmas']);
         $centros = Centro::all();
         $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
         $periodos = ['manhã', 'tarde', 'noite'];
@@ -135,8 +131,6 @@ class CursoController extends Controller
             $rules['centro_curso'] = 'required|array|min:1';
             $rules['centro_curso.*.centro_id'] = 'required|integer|exists:centros,id';
             $rules['centro_curso.*.preco'] = 'required|numeric|min:0';
-            $rules['centro_curso.*.duracao'] = 'required|string|max:100';
-            $rules['centro_curso.*.data_arranque'] = 'required|date|after_or_equal:today';
         }
         
         $validated = $request->validate($rules);
@@ -168,9 +162,7 @@ class CursoController extends Controller
                 $curso->centros()->detach();
                 foreach ($validated['centro_curso'] as $centroDado) {
                     $curso->centros()->attach($centroDado['centro_id'], [
-                        'preco' => $centroDado['preco'],
-                        'duracao' => $centroDado['duracao'],
-                        'data_arranque' => $centroDado['data_arranque'] ?? null
+                        'preco' => $centroDado['preco']
                     ]);
                 }
             }, 5);
@@ -218,15 +210,11 @@ class CursoController extends Controller
         $validated = $request->validate([
             'centro_id' => 'required|integer|exists:centros,id',
             'preco' => 'required|numeric|min:0',
-            'duracao' => 'required|string|max:100',
-            'data_arranque' => 'required|date',
         ]);
 
         try {
             $curso->centros()->attach($validated['centro_id'], [
-                'preco' => $validated['preco'],
-                'duracao' => $validated['duracao'],
-                'data_arranque' => $validated['data_arranque'] ?? null
+                'preco' => $validated['preco']
             ]);
 
             return response()->json(['success' => true, 'message' => 'Centro associado com sucesso'], 201);
@@ -242,15 +230,11 @@ class CursoController extends Controller
     {
         $validated = $request->validate([
             'preco' => 'required|numeric|min:0',
-            'duracao' => 'required|string|max:100',
-            'data_arranque' => 'required|date',
         ]);
 
         try {
             $curso->centros()->updateExistingPivot($centroId, [
-                'preco' => $validated['preco'],
-                'duracao' => $validated['duracao'],
-                'data_arranque' => $validated['data_arranque']
+                'preco' => $validated['preco']
             ]);
 
             return response()->json(['success' => true, 'message' => 'Centro atualizado com sucesso'], 200);

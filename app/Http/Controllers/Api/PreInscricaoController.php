@@ -36,7 +36,7 @@ class PreInscricaoController extends Controller
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
             'centro_id' => 'required|exists:centros,id',
-            'cronograma_id' => 'nullable|exists:cronogramas,id',
+            'turma_id' => 'nullable|exists:turmas,id',
             'nome_completo' => 'required|string|max:100',
             'contactos' => 'required|string',
             'email' => 'nullable|email|max:100',
@@ -62,21 +62,21 @@ class PreInscricaoController extends Controller
             ], 422);
         }
         
-        // Validação: Se cronograma_id fornecido, deve pertencer ao curso selecionado
-        if ($validated['cronograma_id']) {
-            $cronograma = \App\Models\Cronograma::find($validated['cronograma_id']);
+        // Validação: Se turma_id fornecido, deve pertencer ao curso selecionado
+        if ($validated['turma_id']) {
+            $turma = \App\Models\Turma::find($validated['turma_id']);
             
-            if (!$cronograma) {
+            if (!$turma) {
                 return response()->json([
                     'status' => 'erro',
-                    'mensagem' => 'Cronograma não encontrado.'
+                    'mensagem' => 'Turma não encontrada.'
                 ], 404);
             }
             
-            if ($cronograma->curso_id !== $validated['curso_id']) {
+            if ($turma->curso_id !== $validated['curso_id']) {
                 return response()->json([
                     'status' => 'erro',
-                    'mensagem' => 'O cronograma selecionado não pertence ao curso escolhido.'
+                    'mensagem' => 'A turma selecionada não pertence ao curso escolhido.'
                 ], 422);
             }
         }
@@ -134,7 +134,7 @@ class PreInscricaoController extends Controller
      */
     public function index()
     {
-        $preInscricoes = PreInscricao::with(['curso', 'centro', 'cronograma'])->get();
+        $preInscricoes = PreInscricao::with(['curso', 'centro', 'turma'])->get();
         return response()->json($preInscricoes);
     }
 
@@ -255,7 +255,7 @@ class PreInscricaoController extends Controller
      */
     public function show($id)
     {
-        $preInscricao = PreInscricao::with(['curso', 'centro', 'cronograma'])->find($id);
+        $preInscricao = PreInscricao::with(['curso', 'centro', 'turma'])->find($id);
         if (!$preInscricao) {
             return response()->json([
                 'status' => 'erro',

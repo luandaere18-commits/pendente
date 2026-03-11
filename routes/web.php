@@ -6,7 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\FormadorController;
-use App\Http\Controllers\CronogramaController;
+use App\Http\Controllers\TurmaController;
 use App\Http\Controllers\PreInscricaoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProdutoController;
@@ -81,8 +81,8 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
         'formadores' => 'formador'
     ]);
     
-    // Cronogramas
-    Route::resource('cronogramas', CronogramaController::class);
+    // Turmas
+    Route::resource('turmas', TurmaController::class);
     
     // Pré-inscrições
     Route::resource('pre-inscricoes', PreInscricaoController::class)->parameters([

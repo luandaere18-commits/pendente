@@ -50,7 +50,7 @@
                 <h2 class="mb-1">
                     <i class="fas fa-edit me-2 text-primary"></i>Editar Curso: {{ $curso->nome }}
                 </h2>
-                <p class="text-muted small">Atualizar informações do curso e centros. Cronogramas são gerenciados separadamente.</p>
+                <p class="text-muted small">Atualizar informações do curso e centros. turmas são gerenciados separadamente.</p>
             </div>
             <a href="{{ route('cursos.index') }}" class="btn btn-sm btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Voltar
@@ -188,7 +188,7 @@
     </form>
 </div>
 
-<!-- Templates para Centro e Cronograma -->
+<!-- Templates para Centro e turma -->
 <template id="centroTemplate">
     <div class="centro-item border rounded p-2 mb-2">
         <div class="d-flex justify-content-between align-items-start mb-2">
@@ -209,19 +209,9 @@
                 </select>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-6">
                 <label class="form-label small">Preço (€) <span class="text-danger">*</span></label>
                 <input type="number" class="form-control form-control-sm" name="centro_curso[INDEX][preco]" placeholder="0.00" step="0.01" min="0" required>
-            </div>
-
-            <div class="col-md-3">
-                <label class="form-label small">Duração <span class="text-danger">*</span></label>
-                <input type="text" class="form-control form-control-sm" name="centro_curso[INDEX][duracao]" placeholder="Ex: 40h" maxlength="100" required>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label small">Data de Arranque <span class="text-danger">*</span></label>
-                <input type="date" class="form-control form-control-sm" name="centro_curso[INDEX][data_arranque]" required>
             </div>
         </div>
     </div>

@@ -3,54 +3,50 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cronograma;
+use App\Models\Turma;
 use App\Models\Curso;
 use Illuminate\Http\Request;
 
 /**
  * @OA\Tag(
- *     name="Cronogramas",
- *     description="Operações relacionadas aos cronogramas de cursos"
+ *     name="Turmas",
+ *     description="Operações relacionadas às turmas de cursos"
  * )
  */
-class CronogramaController extends Controller
+class TurmaController extends Controller
 {
-
-
     /**
      * @OA\Get(
-     *     path="/cronogramas",
-     *     tags={"Cronogramas"},
-     *     summary="Listar todos os cronogramas",
+     *     path="/turmas",
+     *     tags={"Turmas"},
+     *     summary="Listar todas as turmas",
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de cronogramas",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Cronograma"))
+     *         description="Lista de turmas",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Turma"))
      *     )
      * )
      */
     public function index()
     {
-        $cronogramas = Cronograma::with('curso')->get();
-        return response()->json($cronogramas);
+        $turmas = Turma::with('curso')->get();
+        return response()->json($turmas);
     }
-
-
 
     /**
      * @OA\Post(
-     *     path="/cronogramas",
-     *     tags={"Cronogramas"},
-     *     summary="Criar um novo cronograma",
+     *     path="/turmas",
+     *     tags={"Turmas"},
+     *     summary="Criar uma nova turma",
      *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/CronogramaInput")
+     *         @OA\JsonContent(ref="#/components/schemas/TurmaInput")
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Cronograma criado",
-     *         @OA\JsonContent(ref="#/components/schemas/Cronograma")
+     *         description="Turma criada",
+     *         @OA\JsonContent(ref="#/components/schemas/Turma")
      *     )
      * )
      */
@@ -58,6 +54,7 @@ class CronogramaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
@@ -84,22 +81,20 @@ class CronogramaController extends Controller
             $validated['dia_semana'] = [$validated['dia_semana']];
         }
 
-        $cronograma = Cronograma::create($validated);
+        $turma = Turma::create($validated);
 
         return response()->json([
             'status' => 'sucesso',
-            'mensagem' => 'Cronograma cadastrado com sucesso!',
-            'dados' => $cronograma
+            'mensagem' => 'Turma cadastrada com sucesso!',
+            'dados' => $turma
         ], 201);
     }
 
-
-
     /**
      * @OA\Get(
-     *     path="/cronogramas/{id}",
-     *     tags={"Cronogramas"},
-     *     summary="Buscar cronograma por ID",
+     *     path="/turmas/{id}",
+     *     tags={"Turmas"},
+     *     summary="Buscar turma por ID",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -108,34 +103,32 @@ class CronogramaController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Cronograma encontrado",
-     *         @OA\JsonContent(ref="#/components/schemas/Cronograma")
+     *         description="Turma encontrada",
+     *         @OA\JsonContent(ref="#/components/schemas/Turma")
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Cronograma não encontrado"
+     *         description="Turma não encontrada"
      *     )
      * )
      */
     public function show($id)
     {
-        $cronograma = Cronograma::with('curso')->find($id);
-        if (!$cronograma) {
+        $turma = Turma::with('curso')->find($id);
+        if (!$turma) {
             return response()->json([
                 'status' => 'erro',
-                'mensagem' => 'Cronograma não encontrado!'
+                'mensagem' => 'Turma não encontrada!'
             ], 404);
         }
-        return response()->json(['status' => 'sucesso', 'dados' => $cronograma]);
+        return response()->json(['status' => 'sucesso', 'dados' => $turma]);
     }
-
-
 
     /**
      * @OA\Put(
-     *     path="/cronogramas/{id}",
-     *     tags={"Cronogramas"},
-     *     summary="Atualizar cronograma (não permite editar curso_id)",
+     *     path="/turmas/{id}",
+     *     tags={"Turmas"},
+     *     summary="Atualizar turma (não permite editar curso_id)",
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
@@ -145,31 +138,32 @@ class CronogramaController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/CronogramaUpdateInput")
+     *         @OA\JsonContent(ref="#/components/schemas/TurmaUpdateInput")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Cronograma atualizado",
-     *         @OA\JsonContent(ref="#/components/schemas/Cronograma")
+     *         description="Turma atualizada",
+     *         @OA\JsonContent(ref="#/components/schemas/Turma")
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Cronograma não encontrado"
+     *         description="Turma não encontrada"
      *     )
      * )
      */
     public function update(Request $request, $id)
     {
-        $cronograma = Cronograma::find($id);
-        if (!$cronograma) {
+        $turma = Turma::find($id);
+        if (!$turma) {
             return response()->json([
                 'status' => 'erro',
-                'mensagem' => 'Cronograma não encontrado!'
+                'mensagem' => 'Turma não encontrada!'
             ], 404);
         }
         
         // Não permite editar curso_id
         $validated = $request->validate([
+            'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
@@ -199,22 +193,20 @@ class CronogramaController extends Controller
             $validated['hora_fim'] = date('H:i', strtotime($validated['hora_fim']));
         }
         
-        $cronograma->update($validated);
+        $turma->update($validated);
         
         return response()->json([
             'status' => 'sucesso',
-            'mensagem' => 'Cronograma atualizado com sucesso!',
-            'dados' => $cronograma
+            'mensagem' => 'Turma atualizada com sucesso!',
+            'dados' => $turma
         ]);
     }
 
-
-
     /**
      * @OA\Delete(
-     *     path="/cronogramas/{id}",
-     *     tags={"Cronogramas"},
-     *     summary="Deletar cronograma",
+     *     path="/turmas/{id}",
+     *     tags={"Turmas"},
+     *     summary="Deletar turma",
      *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
@@ -224,7 +216,7 @@ class CronogramaController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Cronograma deletado"
+     *         description="Turma deletada"
      *     ),
      *     @OA\Response(
      *         response=401,
@@ -232,87 +224,23 @@ class CronogramaController extends Controller
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Cronograma não encontrado"
+     *         description="Turma não encontrada"
      *     )
      * )
      */
     public function destroy($id)
     {
-        $cronograma = Cronograma::find($id);
-        if (!$cronograma) {
+        $turma = Turma::find($id);
+        if (!$turma) {
             return response()->json([
                 'status' => 'erro',
-                'mensagem' => 'Cronograma não encontrado!'
+                'mensagem' => 'Turma não encontrada!'
             ], 404);
         }
-        $cronograma->delete();
+        $turma->delete();
         return response()->json([
             'status' => 'sucesso',
-            'mensagem' => 'Cronograma deletado com sucesso!'
+            'mensagem' => 'Turma deletada com sucesso!'
         ]);
-    }
-
-    /**
-     * Verificar conflitos de horário para um mesmo formador
-     */
-    private function verificarConflitosHorario($dadosHorario, $cronogramaIdIgnorar = null)
-    {
-        $conflitos = [];
-        
-        // Buscar o curso e seus formadores
-        $curso = Curso::with('formadores')->find($dadosHorario['curso_id']);
-        
-        if (!$curso || $curso->formadores->isEmpty()) {
-            return $conflitos; // Sem formadores, sem conflitos
-        }
-
-        foreach ($curso->formadores as $formador) {
-            // Buscar todos os cronogramas dos cursos deste formador
-            $cronogramasFormador = Cronograma::whereHas('curso.formadores', function($query) use ($formador) {
-                $query->where('formadores.id', $formador->id);
-            })
-            ->where('dia_semana', $dadosHorario['dia_semana'])
-            ->when($cronogramaIdIgnorar, function($query, $id) {
-                return $query->where('id', '!=', $id);
-            })
-            ->with(['curso.formadores'])
-            ->get();
-
-            foreach ($cronogramasFormador as $cronogramaExistente) {
-                if ($this->horariosSeConflitam(
-                    $dadosHorario['hora_inicio'], 
-                    $dadosHorario['hora_fim'],
-                    $cronogramaExistente->hora_inicio, 
-                    $cronogramaExistente->hora_fim
-                )) {
-                    $conflitos[] = [
-                        'formador' => $formador->nome,
-                        'curso_conflitante' => $cronogramaExistente->curso->nome,
-                        'dia_semana' => $cronogramaExistente->dia_semana,
-                        'periodo' => $cronogramaExistente->periodo,
-                        'hora_inicio' => $cronogramaExistente->hora_inicio,
-                        'hora_fim' => $cronogramaExistente->hora_fim,
-                        'mensagem' => "Formador {$formador->nome} já tem aula do curso '{$cronogramaExistente->curso->nome}' das {$cronogramaExistente->hora_inicio} às {$cronogramaExistente->hora_fim}"
-                    ];
-                }
-            }
-        }
-
-        return $conflitos;
-    }
-
-    /**
-     * Verificar se dois horários se conflitam
-     */
-    private function horariosSeConflitam($inicio1, $fim1, $inicio2, $fim2)
-    {
-        // Converter para timestamps para facilitar comparação
-        $inicio1 = strtotime($inicio1);
-        $fim1 = strtotime($fim1);
-        $inicio2 = strtotime($inicio2);
-        $fim2 = strtotime($fim2);
-
-        // Verificar se há sobreposição
-        return ($inicio1 < $fim2) && ($fim1 > $inicio2);
     }
 }

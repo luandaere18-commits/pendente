@@ -134,9 +134,9 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Cronograma Preferido</label>
-                        <select class="form-select" name="cronograma_id" id="modal_cronogramas">
-                            <option value="">Selecionar cronograma (opcional)</option>
+                        <label class="form-label">turma Preferido</label>
+                        <select class="form-select" name="turma_id" id="modal_turmas">
+                            <option value="">Selecionar turma (opcional)</option>
                         </select>
                     </div>
                     
@@ -200,7 +200,7 @@
 <script>
 let centroAtual = null;
 let cursosDisponiveis = [];
-let cronogramasDisponiveis = [];
+let turmasDisponiveis = [];
 
 $(document).ready(function() {
     const centroId = {{ $centro->id ?? 'null' }};
@@ -208,7 +208,7 @@ $(document).ready(function() {
     if (centroId) {
         carregarCentro(centroId);
         carregarCursos(centroId);
-        carregarCronogramas();
+        carregarturmas();
     } else {
         window.location.href = '{{ route("site.centros") }}';
     }
@@ -344,10 +344,10 @@ function carregarCursos(centroId) {
     });
 }
 
-function carregarCronogramas() {
-    $.get('/api/cronogramas', function(cronogramas) {
-        cronogramasDisponiveis = cronogramas;
-        // Preencher select com todos os cronogramas quando modal abrir
+function carregarturmas() {
+    $.get('/api/turmas', function(turmas) {
+        turmasDisponiveis = turmas;
+        // Preencher select com todos os turmas quando modal abrir
     });
 }
 
@@ -460,18 +460,18 @@ function abrirPreInscricao(cursoId, cursoNome) {
     $('#modal_curso_nome').text(cursoNome || 'Curso');
     $('#modal_centro_nome').text(centroAtual.nome || 'Centro');
     
-    // Carregar cronogramas para este curso
-    const cronogramasEste = cronogramasDisponiveis.filter(c => c.curso_id == cursoId);
-    let cronogramasHtml = '<option value="">Selecionar cronograma (opcional)</option>';
+    // Carregar turmas para este curso
+    const turmasEste = turmasDisponiveis.filter(c => c.curso_id == cursoId);
+    let turmasHtml = '<option value="">Selecionar turma (opcional)</option>';
     
-    cronogramasEste.forEach(cronograma => {
-        const horaTexto = cronograma.hora_inicio && cronograma.hora_fim 
-            ? ` (${cronograma.hora_inicio} - ${cronograma.hora_fim})`
+    turmasEste.forEach(turma => {
+        const horaTexto = turma.hora_inicio && turma.hora_fim 
+            ? ` (${turma.hora_inicio} - ${turma.hora_fim})`
             : '';
-        cronogramasHtml += `<option value="${cronograma.id}">${cronograma.dia_semana} - ${cronograma.periodo}${horaTexto}</option>`;
+        turmasHtml += `<option value="${turma.id}">${turma.dia_semana} - ${turma.periodo}${horaTexto}</option>`;
     });
     
-    $('#modal_cronogramas').html(cronogramasHtml);
+    $('#modal_turmas').html(turmasHtml);
     
     // Limpar form
     $('#preInscricaoForm')[0].reset();
@@ -541,7 +541,7 @@ function submeterPreInscricao() {
     const dados = {
         curso_id: parseInt(cursoId),
         centro_id: parseInt(centroId),
-        cronograma_id: $('#modal_cronogramas').val() ? parseInt($('#modal_cronogramas').val()) : null,
+        turma_id: $('#modal_turmas').val() ? parseInt($('#modal_turmas').val()) : null,
         nome_completo: nomeCompleto.trim(),
         email: $('input[name="email"]').val()?.trim() || null,
         contactos: JSON.stringify(contactos),

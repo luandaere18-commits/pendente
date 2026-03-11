@@ -15,9 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
             $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
-            $table->decimal('preco', 10, 2);
-            $table->string('duracao');
-            $table->date('data_arranque')->nullable(); 
+            $table->decimal('preco', 10, 2); 
             $table->timestamps();
             
             $table->unique(['centro_id', 'curso_id']);

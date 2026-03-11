@@ -25,7 +25,7 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
 // Controllers
 use App\Http\Controllers\Api\CentroController;
 use App\Http\Controllers\Api\CursoController;
-use App\Http\Controllers\Api\CronogramaController;
+use App\Http\Controllers\Api\TurmaController;
 use App\Http\Controllers\Api\FormadorController;
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ProdutoController;
@@ -39,8 +39,8 @@ Route::get('/centros/{id}', [CentroController::class, 'show']);
 Route::get('/cursos', [CursoController::class, 'index'])->name('api.cursos.index');
 Route::get('/cursos/{id}', [CursoController::class, 'show']);
 
-Route::get('/cronogramas', [CronogramaController::class, 'index']);
-Route::get('/cronogramas/{id}', [CronogramaController::class, 'show']);
+Route::get('/turmas', [TurmaController::class, 'index']);
+Route::get('/turmas/{id}', [TurmaController::class, 'show']);
 
 Route::get('/formadores', [FormadorController::class, 'index'])->name('api.formadores.index');
 Route::get('/formadores/{id}', [FormadorController::class, 'show']);
@@ -80,10 +80,10 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::post('/cursos/{id}/centros', [CursoController::class, 'attachCentro']);
     Route::delete('/cursos/{id}/centros/{centroId}', [CursoController::class, 'detachCentro']);
 
-    // Cronogramas
-    Route::post('/cronogramas', [CronogramaController::class, 'store']);
-    Route::put('/cronogramas/{id}', [CronogramaController::class, 'update']);
-    Route::delete('/cronogramas/{id}', [CronogramaController::class, 'destroy']);
+    // Turmas
+    Route::post('/turmas', [TurmaController::class, 'store']);
+    Route::put('/turmas/{id}', [TurmaController::class, 'update']);
+    Route::delete('/turmas/{id}', [TurmaController::class, 'destroy']);
 
     // Formadores
     Route::post('/formadores', [FormadorController::class, 'store']);

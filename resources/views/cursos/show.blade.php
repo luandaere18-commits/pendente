@@ -87,8 +87,8 @@
                         </div>
                         <div class="col-6">
                             <div class="bg-info-subtle rounded p-2 text-center">
-                                <div class="fw-bold text-info fs-5">{{ $curso->cronogramas->count() }}</div>
-                                <small class="text-muted"><i class="fas fa-calendar me-1"></i>Cronogramas</small>
+                                <div class="fw-bold text-info fs-5">{{ $curso->turmas->count() }}</div>
+                                <small class="text-muted"><i class="fas fa-calendar me-1"></i>turmas</small>
                             </div>
                         </div>
                         <div class="col-6">
@@ -111,7 +111,7 @@
     </div>
 
     {{-- ============================================= --}}
-    {{-- TABS - Centros / Cronogramas / Pré-inscrições  --}}
+    {{-- TABS - Centros / turmas / Pré-inscrições  --}}
     {{-- ============================================= --}}
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white border-bottom-0 pt-3 px-4">
@@ -123,9 +123,9 @@
                     </button>
                 </li>
                 <li class="nav-item">
-                    <button class="nav-link fw-semibold" id="cronogramas-tab" data-bs-toggle="tab" data-bs-target="#cronogramas" type="button" role="tab">
-                        <i class="fas fa-calendar-alt me-1"></i>Cronogramas
-                        <span class="badge bg-info ms-1">{{ $curso->cronogramas->count() }}</span>
+                    <button class="nav-link fw-semibold" id="turmas-tab" data-bs-toggle="tab" data-bs-target="#turmas" type="button" role="tab">
+                        <i class="fas fa-calendar-alt me-1"></i>turmas
+                        <span class="badge bg-info ms-1">{{ $curso->turmas->count() }}</span>
                     </button>
                 </li>
                 <li class="nav-item">
@@ -208,17 +208,17 @@
                 </div>
 
                 {{-- ======================== --}}
-                {{-- ABA: CRONOGRAMAS         --}}
+                {{-- ABA: turmas         --}}
                 {{-- ======================== --}}
-                <div class="tab-pane fade" id="cronogramas" role="tabpanel">
+                <div class="tab-pane fade" id="turmas" role="tabpanel">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold mb-0"><i class="fas fa-calendar-alt me-2 text-info"></i>Cronogramas</h5>
-                        <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalAdicionarCronograma">
-                            <i class="fas fa-plus me-1"></i>Novo Cronograma
+                        <h5 class="fw-bold mb-0"><i class="fas fa-calendar-alt me-2 text-info"></i>turmas</h5>
+                        <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalAdicionarturma">
+                            <i class="fas fa-plus me-1"></i>Novo turma
                         </button>
                     </div>
 
-                    @if($curso->cronogramas->count() > 0)
+                    @if($curso->turmas->count() > 0)
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
@@ -232,40 +232,40 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($curso->cronogramas as $cronograma)
+                                    @foreach($curso->turmas as $turma)
                                         <tr>
                                             <td><span class="text-muted">{{ $loop->iteration }}</span></td>
                                             <td>
-                                                @if(is_array($cronograma->dia_semana))
-                                                    @foreach($cronograma->dia_semana as $dia)
+                                                @if(is_array($turma->dia_semana))
+                                                    @foreach($turma->dia_semana as $dia)
                                                         <span class="badge bg-info-subtle text-info me-1">{{ substr($dia, 0, 3) }}</span>
                                                     @endforeach
                                                 @endif
                                             </td>
                                             <td>
-                                                <span class="badge bg-primary-subtle text-primary">{{ ucfirst($cronograma->periodo) }}</span>
+                                                <span class="badge bg-primary-subtle text-primary">{{ ucfirst($turma->periodo) }}</span>
                                             </td>
                                             <td>
-                                                @if($cronograma->hora_inicio)
-                                                    <strong>{{ substr($cronograma->hora_inicio, 0, 5) }}</strong>
+                                                @if($turma->hora_inicio)
+                                                    <strong>{{ substr($turma->hora_inicio, 0, 5) }}</strong>
                                                 @else
                                                     <span class="text-muted">—</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($cronograma->hora_fim)
-                                                    <strong>{{ substr($cronograma->hora_fim, 0, 5) }}</strong>
+                                                @if($turma->hora_fim)
+                                                    <strong>{{ substr($turma->hora_fim, 0, 5) }}</strong>
                                                 @else
                                                     <span class="text-muted">—</span>
                                                 @endif
                                             </td>
                                             <td class="text-end">
-                                                <button class="btn btn-sm btn-outline-primary btn-editar-cronograma"
-                                                        data-cronograma-id="{{ $cronograma->id }}"
-                                                        data-dias="{{ json_encode($cronograma->dia_semana) }}"
-                                                        data-periodo="{{ $cronograma->periodo }}"
-                                                        data-hora-inicio="{{ $cronograma->hora_inicio }}"
-                                                        data-hora-fim="{{ $cronograma->hora_fim }}"
+                                                <button class="btn btn-sm btn-outline-primary btn-editar-turma"
+                                                        data-turma-id="{{ $turma->id }}"
+                                                        data-dias="{{ json_encode($turma->dia_semana) }}"
+                                                        data-periodo="{{ $turma->periodo }}"
+                                                        data-hora-inicio="{{ $turma->hora_inicio }}"
+                                                        data-hora-fim="{{ $turma->hora_fim }}"
                                                         type="button"
                                                         title="Editar">
                                                     <i class="fas fa-edit"></i>
@@ -279,7 +279,7 @@
                     @else
                         <div class="text-center py-5 text-muted">
                             <i class="fas fa-calendar-alt fa-3x mb-3 opacity-25"></i>
-                            <p class="mb-0">Nenhum cronograma cadastrado.</p>
+                            <p class="mb-0">Nenhum turma cadastrado.</p>
                         </div>
                     @endif
                 </div>
@@ -544,18 +544,18 @@
 </div>
 
 {{-- ============================================= --}}
-{{-- MODAL: Adicionar Cronograma                   --}}
+{{-- MODAL: Adicionar turma                   --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalAdicionarCronograma" tabindex="-1" aria-labelledby="modalAdicionarCronogramaLabel" aria-hidden="true">
+<div class="modal fade" id="modalAdicionarturma" tabindex="-1" aria-labelledby="modalAdicionarturmaLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="modalAdicionarCronogramaLabel">
-                    <i class="fas fa-calendar-plus me-2"></i>Adicionar Cronograma
+                <h5 class="modal-title" id="modalAdicionarturmaLabel">
+                    <i class="fas fa-calendar-plus me-2"></i>Adicionar turma
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form id="formAdicionarCronogramaAjax">
+            <form id="formAdicionarturmaAjax">
                 @csrf
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -603,20 +603,20 @@
 </div>
 
 {{-- ============================================= --}}
-{{-- MODAL: Editar Cronograma                      --}}
+{{-- MODAL: Editar turma                      --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalEditarCronograma" tabindex="-1" aria-labelledby="modalEditarCronogramaLabel" aria-hidden="true">
+<div class="modal fade" id="modalEditarturma" tabindex="-1" aria-labelledby="modalEditarturmaLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="modalEditarCronogramaLabel">
-                    <i class="fas fa-edit me-2"></i>Editar Cronograma
+                <h5 class="modal-title" id="modalEditarturmaLabel">
+                    <i class="fas fa-edit me-2"></i>Editar turma
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form id="formEditarCronogramaAjax">
+            <form id="formEditarturmaAjax">
                 @csrf
-                <input type="hidden" name="cronograma_id" id="editCronogramaId">
+                <input type="hidden" name="turma_id" id="editturmaId">
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Dias da Semana <span class="text-danger">*</span></label>
@@ -632,7 +632,7 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
-                            <select class="form-select" name="edit_periodo" id="editCronogramaPeriodo" required>
+                            <select class="form-select" name="edit_periodo" id="editturmaPeriodo" required>
                                 <option value="">Selecione</option>
                                 <option value="manha">Manhã</option>
                                 <option value="tarde">Tarde</option>
@@ -641,11 +641,11 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Hora Início</label>
-                            <input type="time" class="form-control" name="edit_hora_inicio" id="editCronogramaHoraInicio">
+                            <input type="time" class="form-control" name="edit_hora_inicio" id="editturmaHoraInicio">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Hora Fim</label>
-                            <input type="time" class="form-control" name="edit_hora_fim" id="editCronogramaHoraFim">
+                            <input type="time" class="form-control" name="edit_hora_fim" id="editturmaHoraFim">
                         </div>
                     </div>
                 </div>
@@ -958,9 +958,9 @@ $(document).on("click", ".btn-remover-centro", function() {
 });
 
 /**
- * Adicionar Cronograma - AJAX
+ * Adicionar turma - AJAX
  */
-$("#formAdicionarCronogramaAjax").on("submit", function(e) {
+$("#formAdicionarturmaAjax").on("submit", function(e) {
     e.preventDefault();
     
     const $form = $(this);
@@ -986,7 +986,7 @@ $("#formAdicionarCronogramaAjax").on("submit", function(e) {
     };
     
     $.ajax({
-        url: `/api/cronogramas`,
+        url: `/api/turmas`,
         type: "POST",
         data: JSON.stringify(formData),
         contentType: "application/json",
@@ -994,11 +994,11 @@ $("#formAdicionarCronogramaAjax").on("submit", function(e) {
             "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
         },
         success: function(response) {
-            $("#modalAdicionarCronograma").modal("hide");
+            $("#modalAdicionarturma").modal("hide");
             Swal.fire({
                 icon: "success",
                 title: "Sucesso!",
-                text: "Cronograma adicionado com sucesso!",
+                text: "turma adicionado com sucesso!",
                 timer: 2000
             }).then(() => location.reload());
         },
@@ -1009,17 +1009,17 @@ $("#formAdicionarCronogramaAjax").on("submit", function(e) {
             Swal.fire({
                 icon: "error",
                 title: "Erro!",
-                text: message || "Erro ao adicionar cronograma."
+                text: message || "Erro ao adicionar turma."
             });
         }
     });
 });
 
 /**
- * Editar Cronograma - Abre Modal
+ * Editar turma - Abre Modal
  */
-$(document).on("click", ".btn-editar-cronograma", function() {
-    const id = $(this).data("cronograma-id");
+$(document).on("click", ".btn-editar-turma", function() {
+    const id = $(this).data("turma-id");
     let dias = $(this).data("dias");
     let periodo = $(this).data("periodo");
     const horaInicio = $(this).data("hora-inicio");
@@ -1034,10 +1034,10 @@ $(document).on("click", ".btn-editar-cronograma", function() {
         periodo = "manha";
     }
     
-    $("#editCronogramaId").val(id);
-    $("#editCronogramaPeriodo").val(periodo);
-    $("#editCronogramaHoraInicio").val(horaInicio ? horaInicio.substring(0, 5) : "");
-    $("#editCronogramaHoraFim").val(horaFim ? horaFim.substring(0, 5) : "");
+    $("#editturmaId").val(id);
+    $("#editturmaPeriodo").val(periodo);
+    $("#editturmaHoraInicio").val(horaInicio ? horaInicio.substring(0, 5) : "");
+    $("#editturmaHoraFim").val(horaFim ? horaFim.substring(0, 5) : "");
     
     $("input[name=\"edit_dia_semana[]\"]").prop("checked", false).each(function() {
         if (dias && dias.includes($(this).val())) {
@@ -1045,16 +1045,16 @@ $(document).on("click", ".btn-editar-cronograma", function() {
         }
     });
     
-    $("#modalEditarCronograma").modal("show");
+    $("#modalEditarturma").modal("show");
 });
 
 /**
- * Atualizar Cronograma - AJAX
+ * Atualizar turma - AJAX
  */
-$("#formEditarCronogramaAjax").on("submit", function(e) {
+$("#formEditarturmaAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
-    const cronogramaId = $form.find("[name=\"cronograma_id\"]").val();
+    const turmaId = $form.find("[name=\"turma_id\"]").val();
     
     const dias = $form.find("input[name=\"edit_dia_semana[]\"]:checked").map(function() {
         return $(this).val();
@@ -1077,7 +1077,7 @@ $("#formEditarCronogramaAjax").on("submit", function(e) {
     };
     
     $.ajax({
-        url: `/api/cronogramas/${cronogramaId}`,
+        url: `/api/turmas/${turmaId}`,
         type: "PUT",
         data: JSON.stringify(formData),
         contentType: "application/json",
@@ -1085,11 +1085,11 @@ $("#formEditarCronogramaAjax").on("submit", function(e) {
             "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
         },
         success: function() {
-            $("#modalEditarCronograma").modal("hide");
+            $("#modalEditarturma").modal("hide");
             Swal.fire({
                 icon: "success",
                 title: "Sucesso!",
-                text: "Cronograma atualizado com sucesso!",
+                text: "turma atualizado com sucesso!",
                 timer: 2000
             }).then(() => location.reload());
         },
@@ -1100,7 +1100,7 @@ $("#formEditarCronogramaAjax").on("submit", function(e) {
             Swal.fire({
                 icon: "error",
                 title: "Erro!",
-                text: message || "Erro ao atualizar cronograma."
+                text: message || "Erro ao atualizar turma."
             });
         }
     });

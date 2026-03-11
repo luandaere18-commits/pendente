@@ -80,13 +80,6 @@ class CursoController extends Controller
             });
         }
 
-        // Filtro por data de arranque (na tabela pivô centro_curso)
-        if ($request->filled('data_arranque')) {
-            $query->whereHas('centros', function($q) use ($request) {
-                $q->wherePivot('data_arranque', $request->data_arranque);
-            });
-        }
-
         // Filtro por data de criação
         if ($request->filled('data_inicio')) {
             $query->where('created_at', '>=', $request->data_inicio);
@@ -162,8 +155,6 @@ class CursoController extends Controller
             'centros' => 'required|array|min:1',
             'centros.*.centro_id' => 'required|exists:centros,id',
             'centros.*.preco' => 'required|numeric|min:0',
-            'centros.*.duracao' => 'required|string|max:50',
-            'centros.*.data_arranque' => 'required|date',
             'formadores' => 'nullable|array'
         ]);
 
@@ -187,13 +178,11 @@ class CursoController extends Controller
 
         $curso = Curso::create($cursoData);
 
-        // Associar centros com dados extras (preço, duração e data_arranque)
+        // Associar centros com dados extras (preço)
         $centrosPivot = [];
         foreach ($validated['centros'] as $centro) {
             $centrosPivot[$centro['centro_id']] = [
                 'preco' => $centro['preco'],
-                'duracao' => $centro['duracao'],
-                'data_arranque' => $centro['data_arranque'],
             ];
         }
         $curso->centros()->sync($centrosPivot);
@@ -237,7 +226,7 @@ class CursoController extends Controller
 
     public function show($id)
     {
-        $curso = Curso::with(['centros', 'formadores', 'cronogramas'])->find($id);
+        $curso = Curso::with(['centros', 'formadores', 'turmas'])->find($id);
 
         if (!$curso) {
             return response()->json([
@@ -307,8 +296,6 @@ class CursoController extends Controller
             'centros' => 'nullable|array',
             'centros.*.centro_id' => 'required_unless:centros,null|exists:centros,id',
             'centros.*.preco' => 'required_unless:centros,null|numeric|min:0',
-            'centros.*.duracao' => 'required_unless:centros,null|string|max:50',
-            'centros.*.data_arranque' => 'nullable|date',
             'formadores' => 'nullable|array'
         ];
 
@@ -337,8 +324,6 @@ class CursoController extends Controller
             foreach ($validated['centros'] as $centro) {
                 $centrosPivot[$centro['centro_id']] = [
                     'preco' => $centro['preco'],
-                    'duracao' => $centro['duracao'],
-                    'data_arranque' => $centro['data_arranque'] ?? null,
                 ];
             }
             $curso->centros()->sync($centrosPivot);
@@ -423,8 +408,6 @@ class CursoController extends Controller
             $validated = $request->validate([
                 'centro_id' => 'required|integer|exists:centros,id',
                 'preco' => 'required|numeric|min:0',
-                'duracao' => 'required|string|max:100',
-                'data_arranque' => 'required|date|after_or_equal:today',
             ]);
 
             // Verificar se centro já está associado
@@ -438,8 +421,6 @@ class CursoController extends Controller
             // Associar centro
             $curso->centros()->attach($validated['centro_id'], [
                 'preco' => $validated['preco'],
-                'duracao' => $validated['duracao'],
-                'data_arranque' => $validated['data_arranque']
             ]);
 
             return response()->json([
@@ -502,15 +483,11 @@ class CursoController extends Controller
 
         $validated = $request->validate([
             'preco' => 'required|numeric|min:0',
-            'duracao' => 'required|string|max:100',
-            'data_arranque' => 'required|date',
         ]);
 
         try {
             $curso->centros()->updateExistingPivot($centroId, [
                 'preco' => $validated['preco'],
-                'duracao' => $validated['duracao'],
-                'data_arranque' => $validated['data_arranque']
             ]);
 
             return response()->json([

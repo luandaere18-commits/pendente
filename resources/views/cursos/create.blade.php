@@ -237,7 +237,7 @@
             <button type="button" class="btn btn-sm btn-close remover-centro" aria-label="Remover" title="Remover centro"></button>
         </div>
         <div class="row g-2">
-            <div class="col-md-7">
+            <div class="col-md-8">
                 <label class="form-label">Centro <span class="text-danger">*</span></label>
                 <select class="form-select form-select-sm centro-select" name="centro_curso[INDEX][centro_id]" required>
                     <option value="">Selecione um centro</option>
@@ -246,17 +246,9 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="form-label">Preço (€) <span class="text-danger">*</span></label>
                 <input type="number" class="form-control form-control-sm" name="centro_curso[INDEX][preco]" placeholder="0.00" step="0.01" min="0" required>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Duração <span class="text-danger">*</span></label>
-                <input type="text" class="form-control form-control-sm" name="centro_curso[INDEX][duracao]" placeholder="Ex: 40h" maxlength="100" required>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label">Data de Arranque <span class="text-danger">*</span></label>
-                <input type="date" class="form-control form-control-sm" name="centro_curso[INDEX][data_arranque]" required>
             </div>
         </div>
     </div>

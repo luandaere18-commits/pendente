@@ -121,9 +121,9 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="cronograma_id" class="form-label">Cronograma</label>
-                                <select class="form-select" id="cronograma_id" name="cronograma_id">
-                                    <option value="">Selecione o cronograma (opcional)</option>
+                                <label for="turma_id" class="form-label">turma</label>
+                                <select class="form-select" id="turma_id" name="turma_id">
+                                    <option value="">Selecione o turma (opcional)</option>
                                 </select>
                             </div>
                             
@@ -205,7 +205,7 @@
 $(document).ready(function() {
     carregarCursos();
     carregarCentros();
-    carregarCronogramas();
+    carregarturmas();
 
     // Preview em tempo real
     $('#preInscricaoForm input, #preInscricaoForm select, #preInscricaoForm textarea').on('input change', function() {
@@ -218,9 +218,9 @@ $(document).ready(function() {
         criarPreInscricao();
     });
 
-    // Atualizar cronogramas quando curso mudar
+    // Atualizar turmas quando curso mudar
     $('#curso_id').on('change', function() {
-        carregarCronogramas();
+        carregarturmas();
     });
 });
 
@@ -248,23 +248,23 @@ function carregarCentros() {
     });
 }
 
-function carregarCronogramas() {
+function carregarturmas() {
     const cursoId = $('#curso_id').val();
-    let url = '/api/cronogramas';
+    let url = '/api/turmas';
     
     if (cursoId) {
         url += `?curso_id=${cursoId}`;
     }
 
     $.get(url, function(data) {
-        let options = '<option value="">Selecione o cronograma (opcional)</option>';
-        data.forEach(function(cronograma) {
-            const horaTexto = cronograma.hora_inicio && cronograma.hora_fim 
-                ? ` (${cronograma.hora_inicio} - ${cronograma.hora_fim})`
+        let options = '<option value="">Selecione o turma (opcional)</option>';
+        data.forEach(function(turma) {
+            const horaTexto = turma.hora_inicio && turma.hora_fim 
+                ? ` (${turma.hora_inicio} - ${turma.hora_fim})`
                 : '';
-            options += `<option value="${cronograma.id}">${cronograma.dia_semana} - ${cronograma.periodo}${horaTexto}</option>`;
+            options += `<option value="${turma.id}">${turma.dia_semana} - ${turma.periodo}${horaTexto}</option>`;
         });
-        $('#cronograma_id').html(options);
+        $('#turma_id').html(options);
     });
 }
 
@@ -388,7 +388,7 @@ function criarPreInscricao() {
         email: $('#email').val() || null,
         curso_id: parseInt($('#curso_id').val()),
         centro_id: parseInt($('#centro_id').val()),
-        cronograma_id: $('#cronograma_id').val() ? parseInt($('#cronograma_id').val()) : null,
+        turma_id: $('#turma_id').val() ? parseInt($('#turma_id').val()) : null,
         status: $('#status').val(),
         contactos: Object.keys(contactos).length > 0 ? contactos : null,
         observacoes: $('#observacoes').val() || null

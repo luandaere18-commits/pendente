@@ -338,35 +338,37 @@ function carregarDetalhesCurso(cursoId) {
                 centrosHtml += '</tbody></table></div></div>';
             }
             
-            // Seção de Cronogramas
-            let cronogramasHtml = '';
-            if (curso.cronogramas && curso.cronogramas.length > 0) {
-                cronogramasHtml = '<div class="mt-4"><h6 class="fw-semibold mb-3"><i class="fas fa-calendar me-2 text-info"></i>Cronogramas</h6><div class="table-responsive"><table class="table table-sm table-hover"><thead class="table-light"><tr><th>Dias</th><th>Período</th><th>Hora Início</th><th>Hora Fim</th></tr></thead><tbody>';
-                curso.cronogramas.forEach(cron => {
-                    const dias = Array.isArray(cron.dia_semana) 
-                        ? cron.dia_semana.map(d => {
+            // Seção de Turmas
+            let turmasHtml = '';
+            if (curso.turmas && curso.turmas.length > 0) {
+                turmasHtml = '<div class="mt-4"><h6 class="fw-semibold mb-3"><i class="fas fa-calendar me-2 text-info"></i>Turmas</h6><div class="table-responsive"><table class="table table-sm table-hover"><thead class="table-light"><tr><th>Dias</th><th>Período</th><th>Hora Início</th><th>Hora Fim</th><th>Duração (Semanas)</th></tr></thead><tbody>';
+                curso.turmas.forEach(turma => {
+                    const dias = Array.isArray(turma.dia_semana) 
+                        ? turma.dia_semana.map(d => {
                             const diasNomes = { 0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sab' };
                             return diasNomes[d] || d;
                         }).join(', ')
-                        : (cron.dia_semana || 'N/A');
+                        : (turma.dia_semana || 'N/A');
                     
-                    const periodo = cron.periodo === 'manha' ? 'Manhã' : 
-                                   cron.periodo === 'tarde' ? 'Tarde' : 
-                                   cron.periodo === 'noite' ? 'Noite' : (cron.periodo || 'N/A');
+                    const periodo = turma.periodo === 'manha' ? 'Manhã' : 
+                                   turma.periodo === 'tarde' ? 'Tarde' : 
+                                   turma.periodo === 'noite' ? 'Noite' : (turma.periodo || 'N/A');
                     
-                    const horaInicio = cron.hora_inicio || 'N/A';
-                    const horaFim = cron.hora_fim || 'N/A';
+                    const horaInicio = turma.hora_inicio || 'N/A';
+                    const horaFim = turma.hora_fim || 'N/A';
+                    const duracaoSemanas = turma.duracao_semanas || 'N/A';
                     
-                    cronogramasHtml += `
+                    turmasHtml += `
                         <tr>
                             <td><strong>${dias}</strong></td>
                             <td><span class="badge bg-light text-dark">${periodo}</span></td>
                             <td>${horaInicio}</td>
                             <td>${horaFim}</td>
+                            <td>${duracaoSemanas}</td>
                         </tr>
                     `;
                 });
-                cronogramasHtml += '</tbody></table></div></div>';
+                turmasHtml += '</tbody></table></div></div>';
             }
             
             const conteudo = `
@@ -393,7 +395,7 @@ function carregarDetalhesCurso(cursoId) {
                 </div>
                 <hr>
                 ${centrosHtml}
-                ${cronogramasHtml}
+                ${turmasHtml}
             `;
             
             $('#conteudoVisualizarCurso').html(conteudo);

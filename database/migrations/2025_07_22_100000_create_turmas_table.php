@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cronogramas', function (Blueprint $table) {
+        Schema::create('turmas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
-            $table->enum('dia_semana', ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']);
+            $table->unsignedInteger('duracao_semanas')->nullable();
+            $table->date('data_arranque')->nullable();
+            $table->json('dia_semana', ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']);
             $table->enum('periodo', ['manhã', 'tarde', 'noite']);
             $table->time('hora_inicio')->nullable();   // Hora de início da aula
             $table->time('hora_fim')->nullable();      // Hora de fim da aula
@@ -30,7 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cronogramas');
+        Schema::dropIfExists('turmas');
     }
 
     

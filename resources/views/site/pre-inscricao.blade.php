@@ -202,9 +202,9 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="cronograma_id" class="form-label">Cronograma (opcional)</label>
-                            <select class="form-select" id="cronograma_id">
-                                <option value="">Selecione um cronograma</option>
+                            <label for="turma_id" class="form-label">Turma (opcional)</label>
+                            <select class="form-select" id="turma_id">
+                                <option value="">Selecione uma turma</option>
                             </select>
                         </div>
                     </div>
@@ -223,7 +223,7 @@
                     <form id="inscricaoForm">
                         <input type="hidden" id="curso_id" name="curso_id">
                         <input type="hidden" id="selected_centro_id" name="centro_id">
-                        <input type="hidden" id="selected_cronograma_id" name="cronograma_id">
+                        <input type="hidden" id="selected_turma_id" name="turma_id">
                         
                         <div class="row">
                             <div class="col-md-8 mb-3">
@@ -326,7 +326,7 @@
         let centroSelecionado = null;
         let cursos = [];
         let centros = [];
-        let cronogramas = [];
+        let turmas = [];
 
         $(document).ready(function() {
             // Setup CSRF token
@@ -354,9 +354,9 @@
                 preencherSelectCentros();
             });
 
-            // Carregar cronogramas
-            $.get('/api/cronogramas', function(data) {
-                cronogramas = data;
+            // Carregar turmas
+            $.get('/api/turmas', function(data) {
+                turmas = data;
             });
         }
 
@@ -449,8 +449,8 @@
             // Carregar centros disponíveis para este curso
             carregarCentrosParaCurso(cursoId);
             
-            // Carregar cronogramas para este curso
-            carregarCronogramas();
+            // Carregar turmas para este curso
+            carregarTurmas();
             $('#btnProximo').prop('disabled', false);
         }
 
@@ -499,7 +499,7 @@
                     return;
                 }
                 passoAtual = 3;
-                $('#selected_cronograma_id').val($('#cronograma_id').val());
+                $('#selected_turma_id').val($('#turma_id').val());
             }
             
             atualizarPasso();
@@ -562,23 +562,23 @@
             }
         }
 
-        function carregarCronogramas() {
+        function carregarTurmas() {
             const cursoId = $('#curso_id').val();
             
-            const cronogramasDisponiveis = cronogramas.filter(c => 
+            const turmasDisponiveis = turmas.filter(c => 
                 c.curso_id == cursoId
             );
 
-            $('#cronograma_id').html('<option value="">Selecione um cronograma</option>');
+            $('#turma_id').html('<option value="">Selecione uma turma</option>');
             
-            cronogramasDisponiveis.forEach(cronograma => {
-                const horaTexto = cronograma.hora_inicio && cronograma.hora_fim 
-                    ? ` (${cronograma.hora_inicio} - ${cronograma.hora_fim})`
+            turmasDisponiveis.forEach(turma => {
+                const horaTexto = turma.hora_inicio && turma.hora_fim 
+                    ? ` (${turma.hora_inicio} - ${turma.hora_fim})`
                     : '';
                 
-                $('#cronograma_id').append(`
-                    <option value="${cronograma.id}">
-                        ${cronograma.dia_semana} - ${cronograma.periodo}${horaTexto}
+                $('#turma_id').append(`
+                    <option value="${turma.id}">
+                        ${Array.isArray(turma.dia_semana) ? turma.dia_semana.join(', ') : turma.dia_semana} - ${turma.periodo}${horaTexto}
                     </option>
                 `);
             });
@@ -634,7 +634,7 @@
             const dados = {
                 curso_id: parseInt($('#curso_id').val()),
                 centro_id: parseInt($('#selected_centro_id').val()),
-                cronograma_id: $('#selected_cronograma_id').val() ? parseInt($('#selected_cronograma_id').val()) : null,
+                turma_id: $('#selected_turma_id').val() ? parseInt($('#selected_turma_id').val()) : null,
                 nome_completo: $('#nome_completo').val(),
                 email: $('#email').val() || null,
                 contactos: JSON.stringify(contactos),

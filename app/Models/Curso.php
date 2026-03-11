@@ -25,13 +25,13 @@ class Curso extends Model
     public function centros()
     {
         return $this->belongsToMany(Centro::class, 'centro_curso')
-        ->withPivot(['preco', 'duracao', 'data_arranque']);
+        ->withPivot(['preco']);
     }
 
-    // Um curso tem muitos cronogramas
-    public function cronogramas()
+    // Um curso tem muitas turmas
+    public function turmas()
     {
-        return $this->hasMany(Cronograma::class);
+        return $this->hasMany(Turma::class);
     }
 
     // N:N com formadores

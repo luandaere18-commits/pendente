@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Editar Cronograma')
+@section('title', 'Editar Turma')
 
 @section('content')
 <div class="container-fluid">
@@ -9,11 +9,11 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h1 class="display-6 mb-2">
-                        <i class="fas fa-edit me-3 text-primary"></i>Editar Cronograma
+                        <i class="fas fa-edit me-3 text-primary"></i>Editar Turma
                     </h1>
-                    <p class="text-muted">Atualizar informações do cronograma</p>
+                    <p class="text-muted">Atualizar informações da turma</p>
                 </div>
-                <a href="{{ route('cronogramas.index') }}" class="btn btn-outline-secondary">
+                <a href="{{ route('turmas.index') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Voltar
                 </a>
             </div>
@@ -25,14 +25,14 @@
             <div class="card">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="fas fa-clock me-2"></i>Informações do Cronograma
+                        <i class="fas fa-clock me-2"></i>Informações da Turma
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form id="cronogramaForm" method="POST" action="{{ route('cronogramas.update', $cronograma->id) }}">
+                    <form id="turmaForm" method="POST" action="{{ route('turmas.update', $turma->id) }}">
                         @csrf
                         @method('PUT')
-                        <input type="hidden" id="cronograma_id" name="id" value="{{ $cronograma->id }}">
+                        <input type="hidden" id="turma_id" name="id" value="{{ $turma->id }}">
                         
                         <div class="row">
                             <div class="col-12 mb-3">
@@ -41,38 +41,38 @@
                                     <option value="">Selecione o curso</option>
                                     @foreach($cursos as $curso)
                                         @if($curso->ativo)
-                                            <option value="{{ $curso->id }}" {{ $cronograma->curso_id == $curso->id ? 'selected' : '' }}>
+                                            <option value="{{ $curso->id }}" {{ $turma->curso_id == $curso->id ? 'selected' : '' }}>
                                                 {{ $curso->nome }} - {{ $curso->area }}
                                             </option>
                                         @endif
                                     @endforeach
                                 </select>
-                                <div class="form-text">Escolha o curso para este cronograma</div>
+                                <div class="form-text">Escolha o curso para esta turma</div>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="dia_semana" class="form-label">Dia da Semana <span class="text-danger">*</span></label>
-                                <select class="form-select" id="dia_semana" name="dia_semana" required>
-                                    <option value="">Selecione o dia</option>
-                                    <option value="Segunda" {{ $cronograma->dia_semana == 'Segunda' ? 'selected' : '' }}>Segunda-feira</option>
-                                    <option value="Terça" {{ $cronograma->dia_semana == 'Terça' ? 'selected' : '' }}>Terça-feira</option>
-                                    <option value="Quarta" {{ $cronograma->dia_semana == 'Quarta' ? 'selected' : '' }}>Quarta-feira</option>
-                                    <option value="Quinta" {{ $cronograma->dia_semana == 'Quinta' ? 'selected' : '' }}>Quinta-feira</option>
-                                    <option value="Sexta" {{ $cronograma->dia_semana == 'Sexta' ? 'selected' : '' }}>Sexta-feira</option>
-                                    <option value="Sábado" {{ $cronograma->dia_semana == 'Sábado' ? 'selected' : '' }}>Sábado</option>
-                                    <option value="Domingo" {{ $cronograma->dia_semana == 'Domingo' ? 'selected' : '' }}>Domingo</option>
+                                <label for="dia_semana" class="form-label">Dias da Semana <span class="text-danger">*</span></label>
+                                <select class="form-select" id="dia_semana" name="dia_semana" multiple required>
+                                    <option value="Segunda" {{ in_array('Segunda', $turma->dia_semana ?? []) ? 'selected' : '' }}>Segunda-feira</option>
+                                    <option value="Terça" {{ in_array('Terça', $turma->dia_semana ?? []) ? 'selected' : '' }}>Terça-feira</option>
+                                    <option value="Quarta" {{ in_array('Quarta', $turma->dia_semana ?? []) ? 'selected' : '' }}>Quarta-feira</option>
+                                    <option value="Quinta" {{ in_array('Quinta', $turma->dia_semana ?? []) ? 'selected' : '' }}>Quinta-feira</option>
+                                    <option value="Sexta" {{ in_array('Sexta', $turma->dia_semana ?? []) ? 'selected' : '' }}>Sexta-feira</option>
+                                    <option value="Sábado" {{ in_array('Sábado', $turma->dia_semana ?? []) ? 'selected' : '' }}>Sábado</option>
+                                    <option value="Domingo" {{ in_array('Domingo', $turma->dia_semana ?? []) ? 'selected' : '' }}>Domingo</option>
                                 </select>
+                                <div class="form-text">Selecione um ou mais dias da semana</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="periodo" class="form-label">Período <span class="text-danger">*</span></label>
                                 <select class="form-select" id="periodo" name="periodo" required>
                                     <option value="">Selecione o período</option>
-                                    <option value="manhã" {{ $cronograma->periodo == 'manhã' ? 'selected' : '' }}>Manhã</option>
-                                    <option value="tarde" {{ $cronograma->periodo == 'tarde' ? 'selected' : '' }}>Tarde</option>
-                                    <option value="noite" {{ $cronograma->periodo == 'noite' ? 'selected' : '' }}>Noite</option>
+                                    <option value="manha" {{ $turma->periodo == 'manha' ? 'selected' : '' }}>Manhã</option>
+                                    <option value="tarde" {{ $turma->periodo == 'tarde' ? 'selected' : '' }}>Tarde</option>
+                                    <option value="noite" {{ $turma->periodo == 'noite' ? 'selected' : '' }}>Noite</option>
                                 </select>
                             </div>
                         </div>
@@ -80,28 +80,36 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="hora_inicio" class="form-label">Hora de Início <span class="text-danger">*</span></label>
-                                <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" value="{{ $cronograma->hora_inicio ? substr($cronograma->hora_inicio, 0, 5) : '' }}" required>
+                                <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" value="{{ $turma->hora_inicio ? substr($turma->hora_inicio, 0, 5) : '' }}" required>
                                 <div class="form-text">Hora específica de início</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="hora_fim" class="form-label">Hora de Fim <span class="text-danger">*</span></label>
-                                <input type="time" class="form-control" id="hora_fim" name="hora_fim" value="{{ $cronograma->hora_fim ? substr($cronograma->hora_fim, 0, 5) : '' }}" required>
+                                <input type="time" class="form-control" id="hora_fim" name="hora_fim" value="{{ $turma->hora_fim ? substr($turma->hora_fim, 0, 5) : '' }}" required>
                                 <div class="form-text">Hora específica de término</div>
                             </div>
                         </div>
 
-                        <div class="alert alert-info" id="cronogramaAlert" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="duracao_semanas" class="form-label">Duração (Semanas) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="duracao_semanas" name="duracao_semanas" min="1" max="52" value="{{ $turma->duracao_semanas }}" required>
+                                <div class="form-text">Número de semanas de duração da turma</div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info" id="turmaAlert" style="display: none;">
                             <i class="fas fa-exclamation-triangle me-2"></i>
-                            <span id="cronogramaAlertMessage"></span>
+                            <span id="turmaAlertMessage"></span>
                         </div>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a href="{{ route('cronogramas.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('turmas.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-times me-2"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Atualizar Cronograma
+                                <i class="fas fa-save me-2"></i>Atualizar Turma
                             </button>
                         </div>
                     </form>
@@ -117,24 +125,25 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <h6>Dicas para editar um cronograma:</h6>
+                    <h6>Dicas para editar uma turma:</h6>
                     <ul class="small">
                         <li><strong>Curso:</strong> Selecione o curso que será ministrado</li>
-                        <li><strong>Dia:</strong> Dia da semana das aulas</li>
+                        <li><strong>Dias:</strong> Dias da semana das aulas (pode selecionar múltiplos)</li>
                         <li><strong>Período:</strong> Manhã, tarde ou noite</li>
                         <li><strong>Horas:</strong> Especifique horários exatos de início e fim</li>
+                        <li><strong>Duração:</strong> Número de semanas da turma</li>
                     </ul>
                     
                     <h6 class="mt-3">Períodos sugeridos:</h6>
                     <ul class="small">
-                        <li><strong>Manhã:</strong> 08:00 - 12:00</li>
-                        <li><strong>Tarde:</strong> 14:00 - 18:00</li>
-                        <li><strong>Noite:</strong> 19:00 - 23:00</li>
+                        <li><strong>Manhã:</strong> 07:00 - 12:00</li>
+                        <li><strong>Tarde:</strong> 12:00 - 18:00</li>
+                        <li><strong>Noite:</strong> 18:00 - 22:00</li>
                     </ul>
                     
                     <h6 class="mt-3">Validação de Horários:</h6>
                     <ul class="small">
-                        <li><strong>Manhã:</strong> 08:00 até 11:59</li>
+                        <li><strong>Manhã:</strong> 07:00 até 11:59</li>
                         <li><strong>Tarde:</strong> 12:00 até 17:59</li>
                         <li><strong>Noite:</strong> 18:00 até 21:59</li>
                     </ul>
@@ -148,9 +157,9 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    <p><strong>ID:</strong> {{ $cronograma->id }}</p>
-                    <p><strong>Data de Criação:</strong><br><small>{{ $cronograma->created_at->format('d/m/Y H:i') }}</small></p>
-                    <p><strong>Última Atualização:</strong><br><small>{{ $cronograma->updated_at->format('d/m/Y H:i') }}</small></p>
+                    <p><strong>ID:</strong> {{ $turma->id }}</p>
+                    <p><strong>Data de Criação:</strong><br><small>{{ $turma->created_at->format('d/m/Y H:i') }}</small></p>
+                    <p><strong>Última Atualização:</strong><br><small>{{ $turma->updated_at->format('d/m/Y H:i') }}</small></p>
                     <hr>
                     <h6 class="text-warning">Atenção:</h6>
                     <ul class="small">
@@ -177,7 +186,7 @@
 
 @section('scripts')
 <script>
-const cronogramaId = {{ $cronograma->id ?? 'null' }};
+const turmaId = {{ $turma->id ?? 'null' }};
 
 $(document).ready(function() {
     // Os dados já estão carregados no formulário via Blade
@@ -185,7 +194,7 @@ $(document).ready(function() {
     atualizarPreview();
     
     // Preview em tempo real
-    $('#cronogramaForm select, #cronogramaForm input').on('change input', function() {
+    $('#turmaForm select, #turmaForm input').on('change input', function() {
         atualizarPreview();
         validarHorarios();
     });
@@ -197,13 +206,20 @@ function validarHorarios() {
     const horaInicio = $('#hora_inicio').val();
     const horaFim = $('#hora_fim').val();
     const periodo = $('#periodo').val();
+    const diasSelecionados = $('#dia_semana').val();
     
-    $('#cronogramaAlert').hide();
+    $('#turmaAlert').hide();
+    
+    if (!diasSelecionados || diasSelecionados.length === 0) {
+        $('#turmaAlertMessage').text('Selecione pelo menos um dia da semana.');
+        $('#turmaAlert').removeClass('alert-info').addClass('alert-warning').show();
+        return false;
+    }
     
     if (horaInicio && horaFim) {
         if (horaFim <= horaInicio) {
-            $('#cronogramaAlertMessage').text('A hora de fim deve ser posterior à hora de início.');
-            $('#cronogramaAlert').removeClass('alert-info').addClass('alert-warning').show();
+            $('#turmaAlertMessage').text('A hora de fim deve ser posterior à hora de início.');
+            $('#turmaAlert').removeClass('alert-info').addClass('alert-warning').show();
             return false;
         }
         
@@ -213,18 +229,18 @@ function validarHorarios() {
         const duracao = (fim - inicio) / (1000 * 60); // minutos
         
         if (duracao < 30) {
-            $('#cronogramaAlertMessage').text('A duração mínima recomendada é de 30 minutos.');
-            $('#cronogramaAlert').removeClass('alert-warning').addClass('alert-info').show();
+            $('#turmaAlertMessage').text('A duração mínima recomendada é de 30 minutos.');
+            $('#turmaAlert').removeClass('alert-warning').addClass('alert-info').show();
         } else if (duracao > 480) { // 8 horas
-            $('#cronogramaAlertMessage').text('A duração é superior a 8 horas. Verifique se está correto.');
-            $('#cronogramaAlert').removeClass('alert-warning').addClass('alert-info').show();
+            $('#turmaAlertMessage').text('A duração é superior a 8 horas. Verifique se está correto.');
+            $('#turmaAlert').removeClass('alert-warning').addClass('alert-info').show();
         }
         
         // Validar hora com base no período
         if (periodo) {
             const [inicioHora] = horaInicio.split(':');
             const validacoes = {
-                'manhã': { min: 8, max: 11 },
+                'manha': { min: 7, max: 11 },
                 'tarde': { min: 12, max: 17 },
                 'noite': { min: 18, max: 21 }
             };
@@ -233,8 +249,8 @@ function validarHorarios() {
                 const hora = parseInt(inicioHora);
                 if (hora < validacoes[periodo].min || hora > validacoes[periodo].max) {
                     const msg = `A hora de início para o período "${periodo}" deve estar entre ${String(validacoes[periodo].min).padStart(2, '0')}:00 e ${String(validacoes[periodo].max).padStart(2, '0')}:59`;
-                    $('#cronogramaAlertMessage').text(msg);
-                    $('#cronogramaAlert').removeClass('alert-info').addClass('alert-warning').show();
+                    $('#turmaAlertMessage').text(msg);
+                    $('#turmaAlert').removeClass('alert-info').addClass('alert-warning').show();
                     return false;
                 }
             }
@@ -246,16 +262,17 @@ function validarHorarios() {
 
 function atualizarPreview() {
     const cursoId = $('#curso_id').val();
-    const diaSemana = $('#dia_semana').val();
+    const diasSelecionados = $('#dia_semana').val();
     const periodo = $('#periodo').val();
     const horaInicio = $('#hora_inicio').val();
     const horaFim = $('#hora_fim').val();
+    const duracao = $('#duracao_semanas').val();
 
-    if (cursoId || diaSemana || periodo) {
+    if (cursoId || diasSelecionados || periodo) {
         const cursoNome = $('#curso_id option:selected').text();
         
         const periodoBadge = getPeriodoBadge(periodo);
-        const diaSemanaFormatado = getDiaSemanaFormatado(diaSemana);
+        const diasFormatados = diasSelecionados ? diasSelecionados.map(dia => getDiaFormatado(dia)).join(', ') : '';
         
         const horarios = (horaInicio && horaFim) 
             ? `<p class="mb-1"><i class="fas fa-clock me-1"></i> ${horaInicio} - ${horaFim}</p>`
@@ -263,12 +280,13 @@ function atualizarPreview() {
 
         let preview = `
             <div class="text-center mb-3">
-                <h6><i class="fas fa-calendar-alt me-2"></i>Cronograma Atualizado</h6>
+                <h6><i class="fas fa-calendar-alt me-2"></i>Turma Atualizada</h6>
             </div>
             
             ${cursoId ? `<p class="mb-2"><strong><i class="fas fa-book me-1"></i> Curso:</strong><br>${cursoNome}</p>` : ''}
-            ${diaSemana ? `<p class="mb-2"><strong><i class="fas fa-calendar-day me-1"></i> Dia:</strong><br>${diaSemanaFormatado}</p>` : ''}
+            ${diasFormatados ? `<p class="mb-2"><strong><i class="fas fa-calendar-day me-1"></i> Dias:</strong><br>${diasFormatados}</p>` : ''}
             ${periodo ? `<p class="mb-2"><strong><i class="fas fa-sun me-1"></i> Período:</strong><br>${periodoBadge}</p>` : ''}
+            ${duracao ? `<p class="mb-2"><strong><i class="fas fa-hourglass-half me-1"></i> Duração:</strong><br>${duracao} semana(s)</p>` : ''}
             ${horarios}
         `;
 
@@ -281,7 +299,7 @@ function atualizarPreview() {
 
 function getPeriodoBadge(periodo) {
     switch(periodo) {
-        case 'manhã':
+        case 'manha':
             return '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manhã</span>';
         case 'tarde':
             return '<span class="badge bg-primary"><i class="fas fa-cloud-sun me-1"></i>Tarde</span>';
@@ -292,17 +310,17 @@ function getPeriodoBadge(periodo) {
     }
 }
 
-function getDiaSemanaFormatado(dia) {
-    const dias = {
-        'Segunda': 'Segunda-feira',
-        'Terça': 'Terça-feira',
-        'Quarta': 'Quarta-feira',
-        'Quinta': 'Quinta-feira',
-        'Sexta': 'Sexta-feira',
-        'Sábado': 'Sábado',
-        'Domingo': 'Domingo'
+function getDiaFormatado(dia) {
+    const diasMap = {
+        'Segunda': 'Seg',
+        'Terça': 'Ter',
+        'Quarta': 'Qua',
+        'Quinta': 'Qui',
+        'Sexta': 'Sex',
+        'Sábado': 'Sab',
+        'Domingo': 'Dom'
     };
-    return dias[dia] || dia;
+    return diasMap[dia] || dia;
 }
 </script>
 @endsection

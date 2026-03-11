@@ -2,32 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cronograma;
+use App\Models\Turma;
 use Illuminate\Http\Request;
 
-class CronogramaController extends Controller
+class TurmaController extends Controller
 {
     public function index()
     {
-        $cronogramas = Cronograma::with(['curso'])->get();
-        return view('cronogramas.index', compact('cronogramas'));
+        $turmas = Turma::with(['curso'])->get();
+        return view('turmas.index', compact('turmas'));
     }
 
     public function create()
     {
         $cursos = \App\Models\Curso::all();
-        return view('cronogramas.create', compact('cursos'));
+        return view('turmas.create', compact('cursos'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
-            'hora_fim' => 'nullable|date_format:H:i'
+            'hora_fim' => 'nullable|date_format:H:i',
+            'data_arranque' => 'nullable|date'
         ]);
         
         // Validar hora_inicio com base no periodo
@@ -36,31 +38,33 @@ class CronogramaController extends Controller
         // Validar que hora_fim > hora_inicio
         $this->validarHoraFimMaiorQueHoraInicio($validated);
         
-        $cronograma = Cronograma::create($validated);
-        return redirect()->route('cronogramas.index')->with('success', 'Cronograma criado com sucesso!');
+        $turma = Turma::create($validated);
+        return redirect()->route('turmas.index')->with('success', 'Turma criada com sucesso!');
     }
 
-    public function show(Cronograma $cronograma)
+    public function show(Turma $turma)
     {
-        $cronograma->load(['curso']);
-        return view('cronogramas.show', compact('cronograma'));
+        $turma->load(['curso']);
+        return view('turmas.show', compact('turma'));
     }
 
-    public function edit(Cronograma $cronograma)
+    public function edit(Turma $turma)
     {
         $cursos = \App\Models\Curso::all();
-        return view('cronogramas.edit', compact('cronograma', 'cursos'));
+        return view('turmas.edit', compact('turma', 'cursos'));
     }
 
-    public function update(Request $request, Cronograma $cronograma)
+    public function update(Request $request, Turma $turma)
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
-            'hora_fim' => 'nullable|date_format:H:i'
+            'hora_fim' => 'nullable|date_format:H:i',
+            'data_arranque' => 'nullable|date'
         ]);
         
         // Validar hora_inicio com base no periodo
@@ -69,14 +73,14 @@ class CronogramaController extends Controller
         // Validar que hora_fim > hora_inicio
         $this->validarHoraFimMaiorQueHoraInicio($validated);
         
-        $cronograma->update($validated);
-        return redirect()->route('cronogramas.index')->with('success', 'Cronograma atualizado com sucesso!');
+        $turma->update($validated);
+        return redirect()->route('turmas.index')->with('success', 'Turma atualizada com sucesso!');
     }
 
-    public function destroy(Cronograma $cronograma)
+    public function destroy(Turma $turma)
     {
-        $cronograma->delete();
-        return redirect()->route('cronogramas.index')->with('success', 'Cronograma deletado com sucesso!');
+        $turma->delete();
+        return redirect()->route('turmas.index')->with('success', 'Turma deletada com sucesso!');
     }
 
     /**
