@@ -42,7 +42,7 @@ class TurmaSeeder extends Seeder
         
         if (isset($cursoIds[0])) {
             // Turma 1 - Multiple schedules (seg, qua, sex) - 4 semanas
-            $turmas[] = ['curso_id' => $cursoIds[0], 'duracao_semanas' => 4, 'dia_semana' => json_encode(['Segunda', 'Quarta', 'Sexta']), 'periodo' => 'manha', 'hora_inicio' => '07:30', 'hora_fim' => '09:30', 'data_arranque' => '2026-04-01', 'created_at' => $now, 'updated_at' => $now];
+            $turmas[] = ['curso_id' => $cursoIds[0], 'duracao_semanas' => 4, 'dia_semana' => json_encode(['Segunda', 'Quarta', 'Sexta']), 'periodo' => 'manhã', 'hora_inicio' => '07:30', 'hora_fim' => '09:30', 'data_arranque' => '2026-04-01', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[1])) {
@@ -57,7 +57,7 @@ class TurmaSeeder extends Seeder
         
         if (isset($cursoIds[3])) {
             // Turma 4 - Morning schedule (ter, qui) - 5 semanas
-            $turmas[] = ['curso_id' => $cursoIds[3], 'duracao_semanas' => 5, 'dia_semana' => json_encode(['Terça', 'Quinta']), 'periodo' => 'manha', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'data_arranque' => '2026-04-12', 'created_at' => $now, 'updated_at' => $now];
+            $turmas[] = ['curso_id' => $cursoIds[3], 'duracao_semanas' => 5, 'dia_semana' => json_encode(['Terça', 'Quinta']), 'periodo' => 'manhã', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'data_arranque' => '2026-04-12', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[4])) {
@@ -67,14 +67,14 @@ class TurmaSeeder extends Seeder
         
         if (isset($cursoIds[5])) {
             // Turma 6 - Weekend schedule morning (sábado) - 4 semanas
-            $turmas[] = ['curso_id' => $cursoIds[5], 'duracao_semanas' => 4, 'dia_semana' => json_encode(['Sábado']), 'periodo' => 'manha', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'data_arranque' => '2026-04-18', 'created_at' => $now, 'updated_at' => $now];
+            $turmas[] = ['curso_id' => $cursoIds[5], 'duracao_semanas' => 4, 'dia_semana' => json_encode(['Sábado']), 'periodo' => 'manhã', 'hora_inicio' => '08:00', 'hora_fim' => '10:00', 'data_arranque' => '2026-04-18', 'created_at' => $now, 'updated_at' => $now];
             // Turma 6b - Weekend schedule afternoon (sábado) - 4 semanas (pode ser turma diferente)
             $turmas[] = ['curso_id' => $cursoIds[5], 'duracao_semanas' => 4, 'dia_semana' => json_encode(['Sábado']), 'periodo' => 'tarde', 'hora_inicio' => '14:00', 'hora_fim' => '16:00', 'data_arranque' => '2026-04-25', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (isset($cursoIds[6])) {
             // Turma 7 - Weekend schedule Sunday - 3 semanas
-            $turmas[] = ['curso_id' => $cursoIds[6], 'duracao_semanas' => 3, 'dia_semana' => json_encode(['Domingo']), 'periodo' => 'manha', 'hora_inicio' => '10:00', 'hora_fim' => '12:00', 'data_arranque' => '2026-05-01', 'created_at' => $now, 'updated_at' => $now];
+            $turmas[] = ['curso_id' => $cursoIds[6], 'duracao_semanas' => 3, 'dia_semana' => json_encode(['Domingo']), 'periodo' => 'manhã', 'hora_inicio' => '10:00', 'hora_fim' => '12:00', 'data_arranque' => '2026-05-01', 'created_at' => $now, 'updated_at' => $now];
         }
         
         if (!empty($turmas)) {
