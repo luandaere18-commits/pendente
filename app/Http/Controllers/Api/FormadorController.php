@@ -37,8 +37,8 @@ class FormadorController extends Controller
      */
     public function index(Request $request)
     {
-        // Busca todos os formadores, incluindo cursos e centros relacionados
-        $query = Formador::with(['cursos', 'centros']);
+        // Busca todos os formadores, incluindo centros relacionados
+        $query = Formador::with(['centros']);
         // Permite busca textual por nome, especialidade ou bio
         if ($request->filled('busca')) {
             $busca = $request->busca;
@@ -116,10 +116,6 @@ class FormadorController extends Controller
         }
         // Cria o formador
         $formador = Formador::create($validated);
-        // Associa cursos ao formador, se enviados
-        if ($request->has('cursos')) {
-            $formador->cursos()->sync($request->cursos);
-        }
         // Associa centros ao formador, se enviados
         if ($request->has('centros')) {
             $formador->centros()->sync($request->centros);
@@ -158,8 +154,8 @@ class FormadorController extends Controller
      */
     public function show($id)
     {
-        // Busca formador por ID, incluindo cursos e centros
-        $formador = Formador::with(['cursos', 'centros'])->find($id);
+        // Busca formador por ID, incluindo centros
+        $formador = Formador::with(['centros'])->find($id);
         if (!$formador) {
             // Retorna erro se não encontrado
             return response()->json([
@@ -258,21 +254,11 @@ class FormadorController extends Controller
         }
         // Atualiza dados do formador
         $formador->update($validated);
-        // Atualiza cursos associados
-        if ($request->has('cursos')) {
-            $formador->cursos()->sync($request->cursos);
-        }
         // Atualiza centros associados
         if ($request->has('centros')) {
             $formador->centros()->sync($request->centros);
         }
-        // Retorna resposta de sucesso
-        return response()->json([
-            'status' => 'sucesso',
-            'mensagem' => 'Formador atualizado com sucesso!',
-            'dados' => $formador->load(['cursos', 'centros'])
-        ]);
-    }
+            'dados' => $formador->load(['centros'])
 
 
 
@@ -314,7 +300,6 @@ class FormadorController extends Controller
             ], 404);
         }
         // Remove associações N:N antes de deletar
-        $formador->cursos()->detach();
         $formador->centros()->detach();
         $formador->delete();
         // Retorna resposta de sucesso

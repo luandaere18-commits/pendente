@@ -92,12 +92,6 @@
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="bg-success-subtle rounded p-2 text-center">
-                                <div class="fw-bold text-success fs-5">{{ $curso->formadores->count() }}</div>
-                                <small class="text-muted"><i class="fas fa-chalkboard-teacher me-1"></i>Formadores</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
                             <div class="bg-warning-subtle rounded p-2 text-center">
                                 <div class="fw-bold text-warning fs-5">{{ $curso->preInscricoes->count() }}</div>
                                 <small class="text-muted"><i class="fas fa-user-plus me-1"></i>Pré-inscrições</small>

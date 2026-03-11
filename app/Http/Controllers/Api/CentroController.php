@@ -31,7 +31,7 @@ class CentroController extends Controller
     public function index()
     {
         // Retorna todos os centros com relacionamentos relevantes
-        return response()->json(Centro::with(['cursos', 'formadores'])->get());
+        return response()->json(Centro::with(['cursos'])->get());
     }
 
     /**
@@ -140,7 +140,7 @@ class CentroController extends Controller
     public function show($id)
     {
         // Busca o centro pelo ID, incluindo cursos e formadores relacionados
-        $centro = Centro::with(['cursos', 'formadores'])->find($id);
+        $centro = Centro::with(['cursos'])->find($id);
 
         // Verifica se o centro foi encontrado
         if (!$centro) {

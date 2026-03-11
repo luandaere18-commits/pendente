@@ -36,7 +36,7 @@ class CursoController extends Controller
 
     public function index(Request $request)
     {
-        $query = Curso::with(['centros', 'formadores']);
+        $query = Curso::with(['centros', 'turmas']);
 
         // Filtro por múltiplos centros (busca em relacionamento many-to-many)
         if ($request->filled('centros')) {
@@ -187,12 +187,7 @@ class CursoController extends Controller
         }
         $curso->centros()->sync($centrosPivot);
 
-        // Sincronizar formadores
-        if (!empty($validated['formadores'])) {
-            $curso->formadores()->sync($validated['formadores']);
-        }
-
-        $curso->load(['centros', 'formadores']);
+        $curso->load(['centros', 'turmas']);
 
         return response()->json([
             'status' => 'sucesso',
@@ -226,7 +221,7 @@ class CursoController extends Controller
 
     public function show($id)
     {
-        $curso = Curso::with(['centros', 'formadores', 'turmas'])->find($id);
+        $curso = Curso::with(['centros', 'turmas'])->find($id);
 
         if (!$curso) {
             return response()->json([
@@ -329,12 +324,7 @@ class CursoController extends Controller
             $curso->centros()->sync($centrosPivot);
         }
 
-        // Sincronizar formadores apenas se foram fornecidos
-        if (!empty($validated['formadores'])) {
-            $curso->formadores()->sync($validated['formadores']);
-        }
-
-        $curso->load(['centros', 'formadores']);
+        $curso->load(['centros', 'turmas']);
 
         return response()->json([
             'status' => 'sucesso',

@@ -25,12 +25,6 @@ class Formador extends Model
         'contactos' => 'array',
     ];
 
-    // N:N com cursos
-    public function cursos()
-    {
-        return $this->belongsToMany(Curso::class, 'curso_formador')->withTimestamps();
-    }
-
     // N:N com centros
     public function centros()
     {
