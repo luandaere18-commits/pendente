@@ -27,7 +27,6 @@ class DatabaseSeeder extends Seeder
             TurmaSeeder::class,
             CentroCursoSeeder::class, 
             CentroFormadorSeeder::class,
-            CursoFormadorSeeder::class,
             CategoriaSeeder::class,   // Antes dos produtos
             ProdutoSeeder::class,     // Depois das categorias
             PreInscricaoSeeder::class,   // Por último porque depende de todos
