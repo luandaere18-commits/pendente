@@ -396,6 +396,10 @@
                             <label class="form-label fw-semibold">Descrição</label>
                             <textarea class="form-control" name="descricao" rows="2">{{ $curso->descricao }}</textarea>
                         </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Programa do Curso</label>
+                            <textarea class="form-control" name="programa" rows="2">{{ $curso->programa }}</textarea>
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Área <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="area" value="{{ $curso->area }}" required>
@@ -408,8 +412,20 @@
                                 <option value="hibrido" {{ $curso->modalidade === "hibrido" ? "selected" : "" }}>Híbrido</option>
                             </select>
                         </div>
-                        <div class="col-12">
-                            <div class="form-check">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Imagem do Curso</label>
+                            <input type="file" class="form-control" name="imagem" accept="image/*">
+                            <small class="text-muted">JPEG, PNG, JPG ou GIF (máx 2MB)</small>
+                            @if($curso->imagem_url)
+                                <div class="mt-2">
+                                    <small class="d-block text-muted mb-1">Imagem atual:</small>
+                                    <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" style="max-width: 100px; border-radius: 4px;">
+                                </div>
+                            @endif
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Status</label>
+                            <div class="form-check" style="margin-top: 32px;">
                                 <input type="checkbox" class="form-check-input" name="ativo" value="1" id="editCursoAtivo" {{ $curso->ativo ? "checked" : "" }}>
                                 <label class="form-check-label" for="editCursoAtivo">Curso Ativo</label>
                             </div>
@@ -659,69 +675,120 @@ $("#formEditarCursoAjax").on("submit", function(e) {
     e.preventDefault();
     
     const $form = $(this);
-    const formData = {
-        nome: $form.find("[name=\"nome\"]").val().trim(),
-        descricao: $form.find("[name=\"descricao\"]").val().trim(),
-        area: $form.find("[name=\"area\"]").val().trim(),
-        modalidade: $form.find("[name=\"modalidade\"]").val().trim(),
-        ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0
-    };
+    const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
     
-    if (!formData.nome || !formData.area) {
+    // Validação básica
+    const nome = $form.find("[name=\"nome\"]").val().trim();
+    const area = $form.find("[name=\"area\"]").val().trim();
+    if (!nome || !area) {
         Swal.fire("Erro!", "Preencha os campos obrigatórios", "error");
         return;
     }
     
-    console.log("Enviando atualização do curso:", JSON.stringify(formData, null, 2));
-    
-    $.ajax({
-        url: `/api/cursos/${cursoId}`,
-        type: "PUT",
-        data: JSON.stringify(formData),
-        contentType: "application/json",
-        dataType: "json",
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
-            "Accept": "application/json"
-        },
-        success: function(response) {
-            console.log("Sucesso:", response);
-            $("#modalEditarCurso").modal("hide");
-            Swal.fire({
-                icon: "success",
-                title: "Sucesso!",
-                text: "Curso atualizado com sucesso!",
-                timer: 2000
-            }).then(() => location.reload());
-        },
-        error: function(xhr, status, error) {
-            console.error("Status:", xhr.status);
-            console.error("Status Text:", xhr.statusText);
-            console.error("Response:", xhr.responseText);
-            console.error("Response JSON:", xhr.responseJSON);
-            
-            let message = "Erro desconhecido";
-            
-            // Se há erros de validação
-            if (xhr.responseJSON?.errors) {
-                message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+    // Se houver arquivo, usar FormData, senão usar JSON
+    if (imagemFile) {
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('descricao', $form.find("[name=\"descricao\"]").val().trim());
+        formData.append('programa', $form.find("[name=\"programa\"]").val().trim());
+        formData.append('area', area);
+        formData.append('modalidade', $form.find("[name=\"modalidade\"]").val().trim());
+        formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
+        formData.append('imagem', imagemFile);
+        
+        $.ajax({
+            url: `/api/cursos/${cursoId}`,
+            type: "PUT",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
+                "Accept": "application/json"
+            },
+            success: function(response) {
+                console.log("Sucesso:", response);
+                $("#modalEditarCurso").modal("hide");
+                Swal.fire({
+                    icon: "success",
+                    title: "Sucesso!",
+                    text: "Curso atualizado com sucesso!",
+                    timer: 2000
+                }).then(() => location.reload());
+            },
+            error: function(xhr, status, error) {
+                console.error("Status:", xhr.status);
+                console.error("Response:", xhr.responseText);
+                
+                let message = "Erro desconhecido";
+                if (xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Erro!",
+                    text: message || "Erro ao atualizar curso."
+                });
             }
-            // Se há mensagem direta
-            else if (xhr.responseJSON?.message) {
-                message = xhr.responseJSON.message;
+        });
+    } else {
+        // Sem arquivo - usar JSON como antes
+        const formData = {
+            nome: nome,
+            descricao: $form.find("[name=\"descricao\"]").val().trim(),
+            programa: $form.find("[name=\"programa\"]").val().trim(),
+            area: area,
+            modalidade: $form.find("[name=\"modalidade\"]").val().trim(),
+            ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0
+        };
+        
+        $.ajax({
+            url: `/api/cursos/${cursoId}`,
+            type: "PUT",
+            data: JSON.stringify(formData),
+            contentType: "application/json",
+            dataType: "json",
+            headers: {
+                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
+                "Accept": "application/json"
+            },
+            success: function(response) {
+                console.log("Sucesso:", response);
+                $("#modalEditarCurso").modal("hide");
+                Swal.fire({
+                    icon: "success",
+                    title: "Sucesso!",
+                    text: "Curso atualizado com sucesso!",
+                    timer: 2000
+                }).then(() => location.reload());
+            },
+            error: function(xhr, status, error) {
+                console.error("Status:", xhr.status);
+                console.error("Status Text:", xhr.statusText);
+                console.error("Response:", xhr.responseText);
+                console.error("Response JSON:", xhr.responseJSON);
+                
+                let message = "Erro desconhecido";
+                
+                if (xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                } else if (xhr.responseJSON?.error) {
+                    message = xhr.responseJSON.error;
+                }
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Erro!",
+                    text: message || "Erro ao atualizar curso."
+                });
             }
-            // Se há erro genérico
-            else if (xhr.responseJSON?.error) {
-                message = xhr.responseJSON.error;
-            }
-            
-            Swal.fire({
-                icon: "error",
-                title: "Erro!",
-                text: message || "Erro ao atualizar curso."
-            });
-        }
-    });
+        });
+    }
 });
 
 /**

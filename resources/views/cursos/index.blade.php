@@ -67,6 +67,29 @@
 </div>
 
 {{-- ============================================= --}}
+{{-- MODAL: Visualizar Detalhes do Curso           --}}
+{{-- ============================================= --}}
+<div class="modal fade" id="modalVisualizarCurso" tabindex="-1" aria-labelledby="modalVisualizarCursoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-3">
+            <div class="modal-header bg-primary text-white sticky-top">
+                <h5 class="modal-title" id="modalVisualizarCursoLabel">
+                    <i class="fas fa-book me-2"></i>Detalhes do Curso
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body p-4" id="conteudoVisualizarCurso">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ============================================= --}}
 {{-- MODAL: Criar Novo Curso                       --}}
 {{-- ============================================= --}}
 <div class="modal fade" id="modalNovoCurso" tabindex="-1" aria-labelledby="modalNovoCursoLabel" aria-hidden="true">
@@ -269,6 +292,83 @@ function carregarCentros() {
 }
 
 /**
+ * Carregar detalhes do curso para visualização
+ */
+function carregarDetalhesCurso(cursoId) {
+    $.ajax({
+        url: `/api/cursos/${cursoId}`,
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        },
+        success: function(curso) {
+            const statusBadge = curso.ativo 
+                ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
+                : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
+            
+            const modalidadeBadge = curso.modalidade === 'online' 
+                ? '<span class="badge bg-info"><i class="fas fa-globe me-1"></i>Online</span>'
+                : curso.modalidade === 'presencial'
+                ? '<span class="badge bg-warning"><i class="fas fa-building me-1"></i>Presencial</span>'
+                : '<span class="badge bg-primary"><i class="fas fa-laptop-house me-1"></i>Híbrido</span>';
+            
+            const imagemHtml = curso.imagem_url 
+                ? `<img src="${curso.imagem_url}" alt="${curso.nome}" class="img-fluid rounded" style="max-width: 150px; max-height: 150px; object-fit: cover;">`
+                : '<div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 150px; height: 150px;"><i class="fas fa-image fa-2x text-muted"></i></div>';
+            
+            let centrosHtml = '';
+            if (curso.centros && curso.centros.length > 0) {
+                centrosHtml = '<div class="mt-3"><h6 class="fw-semibold mb-2"><i class="fas fa-building me-2 text-primary"></i>Centros Associados</h6><div class="list-group">';
+                curso.centros.forEach(centro => {
+                    centrosHtml += `
+                        <div class="list-group-item px-3 py-2">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">${centro.nome}</h6>
+                                    <small class="text-muted">Preço: <strong>${centro.pivot?.preco || 'N/A'} Kz</strong> | Duração: <strong>${centro.pivot?.duracao || 'N/A'}</strong></small>
+                                </div>
+                                <small class="text-muted">${centro.pivot?.data_arranque || 'N/A'}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+                centrosHtml += '</div></div>';
+            }
+            
+            const conteudo = `
+                <div class="row g-3">
+                    <div class="col-md-3 text-center">
+                        ${imagemHtml}
+                    </div>
+                    <div class="col-md-9">
+                        <div class="mb-2">
+                            <h5 class="fw-bold mb-2">${curso.nome}</h5>
+                            <div class="d-flex gap-2 flex-wrap">
+                                ${statusBadge}
+                                ${modalidadeBadge}
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <p class="mb-2"><strong>Área:</strong> ${curso.area}</p>
+                            ${curso.descricao ? `<p class="mb-2"><strong>Descrição:</strong> ${curso.descricao}</p>` : ''}
+                            ${curso.programa ? `<p class="mb-2"><strong>Programa:</strong> ${curso.programa}</p>` : ''}
+                        </div>
+                    </div>
+                </div>
+                ${centrosHtml}
+            `;
+            
+            $('#conteudoVisualizarCurso').html(conteudo);
+            $('#modalVisualizarCurso').modal('show');
+        },
+        error: function(err) {
+            console.error('Erro ao carregar detalhes do curso:', err);
+            Swal.fire('Erro!', 'Não foi possível carregar os detalhes do curso.', 'error');
+        }
+    });
+}
+
+/**
  * Configurar eventos do modal
  */
 function configurarEventosModal() {
@@ -289,6 +389,13 @@ function configurarEventosModal() {
         e.preventDefault();
         $(this).closest('.col-12').remove();
         atualizarNumeroCentrosModal();
+    });
+
+    // Visualizar detalhes do curso
+    $(document).on('click', '.btn-visualizar-curso', function(e) {
+        e.preventDefault();
+        const cursoId = $(this).data('curso-id');
+        carregarDetalhesCurso(cursoId);
     });
 }
 
@@ -485,11 +592,11 @@ function carregarCursos() {
                             <td class="text-center">${statusBadge}</td>
                             <td class="text-end pe-3">
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <a href="/cursos/${curso.id}" class="btn btn-outline-primary" title="Visualizar">
+                                    <button type="button" class="btn btn-outline-primary btn-visualizar-curso" data-curso-id="${curso.id}" title="Visualizar detalhes">
                                         <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="/cursos/${curso.id}/edit" class="btn btn-outline-warning" title="Editar">
-                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <a href="/cursos/${curso.id}" class="btn btn-outline-info" title="Gerenciar curso">
+                                        <i class="fas fa-sliders-h"></i>
                                     </a>
                                     <button type="button" class="btn btn-outline-danger" onclick="eliminarCurso(${curso.id})" title="Eliminar">
                                         <i class="fas fa-trash"></i>
