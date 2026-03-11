@@ -258,7 +258,13 @@ class FormadorController extends Controller
         if ($request->has('centros')) {
             $formador->centros()->sync($request->centros);
         }
+        // Retorna resposta de sucesso
+        return response()->json([
+            'status' => 'sucesso',
+            'mensagem' => 'Formador atualizado com sucesso!',
             'dados' => $formador->load(['centros'])
+        ]);
+    }
 
 
 
