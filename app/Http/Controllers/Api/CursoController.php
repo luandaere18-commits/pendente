@@ -237,7 +237,7 @@ class CursoController extends Controller
 
     public function show($id)
     {
-        $curso = Curso::with(['centros', 'formadores'])->find($id);
+        $curso = Curso::with(['centros', 'formadores', 'cronogramas'])->find($id);
 
         if (!$curso) {
             return response()->json([

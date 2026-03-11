@@ -301,7 +301,9 @@ function carregarDetalhesCurso(cursoId) {
         headers: {
             'Accept': 'application/json'
         },
-        success: function(curso) {
+        success: function(response) {
+            const curso = response.dados || response;
+            
             const statusBadge = curso.ativo 
                 ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
                 : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
@@ -316,46 +318,82 @@ function carregarDetalhesCurso(cursoId) {
                 ? `<img src="${curso.imagem_url}" alt="${curso.nome}" class="img-fluid rounded" style="max-width: 150px; max-height: 150px; object-fit: cover;">`
                 : '<div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 150px; height: 150px;"><i class="fas fa-image fa-2x text-muted"></i></div>';
             
+            // Seção de Centros
             let centrosHtml = '';
             if (curso.centros && curso.centros.length > 0) {
-                centrosHtml = '<div class="mt-3"><h6 class="fw-semibold mb-2"><i class="fas fa-building me-2 text-primary"></i>Centros Associados</h6><div class="list-group">';
+                centrosHtml = '<div class="mt-4"><h6 class="fw-semibold mb-3"><i class="fas fa-building me-2 text-primary"></i>Centros Associados</h6><div class="table-responsive"><table class="table table-sm table-hover"><thead class="table-light"><tr><th>Centro</th><th>Preço (Kz)</th><th>Duração</th><th>Data Arranque</th></tr></thead><tbody>';
                 curso.centros.forEach(centro => {
+                    const preco = centro.pivot?.preco ? parseFloat(centro.pivot.preco).toLocaleString('pt-PT') : 'N/A';
+                    const duracao = centro.pivot?.duracao || 'N/A';
+                    const data = centro.pivot?.data_arranque || 'N/A';
                     centrosHtml += `
-                        <div class="list-group-item px-3 py-2">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h6 class="mb-1">${centro.nome}</h6>
-                                    <small class="text-muted">Preço: <strong>${centro.pivot?.preco || 'N/A'} Kz</strong> | Duração: <strong>${centro.pivot?.duracao || 'N/A'}</strong></small>
-                                </div>
-                                <small class="text-muted">${centro.pivot?.data_arranque || 'N/A'}</small>
-                            </div>
-                        </div>
+                        <tr>
+                            <td><strong>${centro.nome}</strong></td>
+                            <td>${preco}</td>
+                            <td>${duracao}</td>
+                            <td>${data}</td>
+                        </tr>
                     `;
                 });
-                centrosHtml += '</div></div>';
+                centrosHtml += '</tbody></table></div></div>';
+            }
+            
+            // Seção de Cronogramas
+            let cronogramasHtml = '';
+            if (curso.cronogramas && curso.cronogramas.length > 0) {
+                cronogramasHtml = '<div class="mt-4"><h6 class="fw-semibold mb-3"><i class="fas fa-calendar me-2 text-info"></i>Cronogramas</h6><div class="table-responsive"><table class="table table-sm table-hover"><thead class="table-light"><tr><th>Dias</th><th>Período</th><th>Hora Início</th><th>Hora Fim</th></tr></thead><tbody>';
+                curso.cronogramas.forEach(cron => {
+                    const dias = Array.isArray(cron.dia_semana) 
+                        ? cron.dia_semana.map(d => {
+                            const diasNomes = { 0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sab' };
+                            return diasNomes[d] || d;
+                        }).join(', ')
+                        : (cron.dia_semana || 'N/A');
+                    
+                    const periodo = cron.periodo === 'manha' ? 'Manhã' : 
+                                   cron.periodo === 'tarde' ? 'Tarde' : 
+                                   cron.periodo === 'noite' ? 'Noite' : (cron.periodo || 'N/A');
+                    
+                    const horaInicio = cron.hora_inicio || 'N/A';
+                    const horaFim = cron.hora_fim || 'N/A';
+                    
+                    cronogramasHtml += `
+                        <tr>
+                            <td><strong>${dias}</strong></td>
+                            <td><span class="badge bg-light text-dark">${periodo}</span></td>
+                            <td>${horaInicio}</td>
+                            <td>${horaFim}</td>
+                        </tr>
+                    `;
+                });
+                cronogramasHtml += '</tbody></table></div></div>';
             }
             
             const conteudo = `
-                <div class="row g-3">
+                <div class="row g-3 mb-3">
                     <div class="col-md-3 text-center">
                         ${imagemHtml}
                     </div>
                     <div class="col-md-9">
-                        <div class="mb-2">
+                        <div class="mb-3">
                             <h5 class="fw-bold mb-2">${curso.nome}</h5>
-                            <div class="d-flex gap-2 flex-wrap">
+                            <div class="d-flex gap-2 flex-wrap mb-3">
                                 ${statusBadge}
                                 ${modalidadeBadge}
                             </div>
                         </div>
-                        <div class="mt-3">
-                            <p class="mb-2"><strong>Área:</strong> ${curso.area}</p>
-                            ${curso.descricao ? `<p class="mb-2"><strong>Descrição:</strong> ${curso.descricao}</p>` : ''}
-                            ${curso.programa ? `<p class="mb-2"><strong>Programa:</strong> ${curso.programa}</p>` : ''}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <p class="mb-2"><strong><i class="fas fa-tag me-2 text-primary"></i>Área:</strong> ${curso.area}</p>
+                            </div>
+                            ${curso.descricao ? `<div class="col-md-12"><p class="mb-2"><strong><i class="fas fa-align-left me-2 text-primary"></i>Descrição:</strong><br>${curso.descricao}</p></div>` : ''}
+                            ${curso.programa ? `<div class="col-md-12"><p class="mb-2"><strong><i class="fas fa-book me-2 text-primary"></i>Programa:</strong><br>${curso.programa}</p></div>` : ''}
                         </div>
                     </div>
                 </div>
+                <hr>
                 ${centrosHtml}
+                ${cronogramasHtml}
             `;
             
             $('#conteudoVisualizarCurso').html(conteudo);
