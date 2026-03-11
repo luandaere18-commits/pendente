@@ -288,23 +288,26 @@ class CursoController extends Controller
             ], 404);
         }
 
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',  // Aumentado de 100 para 255
-            'descricao' => 'required|string',
+        // Validação condicional: permite edição parcial quando é API JSON
+        $rules = [
+            'nome' => 'sometimes|required|string|max:255',
+            'descricao' => 'sometimes|string',
             'programa' => 'nullable|string',
-            'area' => 'nullable|string|max:100',
-            'modalidade' => 'required|in:presencial,online,hibrido',  // Adicionado 'hibrido'
+            'area' => 'sometimes|string|max:100',
+            'modalidade' => 'sometimes|in:presencial,online,hibrido',
             'imagem_url' => 'nullable|url|max:255',
-            'ativo' => 'boolean',
-            'centros' => 'required|array|min:1',
-            'centros.*.centro_id' => 'required|exists:centros,id',
-            'centros.*.preco' => 'required|numeric|min:0',
-            'centros.*.duracao' => 'required|string|max:50',
+            'ativo' => 'nullable|boolean',
+            'centros' => 'nullable|array',
+            'centros.*.centro_id' => 'required_unless:centros,null|exists:centros,id',
+            'centros.*.preco' => 'required_unless:centros,null|numeric|min:0',
+            'centros.*.duracao' => 'required_unless:centros,null|string|max:50',
             'centros.*.data_arranque' => 'nullable|date',
-            'formadores' => 'array'
-        ]);
+            'formadores' => 'nullable|array'
+        ];
 
-        // Separe apenas os campos do curso
+        $validated = $request->validate($rules);
+
+        // Separe apenas os campos do curso que foram enviados
         $cursoData = collect($validated)->only([
             'nome',
             'descricao',
@@ -313,22 +316,28 @@ class CursoController extends Controller
             'modalidade',
             'imagem_url',
             'ativo'
-        ])->toArray();
+        ])->filter(function($value) {
+            return !is_null($value);
+        })->toArray();
 
-        $curso->update($cursoData);
-
-        // Atualizar associações com centros (preço, duração e data_arranque)
-        $centrosPivot = [];
-        foreach ($validated['centros'] as $centro) {
-            $centrosPivot[$centro['centro_id']] = [
-                'preco' => $centro['preco'],
-                'duracao' => $centro['duracao'],
-                'data_arranque' => $centro['data_arranque'] ?? null,
-            ];
+        if (!empty($cursoData)) {
+            $curso->update($cursoData);
         }
-        $curso->centros()->sync($centrosPivot);
 
-        // Sincronizar formadores
+        // Atualizar associações com centros apenas se foram fornecidos
+        if (!empty($validated['centros'])) {
+            $centrosPivot = [];
+            foreach ($validated['centros'] as $centro) {
+                $centrosPivot[$centro['centro_id']] = [
+                    'preco' => $centro['preco'],
+                    'duracao' => $centro['duracao'],
+                    'data_arranque' => $centro['data_arranque'] ?? null,
+                ];
+            }
+            $curso->centros()->sync($centrosPivot);
+        }
+
+        // Sincronizar formadores apenas se foram fornecidos
         if (!empty($validated['formadores'])) {
             $curso->formadores()->sync($validated['formadores']);
         }
@@ -474,6 +483,39 @@ class CursoController extends Controller
                 'status' => 'erro',
                 'mensagem' => 'Erro ao desassociar centro: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Atualizar dados de um centro associado a um curso (pivot data)
+     */
+    public function updateCentro(Request $request, $id, $centroId)
+    {
+        $curso = Curso::findOrFail($id);
+
+        $validated = $request->validate([
+            'preco' => 'required|numeric|min:0',
+            'duracao' => 'required|string|max:100',
+            'data_arranque' => 'required|date',
+        ]);
+
+        try {
+            $curso->centros()->updateExistingPivot($centroId, [
+                'preco' => $validated['preco'],
+                'duracao' => $validated['duracao'],
+                'data_arranque' => $validated['data_arranque']
+            ]);
+
+            return response()->json([
+                'status' => 'sucesso',
+                'mensagem' => 'Centro atualizado com sucesso!',
+                'dados' => $curso->load('centros')
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Erro ao atualizar centro: ' . $e->getMessage()
+            ], 400);
         }
     }
 }

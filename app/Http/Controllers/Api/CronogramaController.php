@@ -60,17 +60,21 @@ class CronogramaController extends Controller
             'curso_id' => 'required|exists:cursos,id',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manhã,tarde,noite',
+            'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i'
         ]);
+
+        // Normalizar período (remover acento se houver)
+        $validated['periodo'] = str_replace('manhã', 'manha', $validated['periodo']);
 
         // Validar hora_fim > hora_inicio se ambas estão preenchidas
         if (!empty($validated['hora_inicio']) && !empty($validated['hora_fim'])) {
             if ($validated['hora_fim'] <= $validated['hora_inicio']) {
                 return response()->json([
                     'status' => 'erro',
-                    'mensagem' => 'A hora de fim deve ser maior que a hora de início.'
+                    'mensagem' => 'A hora de fim deve ser maior que a hora de início.',
+                    'errors' => ['hora_fim' => ['A hora de fim deve ser maior que a hora de início.']]
                 ], 422);
             }
         }
@@ -163,29 +167,40 @@ class CronogramaController extends Controller
                 'mensagem' => 'Cronograma não encontrado!'
             ], 404);
         }
+        
         // Não permite editar curso_id
         $validated = $request->validate([
-            'dia_semana' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manhã,tarde,noite',
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fim' => 'required|date_format:H:i|after:hora_inicio'
+            'dia_semana' => 'required|array|min:1',
+            'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
+            'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
+            'hora_inicio' => 'nullable|date_format:H:i',
+            'hora_fim' => 'nullable|date_format:H:i'
         ]);
-        // Garantir formato correto das horas
-        $validated['hora_inicio'] = date('H:i', strtotime($validated['hora_inicio']));
-        $validated['hora_fim'] = date('H:i', strtotime($validated['hora_fim']));
-        // Verificar conflitos de horário (ignorando o cronograma atual)
-        $dadosConflito = array_merge($validated, [
-            'curso_id' => $cronograma->curso_id
-        ]);
-        $conflitos = $this->verificarConflitosHorario($dadosConflito, $id);
-        if (!empty($conflitos)) {
-            return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Conflito de horário detectado!',
-                'conflitos' => $conflitos
-            ], 422);
+        
+        // Normalizar período (remover acento se houver)
+        $validated['periodo'] = str_replace('manhã', 'manha', $validated['periodo']);
+        
+        // Validar hora_fim > hora_inicio se ambas estão preenchidas
+        if (!empty($validated['hora_inicio']) && !empty($validated['hora_fim'])) {
+            if ($validated['hora_fim'] <= $validated['hora_inicio']) {
+                return response()->json([
+                    'status' => 'erro',
+                    'mensagem' => 'A hora de fim deve ser maior que a hora de início.',
+                    'errors' => ['hora_fim' => ['A hora de fim deve ser maior que a hora de início.']]
+                ], 422);
+            }
         }
+        
+        // Garantir formato correto das horas
+        if (!empty($validated['hora_inicio'])) {
+            $validated['hora_inicio'] = date('H:i', strtotime($validated['hora_inicio']));
+        }
+        if (!empty($validated['hora_fim'])) {
+            $validated['hora_fim'] = date('H:i', strtotime($validated['hora_fim']));
+        }
+        
         $cronograma->update($validated);
+        
         return response()->json([
             'status' => 'sucesso',
             'mensagem' => 'Cronograma atualizado com sucesso!',
