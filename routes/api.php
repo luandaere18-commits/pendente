@@ -43,7 +43,7 @@ Route::get('/turmas', [TurmaController::class, 'index']);
 Route::get('/turmas/{id}', [TurmaController::class, 'show']);
 
 Route::get('/formadores', [FormadorController::class, 'index'])->name('api.formadores.index');
-Route::get('/formadores/{id}', [FormadorController::class, 'show']);
+Route::get('/formadores/{formador}', [FormadorController::class, 'show'])->name('api.formadores.show');
 
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/categorias/{categoria}', [CategoriaController::class, 'show']);
@@ -86,9 +86,9 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::delete('/turmas/{id}', [TurmaController::class, 'destroy']);
 
     // Formadores
-    Route::post('/formadores', [FormadorController::class, 'store']);
-    Route::put('/formadores/{id}', [FormadorController::class, 'update']);
-    Route::delete('/formadores/{id}', [FormadorController::class, 'destroy']);
+    Route::post('/formadores', [FormadorController::class, 'store'])->name('api.formadores.store');
+    Route::put('/formadores/{formador}', [FormadorController::class, 'update'])->name('api.formadores.update');
+    Route::delete('/formadores/{formador}', [FormadorController::class, 'destroy'])->name('api.formadores.destroy');
 
     // Categorias
     Route::post('/categorias', [CategoriaController::class, 'store']);

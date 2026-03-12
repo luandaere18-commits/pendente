@@ -152,17 +152,10 @@ class FormadorController extends Controller
      *     )
      * )
      */
-    public function show($id)
+    public function show(Formador $formador)
     {
         // Busca formador por ID, incluindo centros e turmas
-        $formador = Formador::with(['centros', 'turmas.curso'])->find($id);
-        if (!$formador) {
-            // Retorna erro se não encontrado
-            return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Formador não encontrado!'
-            ], 404);
-        }
+        $formador = $formador->load(['centros', 'turmas.curso']);
         // Retorna dados do formador
         return response()->json(['data' => $formador]);
     }
@@ -200,21 +193,12 @@ class FormadorController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Formador $formador)
     {
-        // Busca formador para atualizar
-        $formador = Formador::find($id);
-        if (!$formador) {
-            // Retorna erro se não encontrado
-            return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Formador não encontrado!'
-            ], 404);
-        }
         // Validação dos dados recebidos
         $validated = $request->validate([
             'nome' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100|unique:formadores,email' . ($request->method() === 'PUT' ? ',' . $id : ''),
+            'email' => 'nullable|email|max:100|unique:formadores,email' . ($request->method() === 'PUT' ? ',' . $formador->id : ''),
             'contactos' => 'nullable|array',
             'contactos.*.tipo' => 'nullable|string',
             'contactos.*.valor' => 'nullable|string',
@@ -294,17 +278,8 @@ class FormadorController extends Controller
      *     )
      * )
      */
-    public function destroy($id)
+    public function destroy(Formador $formador)
     {
-        // Busca formador para deletar
-        $formador = Formador::find($id);
-        if (!$formador) {
-            // Retorna erro se não encontrado
-            return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Formador não encontrado!'
-            ], 404);
-        }
         // Remove associações N:N antes de deletar
         $formador->centros()->detach();
         $formador->delete();
