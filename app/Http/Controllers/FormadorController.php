@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Formador;
+use App\Models\Centro;
 use Illuminate\Http\Request;
 
 class FormadorController extends Controller
@@ -10,7 +11,8 @@ class FormadorController extends Controller
     public function index()
     {
         $formadores = Formador::with(['centros'])->get();
-        return view('formadores.index', compact('formadores'));
+        $centros = Centro::all();
+        return view('formadores.index', compact('formadores', 'centros'));
     }
 
     public function create()
