@@ -33,10 +33,4 @@ class Curso extends Model
     {
         return $this->hasMany(Turma::class);
     }
-
-    // Um curso pode ter muitas pré-inscrições
-    public function preInscricoes()
-    {
-        return $this->hasMany(PreInscricao::class);
-    }
 }

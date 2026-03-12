@@ -64,6 +64,7 @@
         .main-content {
             margin-left: 250px;
             padding: 2rem;
+            padding-top: calc(2rem + 70px);
             min-height: 100vh;
         }
         

@@ -97,7 +97,7 @@ class CursoController extends Controller
 
     public function show(Curso $curso)
     {
-        $curso->load(['centros', 'turmas', 'preInscricoes']);
+        $curso->load(['centros', 'turmas']);
         $centros = Centro::all();
         $formadores = Formador::all();
         return view('cursos.show', compact('curso', 'centros', 'formadores'));

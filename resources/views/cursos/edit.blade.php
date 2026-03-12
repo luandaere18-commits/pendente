@@ -282,23 +282,34 @@ $(document).ready(function() {
 });
 
 function carregarCentrosExistentes() {
+    if (!cursoData || !cursoData.centros || cursoData.centros.length === 0) {
+        return;
+    }
+    
     cursoData.centros.forEach((centro, index) => {
-        const tempDiv = document.createElement('div');
-        const template = document.getElementById('centroTemplate');
-        const clone = template.content.cloneNode(true);
-        tempDiv.appendChild(clone);
-        
-        let html = tempDiv.innerHTML
-            .replace(/INDEX/g, index)
-            .replace(/numero-centro">1</g, `numero-centro">${index + 1}<`);
-        
-        $('#centrosContainer').append('<div class="centro-wrapper-' + index + '">' + html + '</div>');
-        
-        // Preencher com dados
-        $(`select[name="centro_curso[${index}][centro_id]"]`).val(centro.id);
-        $(`input[name="centro_curso[${index}][preco]"]`).val(centro.pivot.preco);
-        
-        centroCount++;
+        try {
+            const tempDiv = document.createElement('div');
+            const template = document.getElementById('centroTemplate');
+            if (!template) return;
+            
+            const clone = template.content.cloneNode(true);
+            tempDiv.appendChild(clone);
+            
+            let html = tempDiv.innerHTML
+                .replace(/INDEX/g, index)
+                .replace(/numero-centro">1</g, `numero-centro">${index + 1}<`);
+            
+            $('#centrosContainer').append('<div class="centro-wrapper-' + index + '">' + html + '</div>');
+            
+            // Preencher com dados - com verificação de pivot
+            $(`select[name="centro_curso[${index}][centro_id]"]`).val(centro.id);
+            const preco = centro.pivot && centro.pivot.preco ? centro.pivot.preco : '';
+            $(`input[name="centro_curso[${index}][preco]"]`).val(preco);
+            
+            centroCount++;
+        } catch(e) {
+            console.error('Erro ao carregar centro:', e, centro);
+        }
     });
 }
 

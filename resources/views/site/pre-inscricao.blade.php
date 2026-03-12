@@ -346,17 +346,25 @@
                 cursos = data.filter(curso => curso.ativo);
                 exibirCursos();
                 preencherFiltroAreas();
+            }).fail(function() {
+                console.error('Erro ao carregar cursos');
             });
 
             // Carregar centros
             $.get('/api/centros', function(data) {
                 centros = data;
                 preencherSelectCentros();
+            }).fail(function() {
+                console.error('Erro ao carregar centros');
             });
 
-            // Carregar turmas
-            $.get('/api/turmas', function(data) {
-                turmas = data;
+            // Carregar turmas - IMPORTANTE para carregamento do select
+            $.get('/api/turmas?publicado=true', function(data) {
+                turmas = Array.isArray(data) ? data : (data.data || []);
+                console.log('Turmas carregadas:', turmas.length);
+            }).fail(function(xhr) {
+                console.error('Erro ao carregar turmas:', xhr);
+                turmas = [];
             });
         }
 
@@ -565,20 +573,42 @@
         function carregarTurmas() {
             const cursoId = $('#curso_id').val();
             
-            const turmasDisponiveis = turmas.filter(c => 
-                c.curso_id == cursoId
+            if (!cursoId || turmas.length === 0) {
+                console.log('Carregando turmas da API...');
+                // Carregar turmas se ainda não foram carregadas
+                $.get('/api/turmas?publicado=true', function(data) {
+                    turmas = Array.isArray(data) ? data : (data.data || []);
+                    exibirTurmasDisponíveis(cursoId);
+                });
+            } else {
+                exibirTurmasDisponíveis(cursoId);
+            }
+        }
+
+        function exibirTurmasDisponíveis(cursoId) {
+            const turmasDisponiveis = turmas.filter(t => 
+                t.curso_id == cursoId && t.publicado
             );
 
             $('#turma_id').html('<option value="">Selecione uma turma</option>');
+            
+            if (turmasDisponiveis.length === 0) {
+                $('#turma_id').append('<option value="" disabled>Nenhuma turma disponível para este curso</option>');
+            }
             
             turmasDisponiveis.forEach(turma => {
                 const horaTexto = turma.hora_inicio && turma.hora_fim 
                     ? ` (${turma.hora_inicio} - ${turma.hora_fim})`
                     : '';
                 
+                const periodoTexto = turma.periodo ? turma.periodo.toUpperCase() : 'N/A';
+                const diasTexto = Array.isArray(turma.dia_semana) 
+                    ? turma.dia_semana.join(', ') 
+                    : turma.dia_semana || 'N/A';
+                
                 $('#turma_id').append(`
                     <option value="${turma.id}">
-                        ${Array.isArray(turma.dia_semana) ? turma.dia_semana.join(', ') : turma.dia_semana} - ${turma.periodo}${horaTexto}
+                        ${diasTexto} - ${periodoTexto}${horaTexto}
                     </option>
                 `);
             });
@@ -622,7 +652,7 @@
                 const tipo = $(this).find('.contacto-tipo').val();
                 const valor = $(this).find('.contacto-valor').val();
                 if (valor.trim()) {
-                    contactos.push({ tipo, valor });
+                    contactos.push(valor); // Apenas enviar valores
                 }
             });
 
@@ -631,14 +661,18 @@
                 return;
             }
 
+            const turmaId = $('#selected_turma_id').val();
+            if (!turmaId) {
+                Swal.fire('Atenção!', 'Por favor, selecione uma turma.', 'warning');
+                return;
+            }
+
             const dados = {
-                curso_id: parseInt($('#curso_id').val()),
-                centro_id: parseInt($('#selected_centro_id').val()),
-                turma_id: $('#selected_turma_id').val() ? parseInt($('#selected_turma_id').val()) : null,
+                turma_id: parseInt(turmaId),
                 nome_completo: $('#nome_completo').val(),
                 email: $('#email').val() || null,
-                contactos: JSON.stringify(contactos),
-                observacoes: $('#observacoes').val() || null
+                contactos: contactos,
+                status: 'pendente'
             };
 
             $.ajax({

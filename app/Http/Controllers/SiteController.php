@@ -13,7 +13,7 @@ class SiteController extends Controller
      */
     public function home()
     {
-        return view('site.home');
+        return view('site.home-novo');
     }
 
     /**
@@ -21,7 +21,7 @@ class SiteController extends Controller
      */
     public function centros()
     {
-        return view('site.centros');
+        return view('site.centros-novo');
     }
 
     /**
@@ -29,15 +29,15 @@ class SiteController extends Controller
      */
     public function cursos()
     {
-        return view('site.cursos');
+        return view('site.cursos-novo');
     }
 
     /**
      * Página de um centro específico
      */
-    public function centro(Centro $centro)
+    public function centro($id = null)
     {
-        return view('site.centro-detalhes', compact('centro'));
+        return view('site.centro-detalhe-novo', ['centroId' => $id]);
     }
 
     /**
@@ -45,7 +45,7 @@ class SiteController extends Controller
      */
     public function sobre()
     {
-        return view('site.sobre');
+        return view('site.sobre-novo');
     }
 
     /**
@@ -53,6 +53,6 @@ class SiteController extends Controller
      */
     public function contactos()
     {
-        return view('site.contactos');
+        return view('site.contactos-novo');
     }
 }
