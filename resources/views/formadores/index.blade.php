@@ -43,18 +43,17 @@
                     <thead class="table-light">
                         <tr>
                             <th class="ps-3" style="width:60px">ID</th>
-                            <th style="width:56px">Foto</th>
                             <th>Nome</th>
                             <th class="d-none d-md-table-cell">Email</th>
                             <th class="d-none d-lg-table-cell">Especialidade</th>
+                            <th class="text-center" style="width:90px">Cursos</th>
                             <th class="text-center" style="width:90px">Contactos</th>
-                            <th class="text-center" style="width:80px">Turmas</th>
                             <th class="text-end pe-3" style="width:130px">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
+                            <td colspan="7" class="text-center py-5 text-muted">
                                 <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
                                 Carregando formadores...
                             </td>
@@ -95,7 +94,7 @@
 {{-- MODAL: Criar Novo Formador                   --}}
 {{-- ============================================= --}}
 <div class="modal fade" id="modalNovoFormador" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content border-0 shadow">
 
             {{-- Header --}}
@@ -117,7 +116,7 @@
 
                         {{-- COLUNA ESQUERDA --}}
                         <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0 h-100">
+                            <div class="card border bg-light border-0">
                                 <div class="card-body">
                                     <h6 class="fw-bold text-primary mb-3">
                                         <i class="fas fa-id-card me-2"></i>Informações do Formador
@@ -125,17 +124,17 @@
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">Nome <span class="text-danger">*</span></label>
-                                        <input type="text" name="nome" class="form-control" placeholder="Nome completo" required>
+                                        <input type="text" name="nome" class="form-control form-control-sm" placeholder="Nome completo" required>
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">Email</label>
-                                        <input type="email" name="email" class="form-control" placeholder="email@centro.ao">
+                                        <input type="email" name="email" class="form-control form-control-sm" placeholder="email@centro.ao">
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">Especialidade</label>
-                                        <input type="text" name="especialidade" class="form-control" placeholder="Ex: Informática, Design...">
+                                        <input type="text" name="especialidade" class="form-control form-control-sm" placeholder="Ex: Informática, Design...">
                                     </div>
 
                                     <div class="mb-0">
@@ -143,7 +142,7 @@
                                             <i class="fas fa-camera me-1 text-muted"></i>Foto
                                         </label>
                                         <input type="file" name="foto" class="form-control form-control-sm" accept="image/*">
-                                        <div class="form-text">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
+                                        <div class="form-text small">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
                                     </div>
                                 </div>
                             </div>
@@ -151,27 +150,42 @@
 
                         {{-- COLUNA DIREITA --}}
                         <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0 h-100">
+                            <div class="card border bg-light border-0">
                                 <div class="card-body">
                                     <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-address-book me-2"></i>Contactos e Biografia
+                                        <i class="fas fa-address-book me-2"></i>Contactos
                                     </h6>
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">
                                             <i class="fas fa-phone me-1 text-muted"></i>Contacto
                                         </label>
-                                        <input type="text" name="contacto_telefone" class="form-control" placeholder="+244 900 000 000">
+                                        <input type="text" name="contacto_telefone" class="form-control form-control-sm" placeholder="+244 900 000 000">
                                     </div>
 
                                     <div class="mb-0">
                                         <label class="form-label fw-medium small">Biografia</label>
-                                        <textarea name="bio" class="form-control" rows="7" placeholder="Breve descrição profissional..."></textarea>
+                                        <textarea name="bio" class="form-control form-control-sm" rows="7" placeholder="Breve descrição profissional..."></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                    </div>
+
+                    {{-- ====== SEÇÃO DE CENTROS ====== --}}
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-semibold mb-0">
+                                <i class="fas fa-building text-primary me-2"></i>Centros de Formação
+                            </h6>
+                            <button type="button" id="adicionarCentroNovoFormadorBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Adicionar Centro
+                            </button>
+                        </div>
+                        <div id="centrosContainerNovoFormador" class="row g-3">
+                            {{-- centros dinâmicos aqui --}}
+                        </div>
                     </div>
                 </form>
             </div>
@@ -194,7 +208,7 @@
 {{-- MODAL: Editar Formador                       --}}
 {{-- ============================================= --}}
 <div class="modal fade" id="modalEditarFormador" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content border-0 shadow">
 
             {{-- Header --}}
@@ -217,7 +231,7 @@
 
                         {{-- COLUNA ESQUERDA --}}
                         <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0 h-100">
+                            <div class="card border bg-light border-0">
                                 <div class="card-body">
                                     <h6 class="fw-bold text-primary mb-3">
                                         <i class="fas fa-id-card me-2"></i>Informações do Formador
@@ -225,25 +239,25 @@
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">Nome <span class="text-danger">*</span></label>
-                                        <input type="text" id="editNome" class="form-control" required>
+                                        <input type="text" id="editNome" class="form-control form-control-sm" required>
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">Email</label>
-                                        <input type="email" id="editEmail" class="form-control">
+                                        <input type="email" id="editEmail" class="form-control form-control-sm">
                                     </div>
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">Especialidade</label>
-                                        <input type="text" id="editEspecialidade" class="form-control">
+                                        <input type="text" id="editEspecialidade" class="form-control form-control-sm">
                                     </div>
 
                                     <div class="mb-0">
                                         <label class="form-label fw-medium small">
                                             <i class="fas fa-camera me-1 text-muted"></i>Foto (Nova)
                                         </label>
-                                        <input type="file" id="editFoto" class="form-control form-control-sm" accept="image/*">
-                                        <div class="form-text">Deixe em branco para manter a foto atual</div>
+                                        <input type="file" id="editFoto" name="foto" class="form-control form-control-sm" accept="image/*">
+                                        <div class="form-text small">Deixe em branco para manter a foto atual</div>
                                     </div>
                                 </div>
                             </div>
@@ -251,27 +265,42 @@
 
                         {{-- COLUNA DIREITA --}}
                         <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0 h-100">
+                            <div class="card border bg-light border-0">
                                 <div class="card-body">
                                     <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-address-book me-2"></i>Contactos e Biografia
+                                        <i class="fas fa-address-book me-2"></i>Contactos
                                     </h6>
 
                                     <div class="mb-3">
                                         <label class="form-label fw-medium small">
                                             <i class="fas fa-phone me-1 text-muted"></i>Contacto
                                         </label>
-                                        <input type="text" id="editContactoTelefone" class="form-control" placeholder="+244 900 000 000">
+                                        <input type="text" id="editContactoTelefone" class="form-control form-control-sm" placeholder="+244 900 000 000">
                                     </div>
 
                                     <div class="mb-0">
                                         <label class="form-label fw-medium small">Biografia</label>
-                                        <textarea id="editBio" class="form-control" rows="7"></textarea>
+                                        <textarea id="editBio" class="form-control form-control-sm" rows="7"></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                    </div>
+
+                    {{-- ====== SEÇÃO DE CENTROS ====== --}}
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-semibold mb-0">
+                                <i class="fas fa-building text-primary me-2"></i>Centros de Formação
+                            </h6>
+                            <button type="button" id="adicionarCentroEditarFormadorBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Adicionar Centro
+                            </button>
+                        </div>
+                        <div id="centrosContainerEditarFormador" class="row g-3">
+                            {{-- centros dinâmicos aqui --}}
+                        </div>
                     </div>
                 </form>
             </div>
@@ -292,11 +321,151 @@
 
 @endsection
 
+{{-- ============================================= --}}
+{{-- Template para Centro no Modal                 --}}
+{{-- ============================================= --}}
+<template id="centroFormadorTemplate">
+    <div class="col-12 col-md-6">
+        <div class="centro-card card border rounded-3 shadow-sm">
+            <div class="card-header bg-light d-flex align-items-center justify-content-between py-2 px-3">
+                <span class="badge bg-primary numero-centro-modal">Centro 1</span>
+                <button type="button" class="btn btn-outline-danger btn-sm remover-centro-modal py-0 px-2" title="Remover">
+                    <i class="fas fa-trash-alt small"></i>
+                </button>
+            </div>
+            <div class="card-body p-3">
+                <div>
+                    <label class="form-label small mb-1 fw-medium">Centro <span class="text-danger">*</span></label>
+                    <select class="form-select form-select-sm centro-id-modal" required>
+                        <option value="">Selecione</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
 @section('scripts')
 <script>
+let centrosDisponiveisList = [];
+let centrosContainerNovoFormadorCount = 0;
+let centrosContainerEditarFormadorCount = 0;
+
 $(document).ready(function() {
+    carregarCentros();
     carregarFormadores();
+    configurarEventosModal();
 });
+
+/**
+ * Carregar lista de centros disponíveis
+ */
+function carregarCentros() {
+    $.ajax({
+        url: '/api/centros',
+        method: 'GET',
+        success: function(data) {
+            centrosDisponiveisList = data;
+        },
+        error: function(err) {
+            console.error('Erro ao carregar centros:', err);
+        }
+    });
+}
+
+/**
+ * Configurar eventos do modal
+ */
+function configurarEventosModal() {
+    $('#modalNovoFormador').on('show.bs.modal', function() {
+        $('#formNovoFormadorAjax')[0].reset();
+        $('#centrosContainerNovoFormador').empty();
+        centrosContainerNovoFormadorCount = 0;
+        adicionarCentroNovoFormador();
+    });
+
+    $('#modalEditarFormador').on('show.bs.modal', function() {
+        $('#centrosContainerEditarFormador').empty();
+        centrosContainerEditarFormadorCount = 0;
+    });
+
+    $(document).on('click', '#adicionarCentroNovoFormadorBtn', function(e) {
+        e.preventDefault();
+        adicionarCentroNovoFormador();
+    });
+
+    $(document).on('click', '#adicionarCentroEditarFormadorBtn', function(e) {
+        e.preventDefault();
+        adicionarCentroEditarFormador();
+    });
+
+    $(document).on('click', '.remover-centro-modal', function(e) {
+        e.preventDefault();
+        $(this).closest('.col-12').remove();
+        atualizarNumeroCentros();
+    });
+}
+
+/**
+ * Adicionar centro no modal de novo formador
+ */
+function adicionarCentroNovoFormador() {
+    const template = document.getElementById('centroFormadorTemplate');
+    if (!template) return;
+
+    const clone = template.content.cloneNode(true);
+    const wrapper = document.createElement('div');
+    wrapper.appendChild(clone);
+
+    const html = wrapper.innerHTML;
+    $('#centrosContainerNovoFormador').append(html);
+
+    const selects = $('#centrosContainerNovoFormador').find('.centro-id-modal');
+    const lastSelect = selects.last();
+
+    centrosDisponiveisList.forEach(centro => {
+        lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
+    });
+
+    atualizarNumeroCentros();
+}
+
+/**
+ * Adicionar centro no modal de editar formador
+ */
+function adicionarCentroEditarFormador() {
+    const template = document.getElementById('centroFormadorTemplate');
+    if (!template) return;
+
+    const clone = template.content.cloneNode(true);
+    const wrapper = document.createElement('div');
+    wrapper.appendChild(clone);
+
+    const html = wrapper.innerHTML;
+    $('#centrosContainerEditarFormador').append(html);
+
+    const selects = $('#centrosContainerEditarFormador').find('.centro-id-modal');
+    const lastSelect = selects.last();
+
+    centrosDisponiveisList.forEach(centro => {
+        lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
+    });
+
+    atualizarNumeroCentros();
+}
+
+/**
+ * Atualizar numeração dos centros
+ */
+function atualizarNumeroCentros() {
+    const badges = $('.numero-centro-modal');
+    badges.each((index, badge) => {
+        $(badge).text('Centro ' + (index + 1));
+    });
+
+    const btnsRemover = $('.remover-centro-modal');
+    btnsRemover.prop('disabled', btnsRemover.length <= 1);
+}
 
 /**
  * Carrega a lista de formadores via API
@@ -311,35 +480,49 @@ function carregarFormadores() {
             let html = '';
             
             if (data.length === 0) {
-                html = '<tr><td colspan="8" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhum formador encontrado</td></tr>';
+                html = '<tr><td colspan="7" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhum formador encontrado</td></tr>';
             } else {
                 data.forEach(function(formador) {
-                    const foto = formador.foto_url 
-                        ? `<img src="${formador.foto_url}" alt="${formador.nome}" class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;">`
-                        : '<div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:40px;height:40px;"><i class="fas fa-user text-primary"></i></div>';
                     
                     const email = formador.email || '<span class="text-muted">—</span>';
                     const especialidade = formador.especialidade || '<span class="text-muted">—</span>';
                     
-                    let contactos = '<span class="badge bg-secondary-subtle text-secondary">0</span>';
-                    if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
-                        contactos = `<span class="badge bg-info-subtle text-info">${formador.contactos.length}</span>`;
+                    // Cursos (via turmas)
+                    let cursosBadges = '<span class="text-muted small">Nenhum</span>';
+                    const cursosSet = new Set();
+                    if (formador.turmas && Array.isArray(formador.turmas)) {
+                        formador.turmas.forEach(function(turma) {
+                            if (turma.curso && turma.curso.nome) {
+                                cursosSet.add(turma.curso.nome);
+                            }
+                        });
+                    }
+                    if (cursosSet.size > 0) {
+                        const cursosArray = Array.from(cursosSet);
+                        cursosBadges = cursosArray.slice(0, 2).map(function(curso) {
+                            return `<span class="badge bg-info-subtle text-info me-1 mb-1">${curso}</span>`;
+                        }).join('');
+                        if (cursosArray.length > 2) {
+                            cursosBadges += `<span class="badge bg-secondary-subtle text-secondary me-1 mb-1">+${cursosArray.length - 2}</span>`;
+                        }
                     }
                     
-                    const turmas = formador.turmas ? formador.turmas.length : 0;
-                    const turmasBadge = turmas > 0
-                        ? `<span class="badge bg-success-subtle text-success">${turmas}</span>`
-                        : '<span class="badge bg-secondary-subtle text-secondary">0</span>';
+                    let contactos = '<span class="text-muted small">Nenhum</span>';
+                    if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
+                        contactos = formador.contactos.map(function(c) {
+                            let telefone = typeof c === 'string' ? c : (c.valor || c);
+                            return `<span class="badge bg-info-subtle text-info me-1 mb-1"><i class="fas fa-phone me-1"></i>${telefone}</span>`;
+                        }).join('');
+                    }
                     
                     html += `
                         <tr>
                             <td class="ps-3"><strong class="text-muted">#${formador.id}</strong></td>
-                            <td>${foto}</td>
                             <td><strong>${formador.nome}</strong></td>
                             <td class="d-none d-md-table-cell"><small>${email}</small></td>
                             <td class="d-none d-lg-table-cell"><small>${especialidade}</small></td>
+                            <td class="text-center"><small>${cursosBadges}</small></td>
                             <td class="text-center">${contactos}</td>
-                            <td class="text-center">${turmasBadge}</td>
                             <td class="text-end pe-3">
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button type="button" class="btn btn-outline-primary btn-sm" onclick="visualizarFormador(${formador.id})" title="Visualizar"><i class="fas fa-eye"></i></button>
@@ -357,7 +540,7 @@ function carregarFormadores() {
         error: function(err) {
             console.error('Erro ao carregar formadores:', err);
             $('#formadoresTable tbody').html(
-                '<tr><td colspan="8" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
+                '<tr><td colspan="7" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
             );
         }
     });
@@ -381,6 +564,13 @@ window.visualizarFormador = function(id) {
                 }).join('');
             }
             
+            let centrosHtml = '<span class="text-muted">Nenhum centro associado</span>';
+            if (formador.centros && Array.isArray(formador.centros) && formador.centros.length > 0) {
+                centrosHtml = formador.centros.map(function(c) {
+                    return `<span class="badge bg-primary-subtle text-primary me-1"><i class="fas fa-building me-1"></i>${c.nome}</span>`;
+                }).join('');
+            }
+            
             const fotoHtml = formador.foto_url
                 ? `<img src="${formador.foto_url}" class="rounded-3 shadow-sm" style="width:100%;max-width:180px;aspect-ratio:1;object-fit:cover;" alt="${formador.nome}">`
                 : '<div class="rounded-3 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto" style="width:180px;height:180px;"><i class="fas fa-user text-primary fa-4x"></i></div>';
@@ -394,6 +584,7 @@ window.visualizarFormador = function(id) {
                             <div class="col-12"><small class="text-muted d-block fw-medium"><i class="fas fa-envelope me-1"></i>Email</small><small>${formador.email || '—'}</small></div>
                             <div class="col-12"><small class="text-muted d-block fw-medium"><i class="fas fa-star me-1"></i>Especialidade</small><small>${formador.especialidade || '—'}</small></div>
                             <div class="col-12"><small class="text-muted d-block fw-medium mb-1"><i class="fas fa-phone me-1"></i>Contactos</small>${contactosHtml}</div>
+                            <div class="col-12"><small class="text-muted d-block fw-medium mb-1"><i class="fas fa-building me-1"></i>Centros</small>${centrosHtml}</div>
                             <div class="col-12"><small class="text-muted d-block fw-medium"><i class="fas fa-align-left me-1"></i>Biografia</small><small>${formador.bio || '—'}</small></div>
                         </div>
                     </div>
@@ -430,6 +621,26 @@ window.abrirEdicaoFormador = function(id) {
             }
             $('#editContactoTelefone').val(primeroContacto);
             
+            // Limpar e carregar centros
+            $('#centrosContainerEditarFormador').empty();
+            centrosContainerEditarFormadorCount = 0;
+            
+            // Aguardar selects serem renderizados
+            setTimeout(function() {
+                if (formador.centros && formador.centros.length > 0) {
+                    formador.centros.forEach(function(centro) {
+                        adicionarCentroEditarFormador();
+                        setTimeout(function() {
+                            const lastSelect = $('#centrosContainerEditarFormador').find('.centro-id-modal').last();
+                            lastSelect.val(centro.id);
+                        }, 50);
+                    });
+                } else {
+                    adicionarCentroEditarFormador();
+                    atualizarNumeroCentros();
+                }
+            }, 100);
+            
             new bootstrap.Modal(document.getElementById('modalEditarFormador')).show();
         },
         error: function() {
@@ -444,19 +655,34 @@ window.abrirEdicaoFormador = function(id) {
 $('#formNovoFormadorAjax').on('submit', function(e) {
     e.preventDefault();
     
+    const form = this;
+    const formData = new FormData(form);
     const telefone = $('input[name="contacto_telefone"]').val();
+    const centrosArray = [];
+    
+    $('#centrosContainerNovoFormador').find('.centro-card').each(function() {
+        const centroId = $(this).find('.centro-id-modal').val();
+        if (centroId) {
+            centrosArray.push(parseInt(centroId));
+        }
+    });
+    
+    // Adicionar contactos como array indexado para Laravel
+    if (telefone) {
+        formData.append('contactos[0]', telefone);
+    }
+    
+    // Adicionar centros como array indexado para Laravel
+    centrosArray.forEach(function(centroId, index) {
+        formData.append('centros[' + index + ']', centroId);
+    });
     
     $.ajax({
         url: "{{ route('api.formadores.store') }}",
         method: 'POST',
-        data: JSON.stringify({
-            nome: $('input[name="nome"]').val(),
-            email: $('input[name="email"]').val(),
-            especialidade: $('input[name="especialidade"]').val(),
-            bio: $('textarea[name="bio"]').val(),
-            contactos: telefone ? [telefone] : []
-        }),
-        contentType: 'application/json',
+        data: formData,
+        contentType: false,
+        processData: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function() {
             Swal.fire('Sucesso!', 'Formador criado com sucesso', 'success');
@@ -482,19 +708,34 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
     e.preventDefault();
     
     const formadorId = $('#editFormadorId').val();
+    const form = document.getElementById('formEditarFormadorAjax');
+    const formData = new FormData(form);
     const telefone = $('#editContactoTelefone').val();
+    const centrosArray = [];
+    
+    $('#centrosContainerEditarFormador').find('.centro-card').each(function() {
+        const centroId = $(this).find('.centro-id-modal').val();
+        if (centroId) {
+            centrosArray.push(parseInt(centroId));
+        }
+    });
+    
+    // Adicionar contactos como array indexado para Laravel
+    if (telefone) {
+        formData.append('contactos[0]', telefone);
+    }
+    
+    // Adicionar centros como array indexado para Laravel
+    centrosArray.forEach(function(centroId, index) {
+        formData.append('centros[' + index + ']', centroId);
+    });
     
     $.ajax({
         url: `/api/formadores/${formadorId}`,
         method: 'PUT',
-        data: JSON.stringify({
-            nome: $('#editNome').val(),
-            email: $('#editEmail').val(),
-            especialidade: $('#editEspecialidade').val(),
-            bio: $('#editBio').val(),
-            contactos: telefone ? [telefone] : []
-        }),
-        contentType: 'application/json',
+        data: formData,
+        contentType: false,
+        processData: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function() {
             Swal.fire('Sucesso!', 'Formador atualizado com sucesso', 'success');

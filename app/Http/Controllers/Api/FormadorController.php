@@ -78,46 +78,47 @@ class FormadorController extends Controller
             'nome' => 'required|string|max:100',
             'email' => 'nullable|email|max:100|unique:formadores,email',
             'contactos' => 'nullable|array',
-            'contactos.*.tipo' => 'nullable|string',
-            'contactos.*.valor' => 'nullable|string',
             'especialidade' => 'nullable|string|max:100',
             'bio' => 'nullable|string|max:500',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_url' => 'nullable|url|max:255',
             'cursos' => 'array',
             'cursos.*' => 'exists:cursos,id',
-            'centros' => 'array',
+            'centros' => 'nullable|array',
             'centros.*' => 'exists:centros,id'
         ]);
 
-        // Processar contactos: garantir formato consistente
+        // Processar contactos: converter array de strings em array de strings
+        $contactosProcessados = [];
         if (isset($validated['contactos']) && is_array($validated['contactos'])) {
-            $contactosProcessados = [];
             foreach ($validated['contactos'] as $contacto) {
-                if (is_array($contacto) && !empty($contacto['tipo']) && !empty($contacto['valor'])) {
-                    // Formato novo: array de objetos - só adiciona se ambos tipo e valor estiverem preenchidos
-                    $contactosProcessados[] = [
-                        'tipo' => $contacto['tipo'],
-                        'valor' => $contacto['valor']
-                    ];
-                } elseif (is_string($contacto)) {
-                    // Formato antigo: string simples
+                if (is_string($contacto) && !empty($contacto)) {
                     $contactosProcessados[] = $contacto;
                 }
             }
-            $validated['contactos'] = $contactosProcessados;
-        } else {
-            // Se não há contactos, define como array vazio
-            $validated['contactos'] = [];
         }
+        $validated['contactos'] = $contactosProcessados;
         
         // Normaliza o email para minúsculas
         if (!empty($validated['email'])) {
             $validated['email'] = strtolower($validated['email']);
         }
+
+        // Processar upload de foto
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('formadores', $filename, 'public');
+            $validated['foto_url'] = '/storage/' . $path;
+        }
+
+        // Remove 'foto' do validated pois já foi processada
+        unset($validated['foto']);
+
         // Cria o formador
         $formador = Formador::create($validated);
         // Associa centros ao formador, se enviados
-        if ($request->has('centros')) {
+        if ($request->has('centros') && is_array($request->centros)) {
             $formador->centros()->sync($request->centros);
         }
         // Retorna resposta de sucesso com dados completos
@@ -200,46 +201,47 @@ class FormadorController extends Controller
             'nome' => 'required|string|max:100',
             'email' => 'nullable|email|max:100|unique:formadores,email' . ($request->method() === 'PUT' ? ',' . $formador->id : ''),
             'contactos' => 'nullable|array',
-            'contactos.*.tipo' => 'nullable|string',
-            'contactos.*.valor' => 'nullable|string',
             'especialidade' => 'nullable|string|max:100',
             'bio' => 'nullable|string|max:500',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_url' => 'nullable|url|max:255',
             'cursos' => 'array',
             'cursos.*' => 'exists:cursos,id',
-            'centros' => 'array',
+            'centros' => 'nullable|array',
             'centros.*' => 'exists:centros,id'
         ]);
         
-        // Processar contactos: garantir formato consistente
+        // Processar contactos: converter array de strings em array de strings
+        $contactosProcessados = [];
         if (isset($validated['contactos']) && is_array($validated['contactos'])) {
-            $contactosProcessados = [];
             foreach ($validated['contactos'] as $contacto) {
-                if (is_array($contacto) && !empty($contacto['tipo']) && !empty($contacto['valor'])) {
-                    // Formato novo: array de objetos - só adiciona se ambos tipo e valor estiverem preenchidos
-                    $contactosProcessados[] = [
-                        'tipo' => $contacto['tipo'],
-                        'valor' => $contacto['valor']
-                    ];
-                } elseif (is_string($contacto)) {
-                    // Formato antigo: string simples
+                if (is_string($contacto) && !empty($contacto)) {
                     $contactosProcessados[] = $contacto;
                 }
             }
-            $validated['contactos'] = $contactosProcessados;
-        } else {
-            // Se não há contactos, define como array vazio
-            $validated['contactos'] = [];
         }
+        $validated['contactos'] = $contactosProcessados;
         
         // Normaliza o email para minúsculas
         if (!empty($validated['email'])) {
             $validated['email'] = strtolower($validated['email']);
         }
+
+        // Processar upload de foto
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('formadores', $filename, 'public');
+            $validated['foto_url'] = '/storage/' . $path;
+        }
+
+        // Remove 'foto' do validated pois já foi processada
+        unset($validated['foto']);
+
         // Atualiza dados do formador
         $formador->update($validated);
         // Atualiza centros associados
-        if ($request->has('centros')) {
+        if ($request->has('centros') && is_array($request->centros)) {
             $formador->centros()->sync($request->centros);
         }
         // Retorna resposta de sucesso
