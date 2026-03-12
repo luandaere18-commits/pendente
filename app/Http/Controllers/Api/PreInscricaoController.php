@@ -34,70 +34,26 @@ class PreInscricaoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'curso_id' => 'required|exists:cursos,id',
-            'centro_id' => 'required|exists:centros,id',
-            'turma_id' => 'nullable|exists:turmas,id',
+            'turma_id' => 'required|exists:turmas,id',
             'nome_completo' => 'required|string|max:100',
-            'contactos' => 'required|string',
+            'contactos' => 'required|array|min:1',
+            'contactos.*' => 'required|string',
             'email' => 'nullable|email|max:100',
+            'status' => 'nullable|in:pendente,confirmado,cancelado',
             'observacoes' => 'nullable|string|max:500'
         ]);
 
-        // Verificar se o curso está associado ao centro selecionado
-        $curso = \App\Models\Curso::with('centros')->find($validated['curso_id']);
-        $centro = \App\Models\Centro::find($validated['centro_id']);
+        // Verificar se a turma existe
+        $turma = \App\Models\Turma::find($validated['turma_id']);
         
-        if (!$curso || !$centro) {
+        if (!$turma) {
             return response()->json([
                 'status' => 'erro',
-                'mensagem' => 'Dados do curso ou centro não encontrados.'
+                'mensagem' => 'Turma não encontrada.'
             ], 404);
         }
-        
-        $cursoTemCentro = $curso->centros->contains('id', $validated['centro_id']);
-        if (!$cursoTemCentro) {
-            return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'O curso selecionado não está disponível no centro escolhido.'
-            ], 422);
-        }
-        
-        // Validação: Se turma_id fornecido, deve pertencer ao curso selecionado
-        if ($validated['turma_id']) {
-            $turma = \App\Models\Turma::find($validated['turma_id']);
-            
-            if (!$turma) {
-                return response()->json([
-                    'status' => 'erro',
-                    'mensagem' => 'Turma não encontrada.'
-                ], 404);
-            }
-            
-            if ($turma->curso_id !== $validated['curso_id']) {
-                return response()->json([
-                    'status' => 'erro',
-                    'mensagem' => 'A turma selecionada não pertence ao curso escolhido.'
-                ], 422);
-            }
-        }
 
-        // Processar contactos - vem como JSON string do frontend
-        try {
-            $contactosArray = json_decode($validated['contactos'], true);
-            if (!is_array($contactosArray) || empty($contactosArray)) {
-                return response()->json([
-                    'status' => 'erro',
-                    'mensagem' => 'Contactos devem ser fornecidos como um array JSON válido'
-                ], 422);
-            }
-            $validated['contactos'] = json_encode($contactosArray);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Formato de contactos inválido'
-            ], 422);
-        }
-        $validated['status'] = 'pendente'; // Status padrão
+        $validated['status'] = $validated['status'] ?? 'pendente'; // Status padrão
         
         // Normalizar email para lowercase se fornecido
         if (!empty($validated['email'])) {
@@ -134,7 +90,7 @@ class PreInscricaoController extends Controller
      */
     public function index()
     {
-        $preInscricoes = PreInscricao::with(['curso', 'centro', 'turma'])->get();
+        $preInscricoes = PreInscricao::with(['turma.curso'])->get();
         return response()->json($preInscricoes);
     }
 
@@ -255,7 +211,7 @@ class PreInscricaoController extends Controller
      */
     public function show($id)
     {
-        $preInscricao = PreInscricao::with(['curso', 'centro', 'turma'])->find($id);
+        $preInscricao = PreInscricao::with(['turma.curso'])->find($id);
         if (!$preInscricao) {
             return response()->json([
                 'status' => 'erro',

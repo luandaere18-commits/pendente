@@ -23,10 +23,14 @@ return new class extends Migration
             $table->enum('periodo', ['manhã', 'tarde', 'noite']);
             $table->time('hora_inicio')->nullable();   // Hora de início da aula
             $table->time('hora_fim')->nullable();      // Hora de fim da aula
+            $table->unsignedInteger('vagas_totais')->nullable();  // Total de vagas disponíveis
+            $table->unsignedInteger('vagas_preenchidas')->default(0);  // Vagas confirmadas
+            $table->boolean('publicado')->default(false);  // Visível no site público
             $table->timestamps();
             
             // Índices para performance em queries
             $table->index('curso_id');
+            $table->index('publicado');
         });
     }
 

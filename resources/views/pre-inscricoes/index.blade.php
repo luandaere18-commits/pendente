@@ -71,9 +71,9 @@
                             <th>ID</th>
                             <th>Nome</th>
                             <th>Email</th>
-                            <th>Curso</th>
-                            <th>Centro</th>
-                            <th>Horário</th>
+                            <th>Turma</th>
+                            <th>Períodoo</th>
+                            <th>Dias</th>
                             <th>Status</th>
                             <th>Data</th>
                             <th>Ações</th>
@@ -85,13 +85,25 @@
                                 <td>{{ $preInscricao->id }}</td>
                                 <td><strong>{{ $preInscricao->nome_completo }}</strong></td>
                                 <td>{{ $preInscricao->email ?? 'Não informado' }}</td>
-                                <td>{{ $preInscricao->curso->nome ?? 'Curso não encontrado' }}</td>
-                                <td>{{ $preInscricao->centro->nome ?? 'Centro não encontrado' }}</td>
                                 <td>
                                     @if($preInscricao->turma)
-                                        {{ $preInscricao->turma->dia_semana }} - {{ $preInscricao->turma->periodo }}
+                                        <strong>{{ $preInscricao->turma->curso->nome ?? 'Curso desconhecido' }}</strong>
                                     @else
-                                        <span class="text-muted">Não definido</span>
+                                        <span class="text-muted">Sem turma</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($preInscricao->turma)
+                                        <span class="badge bg-secondary">{{ ucfirst(str_replace('manhã', 'Manhã', str_replace('tarde', 'Tarde', str_replace('noite', 'Noite', $preInscricao->turma->periodo)))) }}</span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($preInscricao->turma && $preInscricao->turma->dia_semana)
+                                        <small>{{ implode(', ', $preInscricao->turma->dia_semana) }}</small>
+                                    @else
+                                        <span class="text-muted">—</span>
                                     @endif
                                 </td>
                                 <td>

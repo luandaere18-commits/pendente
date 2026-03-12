@@ -18,14 +18,25 @@ class Turma extends Model
         'hora_inicio', 
         'hora_fim',
         'data_arranque',
-        'status'
+        'status',
+        'vagas_totais',
+        'vagas_preenchidas',
+        'publicado'
     ];
 
     protected $table = 'turmas';
 
     protected $casts = [
         'dia_semana' => 'array',
+        'publicado' => 'boolean',
     ];
+
+    // Accessor para calcular vagas disponíveis
+    public function getVagasDisponiveisAttribute()
+    {
+        if (!$this->vagas_totais) return null;
+        return $this->vagas_totais - $this->vagas_preenchidas;
+    }
 
     // Uma turma pertence a um curso
     public function curso()

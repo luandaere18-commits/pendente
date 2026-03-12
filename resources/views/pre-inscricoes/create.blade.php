@@ -94,42 +94,27 @@
                             </div>
                         </div>
 
-                        <!-- Curso e Centro -->
+                        <!-- Turma e Status -->
                         <div class="row">
                             <div class="col-12">
                                 <h6 class="text-primary mb-3">
-                                    <i class="fas fa-graduation-cap me-2"></i>Curso e Localização
+                                    <i class="fas fa-graduation-cap me-2"></i>Turma e Status
                                 </h6>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="curso_id" class="form-label">Curso <span class="text-danger">*</span></label>
-                                <select class="form-select" id="curso_id" name="curso_id" required>
-                                    <option value="">Selecione o curso</option>
+                                <label for="turma_id" class="form-label">Turma <span class="text-danger">*</span></label>
+                                <select class="form-select" id="turma_id" name="turma_id" required>
+                                    <option value="">Selecione a turma</option>
                                 </select>
+                                <div class="form-text">Selecione uma turma específica para esta pré-inscrição</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
-                                <label for="centro_id" class="form-label">Centro <span class="text-danger">*</span></label>
-                                <select class="form-select" id="centro_id" name="centro_id" required>
-                                    <option value="">Selecione o centro</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="turma_id" class="form-label">turma</label>
-                                <select class="form-select" id="turma_id" name="turma_id">
-                                    <option value="">Selecione o turma (opcional)</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-select" id="status" name="status">
+                                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select class="form-select" id="status" name="status" required>
                                     <option value="pendente" selected>Pendente</option>
                                     <option value="confirmado">Confirmado</option>
                                     <option value="cancelado">Cancelado</option>
@@ -177,9 +162,8 @@
                     <ul class="small">
                         <li><strong>Nome:</strong> Use o nome completo do candidato</li>
                         <li><strong>Contactos:</strong> Adicione múltiplos contactos se necessário</li>
-                        <li><strong>Curso:</strong> Selecione o curso de interesse</li>
-                        <li><strong>Centro:</strong> Escolha o centro onde decorrerá a formação</li>
-                        <li><strong>Horário:</strong> Opcional - pode ser definido posteriormente</li>
+                        <li><strong>Turma:</strong> Selecione a turma específica para a inscrição</li>
+                        <li><strong>Status:</strong> Defina como Pendente ou Confirmado</li>
                         <li><strong>Observações:</strong> Use para notas administrativas importantes</li>
                     </ul>
                 </div>
@@ -203,8 +187,6 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
-    carregarCursos();
-    carregarCentros();
     carregarturmas();
 
     // Preview em tempo real
@@ -217,47 +199,11 @@ $(document).ready(function() {
         e.preventDefault();
         criarPreInscricao();
     });
-
-    // Atualizar turmas quando curso mudar
-    $('#curso_id').on('change', function() {
-        carregarturmas();
-    });
 });
 
-function carregarCursos() {
-    $.get('/api/cursos', function(data) {
-        let options = '<option value="">Selecione o curso</option>';
-        data.forEach(function(curso) {
-            if (curso.ativo) {
-                options += `<option value="${curso.id}">${curso.nome}</option>`;
-            }
-        });
-        $('#curso_id').html(options);
-    });
-}
-
-function carregarCentros() {
-    $.get('/api/centros', function(data) {
-        let options = '<option value="">Selecione o centro</option>';
-        data.forEach(function(centro) {
-            if (centro.ativo) {
-                options += `<option value="${centro.id}">${centro.nome}</option>`;
-            }
-        });
-        $('#centro_id').html(options);
-    });
-}
-
 function carregarturmas() {
-    const cursoId = $('#curso_id').val();
-    let url = '/api/turmas';
-    
-    if (cursoId) {
-        url += `?curso_id=${cursoId}`;
-    }
-
-    $.get(url, function(data) {
-        let options = '<option value="">Selecione o turma (opcional)</option>';
+    $.get('/api/turmas', function(data) {
+        let options = '<option value="">Selecione a turma</option>';
         data.forEach(function(turma) {
             const horaTexto = turma.hora_inicio && turma.hora_fim 
                 ? ` (${turma.hora_inicio} - ${turma.hora_fim})`
@@ -319,14 +265,12 @@ function atualizarBotoesRemover() {
 function atualizarPreview() {
     const nomeCompleto = $('#nome_completo').val();
     const email = $('#email').val();
-    const cursoId = $('#curso_id').val();
-    const centroId = $('#centro_id').val();
+    const turmaId = $('#turma_id').val();
+    const turmaNome = $('#turma_id option:selected').text();
     const status = $('#status').val();
 
-    if (nomeCompleto || email || cursoId || centroId) {
+    if (nomeCompleto || email || turmaId) {
         const statusBadge = getStatusBadge(status);
-        const cursoNome = $('#curso_id option:selected').text();
-        const centroNome = $('#centro_id option:selected').text();
         
         // Coletar contactos
         let contactosHtml = '';
@@ -342,8 +286,7 @@ function atualizarPreview() {
             <h6>${nomeCompleto || 'Nome do Candidato'}</h6>
             <p class="mb-2"><strong>Email:</strong> ${email || '<span class="text-muted">N/A</span>'}</p>
             <p class="mb-2"><strong>Status:</strong> ${statusBadge}</p>
-            ${cursoId ? `<p class="mb-2"><strong>Curso:</strong> ${cursoNome}</p>` : ''}
-            ${centroId ? `<p class="mb-2"><strong>Centro:</strong> ${centroNome}</p>` : ''}
+            ${turmaId && turmaNome !== 'Selecione a turma' ? `<p class="mb-2"><strong>Turma:</strong> ${turmaNome}</p>` : ''}
             ${contactosHtml ? `
                 <div class="mt-2">
                     <strong>Contactos:</strong>
@@ -386,9 +329,7 @@ function criarPreInscricao() {
     const formData = {
         nome_completo: $('#nome_completo').val(),
         email: $('#email').val() || null,
-        curso_id: parseInt($('#curso_id').val()),
-        centro_id: parseInt($('#centro_id').val()),
-        turma_id: $('#turma_id').val() ? parseInt($('#turma_id').val()) : null,
+        turma_id: parseInt($('#turma_id').val()),
         status: $('#status').val(),
         contactos: Object.keys(contactos).length > 0 ? contactos : null,
         observacoes: $('#observacoes').val() || null

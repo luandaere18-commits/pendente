@@ -614,7 +614,7 @@ function carregarCursos() {
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     <a href="/cursos/${curso.id}" class="btn btn-outline-info" title="Gerenciar curso">
-                                        <i class="fas fa-sliders-h"></i>
+                                        <i class="fas fa-cog"></i>
                                     </a>
                                     <button type="button" class="btn btn-outline-danger" onclick="eliminarCurso(${curso.id})" title="Eliminar">
                                         <i class="fas fa-trash"></i>

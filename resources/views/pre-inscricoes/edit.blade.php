@@ -82,59 +82,30 @@
                             </div>
                         </div>
 
-                        <!-- Curso e Centro -->
+                        <!-- Turma e Status -->
                         <div class="row">
                             <div class="col-12">
                                 <h6 class="text-primary mb-3">
-                                    <i class="fas fa-graduation-cap me-2"></i>Curso e Localização
+                                    <i class="fas fa-graduation-cap me-2"></i>Turma e Status
                                 </h6>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="curso_id" class="form-label">Curso <span class="text-danger">*</span></label>
-                                <select class="form-select" id="curso_id" name="curso_id" required>
-                                    <option value="">Selecione o curso</option>
-                                    @foreach($cursos as $curso)
-                                        @if($curso->ativo)
-                                            <option value="{{ $curso->id }}" {{ $preInscricao->curso_id == $curso->id ? 'selected' : '' }}>
-                                                {{ $curso->nome }}
-                                            </option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="centro_id" class="form-label">Centro <span class="text-danger">*</span></label>
-                                <select class="form-select" id="centro_id" name="centro_id" required>
-                                    <option value="">Selecione o centro</option>
-                                    @foreach($centros as $centro)
-                                        @if($centro->ativo)
-                                            <option value="{{ $centro->id }}" {{ $preInscricao->centro_id == $centro->id ? 'selected' : '' }}>
-                                                {{ $centro->nome }}
-                                            </option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="turma_id" class="form-label">turma</label>
-                                <select class="form-select" id="turma_id" name="turma_id">
-                                    <option value="">Selecione o turma (opcional)</option>
+                                <label for="turma_id" class="form-label">Turma <span class="text-danger">*</span></label>
+                                <select class="form-select" id="turma_id" name="turma_id" required>
+                                    <option value="">Selecione a turma</option>
                                     @foreach($turmas as $turma)
                                         <option value="{{ $turma->id }}" {{ $preInscricao->turma_id == $turma->id ? 'selected' : '' }}>
-                                            {{ $turma->dia_semana }} - {{ $turma->periodo }}
+                                            {{ $turma->curso->nome }} - {{ $turma->dia_semana }} ({{ $turma->periodo }})
                                             @if($turma->hora_inicio && $turma->hora_fim)
-                                                ({{ $turma->hora_inicio }} - {{ $turma->hora_fim }})
+                                                {{ $turma->hora_inicio }} - {{ $turma->hora_fim }}
                                             @endif
                                         </option>
                                     @endforeach
                                 </select>
+                                <div class="form-text">Selecione uma turma específica para esta pré-inscrição</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
@@ -321,14 +292,12 @@ function atualizarBotoesRemover() {
 function atualizarPreview() {
     const nomeCompleto = $('#nome_completo').val();
     const email = $('#email').val();
-    const cursoId = $('#curso_id').val();
-    const centroId = $('#centro_id').val();
+    const turmaId = $('#turma_id').val();
+    const turmaNome = $('#turma_id option:selected').text();
     const status = $('#status').val();
 
-    if (nomeCompleto || email || cursoId || centroId) {
+    if (nomeCompleto || email || turmaId) {
         const statusBadge = getStatusBadge(status);
-        const cursoNome = $('#curso_id option:selected').text();
-        const centroNome = $('#centro_id option:selected').text();
         
         // Coletar contactos
         let contactosHtml = '';
@@ -344,8 +313,7 @@ function atualizarPreview() {
             <h6>${nomeCompleto || 'Nome do Candidato'}</h6>
             <p class="mb-2"><strong>Email:</strong> ${email || '<span class="text-muted">N/A</span>'}</p>
             <p class="mb-2"><strong>Status:</strong> ${statusBadge}</p>
-            ${cursoId && cursoNome !== 'Selecione o curso' ? `<p class="mb-2"><strong>Curso:</strong> ${cursoNome}</p>` : ''}
-            ${centroId && centroNome !== 'Selecione o centro' ? `<p class="mb-2"><strong>Centro:</strong> ${centroNome}</p>` : ''}
+            ${turmaId && turmaNome !== 'Selecione a turma' ? `<p class="mb-2"><strong>Turma:</strong> ${turmaNome}</p>` : ''}
             ${contactosHtml ? `
                 <div class="mt-2">
                     <strong>Contactos:</strong>
@@ -358,6 +326,8 @@ function atualizarPreview() {
         $('#previewCard').show();
     } else {
         $('#previewCard').hide();
+    }
+}
     }
 }
 

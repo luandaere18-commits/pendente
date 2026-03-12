@@ -22,11 +22,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Índices para performance em queries
-            $table->index('curso_id');
-            $table->index('centro_id');
             $table->index('turma_id');
-
-            
         });
     }
 

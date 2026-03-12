@@ -13,8 +13,6 @@ class PreInscricao extends Model
     protected $table = 'pre_inscricoes'; // Especificando nome da tabela do banco de dados
 
     protected $fillable = [
-        'curso_id',
-        'centro_id',
         'turma_id',
         'nome_completo',
         'contactos',
@@ -28,16 +26,9 @@ class PreInscricao extends Model
         'contactos' => 'array',
     ];
 
-    public function curso()
-    {
-        return $this->belongsTo(Curso::class);
-    }
-
-    public function centro()
-    {
-        return $this->belongsTo(Centro::class);
-    }
-
+    /**
+     * Uma pré-inscrição pertence a uma turma
+     */
     public function turma()
     {
         return $this->belongsTo(Turma::class);

@@ -9,23 +9,19 @@ class PreInscricaoController extends Controller
 {
     public function index()
     {
-        $preInscricoes = PreInscricao::with(['curso', 'centro'])->get();
+        $preInscricoes = PreInscricao::with(['turma.curso'])->get();
         return view('pre-inscricoes.index', compact('preInscricoes'));
     }
 
     public function create()
     {
-        $cursos = \App\Models\Curso::all();
-        $centros = \App\Models\Centro::all();
-        $turmas = \App\Models\Turma::all();
-        return view('pre-inscricoes.create', compact('cursos', 'centros', 'turmas'));
+        $turmas = \App\Models\Turma::with('curso')->get();
+        return view('pre-inscricoes.create', compact('turmas'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'curso_id' => 'required|exists:cursos,id',
-            'centro_id' => 'required|exists:centros,id',
             'turma_id' => 'required|exists:turmas,id',
             'nome_completo' => 'required|string|max:100',
             'contactos' => 'required|array|min:1',
@@ -47,23 +43,19 @@ class PreInscricaoController extends Controller
 
     public function show(PreInscricao $preInscricao)
     {
-        $preInscricao->load(['curso', 'centro']);
+        $preInscricao->load(['turma.curso']);
         return view('pre-inscricoes.show', compact('preInscricao'));
     }
 
     public function edit(PreInscricao $preInscricao)
     {
-        $cursos = \App\Models\Curso::all();
-        $centros = \App\Models\Centro::all();
-        $turmas = \App\Models\Turma::all();
-        return view('pre-inscricoes.edit', compact('preInscricao', 'cursos', 'centros', 'turmas'));
+        $turmas = \App\Models\Turma::with('curso')->get();
+        return view('pre-inscricoes.edit', compact('preInscricao', 'turmas'));
     }
 
     public function update(Request $request, PreInscricao $preInscricao)
     {
         $validated = $request->validate([
-            'curso_id' => 'required|exists:cursos,id',
-            'centro_id' => 'required|exists:centros,id',
             'turma_id' => 'required|exists:turmas,id',
             'nome_completo' => 'required|string|max:100',
             'contactos' => 'required|array|min:1',

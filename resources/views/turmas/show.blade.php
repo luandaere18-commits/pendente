@@ -21,7 +21,7 @@
             <div class="row align-items-start">
 
                 {{-- Info principal --}}
-                <div class="col-md-10">
+                <div class="col-md-9">
                     <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                         <h3 class="fw-bold mb-0">{{ $turma->curso->nome }}</h3>
                         @php
@@ -87,13 +87,57 @@
                             <p class="text-muted">{{ \Carbon\Carbon::parse($turma->data_arranque)->format('d/m/Y') }}</p>
                         </div>
                     </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-4">
+                            <p class="mb-1"><strong><i class="fas fa-users me-1"></i>Vagas:</strong></p>
+                            <p class="text-muted">
+                                @if($turma->vagas_totais)
+                                    <span class="badge bg-info">{{ $turma->vagas_totais - $turma->vagas_preenchidas }}/{{ $turma->vagas_totais }}</span> 
+                                    ({{ $turma->vagas_preenchidas }} preenchidas)
+                                @else
+                                    <span class="text-muted">Sem limite</span>
+                                @endif
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="mb-1"><strong><i class="fas fa-globe me-1"></i>Visibilidade:</strong></p>
+                            <p class="text-muted">
+                                @if($turma->publicado)
+                                    <span class="badge bg-success"><i class="fas fa-eye me-1"></i>Público</span>
+                                @else
+                                    <span class="badge bg-secondary"><i class="fas fa-eye-slash me-1"></i>Privado</span>
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+                    </div>
                 </div>
 
-                {{-- Botão Editar --}}
-                <div class="col-md-2 text-md-end">
-                    <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalEditarTurma">
-                        <i class="fas fa-edit me-2"></i>Editar
-                    </button>
+                {{-- Ações + Contadores --}}
+                <div class="col-md-3">
+                    {{-- Botões de ação --}}
+                    <div class="d-flex gap-2 mb-3 justify-content-md-end flex-wrap">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarTurma">
+                            <i class="fas fa-edit me-1"></i>Editar
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarTurmaShow({{ $turma->id }})">
+                            <i class="fas fa-trash me-1"></i>Eliminar
+                        </button>
+                        <a href="{{ route('turmas.index') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Voltar
+                        </a>
+                    </div>
+
+                    {{-- Mini contadores --}}
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="bg-warning-subtle rounded p-2 text-center">
+                                <div class="fw-bold text-warning fs-5" id="contagemInscricoes">{{ $turma->preInscricoes->count() }}</div>
+                                <small class="text-muted"><i class="fas fa-user-plus me-1"></i>Pré-inscrições</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -237,6 +281,18 @@
                                 <option value="">Selecione (opcional)</option>
                             </select>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Vagas Disponíveis</label>
+                            <input type="number" id="vagasTotaisShow" value="{{ $turma->vagas_totais }}" min="1" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" id="publicadoShow" {{ $turma->publicado ? 'checked' : '' }}>
+                                <label class="form-check-label fw-medium" for="publicadoShow">
+                                    <i class="fas fa-globe me-1 text-info"></i>Publicar no site
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-4">
@@ -318,6 +374,8 @@ function configurarFormulario() {
             duracao_semanas: $('#duracaoShow').val(),
             data_arranque: $('#dataArranqueShow').val(),
             formador_id: $('#formadorIdShow').val() || null,
+            vagas_totais: $('#vagasTotaisShow').val() || null,
+            publicado: $('#publicadoShow').is(':checked'),
             dia_semana: dias
         };
 
@@ -365,6 +423,36 @@ function atualizarStatusInscricao(id, status) {
         },
         error: function() {
             Swal.fire('Erro', 'Erro ao atualizar status', 'error');
+        }
+    });
+}
+
+// Eliminar turma (função do botão Eliminar na página show)
+function eliminarTurmaShow(id) {
+    Swal.fire({
+        title: 'Confirmar eliminação',
+        text: 'Tem certeza que deseja eliminar esta turma?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sim, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/api/turmas/${id}`,
+                method: 'DELETE',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                success: function() {
+                    Swal.fire('Eliminado!', 'Turma eliminada com sucesso', 'success').then(() => {
+                        window.location.href = "{{ route('turmas.index') }}";
+                    });
+                },
+                error: function() {
+                    Swal.fire('Erro', 'Erro ao eliminar turma', 'error');
+                }
+            });
         }
     });
 }

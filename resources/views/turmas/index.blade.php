@@ -43,6 +43,8 @@
                             <th class="text-center" style="width:110px">Status</th>
                             <th class="text-center" style="width:80px">Período</th>
                             <th class="text-center" style="width:100px">Horário</th>
+                            <th class="text-center" style="width:100px">Vagas</th>
+                            <th class="text-center" style="width:90px">Público</th>
                             <th class="text-end pe-2" style="width:150px">Ações</th>
                         </tr>
                     </thead>
@@ -171,6 +173,19 @@
                                     <div class="mb-0">
                                         <label class="form-label fw-medium small">Duração (Semanas)</label>
                                         <input type="number" name="duracao_semanas" min="1" max="52" class="form-control form-control-sm" placeholder="Número de semanas">
+                                    </div>
+
+                                    <div class="mt-3 mb-3">
+                                        <label class="form-label fw-medium small">Vagas Disponíveis</label>
+                                        <input type="number" name="vagas_totais" min="1" class="form-control form-control-sm" placeholder="Total de vagas">
+                                    </div>
+
+                                    <div class="form-check form-switch mt-3">
+                                        <input class="form-check-input" type="checkbox" name="publicado" id="publicadoNovo" value="1">
+                                        <label class="form-check-label small fw-medium" for="publicadoNovo">
+                                            <i class="fas fa-globe me-1 text-info"></i>Publicar no site
+                                        </label>
+                                        <small class="text-muted d-block mt-1">Marque para mostrar esta turma no site público</small>
                                     </div>
                                 </div>
                             </div>
@@ -401,6 +416,22 @@
                         <input type="date" id="editDataArranque" class="form-control" required>
                         <small class="text-muted d-block mt-1">Selecione apenas datas futuras</small>
                     </div>
+
+                    {{-- VAGAS E PUBLICAÇÃO --}}
+                    <div class="row g-3 mt-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Vagas Disponíveis</label>
+                            <input type="number" id="editVagasTotais" min="1" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" id="editPublicado">
+                                <label class="form-check-label fw-medium" for="editPublicado">
+                                    <i class="fas fa-globe me-1 text-info"></i>Publicar no site
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -480,7 +511,7 @@ function carregarTurmas() {
             let html = '';
             
             if (data.length === 0) {
-                html = '<tr><td colspan="8" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhuma turma encontrada</td></tr>';
+                html = '<tr><td colspan="10" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhuma turma encontrada</td></tr>';
             } else {
                 data.forEach(function(turma) {
                     const cursoNome = turma.curso ? turma.curso.nome : 'N/A';
@@ -499,6 +530,18 @@ function carregarTurmas() {
                     const horaInicio = turma.hora_inicio ? turma.hora_inicio.substring(0, 5) : '—';
                     const horaFim = turma.hora_fim ? turma.hora_fim.substring(0, 5) : '—';
                     
+                    // Vagas
+                    let vagasDisplay = '—';
+                    if (turma.vagas_totais) {
+                        const disponveis = turma.vagas_totais - turma.vagas_preenchidas;
+                        vagasDisplay = `<small><span class="badge bg-info">${disponveis}/${turma.vagas_totais}</span></small>`;
+                    }
+                    
+                    // Publicado
+                    const publicadoBadge = turma.publicado 
+                        ? '<span class="badge bg-success"><i class="fas fa-eye me-1"></i>Público</span>'
+                        : '<span class="badge bg-secondary"><i class="fas fa-eye-slash me-1"></i>Privado</span>';
+                    
                     html += `
                         <tr>
                             <td class="ps-2"><strong class="text-muted small">#${turma.id}</strong></td>
@@ -508,11 +551,12 @@ function carregarTurmas() {
                             <td class="text-center">${statusBadge}</td>
                             <td class="text-center">${periodoBadge}</td>
                             <td class="text-center"><small>${horaInicio}-${horaFim}</small></td>
+                            <td class="text-center">${vagasDisplay}</td>
+                            <td class="text-center">${publicadoBadge}</td>
                             <td class="text-end pe-2">
                                 <div class="d-flex gap-1 justify-content-end">
-                                    <button type="button" class="btn btn-sm btn-outline-success" onclick="window.location.href='/turmas/${turma.id}'" title="Gerenciar"><i class="fas fa-cog"></i></button>
                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="visualizarTurma(${turma.id})" title="Visualizar"><i class="fas fa-eye"></i></button>
-                                    <button type="button" class="btn btn-sm btn-outline-warning" onclick="abrirEdicaoTurma(${turma.id})" title="Editar"><i class="fas fa-edit"></i></button>
+                                    <a href="/turmas/${turma.id}" class="btn btn-sm btn-outline-info" title="Gerenciar"><i class="fas fa-cog"></i></a>
                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarTurma(${turma.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
                                 </div>
                             </td>
@@ -526,7 +570,7 @@ function carregarTurmas() {
         error: function(err) {
             console.error('Erro ao carregar turmas:', err);
             $('#turmasTable tbody').html(
-                '<tr><td colspan="8" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
+                '<tr><td colspan="10" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
             );
         }
     });
@@ -697,6 +741,8 @@ window.abrirEdicaoTurma = function(id) {
             $('#editHoraFim').val(turma.hora_fim ? turma.hora_fim.substring(0, 5) : '');
             $('#editDuracaoSemanas').val(turma.duracao_semanas || '');
             $('#editDataArranque').val(turma.data_arranque);
+            $('#editVagasTotais').val(turma.vagas_totais || '');
+            $('#editPublicado').prop('checked', turma.publicado || false);
             
             // Desselecionar todas
             $('.dia-semana-edit').prop('checked', false);
@@ -748,6 +794,8 @@ function criarTurma() {
         hora_fim: $('input[name="hora_fim"]').val(),
         duracao_semanas: $('input[name="duracao_semanas"]').val(),
         data_arranque: $('input[name="data_arranque"]').val(),
+        vagas_totais: $('input[name="vagas_totais"]').val() || null,
+        publicado: $('input[name="publicado"]').is(':checked'),
         dia_semana: dia_semana
     };
     
@@ -807,6 +855,8 @@ function atualizarTurma() {
         hora_fim: $('#editHoraFim').val(),
         duracao_semanas: $('#editDuracaoSemanas').val(),
         data_arranque: $('#editDataArranque').val(),
+        vagas_totais: $('#editVagasTotais').val() || null,
+        publicado: $('#editPublicado').is(':checked'),
         dia_semana: dia_semana
     };
     

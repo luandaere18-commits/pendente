@@ -62,7 +62,9 @@ class TurmaController extends Controller
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
-            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
+            'vagas_totais' => 'nullable|integer|min:1',
+            'publicado' => 'nullable|boolean'
         ]);
 
         // Normalizar período (adicionar acento conforme migration)
@@ -188,7 +190,9 @@ class TurmaController extends Controller
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
-            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
+            'vagas_totais' => 'nullable|integer|min:1',
+            'publicado' => 'nullable|boolean'
         ]);
         
         // Normalizar período (adicionar acento conforme migration)
