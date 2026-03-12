@@ -9,20 +9,22 @@ class TurmaController extends Controller
 {
     public function index()
     {
-        $turmas = Turma::with(['curso'])->get();
+        $turmas = Turma::with(['curso', 'formador'])->get();
         return view('turmas.index', compact('turmas'));
     }
 
     public function create()
     {
         $cursos = \App\Models\Curso::all();
-        return view('turmas.create', compact('cursos'));
+        $formadores = \App\Models\Formador::all();
+        return view('turmas.create', compact('cursos', 'formadores'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'formador_id' => 'nullable|exists:formadores,id',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
@@ -45,20 +47,22 @@ class TurmaController extends Controller
 
     public function show(Turma $turma)
     {
-        $turma->load(['curso']);
+        $turma->load(['curso', 'formador']);
         return view('turmas.show', compact('turma'));
     }
 
     public function edit(Turma $turma)
     {
         $cursos = \App\Models\Curso::all();
-        return view('turmas.edit', compact('turma', 'cursos'));
+        $formadores = \App\Models\Formador::all();
+        return view('turmas.edit', compact('turma', 'cursos', 'formadores'));
     }
 
     public function update(Request $request, Turma $turma)
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'formador_id' => 'nullable|exists:formadores,id',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',

@@ -482,24 +482,40 @@ function atualizarNumeroCentros() {
 }
 
 /**
- * Atualizar status de centros (desabilitar duplicados)
+ * Atualizar status de centros (ocultar duplicados)
  */
 function atualizarSelectsDeCentros() {
-    const selects = $('select.centro-id-modal');
+    const selects = $('select.centro-id-modal:not(#centrosContainerEditarFormador select)');
+    const allSelectedIds = [];
     
-    selects.each(function(index, select) {
-        const selectedValue = $(select).val();
+    // Coletar todos os valores selecionados nos dropdowns de NOVO formador
+    selects.each(function() {
+        const val = $(this).val();
+        if (val) {
+            allSelectedIds.push(val);
+        }
+    });
+    
+    // Para cada dropdown, esconder opções que já estão selecionadas em outro
+    selects.each(function() {
+        const select = $(this);
+        const selectedInThis = select.val();
         
-        selects.each(function(otherIndex, otherSelect) {
-            if (index !== otherIndex) {
-                const otherValue = $(otherSelect).val();
-                $(otherSelect).find('option').each(function() {
-                    if ($(this).val() === selectedValue && selectedValue !== '') {
-                        $(this).prop('disabled', true);
-                    } else if ($(this).val() !== selectedValue && $(this).val() !== otherValue) {
-                        $(this).prop('disabled', false);
-                    }
-                });
+        select.find('option').each(function() {
+            const optionId = $(this).val();
+            
+            if (optionId === '') {
+                // Opção vazia sempre visível
+                $(this).prop('hidden', false);
+            } else if (optionId === selectedInThis) {
+                // Opção atualmente selecionada sempre visível
+                $(this).prop('hidden', false);
+            } else if (allSelectedIds.includes(optionId)) {
+                // Se está selecionado em outro dropdown, esconder
+                $(this).prop('hidden', true);
+            } else {
+                // Caso contrário, mostrar
+                $(this).prop('hidden', false);
             }
         });
     });

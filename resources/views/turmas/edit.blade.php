@@ -52,6 +52,23 @@
                         </div>
 
                         <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="formador_id" class="form-label">Formador</label>
+                                <select class="form-select" id="formador_id" name="formador_id">
+                                    <option value="">Selecione um formador (opcional)</option>
+                                    @forelse($formadores as $formador)
+                                        <option value="{{ $formador->id }}" {{ $turma->formador_id == $formador->id ? 'selected' : '' }}>
+                                            {{ $formador->nome }}
+                                        </option>
+                                    @empty
+                                        <option disabled>Nenhum formador disponível</option>
+                                    @endforelse
+                                </select>
+                                <div class="form-text">Escolha o formador que leciona esta turma</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="dia_semana" class="form-label">Dias da Semana <span class="text-danger">*</span></label>
                                 <select class="form-select" id="dia_semana" name="dia_semana" multiple required>

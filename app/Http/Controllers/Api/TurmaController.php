@@ -29,7 +29,7 @@ class TurmaController extends Controller
      */
     public function index()
     {
-        $turmas = Turma::with('curso')->get();
+        $turmas = Turma::with(['curso', 'formador'])->get();
         return response()->json($turmas);
     }
 
@@ -55,18 +55,23 @@ class TurmaController extends Controller
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
             'formador_id' => 'nullable|exists:formadores,id',
-            'data_arranque' => 'required|date',
+            'data_arranque' => 'required|date|after:today',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
-            'hora_inicio' => 'nullable|date_format:H:i',
+            'hora_inicio' => 'required|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
 
         // Normalizar período (remover acento se houver)
         $validated['periodo'] = str_replace('manhã', 'manha', $validated['periodo']);
+        
+        // Definir status padrão se não fornecido
+        if (empty($validated['status'])) {
+            $validated['status'] = 'planeada';
+        }
 
         // Validar hora_fim > hora_inicio se ambas estão preenchidas
         if (!empty($validated['hora_inicio']) && !empty($validated['hora_fim'])) {
@@ -117,7 +122,7 @@ class TurmaController extends Controller
      */
     public function show($id)
     {
-        $turma = Turma::with('curso')->find($id);
+        $turma = Turma::with(['curso', 'formador'])->find($id);
         if (!$turma) {
             return response()->json([
                 'status' => 'erro',
@@ -167,18 +172,23 @@ class TurmaController extends Controller
         // Não permite editar curso_id
         $validated = $request->validate([
             'formador_id' => 'nullable|exists:formadores,id',
-            'data_arranque' => 'nullable|date',
+            'data_arranque' => 'nullable|date|after:today',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
-            'hora_inicio' => 'nullable|date_format:H:i',
+            'hora_inicio' => 'required|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
         
         // Normalizar período (remover acento se houver)
         $validated['periodo'] = str_replace('manhã', 'manha', $validated['periodo']);
+        
+        // Definir status padrão se não fornecido
+        if (empty($validated['status'])) {
+            $validated['status'] = 'planeada';
+        }
         
         // Validar hora_fim > hora_inicio se ambas estão preenchidas
         if (!empty($validated['hora_inicio']) && !empty($validated['hora_fim'])) {
