@@ -3,30 +3,33 @@
 @section('title', 'Pré-Inscrições')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="display-6 mb-2">
-                        <i class="fas fa-user-plus me-3 text-primary"></i>Gestão de Pré-Inscrições
-                    </h1>
-                    <p class="text-muted">Gerir todas as pré-inscrições dos candidatos</p>
+<div class="container-fluid py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-12 col-md-8 mb-3 mb-md-0">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-3 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:52px;height:52px;">
+                    <i class="fas fa-user-check text-primary fa-lg"></i>
                 </div>
-                <a href="{{ route('pre-inscricoes.create') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-plus me-2"></i>Nova Pré-Inscrição
-                </a>
+                <div>
+                    <h1 class="h3 fw-bold mb-0">Gestão de Pré-Inscrições</h1>
+                    <p class="text-muted mb-0 small">Gerir todas as pré-inscrições dos candidatos</p>
+                </div>
             </div>
+        </div>
+        <div class="col-12 col-md-4 text-md-end">
+            <a href="{{ route('pre-inscricoes.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nova Pré-Inscrição
+            </a>
         </div>
     </div>
 
-    <!-- Filtros -->
-    <div class="card mb-3">
+    {{-- FILTROS --}}
+    <div class="card border-0 shadow-sm mb-3">
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-3">
-                    <label for="filtroStatus" class="form-label">Status</label>
-                    <select class="form-select" id="filtroStatus">
+                    <label for="filtroStatus" class="form-label small fw-semibold">Status</label>
+                    <select class="form-select form-select-sm" id="filtroStatus" onchange="aplicarFiltros()">
                         <option value="">Todos os status</option>
                         <option value="pendente">Pendente</option>
                         <option value="confirmado">Confirmado</option>
@@ -34,107 +37,117 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="filtroCurso" class="form-label">Curso</label>
-                    <select class="form-select" id="filtroCurso">
+                    <label for="filtroCurso" class="form-label small fw-semibold">Curso</label>
+                    <select class="form-select form-select-sm" id="filtroCurso" onchange="aplicarFiltros()">
                         <option value="">Todos os cursos</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="filtroCentro" class="form-label">Centro</label>
-                    <select class="form-select" id="filtroCentro">
+                    <label for="filtroCentro" class="form-label small fw-semibold">Centro</label>
+                    <select class="form-select form-select-sm" id="filtroCentro" onchange="aplicarFiltros()">
                         <option value="">Todos os centros</option>
                     </select>
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
-                    <button type="button" class="btn btn-secondary me-2" onclick="aplicarFiltros()">
-                        <i class="fas fa-filter me-2"></i>Filtrar
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary" onclick="limparFiltros()">
-                        <i class="fas fa-times me-2"></i>Limpar
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()">
+                        <i class="fas fa-redo me-1"></i>Limpar
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">
-                <i class="fas fa-list me-2"></i>Lista de Pré-Inscrições
-            </h5>
+    {{-- TABELA DE PRÉ-INSCRIÇÕES --}}
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom py-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-list text-primary"></i>
+                <h5 class="mb-0 fw-semibold">Lista de Pré-Inscrições</h5>
+            </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover data-table" id="preInscricoesTable">
-                    <thead>
+                <table class="table table-hover align-middle mb-0" id="preInscricoesTable" style="width:100%">
+                    <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Turma</th>
-                            <th>Períodoo</th>
-                            <th>Dias</th>
-                            <th>Status</th>
-                            <th>Data</th>
-                            <th>Ações</th>
+                            <th class="ps-2" style="width:50px">ID</th>
+                            <th style="width:200px">Nome</th>
+                            <th style="width:180px">Email</th>
+                            <th style="width:180px">Turma</th>
+                            <th class="text-center" style="width:110px">Período</th>
+                            <th class="text-center" style="width:100px">Dias</th>
+                            <th class="text-center" style="width:110px">Arranque</th>
+                            <th class="text-center" style="width:100px">Status</th>
+                            <th class="text-end pe-2" style="width:180px">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($preInscricoes as $preInscricao)
                             <tr>
-                                <td>{{ $preInscricao->id }}</td>
+                                <td class="ps-2"><small class="text-muted">#{{ $preInscricao->id }}</small></td>
                                 <td><strong>{{ $preInscricao->nome_completo }}</strong></td>
-                                <td>{{ $preInscricao->email ?? 'Não informado' }}</td>
+                                <td><small>{{ $preInscricao->email ?? '—' }}</small></td>
                                 <td>
                                     @if($preInscricao->turma)
-                                        <strong>{{ $preInscricao->turma->curso->nome ?? 'Curso desconhecido' }}</strong>
+                                        <small><strong>{{ $preInscricao->turma->curso->nome ?? 'Curso desconhecido' }}</strong></small>
                                     @else
-                                        <span class="text-muted">Sem turma</span>
+                                        <span class="text-muted small">Sem turma</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if($preInscricao->turma)
                                         <span class="badge bg-secondary">{{ ucfirst(str_replace('manhã', 'Manhã', str_replace('tarde', 'Tarde', str_replace('noite', 'Noite', $preInscricao->turma->periodo)))) }}</span>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if($preInscricao->turma && $preInscricao->turma->dia_semana)
                                         <small>{{ implode(', ', $preInscricao->turma->dia_semana) }}</small>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
+                                    @if($preInscricao->turma && $preInscricao->turma->data_arranque)
+                                        <small>{{ \Carbon\Carbon::parse($preInscricao->turma->data_arranque)->format('d/m/Y') }}</small>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
                                     @if($preInscricao->status === 'pendente')
-                                        <span class="badge bg-warning">Pendente</span>
+                                        <span class="badge bg-warning text-dark">Pendente</span>
                                     @elseif($preInscricao->status === 'confirmado')
                                         <span class="badge bg-success">Confirmado</span>
                                     @elseif($preInscricao->status === 'cancelado')
                                         <span class="badge bg-danger">Cancelado</span>
-                                    @else
-                                        <span class="badge bg-secondary">{{ $preInscricao->status }}</span>
                                     @endif
                                 </td>
-                                <td>{{ $preInscricao->created_at->format('d/m/Y') }}</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="visualizarPreInscricao({{ $preInscricao->id }})" title="Visualizar">
+                                <td class="text-end pe-2">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-info" onclick="visualizarPreInscricao({{ $preInscricao->id }})" title="Visualizar">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <a href="{{ route('pre-inscricoes.edit', $preInscricao->id) }}" class="btn btn-outline-warning btn-sm" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="deletarPreInscricao({{ $preInscricao->id }})" title="Deletar">
-                                            <i class="fas fa-trash"></i>
+                                        @if($preInscricao->status !== 'confirmado')
+                                        <button type="button" class="btn btn-outline-success" onclick="confirmarPreInscricao({{ $preInscricao->id }})" title="Confirmar">
+                                            <i class="fas fa-check"></i>
                                         </button>
+                                        @endif
+                                        @if($preInscricao->status !== 'cancelado')
+                                        <button type="button" class="btn btn-outline-danger" onclick="cancelarPreInscricao({{ $preInscricao->id }})" title="Cancelar">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center text-muted">Nenhuma pré-inscrição encontrada</td>
+                                <td colspan="9" class="text-center py-5 text-muted">
+                                    <div class="mb-2"><i class="fas fa-inbox fa-2x text-muted"></i></div>
+                                    Nenhuma pré-inscrição encontrada
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -165,13 +178,36 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
-    // Inicializar DataTable se necessário
-    $('#preInscricoesTable').DataTable({
-        language: {
-            url: '/js/datatables-pt.js'
-        }
-    });
+    // Carregar opções de filtro
+    carregarFiltros();
 });
+
+/**
+ * Carrega as opções de filtros (cursos e centros)
+ */
+function carregarFiltros() {
+    // Carregar cursos
+    $.get('/api/cursos', function(data) {
+        let options = '<option value="">Todos os cursos</option>';
+        data.forEach(function(curso) {
+            if (curso.ativo) {
+                options += `<option value="${curso.id}">${curso.nome}</option>`;
+            }
+        });
+        $('#filtroCurso').html(options);
+    });
+    
+    // Carregar centros
+    $.get('/api/centros', function(data) {
+        let options = '<option value="">Todos os centros</option>';
+        data.forEach(function(centro) {
+            if (centro.ativo) {
+                options += `<option value="${centro.id}">${centro.nome}</option>`;
+            }
+        });
+        $('#filtroCentro').html(options);
+    });
+}
 
 /**
  * Visualiza os detalhes de uma pré-inscrição específica
@@ -179,107 +215,94 @@ $(document).ready(function() {
  */
 function visualizarPreInscricao(id) {
     $.ajax({
-        url: `/api/pre-inscricoes/${id}`,
+        url: `/pre-inscricoes/${id}`,
         method: 'GET',
-        success: function(preInscricao) {
-            const statusBadge = getStatusBadge(preInscricao.status);
-            
-            let contactos = '';
-            if (preInscricao.contactos) {
-                try {
-                    const contactosObj = typeof preInscricao.contactos === 'string' 
-                        ? JSON.parse(preInscricao.contactos) 
-                        : preInscricao.contactos;
-                    
-                    contactos = '<ul class="list-unstyled mb-0">';
-                    Object.keys(contactosObj).forEach(key => {
-                        contactos += `<li><strong>${key}:</strong> ${contactosObj[key]}</li>`;
-                    });
-                    contactos += '</ul>';
-                } catch (e) {
-                    contactos = preInscricao.contactos;
-                }
-            } else {
-                contactos = '<span class="text-muted">Nenhum contacto registado</span>';
-            }
-            
-            let html = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5>${preInscricao.nome_completo}</h5>
-                        <p class="mb-2"><strong>Email:</strong> ${preInscricao.email || '<span class="text-muted">N/A</span>'}</p>
-                        <p class="mb-2"><strong>Status:</strong> ${statusBadge}</p>
-                        <p class="mb-2"><strong>Data de Inscrição:</strong> ${new Date(preInscricao.created_at).toLocaleDateString('pt-PT')}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p class="mb-2"><strong>Curso:</strong> ${preInscricao.curso ? preInscricao.curso.nome : '<span class="text-muted">N/A</span>'}</p>
-                        <p class="mb-2"><strong>Centro:</strong> ${preInscricao.centro ? preInscricao.centro.nome : '<span class="text-muted">N/A</span>'}</p>
-                        <p class="mb-2"><strong>turma:</strong> ${preInscricao.turma ? preInscricao.turma.dia_semana + ' - ' + preInscricao.turma.periodo : '<span class="text-muted">N/A</span>'}</p>
-                    </div>
-                </div>
-                
-                <div class="mt-3">
-                    <h6><strong>Contactos:</strong></h6>
-                    ${contactos}
-                </div>
-                
-                ${preInscricao.observacoes ? `
-                    <div class="mt-3">
-                        <h6><strong>Observações:</strong></h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0">${preInscricao.observacoes}</p>
-                        </div>
-                    </div>
-                ` : ''}
-            `;
-            
-            $('#viewModalContent').html(html);
-            $('#viewModal').modal('show');
+        success: function(response) {
+            // Redirecionar para a página show
+            window.location.href = `/pre-inscricoes/${id}`;
         },
         error: function(xhr, status, error) {
-            console.error('Erro ao carregar detalhes da pré-inscrição:', error);
+            console.error('Erro ao carregar pré-inscrição:', error);
             alert('Erro ao carregar os detalhes da pré-inscrição.');
         }
     });
 }
 
 /**
- * Deleta uma pré-inscrição específica
- * @param {number} id - ID da pré-inscrição a deletar
+ * Confirma uma pré-inscrição (muda status para confirmado)
+ * @param {number} id - ID da pré-inscrição
  */
-function deletarPreInscricao(id) {
-    if (confirm('Tem certeza que deseja deletar esta pré-inscrição? Esta ação não pode ser desfeita.')) {
-        // Criar um formulário para enviar a requisição DELETE
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/pre-inscricoes/${id}`;
-        form.style.display = 'none';
-        
-        // Adicionar token CSRF
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = csrfToken;
-        form.appendChild(csrfInput);
-        
-        // Adicionar método DELETE
-        const methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'DELETE';
-        form.appendChild(methodInput);
-        
-        // Adicionar ao body e submeter
-        document.body.appendChild(form);
-        form.submit();
+function confirmarPreInscricao(id) {
+    if (confirm('Tem certeza que deseja confirmar esta pré-inscrição?')) {
+        atualizarStatusPreInscricao(id, 'confirmado');
     }
+}
+
+/**
+ * Cancela uma pré-inscrição (muda status para cancelado)
+ * @param {number} id - ID da pré-inscrição
+ */
+function cancelarPreInscricao(id) {
+    if (confirm('Tem certeza que deseja cancelar esta pré-inscrição?')) {
+        atualizarStatusPreInscricao(id, 'cancelado');
+    }
+}
+
+/**
+ * Atualiza o status de uma pré-inscrição
+ * @param {number} id - ID da pré-inscrição
+ * @param {string} status - Novo status
+ */
+function atualizarStatusPreInscricao(id, status) {
+    $.ajax({
+        url: `/api/pre-inscricoes/${id}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify({ status: status }),
+        success: function(response) {
+            // Recarregar a página para refletir as mudanças
+            location.reload();
+        },
+        error: function(xhr, status, error) {
+            console.error('Erro ao atualizar status:', error);
+            const errorMsg = xhr.responseJSON?.message || 'Erro ao atualizar o status da pré-inscrição.';
+            alert(errorMsg);
+        }
+    });
+}
+
+/**
+ * Aplica filtros e recarrega a tabela
+ */
+function aplicarFiltros() {
+    const status = $('#filtroStatus').val();
+    const curso = $('#filtroCurso').val();
+    const centro = $('#filtroCentro').val();
+    
+    // Montar URL com parâmetros
+    let url = '/pre-inscricoes?';
+    if (status) url += `status=${status}&`;
+    if (curso) url += `curso=${curso}&`;
+    if (centro) url += `centro=${centro}`;
+    
+    // Redirecionar para a URL com filtros
+    window.location.href = url;
+}
+
+/**
+ * Limpa os filtros
+ */
+function limparFiltros() {
+    $('#filtroStatus').val('');
+    $('#filtroCurso').val('');
+    $('#filtroCentro').val('');
+    window.location.href = '/pre-inscricoes';
 }
 
 function getStatusBadge(status) {
     switch (status) {
         case 'pendente':
-            return '<span class="badge bg-warning">Pendente</span>';
+            return '<span class="badge bg-warning text-dark">Pendente</span>';
         case 'confirmado':
             return '<span class="badge bg-success">Confirmado</span>';
         case 'cancelado':
@@ -287,18 +310,6 @@ function getStatusBadge(status) {
         default:
             return '<span class="badge bg-secondary">Desconhecido</span>';
     }
-}
-
-function aplicarFiltros() {
-    // Implementar filtros se necessário
-    console.log('Filtros aplicados');
-}
-
-function limparFiltros() {
-    $('#filtroStatus').val('');
-    $('#filtroCurso').val('');
-    $('#filtroCentro').val('');
-    console.log('Filtros limpos');
 }
 </script>
 @endsection

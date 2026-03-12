@@ -137,6 +137,24 @@ class PreInscricaoController extends Controller
         $validated = $request->validate([
             'status' => 'required|in:pendente,confirmado,cancelado'
         ]);
+        
+        // Controlar vagas_preenchidas nas turmas
+        $statusAnterior = $preInscricao->status;
+        $novoStatus = $validated['status'];
+        
+        if ($statusAnterior !== $novoStatus) {
+            $turma = $preInscricao->turma;
+            
+            // Se foi confirmado e agora é algo diferente (cancelado ou pendente)
+            if ($statusAnterior === 'confirmado' && $novoStatus !== 'confirmado') {
+                $turma->decrement('vagas_preenchidas');
+            }
+            // Se não era confirmado e agora é confirmado
+            else if ($statusAnterior !== 'confirmado' && $novoStatus === 'confirmado') {
+                $turma->increment('vagas_preenchidas');
+            }
+        }
+        
         $preInscricao->update($validated);
 
         return response()->json([

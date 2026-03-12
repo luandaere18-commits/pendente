@@ -7,9 +7,30 @@ use Illuminate\Http\Request;
 
 class PreInscricaoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $preInscricoes = PreInscricao::with(['turma.curso'])->get();
+        $query = PreInscricao::with(['turma.curso']);
+
+        // Filtrar por status
+        if ($request->has('status') && !empty($request->get('status'))) {
+            $query->where('status', $request->get('status'));
+        }
+
+        // Filtrar por curso (via turma.curso)
+        if ($request->has('curso') && !empty($request->get('curso'))) {
+            $query->whereHas('turma', function ($q) use ($request) {
+                $q->where('curso_id', $request->get('curso'));
+            });
+        }
+
+        // Filtrar por centro (via turma.centro)
+        if ($request->has('centro') && !empty($request->get('centro'))) {
+            $query->whereHas('turma', function ($q) use ($request) {
+                $q->where('centro_id', $request->get('centro'));
+            });
+        }
+
+        $preInscricoes = $query->get();
         return view('pre-inscricoes.index', compact('preInscricoes'));
     }
 
@@ -68,6 +89,24 @@ class PreInscricaoController extends Controller
         // Normalizar email para lowercase se fornecido
         if (!empty($validated['email'])) {
             $validated['email'] = strtolower($validated['email']);
+        }
+        
+        // Controlar vagas_preenchidas nas turmas
+        $statusAnterior = $preInscricao->status;
+        $novoStatus = $validated['status'];
+        $turmaId = $preInscricao->turma_id;
+        
+        if ($statusAnterior !== $novoStatus) {
+            $turma = \App\Models\Turma::find($turmaId);
+            
+            // Se foi confirmado e agora é algo diferente (cancelado ou pendente)
+            if ($statusAnterior === 'confirmado' && $novoStatus !== 'confirmado') {
+                $turma->decrement('vagas_preenchidas');
+            }
+            // Se não era confirmado e agora é confirmado
+            else if ($statusAnterior !== 'confirmado' && $novoStatus === 'confirmado') {
+                $turma->increment('vagas_preenchidas');
+            }
         }
         
         $preInscricao->update($validated);
