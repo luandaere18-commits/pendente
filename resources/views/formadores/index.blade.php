@@ -310,28 +310,40 @@
 <script>
 $(document).ready(function() {
     let table = null;
+    
+    // Dados iniciais já carregados no servidor
+    let formadoresIniciais = @json($formadores ?? []);
 
     // ===== Carregar Formadores =====
     function carregarFormadores() {
+        console.log('Iniciando carregamento de formadores');
         $.ajax({
             url: '{{ route('api.formadores.index') }}',
             method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + $('meta[name="csrf-token"]').attr('content'),
-                'Accept': 'application/json'
-            },
+            dataType: 'json',
             success: function(response) {
+                console.log('Resposta da API:', response);
                 const data = response.data || [];
+                console.log('Dados extraídos:', data);
                 populateTable(data);
             },
-            error: function() {
-                Swal.fire('Erro', 'Erro ao carregar formadores', 'error');
+            error: function(xhr) {
+                console.error('Erro ao carregar formadores:', xhr);
+                // Se houver erro, usa os dados iniciais
+                if (formadoresIniciais.length > 0) {
+                    console.log('Usando dados iniciais do servidor');
+                    populateTable(formadoresIniciais);
+                } else {
+                    Swal.fire('Erro', 'Erro ao carregar formadores', 'error');
+                }
             }
         });
     }
 
     // ===== Popular Tabela =====
     function populateTable(formadores) {
+        console.log('populateTable chamada com:', formadores);
+        
         if (table) {
             table.destroy();
         }
@@ -384,6 +396,7 @@ $(document).ready(function() {
         });
 
         // Inicializar DataTable
+        console.log('Inicializando DataTable com', formadores.length, 'formadores');
         table = $('#formadoresTable').DataTable({
             language: {
                 url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt_pt.json'
@@ -396,6 +409,7 @@ $(document).ready(function() {
             bDestroy: true,
             order: [[0, 'desc']]
         });
+        console.log('DataTable inicializado:', table);
     }
 
     // ===== Visualizar Formador =====
@@ -403,10 +417,7 @@ $(document).ready(function() {
         $.ajax({
             url: `{{ route('api.formadores.show', ['formador' => ':id']) }}`.replace(':id', id),
             method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + $('meta[name="csrf-token"]').attr('content'),
-                'Accept': 'application/json'
-            },
+            dataType: 'json',
             success: function(response) {
                 const formador = response.data;
                 let turmasHtml = '';
@@ -468,7 +479,8 @@ $(document).ready(function() {
                 const modal = new bootstrap.Modal(document.getElementById('modalVisualizarFormador'));
                 modal.show();
             },
-            error: function() {
+            error: function(xhr) {
+                console.error('Erro ao carregar detalhes do formador:', xhr);
                 Swal.fire('Erro', 'Erro ao carregar detalhes do formador', 'error');
             }
         });
@@ -479,10 +491,7 @@ $(document).ready(function() {
         $.ajax({
             url: `{{ route('api.formadores.show', ['formador' => ':id']) }}`.replace(':id', id),
             method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + $('meta[name="csrf-token"]').attr('content'),
-                'Accept': 'application/json'
-            },
+            dataType: 'json',
             success: function(response) {
                 const formador = response.data;
                 $('#editFormadorId').val(formador.id);
@@ -495,7 +504,8 @@ $(document).ready(function() {
                 const modal = new bootstrap.Modal(document.getElementById('modalEditarFormador'));
                 modal.show();
             },
-            error: function() {
+            error: function(xhr) {
+                console.error('Erro ao carregar dados do formador:', xhr);
                 Swal.fire('Erro', 'Erro ao carregar dados do formador', 'error');
             }
         });
@@ -514,16 +524,17 @@ $(document).ready(function() {
         $.ajax({
             url: '{{ route('api.formadores.store') }}',
             method: 'POST',
-            data: {
+            data: JSON.stringify({
                 nome: formData.get('nome'),
                 email: formData.get('email'),
                 especialidade: formData.get('especialidade'),
                 bio: formData.get('bio'),
                 contactos: telefone ? [telefone] : []
-            },
+            }),
+            contentType: 'application/json',
+            dataType: 'json',
             headers: {
-                'Authorization': 'Bearer ' + $('meta[name="csrf-token"]').attr('content'),
-                'Accept': 'application/json'
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
                 Swal.fire('Sucesso!', 'Formador criado com sucesso', 'success');
@@ -552,16 +563,17 @@ $(document).ready(function() {
         $.ajax({
             url: `{{ route('api.formadores.update', ['formador' => ':id']) }}`.replace(':id', formadorId),
             method: 'PUT',
-            data: {
+            data: JSON.stringify({
                 nome: $('#editNome').val(),
                 email: $('#editEmail').val(),
                 especialidade: $('#editEspecialidade').val(),
                 bio: $('#editBio').val(),
                 contactos: telefone ? [telefone] : []
-            },
+            }),
+            contentType: 'application/json',
+            dataType: 'json',
             headers: {
-                'Authorization': 'Bearer ' + $('meta[name="csrf-token"]').attr('content'),
-                'Accept': 'application/json'
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
                 Swal.fire('Sucesso!', 'Formador atualizado com sucesso', 'success');
@@ -595,9 +607,9 @@ $(document).ready(function() {
                 $.ajax({
                     url: `{{ route('api.formadores.destroy', ['formador' => ':id']) }}`.replace(':id', id),
                     method: 'DELETE',
+                    dataType: 'json',
                     headers: {
-                        'Authorization': 'Bearer ' + $('meta[name="csrf-token"]').attr('content'),
-                        'Accept': 'application/json'
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
                         Swal.fire('Eliminado!', 'Formador eliminado com sucesso', 'success');
