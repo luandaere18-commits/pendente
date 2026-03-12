@@ -312,13 +312,13 @@ $(document).ready(function() {
     let table = null;
     
     // Dados iniciais já carregados no servidor
-    let formadoresIniciais = @json($formadores ?? []);
+    let formadoresIniciais = {!! json_encode($formadores ?? []) !!};
 
     // ===== Carregar Formadores =====
     function carregarFormadores() {
         console.log('Iniciando carregamento de formadores');
         $.ajax({
-            url: '{{ route('api.formadores.index') }}',
+            url: "{{ route('api.formadores.index') }}",
             method: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -415,7 +415,7 @@ $(document).ready(function() {
     // ===== Visualizar Formador =====
     window.visualizarFormador = function(id) {
         $.ajax({
-            url: `{{ route('api.formadores.show', ['formador' => ':id']) }}`.replace(':id', id),
+            url: `{{ route("api.formadores.show", ["formador" => ":id"]) }}`.replace(':id', id),
             method: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -489,7 +489,7 @@ $(document).ready(function() {
     // ===== Abrir Modal Edição =====
     window.abrirEdicaoFormador = function(id) {
         $.ajax({
-            url: `{{ route('api.formadores.show', ['formador' => ':id']) }}`.replace(':id', id),
+            url: `{{ route("api.formadores.show", ["formador" => ":id"]) }}`.replace(':id', id),
             method: 'GET',
             dataType: 'json',
             success: function(response) {
@@ -522,7 +522,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: '{{ route('api.formadores.store') }}',
+            url: "{{ route('api.formadores.store') }}",
             method: 'POST',
             data: JSON.stringify({
                 nome: formData.get('nome'),
@@ -561,7 +561,7 @@ $(document).ready(function() {
         const telefone = $('#editContactoTelefone').val();
 
         $.ajax({
-            url: `{{ route('api.formadores.update', ['formador' => ':id']) }}`.replace(':id', formadorId),
+            url: `{{ route("api.formadores.update", ["formador" => ":id"]) }}`.replace(':id', formadorId),
             method: 'PUT',
             data: JSON.stringify({
                 nome: $('#editNome').val(),
@@ -605,7 +605,7 @@ $(document).ready(function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `{{ route('api.formadores.destroy', ['formador' => ':id']) }}`.replace(':id', id),
+                    url: `{{ route("api.formadores.destroy", ["formador" => ":id"]) }}`.replace(':id', id),
                     method: 'DELETE',
                     dataType: 'json',
                     headers: {
