@@ -427,13 +427,19 @@ function adicionarCentroNovoFormador() {
         lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
     });
 
+    // Desabilitar centros já selecionados
+    lastSelect.on('change', function() {
+        atualizarSelectsDeCentros();
+    });
+
+    atualizarSelectsDeCentros();
     atualizarNumeroCentros();
 }
 
 /**
  * Adicionar centro no modal de editar formador
  */
-function adicionarCentroEditarFormador() {
+function adicionarCentroEditarFormador(centrosAssociados = []) {
     const template = document.getElementById('centroFormadorTemplate');
     if (!template) return;
 
@@ -447,10 +453,18 @@ function adicionarCentroEditarFormador() {
     const selects = $('#centrosContainerEditarFormador').find('.centro-id-modal');
     const lastSelect = selects.last();
 
+    // Preencher opções de centros disponíveis
     centrosDisponiveisList.forEach(centro => {
         lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
     });
 
+    // Ao mudar este select, atualizar visibilidade de todos os dropdowns
+    lastSelect.on('change', function() {
+        atualizarSelectsDeCentrosEditar();
+    });
+
+    // Atualizar visibilidade e numeração
+    atualizarSelectsDeCentrosEditar();
     atualizarNumeroCentros();
 }
 
@@ -468,6 +482,71 @@ function atualizarNumeroCentros() {
 }
 
 /**
+ * Atualizar status de centros (desabilitar duplicados)
+ */
+function atualizarSelectsDeCentros() {
+    const selects = $('select.centro-id-modal');
+    
+    selects.each(function(index, select) {
+        const selectedValue = $(select).val();
+        
+        selects.each(function(otherIndex, otherSelect) {
+            if (index !== otherIndex) {
+                const otherValue = $(otherSelect).val();
+                $(otherSelect).find('option').each(function() {
+                    if ($(this).val() === selectedValue && selectedValue !== '') {
+                        $(this).prop('disabled', true);
+                    } else if ($(this).val() !== selectedValue && $(this).val() !== otherValue) {
+                        $(this).prop('disabled', false);
+                    }
+                });
+            }
+        });
+    });
+}
+
+/**
+ * Atualizar dropdowns de centros no modal de editar formador
+ * Oculta centros que já estão selecionados em outro dropdown
+ */
+function atualizarSelectsDeCentrosEditar() {
+    const selectsEditar = $('#centrosContainerEditarFormador').find('.centro-id-modal');
+    const allSelectedIds = [];
+    
+    // Coletar todos os valores atualmente selecionados
+    selectsEditar.each(function() {
+        const val = $(this).val();
+        if (val) {
+            allSelectedIds.push(val);
+        }
+    });
+    
+    // Para cada dropdown, atualizar visibilidade das opções
+    selectsEditar.each(function() {
+        const select = $(this);
+        const selectedInThis = select.val();
+        
+        select.find('option').each(function() {
+            const optionId = $(this).val();
+            
+            if (optionId === '') {
+                // Opção vazia sempre visível
+                $(this).prop('hidden', false);
+            } else if (optionId === selectedInThis) {
+                // Opção atualmente selecionada sempre visível
+                $(this).prop('hidden', false);
+            } else if (allSelectedIds.includes(optionId)) {
+                // Se está selecionado em outro dropdown, esconder
+                $(this).prop('hidden', true);
+            } else {
+                // Caso contrário, mostrar
+                $(this).prop('hidden', false);
+            }
+        });
+    });
+}
+
+/**
  * Carrega a lista de formadores via API
  */
 function carregarFormadores() {
@@ -475,63 +554,68 @@ function carregarFormadores() {
         url: '/api/formadores',
         method: 'GET',
         success: function(response) {
+            console.log('Resposta da API:', response);
             // Suportar { data: [...] } ou array direto
             const data = Array.isArray(response) ? response : (response.data || []);
+            console.log('Dados processados:', data);
             let html = '';
             
             if (data.length === 0) {
                 html = '<tr><td colspan="7" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhum formador encontrado</td></tr>';
             } else {
                 data.forEach(function(formador) {
-                    
-                    const email = formador.email || '<span class="text-muted">—</span>';
-                    const especialidade = formador.especialidade || '<span class="text-muted">—</span>';
-                    
-                    // Cursos (via turmas)
-                    let cursosBadges = '<span class="text-muted small">Nenhum</span>';
-                    const cursosSet = new Set();
-                    if (formador.turmas && Array.isArray(formador.turmas)) {
-                        formador.turmas.forEach(function(turma) {
-                            if (turma.curso && turma.curso.nome) {
-                                cursosSet.add(turma.curso.nome);
+                    try {
+                        const email = formador.email || '<span class="text-muted">—</span>';
+                        const especialidade = formador.especialidade || '<span class="text-muted">—</span>';
+                        
+                        // Cursos (via turmas)
+                        let cursosBadges = '<span class="text-muted small">Nenhum</span>';
+                        if (formador.turmas && Array.isArray(formador.turmas) && formador.turmas.length > 0) {
+                            const cursosSet = new Set();
+                            formador.turmas.forEach(function(turma) {
+                                if (turma && turma.curso && turma.curso.nome) {
+                                    cursosSet.add(turma.curso.nome);
+                                }
+                            });
+                            if (cursosSet.size > 0) {
+                                const cursosArray = Array.from(cursosSet);
+                                cursosBadges = cursosArray.slice(0, 2).map(function(curso) {
+                                    return `<span class="badge bg-info-subtle text-info me-1 mb-1">${curso}</span>`;
+                                }).join('');
+                                if (cursosArray.length > 2) {
+                                    cursosBadges += `<span class="badge bg-secondary-subtle text-secondary me-1 mb-1">+${cursosArray.length - 2}</span>`;
+                                }
                             }
-                        });
-                    }
-                    if (cursosSet.size > 0) {
-                        const cursosArray = Array.from(cursosSet);
-                        cursosBadges = cursosArray.slice(0, 2).map(function(curso) {
-                            return `<span class="badge bg-info-subtle text-info me-1 mb-1">${curso}</span>`;
-                        }).join('');
-                        if (cursosArray.length > 2) {
-                            cursosBadges += `<span class="badge bg-secondary-subtle text-secondary me-1 mb-1">+${cursosArray.length - 2}</span>`;
                         }
+                        
+                        let contactos = '<span class="text-muted small">Nenhum</span>';
+                        if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
+                            contactos = formador.contactos.map(function(c) {
+                                let telefone = typeof c === 'string' ? c : (c.valor || c);
+                                return `<span class="badge bg-info-subtle text-info me-1 mb-1"><i class="fas fa-phone me-1"></i>${telefone}</span>`;
+                            }).join('');
+                        }
+                        
+                        html += `
+                            <tr>
+                                <td class="ps-3"><strong class="text-muted">#${formador.id}</strong></td>
+                                <td><strong>${formador.nome}</strong></td>
+                                <td class="d-none d-md-table-cell"><small>${email}</small></td>
+                                <td class="d-none d-lg-table-cell"><small>${especialidade}</small></td>
+                                <td class="text-center"><small>${cursosBadges}</small></td>
+                                <td class="text-center">${contactos}</td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="visualizarFormador(${formador.id})" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="abrirEdicaoFormador(${formador.id})" title="Editar"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarFormador(${formador.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    } catch (e) {
+                        console.error('Erro ao processar formador:', formador, e);
                     }
-                    
-                    let contactos = '<span class="text-muted small">Nenhum</span>';
-                    if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
-                        contactos = formador.contactos.map(function(c) {
-                            let telefone = typeof c === 'string' ? c : (c.valor || c);
-                            return `<span class="badge bg-info-subtle text-info me-1 mb-1"><i class="fas fa-phone me-1"></i>${telefone}</span>`;
-                        }).join('');
-                    }
-                    
-                    html += `
-                        <tr>
-                            <td class="ps-3"><strong class="text-muted">#${formador.id}</strong></td>
-                            <td><strong>${formador.nome}</strong></td>
-                            <td class="d-none d-md-table-cell"><small>${email}</small></td>
-                            <td class="d-none d-lg-table-cell"><small>${especialidade}</small></td>
-                            <td class="text-center"><small>${cursosBadges}</small></td>
-                            <td class="text-center">${contactos}</td>
-                            <td class="text-end pe-3">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="visualizarFormador(${formador.id})" title="Visualizar"><i class="fas fa-eye"></i></button>
-                                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="abrirEdicaoFormador(${formador.id})" title="Editar"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarFormador(${formador.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
                 });
             }
             
@@ -539,6 +623,8 @@ function carregarFormadores() {
         },
         error: function(err) {
             console.error('Erro ao carregar formadores:', err);
+            console.error('Status:', err.status);
+            console.error('Response:', err.responseText);
             $('#formadoresTable tbody').html(
                 '<tr><td colspan="7" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
             );
@@ -621,23 +707,41 @@ window.abrirEdicaoFormador = function(id) {
             }
             $('#editContactoTelefone').val(primeroContacto);
             
-            // Limpar e carregar centros
+            // Coletar IDs de centros já associados a este formador
+            const centrosAssociados = [];
+            if (formador.centros && formador.centros.length > 0) {
+                formador.centros.forEach(function(centro) {
+                    centrosAssociados.push(centro.id);
+                });
+            }
+            
+            // Limpar container
             $('#centrosContainerEditarFormador').empty();
             centrosContainerEditarFormadorCount = 0;
             
-            // Aguardar selects serem renderizados
+            // Aguardar para renderizar os centros
             setTimeout(function() {
-                if (formador.centros && formador.centros.length > 0) {
-                    formador.centros.forEach(function(centro) {
+                if (centrosAssociados && centrosAssociados.length > 0) {
+                    // Adicionar dropdowns para CADA centro associado
+                    centrosAssociados.forEach(function(centroId) {
                         adicionarCentroEditarFormador();
-                        setTimeout(function() {
-                            const lastSelect = $('#centrosContainerEditarFormador').find('.centro-id-modal').last();
-                            lastSelect.val(centro.id);
-                        }, 50);
                     });
+                    
+                    // Após todos serem adicionados, selecionar os valores
+                    setTimeout(function() {
+                        const selects = $('#centrosContainerEditarFormador').find('.centro-id-modal');
+                        selects.each(function(idx) {
+                            if (idx < centrosAssociados.length) {
+                                $(this).val(centrosAssociados[idx]);
+                            }
+                        });
+                        // Atualizar visibilidade dos dropdowns
+                        atualizarSelectsDeCentrosEditar();
+                        atualizarNumeroCentros();
+                    }, 100);
                 } else {
+                    // Se não há centros, adicionar um vazio
                     adicionarCentroEditarFormador();
-                    atualizarNumeroCentros();
                 }
             }, 100);
             
@@ -655,42 +759,48 @@ window.abrirEdicaoFormador = function(id) {
 $('#formNovoFormadorAjax').on('submit', function(e) {
     e.preventDefault();
     
-    const form = this;
-    const formData = new FormData(form);
-    const telefone = $('input[name="contacto_telefone"]').val();
-    const centrosArray = [];
+    // Construir objeto com dados do formulário
+    const dados = {
+        nome: $('input[name="nome"]').val(),
+        email: $('input[name="email"]').val(),
+        especialidade: $('input[name="especialidade"]').val(),
+        bio: $('textarea[name="bio"]').val(),
+        contactos: []
+    };
     
+    // Adicionar contacto se existir
+    const telefone = $('input[name="contacto_telefone"]').val();
+    if (telefone) {
+        dados.contactos.push(telefone);
+    }
+    
+    // Coletar centros selecionados
+    const centrosArray = [];
     $('#centrosContainerNovoFormador').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
         if (centroId) {
             centrosArray.push(parseInt(centroId));
         }
     });
+    dados.centros = centrosArray;
     
-    // Adicionar contactos como array indexado para Laravel
-    if (telefone) {
-        formData.append('contactos[0]', telefone);
-    }
-    
-    // Adicionar centros como array indexado para Laravel
-    centrosArray.forEach(function(centroId, index) {
-        formData.append('centros[' + index + ']', centroId);
-    });
+    console.log('Enviando dados:', dados);
     
     $.ajax({
         url: "{{ route('api.formadores.store') }}",
         method: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        success: function() {
+        success: function(response) {
+            console.log('Sucesso:', response);
             Swal.fire('Sucesso!', 'Formador criado com sucesso', 'success');
             bootstrap.Modal.getInstance(document.getElementById('modalNovoFormador')).hide();
             $('#formNovoFormadorAjax')[0].reset();
             carregarFormadores();
         },
         error: function(xhr) {
+            console.error('Erro:', xhr);
             const errors = xhr.responseJSON?.errors || {};
             let mensagem = 'Erro ao criar formador';
             if (Object.keys(errors).length > 0) {
@@ -708,41 +818,48 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
     e.preventDefault();
     
     const formadorId = $('#editFormadorId').val();
-    const form = document.getElementById('formEditarFormadorAjax');
-    const formData = new FormData(form);
-    const telefone = $('#editContactoTelefone').val();
-    const centrosArray = [];
     
+    // Construir objeto com dados do formulário
+    const dados = {
+        nome: $('#editNome').val(),
+        email: $('#editEmail').val(),
+        especialidade: $('#editEspecialidade').val(),
+        bio: $('#editBio').val(),
+        contactos: []
+    };
+    
+    // Adicionar contacto se existir
+    const telefone = $('#editContactoTelefone').val();
+    if (telefone) {
+        dados.contactos.push(telefone);
+    }
+    
+    // Coletar centros selecionados
+    const centrosArray = [];
     $('#centrosContainerEditarFormador').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
         if (centroId) {
             centrosArray.push(parseInt(centroId));
         }
     });
+    dados.centros = centrosArray;
     
-    // Adicionar contactos como array indexado para Laravel
-    if (telefone) {
-        formData.append('contactos[0]', telefone);
-    }
-    
-    // Adicionar centros como array indexado para Laravel
-    centrosArray.forEach(function(centroId, index) {
-        formData.append('centros[' + index + ']', centroId);
-    });
+    console.log('Enviando dados:', dados);
     
     $.ajax({
         url: `/api/formadores/${formadorId}`,
         method: 'PUT',
-        data: formData,
-        contentType: false,
-        processData: false,
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        success: function() {
+        success: function(response) {
+            console.log('Sucesso:', response);
             Swal.fire('Sucesso!', 'Formador atualizado com sucesso', 'success');
             bootstrap.Modal.getInstance(document.getElementById('modalEditarFormador')).hide();
             carregarFormadores();
         },
         error: function(xhr) {
+            console.error('Erro:', xhr);
             const errors = xhr.responseJSON?.errors || {};
             let mensagem = 'Erro ao atualizar formador';
             if (Object.keys(errors).length > 0) {

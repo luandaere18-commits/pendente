@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Formador;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Tag(
@@ -37,20 +38,19 @@ class FormadorController extends Controller
      */
     public function index(Request $request)
     {
-        // Busca todos os formadores, incluindo centros e turmas relacionados
-        $query = Formador::with(['centros', 'turmas.curso']);
-        // Permite busca textual por nome, especialidade ou bio
-        if ($request->filled('busca')) {
-            $busca = $request->busca;
-            $query->where(function($q) use ($busca) {
-                $q->where('nome', 'like', "%$busca%")
-                  ->orWhere('especialidade', 'like', "%$busca%")
-                  ->orWhere('bio', 'like', "%$busca%");
-            });
+        try {
+            // Busca todos os formadores, incluindo centros
+            $formadores = Formador::with('centros')->get();
+            
+            // Retorna lista de formadores
+            return response()->json(['data' => $formadores]);
+        } catch (\Exception $e) {
+            \Log::error('Erro ao carregar formadores: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Erro ao carregar formadores: ' . $e->getMessage()
+            ], 500);
         }
-        $formadores = $query->get();
-        // Retorna lista de formadores
-        return response()->json(['data' => $formadores]);
     }
 
 
@@ -78,22 +78,21 @@ class FormadorController extends Controller
             'nome' => 'required|string|max:100',
             'email' => 'nullable|email|max:100|unique:formadores,email',
             'contactos' => 'nullable|array',
+            'contactos.*' => 'nullable|string',
             'especialidade' => 'nullable|string|max:100',
             'bio' => 'nullable|string|max:500',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_url' => 'nullable|url|max:255',
-            'cursos' => 'array',
-            'cursos.*' => 'exists:cursos,id',
             'centros' => 'nullable|array',
-            'centros.*' => 'exists:centros,id'
+            'centros.*' => 'integer|exists:centros,id'
         ]);
 
-        // Processar contactos: converter array de strings em array de strings
+        // Processar contactos: remover strings vazias
         $contactosProcessados = [];
         if (isset($validated['contactos']) && is_array($validated['contactos'])) {
             foreach ($validated['contactos'] as $contacto) {
-                if (is_string($contacto) && !empty($contacto)) {
-                    $contactosProcessados[] = $contacto;
+                if (is_string($contacto) && !empty(trim($contacto))) {
+                    $contactosProcessados[] = trim($contacto);
                 }
             }
         }
@@ -103,6 +102,9 @@ class FormadorController extends Controller
         if (!empty($validated['email'])) {
             $validated['email'] = strtolower($validated['email']);
         }
+
+        // Remover campos que não se deve criar diretamente
+        unset($validated['foto_url']);
 
         // Processar upload de foto
         if ($request->hasFile('foto')) {
@@ -117,10 +119,12 @@ class FormadorController extends Controller
 
         // Cria o formador
         $formador = Formador::create($validated);
+        
         // Associa centros ao formador, se enviados
         if ($request->has('centros') && is_array($request->centros)) {
             $formador->centros()->sync($request->centros);
         }
+        
         // Retorna resposta de sucesso com dados completos
         return response()->json([
             'status' => 'sucesso',
@@ -128,7 +132,6 @@ class FormadorController extends Controller
             'data' => $formador->load(['centros', 'turmas.curso'])
         ], 201);
     }
-
 
 
     /**
@@ -199,24 +202,23 @@ class FormadorController extends Controller
         // Validação dos dados recebidos
         $validated = $request->validate([
             'nome' => 'required|string|max:100',
-            'email' => 'nullable|email|max:100|unique:formadores,email' . ($request->method() === 'PUT' ? ',' . $formador->id : ''),
+            'email' => ['nullable', 'email', 'max:100', Rule::unique('formadores')->ignore($formador->id)],
             'contactos' => 'nullable|array',
+            'contactos.*' => 'nullable|string',
             'especialidade' => 'nullable|string|max:100',
             'bio' => 'nullable|string|max:500',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'foto_url' => 'nullable|url|max:255',
-            'cursos' => 'array',
-            'cursos.*' => 'exists:cursos,id',
             'centros' => 'nullable|array',
-            'centros.*' => 'exists:centros,id'
+            'centros.*' => 'integer|exists:centros,id'
         ]);
         
-        // Processar contactos: converter array de strings em array de strings
+        // Processar contactos: remover strings vazias
         $contactosProcessados = [];
         if (isset($validated['contactos']) && is_array($validated['contactos'])) {
             foreach ($validated['contactos'] as $contacto) {
-                if (is_string($contacto) && !empty($contacto)) {
-                    $contactosProcessados[] = $contacto;
+                if (is_string($contacto) && !empty(trim($contacto))) {
+                    $contactosProcessados[] = trim($contacto);
                 }
             }
         }
@@ -227,23 +229,31 @@ class FormadorController extends Controller
             $validated['email'] = strtolower($validated['email']);
         }
 
-        // Processar upload de foto
+        // Processar upload de foto antes de unset
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $filename = time() . '_' . $file->getClientOriginalName();
             $path = $file->storeAs('formadores', $filename, 'public');
             $validated['foto_url'] = '/storage/' . $path;
+        } else {
+            // Remover foto_url se não houve novo upload
+            unset($validated['foto_url']);
         }
 
-        // Remove 'foto' do validated pois já foi processada
+        // Remove 'foto' do validated (sempre, pois já foi processada)
         unset($validated['foto']);
 
-        // Atualiza dados do formador
+        // Atualiza dados do formador (incluindo foto_url se houve upload)
         $formador->update($validated);
-        // Atualiza centros associados
+        
+        // Atualiza centros associados (replace com novos, remover antigos se necessário)
         if ($request->has('centros') && is_array($request->centros)) {
             $formador->centros()->sync($request->centros);
+        } elseif ($request->has('centros') && $request->centros === null) {
+            // Se centros foi explicitamente enviado como null, remover todos
+            $formador->centros()->detach();
         }
+        
         // Retorna resposta de sucesso
         return response()->json([
             'status' => 'sucesso',
