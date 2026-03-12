@@ -36,4 +36,12 @@ class Formador extends Model
     {
         return $this->hasMany(Turma::class);
     }
+
+    // N:N com cursos via turmas
+    public function cursos()
+    {
+        return $this->belongsToMany(Curso::class, 'turmas', 'formador_id', 'curso_id')
+            ->withTimestamps()
+            ->distinct();
+    }
 }

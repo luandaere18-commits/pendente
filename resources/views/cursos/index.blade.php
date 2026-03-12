@@ -580,14 +580,14 @@ function carregarCursos() {
             } else {
                 data.forEach(function(curso) {
                     const statusBadge = curso.ativo
-                        ? '<span class="badge bg-success-subtle text-success">Ativo</span>'
-                        : '<span class="badge bg-secondary-subtle text-secondary">Inativo</span>';
+                        ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
+                        : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
 
                     const modalidadeBadge = curso.modalidade === 'online'
-                        ? '<span class="badge bg-info-subtle text-info">Online</span>'
+                        ? '<span class="badge bg-info"><i class="fas fa-globe me-1"></i>Online</span>'
                         : curso.modalidade === 'presencial'
-                        ? '<span class="badge bg-warning-subtle text-warning">Presencial</span>'
-                        : '<span class="badge bg-primary-subtle text-primary">Híbrido</span>';
+                        ? '<span class="badge bg-warning text-dark"><i class="fas fa-building me-1"></i>Presencial</span>'
+                        : '<span class="badge bg-primary"><i class="fas fa-arrows-alt me-1"></i>Híbrido</span>';
 
                     let centroCells = '';
                     if (curso.centros && curso.centros.length > 0) {

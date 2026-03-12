@@ -65,8 +65,8 @@ class TurmaController extends Controller
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
 
-        // Normalizar período (remover acento se houver)
-        $validated['periodo'] = str_replace('manhã', 'manha', $validated['periodo']);
+        // Normalizar período (adicionar acento conforme migration)
+        $validated['periodo'] = str_replace('manha', 'manhã', $validated['periodo']);
         
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {
@@ -87,6 +87,15 @@ class TurmaController extends Controller
         // Garantir que dia_semana é um array
         if (!is_array($validated['dia_semana'])) {
             $validated['dia_semana'] = [$validated['dia_semana']];
+        }
+        
+        // Validação: formador obrigatório se status = inscricoes_abertas
+        if ($validated['status'] === 'inscricoes_abertas' && empty($validated['formador_id'])) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Formador obrigatório para turmas com inscrições abertas.',
+                'errors' => ['formador_id' => ['Formador obrigatório para turmas com inscrições abertas.']]
+            ], 422);
         }
 
         $turma = Turma::create($validated);
@@ -182,8 +191,8 @@ class TurmaController extends Controller
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
         ]);
         
-        // Normalizar período (remover acento se houver)
-        $validated['periodo'] = str_replace('manhã', 'manha', $validated['periodo']);
+        // Normalizar período (adicionar acento conforme migration)
+        $validated['periodo'] = str_replace('manha', 'manhã', $validated['periodo']);
         
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {
@@ -201,12 +210,13 @@ class TurmaController extends Controller
             }
         }
         
-        // Garantir formato correto das horas
-        if (!empty($validated['hora_inicio'])) {
-            $validated['hora_inicio'] = date('H:i', strtotime($validated['hora_inicio']));
-        }
-        if (!empty($validated['hora_fim'])) {
-            $validated['hora_fim'] = date('H:i', strtotime($validated['hora_fim']));
+        // Validação: formador obrigatório se status = inscricoes_abertas
+        if ($validated['status'] === 'inscricoes_abertas' && empty($validated['formador_id'])) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Formador obrigatório para turmas com inscrições abertas.',
+                'errors' => ['formador_id' => ['Formador obrigatório para turmas com inscrições abertas.']]
+            ], 422);
         }
         
         $turma->update($validated);

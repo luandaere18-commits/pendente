@@ -129,7 +129,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select name="periodo" id="periodoNovo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manha">Manhã</option>
+                                            <option value="manhã">Manhã</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -138,12 +138,13 @@
 
                                     <div class="mb-0">
                                         <label class="form-label fw-medium small">Status</label>
-                                        <select name="status" class="form-select form-select-sm">
-                                            <option value="planeada">Planeada</option>
-                                            <option value="inscricoes_abertas" selected>Inscrições Abertas</option>
+                                        <select name="status" class="form-select form-select-sm" required>
+                                            <option value="planeada" selected>Planeada</option>
+                                            <option value="inscricoes_abertas">Inscrições Abertas</option>
                                             <option value="em_andamento">Em Andamento</option>
                                             <option value="concluida">Concluída</option>
                                         </select>
+                                        <small class="text-muted d-block mt-1">Para "Inscrições Abertas" obrigatório ter formador</small>
                                     </div>
                                 </div>
                             </div>
@@ -296,7 +297,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select id="editPeriodo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manha">Manhã</option>
+                                            <option value="manhã">Manhã</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -585,7 +586,7 @@ function configurarAutoPreenchimento() {
         const horas = parseInt(hora.split(':')[0]);
         
         // Manhã: 6h até 12h
-        if (horas >= 6 && horas < 12) return 'manha';
+        if (horas >= 6 && horas < 12) return 'manhã';
         // Tarde: 12h até 18h
         if (horas >= 12 && horas < 18) return 'tarde';
         // Noite: 18h até 6h
@@ -728,11 +729,20 @@ function criarTurma() {
         return;
     }
     
+    const formador_id = $('select[name="formador_id"]').val();
+    const status = $('select[name="status"]').val();
+    
+    // Validação: formador obrigatório se status = inscrições_abertas
+    if (status === 'inscricoes_abertas' && !formador_id) {
+        Swal.fire('Aviso', 'Para "Inscrições Abertas" é obrigatório selecionar um formador', 'warning');
+        return;
+    }
+    
     const dados = {
         curso_id: $('select[name="curso_id"]').val(),
-        formador_id: $('select[name="formador_id"]').val() || null,
+        formador_id: formador_id || null,
         periodo: $('select[name="periodo"]').val(),
-        status: $('select[name="status"]').val() || 'planeada',
+        status: status || 'planeada',
         hora_inicio: $('input[name="hora_inicio"]').val(),
         hora_fim: $('input[name="hora_fim"]').val(),
         duracao_semanas: $('input[name="duracao_semanas"]').val(),
@@ -778,11 +788,20 @@ function atualizarTurma() {
         return;
     }
     
+    const formador_id = $('#editFormadorId').val();
+    const status = $('#editStatus').val();
+    
+    // Validação: formador obrigatório se status = inscrições_abertas
+    if (status === 'inscricoes_abertas' && !formador_id) {
+        Swal.fire('Aviso', 'Para "Inscrições Abertas" é obrigatório selecionar um formador', 'warning');
+        return;
+    }
+    
     const dados = {
         curso_id: $('#editCursoId').val(),
-        formador_id: $('#editFormadorId').val() || null,
+        formador_id: formador_id || null,
         periodo: $('#editPeriodo').val(),
-        status: $('#editStatus').val() || 'planeada',
+        status: status || 'planeada',
         hora_inicio: $('#editHoraInicio').val(),
         hora_fim: $('#editHoraFim').val(),
         duracao_semanas: $('#editDuracaoSemanas').val(),
@@ -848,7 +867,7 @@ window.eliminarTurma = function(id) {
  */
 function getPeriodoBadge(periodo) {
     const badges = {
-        'manha': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manhã</span>',
+        'manhã': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manhã</span>',
         'tarde': '<span class="badge bg-primary"><i class="fas fa-cloud-sun me-1"></i>Tarde</span>',
         'noite': '<span class="badge bg-dark"><i class="fas fa-moon me-1"></i>Noite</span>'
     };

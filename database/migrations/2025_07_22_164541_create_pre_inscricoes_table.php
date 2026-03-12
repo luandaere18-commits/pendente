@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('pre_inscricoes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
-            $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
             $table->foreignId('turma_id')->constrained('turmas')->onDelete('cascade');
             $table->string('nome_completo', 100);
             $table->json('contactos');

@@ -3,77 +3,59 @@
 @section('title', 'Centros')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="display-6 mb-2">
-                        <i class="fas fa-building me-3 text-primary"></i>Gestão de Centros
-                    </h1>
-                    <p class="text-muted">Gerir todos os centros de formação no sistema</p>
+
+{{-- ============================================= --}}
+{{-- HEADER                                        --}}
+{{-- ============================================= --}}
+<div class="container-fluid py-4">
+    <div class="row align-items-center mb-4">
+        <div class="col-12 col-md-8 mb-2 mb-md-0">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-success bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
+                    <i class="fas fa-building text-success fa-lg"></i>
                 </div>
-                <a href="{{ route('centros.create') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-plus me-2"></i>Novo Centro
-                </a>
+                <div>
+                    <h1 class="h3 fw-bold mb-0">Gestão de Centros</h1>
+                    <p class="text-muted mb-0 small">Gerir todos os centros de formação do sistema</p>
+                </div>
             </div>
+        </div>
+        <div class="col-12 col-md-4 text-md-end">
+            <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#modalNovoCentro">
+                <i class="fas fa-plus me-2"></i>Novo Centro
+            </button>
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">
-                <i class="fas fa-list me-2"></i>Lista de Centros
-            </h5>
+    {{-- ============================================= --}}
+    {{-- TABELA DE CENTROS                             --}}
+    {{-- ============================================= --}}
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white border-bottom py-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-list text-success"></i>
+                <h5 class="mb-0 fw-semibold">Lista de Centros</h5>
+            </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover data-table" id="centrosTable">
-                    <thead>
+                <table id="centrosTable" class="table table-hover align-middle mb-0" style="width:100%">
+                    <thead class="table-light">
                         <tr>
-                            <th>ID</th>
+                            <th class="ps-3" style="width:60px">ID</th>
                             <th>Nome</th>
-                            <th>Localização</th>
-                            <th>Email</th>
-                            <th>Contactos</th>
-                            <th>Ações</th>
+                            <th style="width:200px">Localização</th>
+                            <th>Contacto(s)</th>
+                            <th style="width:120px" class="text-end pe-3">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($centros as $centro)
-                            <tr>
-                                <td>{{ $centro->id }}</td>
-                                <td><strong>{{ $centro->nome }}</strong></td>
-                                <td>{{ $centro->localizacao }}</td>
-                                <td>{{ $centro->email ?? 'Não definido' }}</td>
-                                <td>
-                                    @if($centro->contactos && is_array($centro->contactos))
-                                        @foreach($centro->contactos as $contacto)
-                                            <small class="d-block"><strong>📱</strong> {{ $contacto }}</small>
-                                        @endforeach
-                                    @else
-                                        <small class="text-muted">Não definido</small>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="visualizarCentro({{ $centro->id }})" title="Visualizar">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <a href="{{ route('centros.edit', $centro->id) }}" class="btn btn-outline-warning btn-sm" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarCentro({{ $centro->id }})" title="Deletar">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">Nenhum centro encontrado</td>
-                            </tr>
-                        @endforelse
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                                Carregando centros...
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -81,118 +63,508 @@
     </div>
 </div>
 
-<!-- Modal de Visualização -->
-<div class="modal fade" id="viewModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-eye me-2"></i>Detalhes do Centro
+{{-- ============================================= --}}
+{{-- MODAL: Visualizar Detalhes do Centro          --}}
+{{-- ============================================= --}}
+<div class="modal fade" id="modalVisualizarCentro" tabindex="-1" aria-labelledby="modalVisualizarCentroLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-3">
+            <div class="modal-header bg-success text-white sticky-top">
+                <h5 class="modal-title" id="modalVisualizarCentroLabel">
+                    <i class="fas fa-building me-2"></i>Detalhes do Centro
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <div class="modal-body" id="viewModalContent">
-                <!-- Conteúdo será carregado via AJAX -->
+            <div class="modal-body p-4" id="conteudoVisualizarCentro">
+                <div class="text-center">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+{{-- ============================================= --}}
+{{-- MODAL: Criar Novo Centro                      --}}
+{{-- ============================================= --}}
+<div class="modal fade" id="modalNovoCentro" tabindex="-1" aria-labelledby="modalNovoCentroLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-3">
+
+            {{-- Header --}}
+            <div class="modal-header bg-success bg-opacity-10 border-0 py-3 px-4">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
+                        <i class="fas fa-plus text-white small"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold mb-0" id="modalNovoCentroLabel">Criar Novo Centro</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            {{-- Body --}}
+            <div class="modal-body p-4">
+                <form id="formNovoCentroAjax">
+                    @csrf
+                    <div class="row g-4">
+
+                        {{-- ====== COLUNA ESQUERDA ====== --}}
+                        <div class="col-12 col-lg-6">
+                            <div class="card border rounded-3 h-100">
+                                <div class="card-header bg-light border-bottom py-2 px-3">
+                                    <h6 class="mb-0 fw-semibold">
+                                        <i class="fas fa-info-circle text-success me-2"></i>Informações Gerais
+                                    </h6>
+                                </div>
+                                <div class="card-body d-flex flex-column gap-3 p-3">
+
+                                    {{-- Nome --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Nome <span class="text-danger">*</span></label>
+                                        <input type="text" name="nome" class="form-control form-control-sm" placeholder="Ex: Centro de Lisboa" required>
+                                    </div>
+
+                                    {{-- Localização --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Localização <span class="text-danger">*</span></label>
+                                        <input type="text" name="localizacao" class="form-control form-control-sm" placeholder="Ex: Avenida Principal, 123" required>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ====== COLUNA DIREITA ====== --}}
+                        <div class="col-12 col-lg-6">
+                            <div class="card border rounded-3 h-100">
+                                <div class="card-header bg-light border-bottom py-2 px-3">
+                                    <h6 class="mb-0 fw-semibold">
+                                        <i class="fas fa-phone text-success me-2"></i>Contacto
+                                    </h6>
+                                </div>
+                                <div class="card-body d-flex flex-column gap-3 p-3">
+
+                                    {{-- Contacto(s) --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Contacto(s) - Telefones <span class="text-danger">*</span></label>
+                                        <input type="text" name="contactos_novo" class="form-control form-control-sm" placeholder="Ex: 923111111, 924222222" required>
+                                        <small class="text-muted d-block mt-1">Separe múltiplos telefones por vírgula</small>
+                                    </div>
+
+                                    {{-- Email --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Email</label>
+                                        <input type="email" name="email" class="form-control form-control-sm" placeholder="Ex: centro@email.com">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Footer --}}
+            <div class="modal-footer border-0 bg-light px-4 py-3">
+                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="submit" form="formNovoCentroAjax" class="btn btn-success px-4">
+                    <i class="fas fa-save me-1"></i>Criar Centro
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ============================================= --}}
+{{-- MODAL: Editar Centro                          --}}
+{{-- ============================================= --}}
+<div class="modal fade" id="modalEditarCentro" tabindex="-1" aria-labelledby="modalEditarCentroLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-3">
+
+            {{-- Header --}}
+            <div class="modal-header bg-success bg-opacity-10 border-0 py-3 px-4">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
+                        <i class="fas fa-edit text-white small"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold mb-0" id="modalEditarCentroLabel">Editar Centro</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            {{-- Body --}}
+            <div class="modal-body p-4">
+                <form id="formEditarCentroAjax">
+                    @csrf
+                    <input type="hidden" name="centro_id" id="editCentroId" >
+                    
+                    <div class="row g-4">
+
+                        {{-- ====== COLUNA ESQUERDA ====== --}}
+                        <div class="col-12 col-lg-6">
+                            <div class="card border rounded-3 h-100">
+                                <div class="card-header bg-light border-bottom py-2 px-3">
+                                    <h6 class="mb-0 fw-semibold">
+                                        <i class="fas fa-info-circle text-success me-2"></i>Informações Gerais
+                                    </h6>
+                                </div>
+                                <div class="card-body d-flex flex-column gap-3 p-3">
+
+                                    {{-- Nome --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Nome <span class="text-danger">*</span></label>
+                                        <input type="text" id="editNome" class="form-control form-control-sm" placeholder="Ex: Centro de Lisboa" required>
+                                    </div>
+
+                                    {{-- Localização --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Localização <span class="text-danger">*</span></label>
+                                        <input type="text" id="editLocalizacao" class="form-control form-control-sm" placeholder="Ex: Avenida Principal, 123" required>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ====== COLUNA DIREITA ====== --}}
+                        <div class="col-12 col-lg-6">
+                            <div class="card border rounded-3 h-100">
+                                <div class="card-header bg-light border-bottom py-2 px-3">
+                                    <h6 class="mb-0 fw-semibold">
+                                        <i class="fas fa-phone text-success me-2"></i>Contacto
+                                    </h6>
+                                </div>
+                                <div class="card-body d-flex flex-column gap-3 p-3">
+
+                                    {{-- Contacto(s) --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Contacto(s) - Telefones <span class="text-danger">*</span></label>
+                                        <input type="text" id="editContactos" class="form-control form-control-sm" placeholder="Ex: 923111111, 924222222" required>
+                                        <small class="text-muted d-block mt-1">Separe múltiplos telefones por vírgula</small>
+                                    </div>
+
+                                    {{-- Email --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Email</label>
+                                        <input type="email" id="editEmail" class="form-control form-control-sm" placeholder="Ex: centro@email.com">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Footer --}}
+            <div class="modal-footer border-0 bg-light px-4 py-3">
+                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="submit" form="formEditarCentroAjax" class="btn btn-success px-4">
+                    <i class="fas fa-save me-1"></i>Guardar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script>
 $(document).ready(function() {
-    // Inicializar DataTable se necessário
-    $('#centrosTable').DataTable({
-        language: {
-            url: '/js/datatables-pt.js'
-        }
-    });
+    carregarCentros();
+    configurarEventos();
 });
 
-
-
 /**
- * Visualiza os detalhes de um centro específico
- * @param {number} id - ID do centro
+ * Carregar lista de centros da API
  */
-function visualizarCentro(id) {
+function carregarCentros() {
     $.ajax({
-        url: `/api/centros/${id}`,
+        url: '/api/centros',
         method: 'GET',
-        success: function(centro) {
-            let contactosHtml = '';
-            try {
-                const contactosObj = typeof centro.contactos === 'string' ? JSON.parse(centro.contactos) : centro.contactos;
-                if (contactosObj && typeof contactosObj === 'object') {
-                    contactosHtml = Object.entries(contactosObj).map(([tipo, valor]) => 
-                        `<p class="mb-1"><strong>${tipo}:</strong> ${valor}</p>`
-                    ).join('');
-                } else {
-                    contactosHtml = '<p class="text-muted">Nenhum contacto definido</p>';
-                }
-            } catch (e) {
-                contactosHtml = '<p class="text-muted">Formato de contactos inválido</p>';
+        success: function(data) {
+            let html = '';
+
+            if (data.length === 0) {
+                html = '<tr><td colspan="7" class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x d-block mb-2"></i>Nenhum centro encontrado</td></tr>';
+            } else {
+                data.forEach(function(centro) {
+                    const statusBadge = centro.ativo
+                        ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
+                        : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
+
+                    html += `
+                        <tr>
+                            <td class="ps-3"><strong>#${centro.id}</strong></td>
+                            <td><strong>${centro.nome}</strong></td>
+                            <td><small>${centro.localizacao || 'N/A'}</small></td>
+                            <td><small>${(centro.contactos && centro.contactos.length > 0) ? centro.contactos.join(', ') : 'N/A'}</small></td>
+                            <td class="text-end pe-3">
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <button class="btn btn-sm btn-outline-info btn-visualizar" data-centro-id="${centro.id}" title="Visualizar">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning btn-editar" data-centro-id="${centro.id}" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger btn-eliminar" data-centro-id="${centro.id}" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
-            
-            let html = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4>${centro.nome}</h4>
-                        <p class="mb-2"><strong>Localização:</strong> ${centro.localizacao}</p>
-                        <p class="mb-2"><strong>Email:</strong> ${centro.email || 'Não definido'}</p>
-                        <p class="mb-2"><strong>Data de Criação:</strong> ${new Date(centro.created_at).toLocaleDateString('pt-PT')}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6><strong>Contactos:</strong></h6>
-                        <div class="bg-light p-3 rounded">
-                            ${contactosHtml}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            $('#viewModalContent').html(html);
-            $('#viewModal').modal('show');
+
+            $('#centrosTable tbody').html(html);
         },
-        error: function(xhr, status, error) {
-            console.error('Erro ao carregar detalhes do centro:', error);
-            alert('Erro ao carregar os detalhes do centro.');
+        error: function(err) {
+            console.error('Erro ao carregar centros:', err);
         }
     });
 }
 
 /**
- * Elimina um centro específico
- * @param {number} id - ID do centro a eliminar
+ * Configurar eventos dos botões
  */
-function eliminarCentro(id) {
-    if (confirm('Tem certeza que deseja deletar este centro? Esta ação não pode ser desfeita.')) {
-        // Criar um formulário para enviar a requisição DELETE
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/centros/${id}`;
-        form.style.display = 'none';
-        
-        // Adicionar token CSRF
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = csrfToken;
-        form.appendChild(csrfInput);
-        
-        // Adicionar método DELETE
-        const methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'DELETE';
-        form.appendChild(methodInput);
-        
-        // Adicionar ao body e submeter
-        document.body.appendChild(form);
-        form.submit();
+function configurarEventos() {
+    // Modal de criar - resetar form
+    $('#modalNovoCentro').on('show.bs.modal', function() {
+        $('#formNovoCentroAjax')[0].reset();
+    });
+
+    // Visualizar Centro
+    $(document).on('click', '.btn-visualizar', function(e) {
+        e.preventDefault();
+        const centroId = $(this).data('centro-id');
+        visualizarCentro(centroId);
+    });
+
+    // Editar Centro
+    $(document).on('click', '.btn-editar', function(e) {
+        e.preventDefault();
+        const centroId = $(this).data('centro-id');
+        abrirEdicaoCentro(centroId);
+    });
+
+    // Eliminar Centro
+    $(document).on('click', '.btn-eliminar', function(e) {
+        e.preventDefault();
+        const centroId = $(this).data('centro-id');
+        eliminarCentro(centroId);
+    });
+
+    // Submeter form de criar
+    $('#formNovoCentroAjax').on('submit', function(e) {
+        e.preventDefault();
+        criarCentro();
+    });
+
+    // Submeter form de editar
+    $('#formEditarCentroAjax').on('submit', function(e) {
+        e.preventDefault();
+        atualizarCentro();
+    });
+}
+
+/**
+ * Visualizar detalhes do centro
+ */
+function visualizarCentro(centroId) {
+    $.ajax({
+        url: `/api/centros/${centroId}`,
+        method: 'GET',
+        success: function(response) {
+            const centro = response.dados || response;
+            
+            const statusBadge = centro.ativo 
+                ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
+                : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
+            
+            let conteudo = `
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong><i class="fas fa-building me-2 text-success"></i>Nome:</strong><br>
+                            <span class="fs-5">${centro.nome}</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong><i class="fas fa-map-marker-alt me-2 text-success"></i>Localização:</strong><br>
+                            <span>${centro.localizacao || 'N/A'}</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong><i class="fas fa-phone me-2 text-success"></i>Contacto(s):</strong><br>
+                            ${(centro.contactos && centro.contactos.length > 0) ? centro.contactos.map(c => `<span class="badge bg-light text-dark">${c}</span>`).join(' ') : '<span class="text-muted">N/A</span>'}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong><i class="fas fa-envelope me-2 text-success"></i>Email:</strong><br>
+                            <span>${centro.email || 'N/A'}</span>
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            $('#conteudoVisualizarCentro').html(conteudo);
+            new bootstrap.Modal(document.getElementById('modalVisualizarCentro')).show();
+        },
+        error: function() {
+            Swal.fire('Erro', 'Erro ao carregar detalhes do centro', 'error');
+        }
+    });
+}
+
+/**
+ * Abrir modal de edição
+ */
+function abrirEdicaoCentro(centroId) {
+    $.ajax({
+        url: `/api/centros/${centroId}`,
+        method: 'GET',
+        success: function(response) {
+            const centro = response.dados || response;
+            
+            $('#editCentroId').val(centro.id);
+            $('#editNome').val(centro.nome);
+            $('#editLocalizacao').val(centro.localizacao || '');
+            $('#editContactos').val((centro.contactos && centro.contactos.length > 0) ? centro.contactos.join(', ') : '');
+            $('#editEmail').val(centro.email || '');
+            
+            new bootstrap.Modal(document.getElementById('modalEditarCentro')).show();
+        },
+        error: function() {
+            Swal.fire('Erro', 'Erro ao carregar dados do centro', 'error');
+        }
+    });
+}
+
+/**
+ * Criar novo centro
+ */
+function criarCentro() {
+    const contactosInput = $('[name="contactos_novo"]').val().trim();
+    const contactosArray = contactosInput.split(',').map(c => c.trim()).filter(c => c.length > 0);
+    
+    if (contactosArray.length === 0) {
+        Swal.fire('Aviso', 'Adicione pelo menos um contacto', 'warning');
+        return;
     }
+    
+    const dados = {
+        nome: $('[name="nome"]').val(),
+        localizacao: $('[name="localizacao"]').val(),
+        contactos: contactosArray,
+        email: $('[name="email"]').val()
+    };
+    
+    $.ajax({
+        url: '/api/centros',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        success: function() {
+            Swal.fire('Sucesso!', 'Centro criado com sucesso', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('modalNovoCentro')).hide();
+            $('#formNovoCentroAjax')[0].reset();
+            carregarCentros();
+        },
+        error: function(xhr) {
+            const errors = xhr.responseJSON?.errors || {};
+            let mensagem = 'Erro ao criar centro';
+            if (Object.keys(errors).length > 0) {
+                mensagem = Object.values(errors).flat().join(', ');
+            }
+            Swal.fire('Erro', mensagem, 'error');
+        }
+    });
+}
+
+/**
+ * Atualizar centro
+ */
+function atualizarCentro() {
+    const centroId = $('#editCentroId').val();
+    const contactosInput = $('#editContactos').val().trim();
+    const contactosArray = contactosInput.split(',').map(c => c.trim()).filter(c => c.length > 0);
+    
+    if (contactosArray.length === 0) {
+        Swal.fire('Aviso', 'Adicione pelo menos um contacto', 'warning');
+        return;
+    }
+    
+    const dados = {
+        nome: $('#editNome').val(),
+        localizacao: $('#editLocalizacao').val(),
+        contactos: contactosArray,
+        email: $('#editEmail').val()
+    };
+    
+    $.ajax({
+        url: `/api/centros/${centroId}`,
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(dados),
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        success: function() {
+            Swal.fire('Sucesso!', 'Centro atualizado com sucesso', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('modalEditarCentro')).hide();
+            carregarCentros();
+        },
+        error: function(xhr) {
+            const errors = xhr.responseJSON?.errors || {};
+            let mensagem = 'Erro ao atualizar centro';
+            if (Object.keys(errors).length > 0) {
+                mensagem = Object.values(errors).flat().join(', ');
+            }
+            Swal.fire('Erro', mensagem, 'error');
+        }
+    });
+}
+
+/**
+ * Eliminar centro
+ */
+function eliminarCentro(centroId) {
+    Swal.fire({
+        title: 'Confirmar Eliminação',
+        text: 'Tem a certeza que deseja eliminar este centro?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sim, eliminar!',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/api/centros/${centroId}`,
+                method: 'DELETE',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                success: function() {
+                    Swal.fire('Eliminado!', 'Centro eliminado com sucesso', 'success');
+                    carregarCentros();
+                },
+                error: function() {
+                    Swal.fire('Erro', 'Erro ao eliminar centro', 'error');
+                }
+            });
+        }
+    });
 }
 </script>
 @endsection

@@ -586,21 +586,12 @@ function carregarFormadores() {
                         
                         // Cursos (via turmas)
                         let cursosBadges = '<span class="text-muted small">Nenhum</span>';
-                        if (formador.turmas && Array.isArray(formador.turmas) && formador.turmas.length > 0) {
-                            const cursosSet = new Set();
-                            formador.turmas.forEach(function(turma) {
-                                if (turma && turma.curso && turma.curso.nome) {
-                                    cursosSet.add(turma.curso.nome);
-                                }
-                            });
-                            if (cursosSet.size > 0) {
-                                const cursosArray = Array.from(cursosSet);
-                                cursosBadges = cursosArray.slice(0, 2).map(function(curso) {
-                                    return `<span class="badge bg-info-subtle text-info me-1 mb-1">${curso}</span>`;
-                                }).join('');
-                                if (cursosArray.length > 2) {
-                                    cursosBadges += `<span class="badge bg-secondary-subtle text-secondary me-1 mb-1">+${cursosArray.length - 2}</span>`;
-                                }
+                        if (formador.cursos && Array.isArray(formador.cursos) && formador.cursos.length > 0) {
+                            cursosBadges = formador.cursos.slice(0, 2).map(function(curso) {
+                                return `<span class="badge bg-info text-white me-1 mb-1\"><i class="fas fa-book me-1"></i>${curso.nome}</span>`;
+                            }).join('');
+                            if (formador.cursos.length > 2) {
+                                cursosBadges += `<span class="badge bg-secondary text-white me-1 mb-1">+${formador.cursos.length - 2}</span>`;
                             }
                         }
                         
@@ -608,7 +599,7 @@ function carregarFormadores() {
                         if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
                             contactos = formador.contactos.map(function(c) {
                                 let telefone = typeof c === 'string' ? c : (c.valor || c);
-                                return `<span class="badge bg-info-subtle text-info me-1 mb-1"><i class="fas fa-phone me-1"></i>${telefone}</span>`;
+                                return `<span class="badge bg-success text-white me-1 mb-1"><i class="fas fa-phone me-1"></i>${telefone}</span>`;
                             }).join('');
                         }
                         

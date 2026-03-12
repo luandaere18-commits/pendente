@@ -39,8 +39,8 @@ class FormadorController extends Controller
     public function index(Request $request)
     {
         try {
-            // Busca todos os formadores, incluindo centros
-            $formadores = Formador::with('centros')->get();
+            // Busca todos os formadores, incluindo centros e cursos
+            $formadores = Formador::with(['centros', 'cursos'])->get();
             
             // Retorna lista de formadores
             return response()->json(['data' => $formadores]);
