@@ -533,8 +533,7 @@ function carregarTurmas() {
                     // Vagas
                     let vagasDisplay = '—';
                     if (turma.vagas_totais) {
-                        const disponveis = turma.vagas_totais - turma.vagas_preenchidas;
-                        vagasDisplay = `<small><span class="badge bg-info">${disponveis}/${turma.vagas_totais}</span></small>`;
+                        vagasDisplay = `<small><span class="badge bg-info">${turma.vagas_preenchidas || 0}/${turma.vagas_totais}</span></small>`;
                     }
                     
                     // Publicado

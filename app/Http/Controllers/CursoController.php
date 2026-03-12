@@ -14,7 +14,7 @@ class CursoController extends Controller
 {
     public function index()
     {
-        $cursos = Curso::with(['centros', 'turmas', 'preInscricoes'])->get();
+        $cursos = Curso::with(['centros', 'turmas'])->get();
         return view('cursos.index', compact('cursos'));
     }
 

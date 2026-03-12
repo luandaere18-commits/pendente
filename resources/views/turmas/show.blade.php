@@ -93,8 +93,7 @@
                             <p class="mb-1"><strong><i class="fas fa-users me-1"></i>Vagas:</strong></p>
                             <p class="text-muted">
                                 @if($turma->vagas_totais)
-                                    <span class="badge bg-info">{{ $turma->vagas_totais - $turma->vagas_preenchidas }}/{{ $turma->vagas_totais }}</span> 
-                                    ({{ $turma->vagas_preenchidas }} preenchidas)
+                                    <span class="badge bg-info">{{ $turma->vagas_preenchidas || 0 }}/{{ $turma->vagas_totais }}</span>
                                 @else
                                     <span class="text-muted">Sem limite</span>
                                 @endif
