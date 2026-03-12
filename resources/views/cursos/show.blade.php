@@ -91,12 +91,6 @@
                                 <small class="text-muted"><i class="fas fa-calendar me-1"></i>turmas</small>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="bg-warning-subtle rounded p-2 text-center">
-                                <div class="fw-bold text-warning fs-5">{{ $curso->preInscricoes->count() }}</div>
-                                <small class="text-muted"><i class="fas fa-user-plus me-1"></i>Pré-inscrições</small>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -120,12 +114,6 @@
                     <button class="nav-link fw-semibold" id="turmas-tab" data-bs-toggle="tab" data-bs-target="#turmas" type="button" role="tab">
                         <i class="fas fa-calendar-alt me-1"></i>turmas
                         <span class="badge bg-info ms-1">{{ $curso->turmas->count() }}</span>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link fw-semibold" id="preinscricoes-tab" data-bs-toggle="tab" data-bs-target="#preinscricoes" type="button" role="tab">
-                        <i class="fas fa-user-plus me-1"></i>Pré-inscrições
-                        <span class="badge bg-warning text-dark ms-1">{{ $curso->preInscricoes->count() }}</span>
                     </button>
                 </li>
             </ul>
@@ -306,87 +294,6 @@
                     @endif
                 </div>
 
-                {{-- ======================== --}}
-                {{-- ABA: PRÉ-INSCRIÇÕES      --}}
-                {{-- ======================== --}}
-                <div class="tab-pane fade" id="preinscricoes" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold mb-0"><i class="fas fa-user-plus me-2 text-warning"></i>Pré-inscrições</h5>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <select class="form-select form-select-sm" id="filtroStatusInscricoes" style="max-width: 200px;">
-                                <option value="">Todos os status</option>
-                                <option value="pendente">Pendentes</option>
-                                <option value="confirmado">Confirmados</option>
-                                <option value="cancelado">Cancelados</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    @if($curso->preInscricoes->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th><i class="fas fa-user me-1 text-muted"></i>Nome</th>
-                                        <th><i class="fas fa-building me-1 text-muted"></i>Centro</th>
-                                        <th><i class="fas fa-envelope me-1 text-muted"></i>Email</th>
-                                        <th><i class="fas fa-phone me-1 text-muted"></i>Telefone</th>
-                                        <th><i class="fas fa-calendar me-1 text-muted"></i>Data</th>
-                                        <th><i class="fas fa-info-circle me-1 text-muted"></i>Status</th>
-                                        <th class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($curso->preInscricoes as $inscricao)
-                                        <tr class="row-inscricao" data-status="{{ $inscricao->status }}">
-                                            <td><strong>{{ $inscricao->nome_completo ?? $inscricao->nome }}</strong></td>
-                                            <td><span class="badge bg-light text-dark">{{ $inscricao->centro->nome ?? '—' }}</span></td>
-                                            <td><a href="mailto:{{ $inscricao->email }}" class="text-decoration-none">{{ $inscricao->email }}</a></td>
-                                            <td>
-                                                @if($inscricao->telefone ?? ($inscricao->contactos["telefone"] ?? null))
-                                                    <a href="tel:{{ $inscricao->telefone ?? $inscricao->contactos["telefone"] }}" class="text-decoration-none">{{ $inscricao->telefone ?? $inscricao->contactos["telefone"] }}</a>
-                                                @else
-                                                    <span class="text-muted">—</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ \Carbon\Carbon::parse($inscricao->created_at)->format("d/m/Y H:i") }}</td>
-                                            <td>
-                                                @if($inscricao->status === "pendente")
-                                                    <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half me-1"></i>Pendente</span>
-                                                @elseif($inscricao->status === "confirmado")
-                                                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Confirmado</span>
-                                                @elseif($inscricao->status === "cancelado")
-                                                    <span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Cancelado</span>
-                                                @endif
-                                            </td>
-                                            <td class="text-end">
-                                                @if($inscricao->status === "pendente")
-                                                    <button class="btn btn-sm btn-outline-success me-1 btn-aceitar-inscricao"
-                                                            data-inscricao-id="{{ $inscricao->id }}"
-                                                            type="button"
-                                                            title="Aceitar">
-                                                        <i class="fas fa-check"></i>
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger btn-rejeitar-inscricao"
-                                                            data-inscricao-id="{{ $inscricao->id }}"
-                                                            type="button"
-                                                            title="Rejeitar">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-user-plus fa-3x mb-3 opacity-25"></i>
-                            <p class="mb-0">Nenhuma pré-inscrição registada.</p>
-                        </div>
-                    @endif
-                </div>
 
             </div>
         </div>
@@ -1167,110 +1074,6 @@ $("#formEditarturmaAjax").on("submit", function(e) {
                 icon: "error",
                 title: "Erro!",
                 text: message || "Erro ao atualizar turma."
-            });
-        }
-    });
-});
-
-/**
- * Filtro de Status - Pré-inscrições
- */
-$("#filtroStatusInscricoes").on("change", function() {
-    const statusFiltro = $(this).val();
-    
-    if (statusFiltro === "") {
-        $(".row-inscricao").show();
-    } else {
-        $(".row-inscricao").hide();
-        $(".row-inscricao[data-status='" + statusFiltro + "']").show();
-    }
-});
-
-/**
- * Aceitar Pré-inscrição - AJAX
- */
-$(document).on("click", ".btn-aceitar-inscricao", function() {
-    const $btn = $(this);
-    const inscricaoId = $btn.data("inscricao-id");
-    
-    if (!inscricaoId) {
-        Swal.fire("Erro!", "ID da inscrição não encontrado", "error");
-        return;
-    }
-    
-    Swal.fire({
-        title: "Confirmar inscrição?",
-        text: "Esta pré-inscrição será confirmada.",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#198754",
-        cancelButtonColor: "#64748b",
-        confirmButtonText: "Sim, confirmar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `/api/pre-inscricoes/${inscricaoId}`,
-                type: "PUT",
-                data: JSON.stringify({ status: "confirmado" }),
-                contentType: "application/json",
-                headers: {
-                    "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-                },
-                success: function() {
-                    Swal.fire("Confirmado!", "Inscrição confirmada com sucesso.", "success").then(() => location.reload());
-                },
-                error: function(xhr) {
-                    console.error("Erro:", xhr);
-                    const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
-                    const message = Object.values(errors).flat().join("\n");
-                    Swal.fire("Erro!", message || "Ocorreu um erro ao confirmar a inscrição.", "error");
-                }
-            });
-        }
-    });
-});
-
-/**
- * Rejeitar Pré-inscrição - AJAX
- */
-$(document).on("click", ".btn-rejeitar-inscricao", function() {
-    const $btn = $(this);
-    const inscricaoId = $btn.data("inscricao-id");
-    
-    if (!inscricaoId) {
-        Swal.fire("Erro!", "ID da inscrição não encontrado", "error");
-        return;
-    }
-    
-    Swal.fire({
-        title: "Rejeitar inscrição?",
-        text: "Esta pré-inscrição será rejeitada.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#dc2626",
-        cancelButtonColor: "#64748b",
-        confirmButtonText: "Sim, rejeitar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `/api/pre-inscricoes/${inscricaoId}`,
-                type: "PUT",
-                data: JSON.stringify({ status: "cancelado" }),
-                contentType: "application/json",
-                headers: {
-                    "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-                },
-                success: function() {
-                    Swal.fire("Rejeitado!", "Inscrição rejeitada com sucesso.", "success").then(() => location.reload());
-                },
-                error: function(xhr) {
-                    console.error("Erro:", xhr);
-                    const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
-                    const message = Object.values(errors).flat().join("\n");
-                    Swal.fire("Erro!", message || "Ocorreu um erro ao rejeitar a inscrição.", "error");
-                }
             });
         }
     });

@@ -510,6 +510,7 @@ function carregarTurmas() {
                             <td class="text-center"><small>${horaInicio}-${horaFim}</small></td>
                             <td class="text-end pe-2">
                                 <div class="d-flex gap-1 justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-outline-success" onclick="window.location.href='/turmas/${turma.id}'" title="Gerenciar"><i class="fas fa-cog"></i></button>
                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="visualizarTurma(${turma.id})" title="Visualizar"><i class="fas fa-eye"></i></button>
                                     <button type="button" class="btn btn-sm btn-outline-warning" onclick="abrirEdicaoTurma(${turma.id})" title="Editar"><i class="fas fa-edit"></i></button>
                                     <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarTurma(${turma.id})" title="Eliminar"><i class="fas fa-trash"></i></button>

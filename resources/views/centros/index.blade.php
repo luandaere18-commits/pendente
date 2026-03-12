@@ -46,6 +46,7 @@
                             <th>Nome</th>
                             <th style="width:200px">Localização</th>
                             <th>Contacto(s)</th>
+                            <th style="width:150px">Email</th>
                             <th style="width:120px" class="text-end pe-3">Ações</th>
                         </tr>
                     </thead>
@@ -294,7 +295,7 @@ function carregarCentros() {
             let html = '';
 
             if (data.length === 0) {
-                html = '<tr><td colspan="7" class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x d-block mb-2"></i>Nenhum centro encontrado</td></tr>';
+                html = '<tr><td colspan="8" class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x d-block mb-2"></i>Nenhum centro encontrado</td></tr>';
             } else {
                 data.forEach(function(centro) {
                     const statusBadge = centro.ativo
@@ -307,6 +308,7 @@ function carregarCentros() {
                             <td><strong>${centro.nome}</strong></td>
                             <td><small>${centro.localizacao || 'N/A'}</small></td>
                             <td><small>${(centro.contactos && centro.contactos.length > 0) ? centro.contactos.join(', ') : 'N/A'}</small></td>
+                            <td><small>${centro.email || 'N/A'}</small></td>
                             <td class="text-end pe-3">
                                 <div class="d-flex gap-2 justify-content-end">
                                     <button class="btn btn-sm btn-outline-info btn-visualizar" data-centro-id="${centro.id}" title="Visualizar">
