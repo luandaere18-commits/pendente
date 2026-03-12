@@ -66,6 +66,16 @@ Route::get('/debug-routes', function() {
     return response()->json($routes);
 });
 
+// Rota de debug para verificar sessão
+Route::get('/test-session', function () {
+    session(['test' => 'Session is working']);
+    return response()->json([
+        'session_id' => session()->getId(),
+        'csrf_token' => csrf_token(),
+        'test_value' => session('test')
+    ]);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Admin Panel Routes
