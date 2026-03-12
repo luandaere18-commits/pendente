@@ -46,6 +46,13 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 // Rota híbrida para login via API que cria sessão web
 Route::post('/api/web-login', [AuthenticatedSessionController::class, 'apiLogin'])->name('api.web.login');
 
+// Rota de debug para formadores (temporária)
+//Route::get('/formadores-test', function () {
+//    $formadores = \App\Models\Formador::with(['centros', 'turmas.curso'])->get();
+//    return view('formadores.index', compact('formadores'));
+//})->name('formadores.test');
+
+
 Route::get('/debug-routes', function() {
     $routes = collect(Route::getRoutes())->map(function ($route) {
         return [
