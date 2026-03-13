@@ -339,8 +339,8 @@
                                     <button class="pi-action-btn view" onclick="visualizarTurma({{ $turma->id }})" title="Ver detalhes">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="pi-action-btn edit" onclick="abrirEdicaoTurma({{ $turma->id }})" title="Editar">
-                                        <i class="fas fa-edit"></i>
+                                    <button class="pi-action-btn edit" onclick="window.location.href='{{ route('turmas.show', $turma) }}'" title="Gerir">
+                                        <i class="fas fa-cogs"></i>
                                     </button>
                                     <button class="pi-action-btn delete" onclick="eliminarTurma({{ $turma->id }})" title="Eliminar">
                                         <i class="fas fa-trash"></i>
@@ -399,7 +399,7 @@
                     </div>
                     <div class="card-actions">
                         <button class="btn btn-sm btn-outline-secondary" onclick="visualizarTurma({{ $turma->id }})"><i class="fas fa-eye me-1"></i>Ver</button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="abrirEdicaoTurma({{ $turma->id }})"><i class="fas fa-edit me-1"></i>Editar</button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ route('turmas.show', $turma) }}'" ><i class="fas fa-cogs me-1"></i>Gerir</button>
                         <button class="btn btn-sm btn-outline-danger" onclick="eliminarTurma({{ $turma->id }})"><i class="fas fa-trash me-1"></i>Eliminar</button>
                     </div>
                 </div>

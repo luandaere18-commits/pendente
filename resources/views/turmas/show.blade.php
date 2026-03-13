@@ -58,12 +58,13 @@
 
     /* Stats */
     .pi-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-    .pi-stat-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1rem; box-shadow: var(--pi-shadow); }
-    .pi-stat-card .stat-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; margin-bottom: 0.5rem; }
+    .pi-stat-card { display: flex; align-items: center; gap: 0.75rem; background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.75rem 1rem; box-shadow: var(--pi-shadow); }
+    .pi-stat-card .stat-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; margin-bottom: 0; flex-shrink: 0; }
     .pi-stat-card .stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
     .pi-stat-card .stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
     .pi-stat-card .stat-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
     .pi-stat-card .stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
+    .pi-stat-card .stat-content { display: flex; flex-direction: column; }
     .pi-stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); margin-bottom: 0.25rem; }
     .pi-stat-card .stat-value { font-size: 1.5rem; font-weight: 700; }
 
@@ -231,24 +232,30 @@
     <div class="pi-stats">
         <div class="pi-stat-card">
             <div class="stat-icon blue"><i class="fas fa-users"></i></div>
-            <div class="stat-label">Total Pré-inscrições</div>
-            <div class="stat-value" style="color: var(--pi-primary);">{{ $totalInscricoes }}</div>
+            <div class="stat-content">
+                <div class="stat-label">Total Pré-inscrições</div>
+                <div class="stat-value text-primary">{{ $totalInscricoes }}</div>
+            </div>
         </div>
         <div class="pi-stat-card">
             <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
-            <div class="stat-label">Pendentes</div>
-            <div class="stat-value" style="color: var(--pi-warning);">{{ $pendentes }}</div>
+            <div class="stat-content">
+                <div class="stat-label">Pendentes</div>
+                <div class="stat-value text-warning">{{ $pendentes }}</div>
+            </div>
         </div>
         <div class="pi-stat-card">
             <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-label">Confirmados</div>
-            <div class="stat-value" style="color: var(--pi-success);">{{ $confirmados }}</div>
+            <div class="stat-content">
+                <div class="stat-label">Confirmados</div>
+                <div class="stat-value text-success">{{ $confirmados }}</div>
+            </div>
         </div>
         <div class="pi-stat-card">
             <div class="stat-icon cyan"><i class="fas fa-chair"></i></div>
-            <div class="stat-label">Vagas</div>
-            <div class="stat-value" style="color: var(--pi-info);">
-                {{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? '∞' }}
+            <div class="stat-content">
+                <div class="stat-label">Vagas</div>
+                <div class="stat-value text-info">{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? '∞' }}</div>
             </div>
         </div>
     </div>
@@ -349,6 +356,8 @@
                             <th>Nome</th>
                             <th>Email</th>
                             <th>Telefone</th>
+                            <th>Contactos</th>
+                            <th>Observações</th>
                             <th>Data</th>
                             <th class="text-center">Status</th>
                             <th class="text-end">Ações</th>
@@ -364,12 +373,26 @@
                                     </a>
                                 </td>
                                 <td>
-                                    @php $telefone = $inscricao->telefone ?? ($inscricao->contactos['telefone'] ?? null); @endphp
+                                    @php
+                                        $telefone = $inscricao->telefone ?? (is_array($inscricao->contactos) && count($inscricao->contactos) ? $inscricao->contactos[0] : null);
+                                        $contatos = '';
+                                        if (is_array($inscricao->contactos)) {
+                                            $contatos = implode(', ', $inscricao->contactos);
+                                        } elseif (!empty($inscricao->contactos)) {
+                                            $contatos = $inscricao->contactos;
+                                        }
+                                    @endphp
                                     @if($telefone)
                                         <a href="tel:{{ $telefone }}" style="color: var(--pi-text); text-decoration: none;">{{ $telefone }}</a>
                                     @else
                                         <span style="color: var(--pi-text-muted);">—</span>
                                     @endif
+                                </td>
+                                <td style="font-size: 0.8125rem; color: var(--pi-text-muted);">
+                                    {{ $contatos ?: '—' }}
+                                </td>
+                                <td style="font-size: 0.8125rem; color: var(--pi-text-muted);">
+                                    {{ $inscricao->observacoes ?: '—' }}
                                 </td>
                                 <td style="font-size: 0.8125rem; color: var(--pi-text-muted);">
                                     {{ \Carbon\Carbon::parse($inscricao->created_at)->format('d/m/Y H:i') }}
@@ -417,9 +440,23 @@
                         </div>
                         <div class="card-details">
                             <span><i class="fas fa-envelope me-1"></i>{{ $inscricao->email }}</span>
-                            @php $telefone = $inscricao->telefone ?? ($inscricao->contactos['telefone'] ?? null); @endphp
+                            @php
+                                $telefone = $inscricao->telefone ?? (is_array($inscricao->contactos) && count($inscricao->contactos) ? $inscricao->contactos[0] : null);
+                                $contatos = '';
+                                if (is_array($inscricao->contactos)) {
+                                    $contatos = implode(', ', $inscricao->contactos);
+                                } elseif (!empty($inscricao->contactos)) {
+                                    $contatos = $inscricao->contactos;
+                                }
+                            @endphp
                             @if($telefone)
                                 <span><i class="fas fa-phone me-1"></i>{{ $telefone }}</span>
+                            @endif
+                            @if($contatos)
+                                <span><i class="fas fa-list me-1"></i>{{ $contatos }}</span>
+                            @endif
+                            @if($inscricao->observacoes)
+                                <span><i class="fas fa-comment me-1"></i>{{ $inscricao->observacoes }}</span>
                             @endif
                             <span><i class="fas fa-calendar me-1"></i>{{ \Carbon\Carbon::parse($inscricao->created_at)->format('d/m/Y') }}</span>
                         </div>
@@ -545,6 +582,12 @@
                             <div class="mb-3">
                                 <label class="form-label">Vagas Disponíveis</label>
                                 <input type="number" id="vagasTotaisShow" name="vagas_totais" class="form-control" value="{{ $turma->vagas_totais }}" min="1">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Vagas Preenchidas</label>
+                                <input type="number" class="form-control" value="{{ $turma->vagas_preenchidas ?? 0 }}" disabled>
+                                <div class="form-text">Atualizado automaticamente quando pré-inscrições são confirmadas.</div>
                             </div>
 
                             <div class="mb-3">

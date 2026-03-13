@@ -579,7 +579,7 @@
             html += '<td class="email-cell">' + esc(item.email || '—') + '</td>';
             html += '<td>' + renderTurmaCell(item) + '</td>';
             html += '<td style="font-size:0.8125rem">' + esc(item.turma && item.turma.centro ? item.turma.centro.nome : '—') + '</td>';
-            html += '<td style="font-size:0.8125rem">' + (item.turma && item.turma.dia_semana ? item.turma.dia_semana.join(', ') : '—') + '</td>';
+            html += '<td>' + renderDiaBadges(item.turma ? item.turma.dia_semana : null) + '</td>';
             html += '<td style="font-size:0.8125rem">' + formatDate(item.turma ? item.turma.data_arranque : null) + '</td>';
             html += '<td>' + statusBadge(item.status) + '</td>';
             html += '<td>' + renderActions(item) + '</td>';
@@ -597,8 +597,7 @@
             if (item.turma) {
                 mobileHtml += '<div class="card-turma">' + periodoIcon(item.turma.periodo) + ' ';
                 mobileHtml += esc(item.turma.curso ? item.turma.curso.nome : '') + ' &bull; ';
-                mobileHtml += esc(item.turma.centro ? item.turma.centro.nome : '') + '</div>';
-            }
+                mobileHtml += esc(item.turma.centro ? item.turma.centro.nome : '') + '</div>';            mobileHtml += '<div class="card-turma">' + renderDiaBadges(item.turma ? item.turma.dia_semana : null) + '</div>';            }
             mobileHtml += '<div class="card-actions">';
             mobileHtml += '<button class="btn btn-sm btn-outline-secondary" onclick="visualizarPreInscricao(' + item.id + ')"><i class="fas fa-eye me-1"></i>Ver</button>';
             if (item.status !== 'confirmado') {
@@ -659,6 +658,13 @@
             case 'noite': return 'Noite';
             default: return periodo || '—';
         }
+    }
+
+    function renderDiaBadges(dias) {
+        if (!dias || !Array.isArray(dias) || dias.length === 0) return '—';
+        return dias.map(function(d) {
+            return '<span class="pi-badge pi-badge-dia" style="margin-right:0.25rem">' + esc(d.substring(0, 3)) + '</span>';
+        }).join('');
     }
 
     function renderTurmaCell(item) {
