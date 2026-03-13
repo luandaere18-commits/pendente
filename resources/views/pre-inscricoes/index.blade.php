@@ -28,7 +28,7 @@
 
     body { background-color: var(--pi-bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--pi-text); }
 
-    .pi-page { max-width: 1280px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .pi-page { max-width: 100%; width: 100%; margin: 0 auto; padding: 1.5rem 2rem; }
 
     /* Header */
     .pi-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
@@ -50,7 +50,7 @@
     .pi-stat-card .stat-value.text-danger { color: var(--pi-danger) !important; }
 
     /* Filters */
-    .pi-filters { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1rem; box-shadow: var(--pi-shadow); margin-bottom: 1rem; }
+    .pi-filters { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1.25rem; box-shadow: var(--pi-shadow); margin-bottom: 1.25rem; width: 100%; }
     .pi-filters-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-size: 0.875rem; font-weight: 500; color: var(--pi-text-muted); }
     .pi-filters-header .badge { font-size: 0.7rem; }
     .pi-filters-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 0.75rem; align-items: end; }
@@ -69,8 +69,8 @@
     .pi-table-header small { font-size: 0.75rem; color: var(--pi-text-muted); }
 
     /* Table */
-    .pi-table { width: 100%; margin: 0; font-size: 0.875rem; }
-    .pi-table thead th { background: #fafbfc; border-bottom: 1px solid var(--pi-border); font-size: 0.75rem; font-weight: 600; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; padding: 0.75rem 1rem; white-space: nowrap; cursor: pointer; user-select: none; }
+    .pi-table { width: 100%; margin: 0; font-size: 0.92rem; }
+    .pi-table thead th { background: rgba(51, 102, 204, 0.08); border-bottom: 1px solid var(--pi-border); font-size: 0.82rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.03em; padding: 0.75rem 1rem; white-space: nowrap; cursor: pointer; user-select: none; }
     .pi-table thead th:hover { color: var(--pi-text); }
     .pi-table thead th .sort-icon { opacity: 0.4; margin-left: 0.25rem; font-size: 0.7rem; }
     .pi-table thead th.sorted .sort-icon { opacity: 1; color: var(--pi-primary); }
@@ -245,7 +245,7 @@
             <select class="form-select" id="filtroCentro">
                 <option value="">Todos os centros</option>
             </select>
-            <button class="pi-btn-clear d-none" id="btnLimparFiltros" onclick="limparFiltros()">
+            <button class="pi-btn-clear" id="btnLimparFiltros" onclick="limparFiltros()">
                 <i class="fas fa-times"></i> Limpar
             </button>
         </div>
@@ -502,11 +502,10 @@
         if (centro) count++;
         if (count > 0) {
             $('#filterCount').text(count).removeClass('d-none');
-            $('#btnLimparFiltros').removeClass('d-none');
         } else {
             $('#filterCount').addClass('d-none');
-            $('#btnLimparFiltros').addClass('d-none');
         }
+        $('#btnLimparFiltros').prop('disabled', count === 0);
 
         currentPage = 1;
         updateStats();
@@ -711,16 +710,17 @@
             url: '/api/pre-inscricoes/' + id,
             method: 'GET',
             success: function(r) {
+                const dados = r.dados || r;
                 var html = '';
-                html += detailRow('fa-user', 'Nome Completo', esc(r.nome_completo));
-                html += detailRow('fa-envelope', 'Email', esc(r.email || '—'));
-                html += detailRow('fa-phone', 'Contactos', r.contactos && r.contactos.length ? esc(r.contactos.join(', ')) : '—');
-                html += detailRow('fa-book', 'Curso', esc(r.turma && r.turma.curso ? r.turma.curso.nome : 'Sem turma'));
-                html += detailRow('fa-map-marker-alt', 'Centro', esc(r.turma && r.turma.centro ? r.turma.centro.nome : '—'));
-                html += detailRow('fa-clock', 'Período', r.turma ? periodoIcon(r.turma.periodo) + ' ' + periodoLabel(r.turma.periodo) : '—');
-                html += detailRow('fa-calendar', 'Data de Arranque', formatDate(r.turma ? r.turma.data_arranque : null));
-                html += detailRow('fa-comment', 'Observações', esc(r.observacoes || 'Sem observações'));
-                html += '<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-info-circle"></i></div><div><div class="pi-detail-label">Status</div><div class="mt-1">' + statusBadge(r.status) + '</div></div></div>';
+                html += detailRow('fa-user', 'Nome Completo', esc(dados.nome_completo));
+                html += detailRow('fa-envelope', 'Email', esc(dados.email || '—'));
+                html += detailRow('fa-phone', 'Contactos', dados.contactos && dados.contactos.length ? esc(dados.contactos.join(', ')) : '—');
+                html += detailRow('fa-book', 'Curso', esc(dados.turma && dados.turma.curso ? dados.turma.curso.nome : 'Sem turma'));
+                html += detailRow('fa-map-marker-alt', 'Centro', esc(dados.turma && dados.turma.centro ? dados.turma.centro.nome : '—'));
+                html += detailRow('fa-clock', 'Período', dados.turma ? periodoIcon(dados.turma.periodo) + ' ' + periodoLabel(dados.turma.periodo) : '—');
+                html += detailRow('fa-calendar', 'Data de Arranque', formatDate(dados.turma ? dados.turma.data_arranque : null));
+                html += detailRow('fa-comment', 'Observações', esc(dados.observacoes || 'Sem observações'));
+                html += '<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-info-circle"></i></div><div><div class="pi-detail-label">Status</div><div class="mt-1">' + statusBadge(dados.status) + '</div></div></div>';
                 $('#viewModalContent').html(html);
             },
             error: function() {
@@ -824,8 +824,14 @@
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function(response) {
-                // Add to local data
-                allData.unshift(response);
+                // Add to local data (API returns {status, mensagem, dados})
+                const dados = response.dados || response;
+                // Garanto que turma está carregada (pode vir como null se não existir)
+                if (dados.turma && !dados.turma.curso) {
+                    // tenta recuperar pelo id caso venha parcial
+                    dados.turma.curso = dados.turma.curso || null;
+                }
+                allData.unshift(dados);
                 aplicarFiltrosLocais();
 
                 Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Pré-inscrição criada com sucesso', timer: 2000, showConfirmButton: false });

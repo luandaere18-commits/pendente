@@ -62,6 +62,9 @@ class PreInscricaoController extends Controller
 
         $preInscricao = PreInscricao::create($validated);
 
+        // Carregar relações para que o frontend possa exibir curso/centro corretamente
+        $preInscricao->load(['turma.curso', 'turma.centro']);
+
         return response()->json([
             'status' => 'sucesso',
             'mensagem' => 'Pré-inscrição realizada!',
@@ -90,7 +93,7 @@ class PreInscricaoController extends Controller
      */
     public function index()
     {
-        $preInscricoes = PreInscricao::with(['turma.curso'])->get();
+        $preInscricoes = PreInscricao::with(['turma.curso', 'turma.centro'])->get();
         return response()->json($preInscricoes);
     }
 
@@ -229,7 +232,7 @@ class PreInscricaoController extends Controller
      */
     public function show($id)
     {
-        $preInscricao = PreInscricao::with(['turma.curso'])->find($id);
+        $preInscricao = PreInscricao::with(['turma.curso', 'turma.centro'])->find($id);
         if (!$preInscricao) {
             return response()->json([
                 'status' => 'erro',

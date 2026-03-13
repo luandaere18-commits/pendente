@@ -9,7 +9,7 @@ class PreInscricaoController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PreInscricao::with(['turma.curso']);
+        $query = PreInscricao::with(['turma.curso', 'turma.centro']);
 
         // Filtrar por status
         if ($request->has('status') && !empty($request->get('status'))) {
@@ -64,7 +64,7 @@ class PreInscricaoController extends Controller
 
     public function show(PreInscricao $preInscricao)
     {
-        $preInscricao->load(['turma.curso']);
+        $preInscricao->load(['turma.curso', 'turma.centro']);
         return view('pre-inscricoes.show', compact('preInscricao'));
     }
 
