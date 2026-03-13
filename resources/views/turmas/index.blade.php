@@ -703,6 +703,12 @@ function configurarEventosModal() {
     // Carregar cursos na inicialização
     carregarCursos();
     
+    // Recarregar cursos quando a página ganha foco (caso tenha criado cursos em outra aba)
+    $(window).on('focus', function() {
+        console.log('Página ganhou foco, recarregando cursos...');
+        carregarCursos();
+    });
+    
     // Limpar form ao abrir modal CREATE
     $('#modalNovasTurma').on('show.bs.modal', function() {
         console.log('Modal de nova turma aberto');
