@@ -115,8 +115,9 @@ class CursoController extends Controller
 
     public function update(Request $request, Curso $curso)
     {
-        // Validação diferenciada: se vem de API (JSON), aceita parcial; se form, exige centros
-        $isApi = $request->wantsJson();
+        try {
+            // Validação diferenciada: se vem de API (JSON), aceita parcial; se form, centros são opcionais
+            $isApi = $request->wantsJson();
         
         $rules = [
             'nome' => 'required|string|max:100|unique:cursos,nome,' . $curso->id,
@@ -126,14 +127,10 @@ class CursoController extends Controller
             'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ativo' => 'nullable',
+            'centro_curso' => 'nullable|array',
+            'centro_curso.*.centro_id' => 'nullable|integer|exists:centros,id',
+            'centro_curso.*.preco' => 'nullable|numeric|min:0',
         ];
-        
-        // Só exige centros se for formulário tradicional (não API JSON)
-        if (!$isApi) {
-            $rules['centro_curso'] = 'required|array|min:1';
-            $rules['centro_curso.*.centro_id'] = 'required|integer|exists:centros,id';
-            $rules['centro_curso.*.preco'] = 'required|numeric|min:0';
-        }
         
         $validated = $request->validate($rules);
 
@@ -158,16 +155,23 @@ class CursoController extends Controller
         // Atualizar o Curso
         $curso->update($cursoData);
 
-        // 2. Só atualizar Centro-Curso se for formulário (não é API)
+        // 2. Atualizar Centro-Curso se for formulário e houver dados válidos
         if (!$isApi && isset($validated['centro_curso'])) {
-            DB::transaction(function () use ($validated, $curso) {
-                $curso->centros()->detach();
-                foreach ($validated['centro_curso'] as $centroDado) {
-                    $curso->centros()->attach($centroDado['centro_id'], [
-                        'preco' => $centroDado['preco']
-                    ]);
-                }
-            }, 5);
+            $centrosData = $validated['centro_curso'];
+            // Filtrar entradas válidas (centro_id não vazio e preco válido)
+            $centrosData = array_filter($centrosData, function($item) {
+                return !empty($item['centro_id']) && isset($item['preco']) && $item['preco'] !== '' && is_numeric($item['preco']) && $item['preco'] >= 0;
+            });
+            if (!empty($centrosData)) {
+                DB::transaction(function () use ($centrosData, $curso) {
+                    $curso->centros()->detach();
+                    foreach ($centrosData as $centroDado) {
+                        $curso->centros()->attach($centroDado['centro_id'], [
+                            'preco' => $centroDado['preco']
+                        ]);
+                    }
+                }, 5);
+            }
         }
 
         // Retornar resposta apropriada
@@ -181,6 +185,12 @@ class CursoController extends Controller
 
         return redirect()->route('cursos.index')
             ->with('success', 'Curso atualizado com sucesso!');
+        } catch (\Exception $e) {
+            if ($isApi) {
+                return response()->json(['error' => 'Erro ao atualizar curso: ' . $e->getMessage()], 500);
+            }
+            return redirect()->back()->withErrors(['error' => 'Erro desconhecido ao atualizar curso: ' . $e->getMessage()])->withInput();
+        }
     }
 
     public function destroy(Curso $curso)

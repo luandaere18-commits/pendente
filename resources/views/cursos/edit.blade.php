@@ -124,12 +124,18 @@
 
                             <div class="col-md-12">
                                 <label for="descricao" class="form-label small">Descrição</label>
-                                <textarea class="form-control form-control-sm" id="descricao" name="descricao" maxlength="1000" style="min-height: 70px;">{{ old('descricao', $curso->descricao) }}</textarea>
+                                <textarea class="form-control form-control-sm @error('descricao') is-invalid @enderror" id="descricao" name="descricao" maxlength="1000" style="min-height: 70px;">{{ old('descricao', $curso->descricao) }}</textarea>
+                                @error('descricao')
+                                    <div class="invalid-feedback small">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-12">
                                 <label for="programa" class="form-label small">Programa do Curso</label>
-                                <textarea class="form-control form-control-sm" id="programa" name="programa" maxlength="5000" style="min-height: 80px;">{{ old('programa', $curso->programa) }}</textarea>
+                                <textarea class="form-control form-control-sm @error('programa') is-invalid @enderror" id="programa" name="programa" maxlength="5000" style="min-height: 80px;">{{ old('programa', $curso->programa) }}</textarea>
+                                @error('programa')
+                                    <div class="invalid-feedback small">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <div class="col-md-6">
@@ -200,8 +206,8 @@
 
         <div class="row g-2">
             <div class="col-md-6">
-                <label class="form-label small">Centro <span class="text-danger">*</span></label>
-                <select class="form-select form-select-sm centro-select" name="centro_curso[INDEX][centro_id]" required>
+                <label class="form-label small">Centro</label>
+                <select class="form-select form-select-sm centro-select" name="centro_curso[INDEX][centro_id]">
                     <option value="">Selecione um centro</option>
                     @foreach ($centros as $centro)
                         <option value="{{ $centro->id }}">{{ $centro->nome }}</option>
@@ -210,8 +216,8 @@
             </div>
 
             <div class="col-md-6">
-                <label class="form-label small">Preço (€) <span class="text-danger">*</span></label>
-                <input type="number" class="form-control form-control-sm" name="centro_curso[INDEX][preco]" placeholder="0.00" step="0.01" min="0" required>
+                <label class="form-label small">Preço (€)</label>
+                <input type="number" class="form-control form-control-sm" name="centro_curso[INDEX][preco]" placeholder="0.00" step="0.01" min="0">
             </div>
         </div>
     </div>
@@ -233,9 +239,6 @@ const cursoData = {!! json_encode([
 $(document).ready(function() {
     // Carregar dados existentes
     carregarCentrosExistentes();
-
-    // Se não houver centros, adicione um em branco
-    if (centroCount === 0) adicionarCentro();
 
     // Eventos
     $(document).on('click', '#adicionarCentroBtn', function(e) {
@@ -343,7 +346,7 @@ function removerCentro(e) {
 }
 
 function atualizarBotoesRemover() {
-    $('.remover-centro').prop('disabled', $('.centro-item').length <= 1);
+    $('.remover-centro').prop('disabled', false);
 }
 </script>
 @endsection
