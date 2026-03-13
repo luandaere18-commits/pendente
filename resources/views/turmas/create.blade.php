@@ -82,7 +82,7 @@
                                 <label for="periodo" class="form-label">Período <span class="text-danger">*</span></label>
                                 <select class="form-select" id="periodo" name="periodo" required>
                                     <option value="">Selecione o período</option>
-                                    <option value="manhã">Manhã</option>
+                                    <option value="manha">Manha</option>
                                     <option value="tarde">Tarde</option>
                                     <option value="noite">Noite</option>
                                 </select>

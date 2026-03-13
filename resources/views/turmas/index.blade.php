@@ -221,7 +221,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select name="periodo" id="periodoNovo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manha">Manhã</option>
+                                            <option value="manha">Manha</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -402,7 +402,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select id="editPeriodo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manha">Manhã</option>
+                                            <option value="manha">Manha</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -1124,7 +1124,7 @@ window.eliminarTurma = function(id) {
  */
 function getPeriodoBadge(periodo) {
     const badges = {
-        'manha': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manhã</span>',
+        'manha': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manha</span>',
         'tarde': '<span class="badge bg-primary"><i class="fas fa-cloud-sun me-1"></i>Tarde</span>',
         'noite': '<span class="badge bg-dark"><i class="fas fa-moon me-1"></i>Noite</span>'
     };

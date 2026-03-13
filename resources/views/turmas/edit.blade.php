@@ -96,7 +96,7 @@
                                 <label for="periodo" class="form-label">Período <span class="text-danger">*</span></label>
                                 <select class="form-select" id="periodo" name="periodo" required>
                                     <option value="">Selecione o período</option>
-                                    <option value="manhã" {{ $turma->periodo == 'manhã' ? 'selected' : '' }}>Manhã</option>
+                                    <option value="manha" {{ $turma->periodo == 'manha' ? 'selected' : '' }}>Manha</option>
                                     <option value="tarde" {{ $turma->periodo == 'tarde' ? 'selected' : '' }}>Tarde</option>
                                     <option value="noite" {{ $turma->periodo == 'noite' ? 'selected' : '' }}>Noite</option>
                                 </select>

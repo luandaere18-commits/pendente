@@ -63,8 +63,8 @@ class TurmaController extends Controller
                 'dia_semana' => 'required|array|min:1',
                 'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
                 'periodo' => 'required|in:manha,tarde,noite', // CORREÇÃO: usar valores da BD (sem acento)
-                'hora_inicio' => 'required|date_format:H:i:s',
-                'hora_fim' => 'nullable|date_format:H:i:s',
+                'hora_inicio' => 'required|date_format:H:i',
+                'hora_fim' => 'nullable|date_format:H:i',
                 'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
                 'vagas_totais' => 'nullable|integer|min:1',
                 'publicado' => 'nullable|boolean'
@@ -72,8 +72,8 @@ class TurmaController extends Controller
             
             \Log::info('Dados validados com sucesso:', $validated);
 
-        // Normalizar período (caso venha 'manhã' com acento)
-        if ($validated['periodo'] === 'manhã') {
+        // Normalizar período (caso venha 'manha' com acento)
+        if ($validated['periodo'] === 'manha') {
             $validated['periodo'] = 'manha';
         }
         
@@ -218,15 +218,15 @@ class TurmaController extends Controller
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
             'periodo' => 'required|in:manha,tarde,noite', // CORREÇÃO: usar valores da BD (sem acento)
-            'hora_inicio' => 'required|date_format:H:i:s', // CORREÇÃO: aceitar formato H:i:s
-            'hora_fim' => 'nullable|date_format:H:i:s', // CORREÇÃO: aceitar formato H:i:s
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fim' => 'nullable|date_format:H:i',
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
             'vagas_totais' => 'nullable|integer|min:1',
             'publicado' => 'nullable|boolean'
         ]);
         
-        // Normalizar período (caso venha 'manhã' com acento)
-        if ($validated['periodo'] === 'manhã') {
+        // Normalizar período (caso venha 'manha' com acento)
+        if ($validated['periodo'] === 'manha') {
             $validated['periodo'] = 'manha';
         }
         
@@ -323,7 +323,7 @@ class TurmaController extends Controller
 
         $validacoes = [
             'manha' => ['07:00', '12:00'],   // 07:00 até 11:59
-            'manhã' => ['07:00', '12:00'],   // 07:00 até 11:59 (compatibilidade)
+            'manha' => ['07:00', '12:00'],   // 07:00 até 11:59 (compatibilidade)
             'tarde' => ['12:00', '18:00'],   // 12:00 até 17:59
             'noite' => ['18:00', '22:00'],   // 18:00 até 21:59
         ];

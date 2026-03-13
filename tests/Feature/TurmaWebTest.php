@@ -111,7 +111,7 @@ class TurmaWebTest extends TestCase
             'formador_id' => $this->formador->id,
             'duracao_semanas' => 8,
             'dia_semana' => ['Segunda', 'Quarta'],
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'hora_inicio' => '08:00',
             'hora_fim' => '10:00',
             'data_arranque' => now()->addDays(10)->toDateString(),
@@ -128,7 +128,7 @@ class TurmaWebTest extends TestCase
         $this->assertDatabaseHas('turmas', [
             'curso_id' => $dados['curso_id'],
             'centro_id' => $dados['centro_id'],
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'hora_inicio' => '08:00',
             'vagas_totais' => 25
         ]);
@@ -166,7 +166,7 @@ class TurmaWebTest extends TestCase
             'curso_id' => $this->curso->id,
             'centro_id' => $centro2->id,
             'dia_semana' => ['Segunda'],
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'hora_inicio' => '08:00',
             'hora_fim' => '10:00',
             'data_arranque' => now()->addDays(10)->toDateString(),
@@ -311,10 +311,10 @@ class TurmaWebTest extends TestCase
      */
     public function test_web_index_turmas_filtrar_por_periodo()
     {
-        Turma::factory()->create(['periodo' => 'manhã']);
+        Turma::factory()->create(['periodo' => 'manha']);
         Turma::factory()->create(['periodo' => 'tarde']);
 
-        $response = $this->get('/turmas?periodo=manhã');
+        $response = $this->get('/turmas?periodo=manha');
 
         $response->assertStatus(200);
         $response->assertViewIs('turmas.index');

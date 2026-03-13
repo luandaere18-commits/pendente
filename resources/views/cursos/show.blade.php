@@ -439,7 +439,8 @@
                                     {{-- Programa --}}
                                     <div class="flex-grow-1 d-flex flex-column">
                                         <label class="form-label fw-medium small mb-1">Programa do Curso</label>
-                                        <textarea name="programa" class="form-control form-control-sm flex-grow-1" rows="6" placeholder="Conteúdo programático..." maxlength="5000">{{ $curso->programa }}</textarea>
+                                        <textarea name="programa" class="form-control form-control-sm flex-grow-1" rows="8" placeholder="Conteúdo programático em formato de lista..." maxlength="10000">{{ $curso->programa }}</textarea>
+                                        <small class="text-muted">Use quebras de linha para criar listas ou tópicos</small>
                                     </div>
                                 </div>
                             </div>
@@ -642,7 +643,7 @@
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="periodo" required>
                                 <option value="" disabled selected>Selecione</option>
-                                <option value="manha">Manhã</option>
+                                <option value="manha">Manha</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -746,7 +747,7 @@
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="edit_periodo" id="editturmaPeriodo" required>
                                 <option value="">Selecione</option>
-                                <option value="manha">Manhã</option>
+                                <option value="manha">Manha</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -1006,8 +1007,8 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         duracao_semanas: $form.find("input[name=\"duracao_semanas\"]").val() || null,
         periodo: $form.find("select[name=\"periodo\"]").val(),
         formador_id: $form.find("select[name=\"formador_id\"]").val() || null,
-        hora_inicio: $form.find("input[name=\"hora_inicio\"]").val() || null,
-        hora_fim: $form.find("input[name=\"hora_fim\"]").val() || null,
+        hora_inicio: $form.find("input[name=\"hora_inicio\"]").val() || "",
+        hora_fim: $form.find("input[name=\"hora_fim\"]").val() || "",
         status: $form.find("select[name=\"status\"]").val(),
         vagas_totais: $form.find("input[name=\"vagas_totais\"]").val() || null,
         publicado: $form.find("input[name=\"publicado\"]").is(":checked") ? 1 : 0
@@ -1146,8 +1147,8 @@ $("#formEditarturmaAjax").on("submit", function(e) {
         dia_semana: dias,
         periodo: $form.find("select[name=\"edit_periodo\"]").val(),
         formador_id: $form.find("select[name=\"edit_formador_id\"]").val() || null,
-        hora_inicio: $form.find("input[name=\"edit_hora_inicio\"]").val() || null,
-        hora_fim: $form.find("input[name=\"edit_hora_fim\"]").val() || null,
+        hora_inicio: $form.find("input[name=\"edit_hora_inicio\"]").val() || "",
+        hora_fim: $form.find("input[name=\"edit_hora_fim\"]").val() || "",
         status: $form.find("select[name=\"edit_status\"]").val()
     };
     
@@ -1383,8 +1384,8 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         // Com arquivo de imagem
         const formData = new FormData();
         formData.append('nome', nome);
-        formData.append('descricao', $form.find("[name=\"descricao\"]").val().trim());
-        formData.append('programa', $form.find("[name=\"programa\"]").val().trim());
+        formData.append('descricao', $form.find("[name=\"descricao\"]").val() || ""); // Garantir string
+        formData.append('programa', $form.find("[name=\"programa\"]").val() || ""); // Garantir string
         formData.append('area', area);
         formData.append('modalidade', modalidade);
         formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
@@ -1454,8 +1455,8 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         // Sem arquivo - usar JSON
         const formData = {
             nome: nome,
-            descricao: $form.find("[name=\"descricao\"]").val().trim(),
-            programa: $form.find("[name=\"programa\"]").val().trim(),
+            descricao: $form.find("[name=\"descricao\"]").val() || "", // Garantir string
+            programa: $form.find("[name=\"programa\"]").val() || "", // Garantir string
             area: area,
             modalidade: modalidade,
             ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0,

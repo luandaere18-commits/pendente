@@ -43,7 +43,7 @@ try {
             'curso_id' => 8,
             'centro_id' => 4,
             'formador_id' => null,
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'status' => 'planeada',
             'hora_inicio' => '08:00',
             'hora_fim' => '10:00',

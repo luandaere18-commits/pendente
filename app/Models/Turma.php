@@ -31,6 +31,8 @@ class Turma extends Model
         'dia_semana' => 'array',
         'publicado' => 'boolean',
         'data_arranque' => 'date',
+        'hora_inicio' => 'datetime:H:i',
+        'hora_fim' => 'datetime:H:i',
     ];
 
     // adiciona atributo virtual para preço do centro

@@ -56,7 +56,7 @@
                         </div>
                         <div class="col-md-4">
                             <p class="mb-1"><strong><i class="fas fa-sun me-1"></i>Período:</strong></p>
-                            <p class="text-muted">{{ ucfirst(str_replace('manhã', 'Manhã', str_replace('tarde', 'Tarde', str_replace('noite', 'Noite', $turma->periodo)))) }}</p>
+                            <p class="text-muted">{{ ucfirst(str_replace('manha', 'Manha', str_replace('tarde', 'Tarde', str_replace('noite', 'Noite', $turma->periodo)))) }}</p>
                         </div>
                         <div class="col-md-4">
                             <p class="mb-1"><strong><i class="fas fa-clock me-1"></i>Horário:</strong></p>
@@ -250,7 +250,7 @@
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Período</label>
                             <select id="periodoShow" class="form-select" required>
-                                <option value="manha" {{ $turma->periodo === 'manha' ? 'selected' : '' }}>Manhã</option>
+                                <option value="manha" {{ $turma->periodo === 'manha' ? 'selected' : '' }}>Manha</option>
                                 <option value="tarde" {{ $turma->periodo === 'tarde' ? 'selected' : '' }}>Tarde</option>
                                 <option value="noite" {{ $turma->periodo === 'noite' ? 'selected' : '' }}>Noite</option>
                             </select>

@@ -190,7 +190,7 @@ class TurmaApiTest extends TestCase
         $this->assertDatabaseHas('turmas', [
             'curso_id' => $dados['curso_id'],
             'centro_id' => $dados['centro_id'],
-            'periodo' => 'manhã', // Normalizado
+            'periodo' => 'manha', // Normalizado
             'hora_inicio' => '08:00'
         ]);
     }
@@ -208,7 +208,7 @@ class TurmaApiTest extends TestCase
             'centro_id' => 1,
             'data_arranque' => now()->addDays(10)->toDateString(),
             'dia_semana' => ['Segunda'],
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'hora_inicio' => '08:00'
         ];
 
@@ -248,7 +248,7 @@ class TurmaApiTest extends TestCase
             'centro_id' => $centro2->id, // Centro que não oferece o curso
             'data_arranque' => now()->addDays(10)->toDateString(),
             'dia_semana' => ['Segunda'],
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'hora_inicio' => '08:00'
         ];
 
@@ -284,7 +284,7 @@ class TurmaApiTest extends TestCase
             'formador_id' => null,
             'data_arranque' => now()->addDays(10)->toDateString(),
             'dia_semana' => ['Segunda'],
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'hora_inicio' => '08:00',
             'status' => 'inscricoes_abertas'
         ];
@@ -346,7 +346,7 @@ class TurmaApiTest extends TestCase
     {
         $dados = [
             'dia_semana' => ['Segunda'],
-            'periodo' => 'manhã',
+            'periodo' => 'manha',
             'hora_inicio' => '08:00'
         ];
 

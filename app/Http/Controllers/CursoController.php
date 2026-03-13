@@ -137,16 +137,16 @@ class CursoController extends Controller
     {
         try {
             // Validação diferenciada: se vem de API (JSON), aceita parcial; se form, centros são opcionais
-            $isApi = $request->wantsJson();
+            $isApi = $request->wantsJson() || $request->isJson();
         
         $rules = [
             'nome' => 'required|string|max:100|unique:cursos,nome,' . $curso->id,
             'descricao' => 'nullable|string|max:1000',
-            'programa' => 'nullable|string|max:5000',
+            'programa' => 'nullable|string|max:10000', // Aumentado para permitir listas maiores
             'area' => 'required|string|max:100',
             'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'ativo' => 'nullable',
+            'ativo' => 'nullable|boolean',
             'centro_curso' => 'nullable|array',
             'centro_curso.*.centro_id' => 'nullable|integer|exists:centros,id',
             'centro_curso.*.preco' => 'nullable|numeric|min:0',
@@ -154,11 +154,20 @@ class CursoController extends Controller
         
         $validated = $request->validate($rules);
 
+        // CORREÇÃO: Garantir que campos opcionais sejam string, nunca null
+        $validated['descricao'] = isset($validated['descricao']) && $validated['descricao'] !== null 
+            ? (string)$validated['descricao'] 
+            : '';
+            
+        $validated['programa'] = isset($validated['programa']) && $validated['programa'] !== null 
+            ? (string)$validated['programa'] 
+            : '';
+
         // 1. Atualizar Curso
         $cursoData = [
             'nome' => $validated['nome'],
-            'descricao' => $validated['descricao'] ?? null,
-            'programa' => $validated['programa'] ?? null,
+            'descricao' => $validated['descricao'] ?? '',
+            'programa' => $validated['programa'] ?? '',
             'area' => $validated['area'],
             'modalidade' => $validated['modalidade'],
             'ativo' => $request->input('ativo', '1') == '1' ? true : false,

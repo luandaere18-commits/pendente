@@ -51,11 +51,11 @@ class TurmaFactory extends Factory
 
         $formador = Formador::inRandomOrder()->first();
 
-        $periodos = ['manhã', 'tarde', 'noite'];
+        $periodos = ['manha', 'tarde', 'noite'];
         $periodo = $this->faker->randomElement($periodos);
 
         $horaInicio = match ($periodo) {
-            'manhã' => $this->faker->time('H:i', '11:59'),
+            'manha' => $this->faker->time('H:i', '11:59'),
             'tarde' => $this->faker->time('H:i', '17:59'),
             'noite' => $this->faker->time('H:i', '21:59'),
         };

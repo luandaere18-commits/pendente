@@ -64,7 +64,7 @@ class TurmaCrudTest extends DuskTestCase
                     ->select('formador_id', $this->formador->id)
                     ->type('duracao_semanas', '8')
                     ->select('dia_semana', ['Segunda', 'Quarta'])
-                    ->select('periodo', 'manhã')
+                    ->select('periodo', 'manha')
                     ->type('hora_inicio', '08:00')
                     ->type('hora_fim', '10:00')
                     ->type('data_arranque', now()->addDays(10)->format('Y-m-d'))
