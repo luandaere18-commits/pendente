@@ -10,7 +10,7 @@ class FormadorController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Formador::with(['cursos']);
+        $query = Formador::with(['cursos', 'centros']);
         
         if ($request->has('nome') && $request->nome) {
             $query->where('nome', 'like', '%' . $request->nome . '%');

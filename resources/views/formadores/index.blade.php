@@ -89,15 +89,48 @@
                                 <td class="d-none d-lg-table-cell"><small>{{ $formador->especialidade ?? '—' }}</small></td>
                                 <td class="text-center">
                                     @php
-                                        $cursoCount = ($formador->cursos && is_countable($formador->cursos)) ? count($formador->cursos) : 0;
+                                        if (is_object($formador->cursos) && method_exists($formador->cursos, 'all')) {
+                                            $cursos = $formador->cursos->all();
+                                        } else {
+                                            $cursos = $formador->cursos ?? [];
+                                        }
                                     @endphp
-                                    <span class="badge bg-info-subtle text-info">{{ $cursoCount }}</span>
+                                    @if(is_countable($cursos) && count($cursos) > 0)
+                                        @foreach(array_slice($cursos, 0, 2) as $curso)
+                                            <span class="badge bg-info text-white me-1 mb-1"><i class="fas fa-book me-1"></i>{{ is_object($curso) ? ($curso->nome ?? 'Curso') : ($curso['nome'] ?? 'Curso') }}</span>
+                                        @endforeach
+                                        @if(count($cursos) > 2)
+                                            <span class="badge bg-secondary text-white mb-1">+{{ count($cursos) - 2 }}</span>
+                                        @endif
+                                    @else
+                                        <span class="text-muted small">Nenhum</span>
+                                    @endif
                                 </td>
                                 <td class="text-center">
-                                    @if($formador->contactos && is_array($formador->contactos))
-                                        <small class="text-muted">{{ count($formador->contactos) }}</small>
+                                    @php
+                                        $contactos = $formador->contactos ?? [];
+                                        $telefoneFormatado = [];
+                                    @endphp
+                                    @if(is_array($contactos) && count($contactos) > 0)
+                                        @foreach(array_slice($contactos, 0, 2) as $contacto)
+                                            @php
+                                                if (is_array($contacto)) {
+                                                    $telefone = $contacto['valor'] ?? $contacto['telefone'] ?? $contacto['value'] ?? null;
+                                                } else {
+                                                    $telefone = $contacto;
+                                                }
+                                                if ($telefone) {
+                                                    $telefoneFormatado[] = $telefone;
+                                                }
+                                            @endphp
+                                        @endforeach
+                                    @endif
+                                    @if(count($telefoneFormatado) > 0)
+                                        @foreach($telefoneFormatado as $tel)
+                                            <div class="badge bg-success text-white me-1 mb-1"><i class="fas fa-phone me-1"></i>{{ $tel }}</div>
+                                        @endforeach
                                     @else
-                                        <small class="text-muted">0</small>
+                                        <small class="text-muted">Sem contactos</small>
                                     @endif
                                 </td>
                                 <td class="text-end pe-3">
@@ -108,6 +141,7 @@
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button type="button" class="btn btn-outline-primary btn-editar-formador" 
+                                                onclick="abrirEdicaoFormador({{ $formador->id }})"
                                                 data-formador-id="{{ $formador->id }}"
                                                 title="Editar">
                                             <i class="fas fa-edit"></i>
