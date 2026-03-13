@@ -73,12 +73,12 @@
                             <th class="ps-2" style="width:50px">ID</th>
                             <th style="width:200px">Nome</th>
                             <th style="width:180px">Email</th>
-                            <th style="width:180px">Turma</th>
-                            <th class="text-center" style="width:110px">Período</th>
-                            <th class="text-center" style="width:100px">Dias</th>
+                            <th style="width:240px">Turma</th>
+                            <th style="width:180px">Centro</th>
+                            <th class="text-center" style="width:110px">Dias</th>
                             <th class="text-center" style="width:110px">Arranque</th>
                             <th class="text-center" style="width:100px">Status</th>
-                            <th class="text-end pe-2" style="width:180px">Ações</th>
+                            <th class="text-end pe-2" style="width:160px">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,14 +89,43 @@
                                 <td><small>{{ $preInscricao->email ?? '—' }}</small></td>
                                 <td>
                                     @if($preInscricao->turma)
-                                        <small><strong>{{ $preInscricao->turma->curso->nome ?? 'Curso desconhecido' }}</strong></small>
+                                        @php
+                                            $periodoIcon = 'fas fa-clock';
+                                            if ($preInscricao->turma->periodo === 'manha') $periodoIcon = 'fas fa-sun';
+                                            if ($preInscricao->turma->periodo === 'tarde') $periodoIcon = 'fas fa-cloud-sun';
+                                            if ($preInscricao->turma->periodo === 'noite') $periodoIcon = 'fas fa-moon';
+                                        @endphp
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-book text-primary"></i>
+                                            <div>
+                                                <div><strong>{{ $preInscricao->turma->curso->nome ?? 'Curso desconhecido' }}</strong></div>
+                                                <small class="text-muted"><i class="{{ $periodoIcon }} me-1"></i>{{ ucfirst($preInscricao->turma->periodo ?? '—') }}</small>
+                                            </div>
+                                        </div>
                                     @else
                                         <span class="text-muted small">Sem turma</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($preInscricao->turma && $preInscricao->turma->centro)
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-building text-secondary"></i>
+                                            <span>{{ $preInscricao->turma->centro->nome ?? '—' }}</span>
+                                        </div>
+                                    @else
+                                        <span class="text-muted small">—</span>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     @if($preInscricao->turma)
                                         <span class="badge bg-secondary">{{ ucfirst(str_replace('manha', 'Manha', str_replace('tarde', 'Tarde', str_replace('noite', 'Noite', $preInscricao->turma->periodo)))) }}</span>
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($preInscricao->turma && $preInscricao->turma->dia_semana)
+                                        <small>{{ implode(', ', $preInscricao->turma->dia_semana) }}</small>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
