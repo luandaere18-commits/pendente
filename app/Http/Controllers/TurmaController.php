@@ -49,12 +49,19 @@ class TurmaController extends Controller
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manha,tarde,noite',
+            'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'data_arranque' => 'required|date',
-            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
+            'vagas_totais' => 'required|integer|min:1',
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
+            'publicado' => 'nullable|boolean'
         ]);
+        
+        // Validar que o centro está associado ao curso
+        if (!\DB::table('centro_curso')->where('centro_id', $validated['centro_id'])->where('curso_id', $validated['curso_id'])->exists()) {
+            return back()->withErrors(['centro_id' => 'O centro selecionado não oferece o curso escolhido.'])->withInput();
+        }
         
         // Validar hora_inicio com base no periodo
         $this->validarHoraComPeriodo($validated);
@@ -68,7 +75,7 @@ class TurmaController extends Controller
 
     public function show(Turma $turma)
     {
-        $turma->load(['curso', 'formador']);
+        $turma->load(['curso', 'formador', 'centro']);
         return view('turmas.show', compact('turma'));
     }
 
@@ -88,12 +95,19 @@ class TurmaController extends Controller
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manha,tarde,noite',
+            'periodo' => 'required|in:manhã,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'data_arranque' => 'required|date',
-            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida'
+            'vagas_totais' => 'required|integer|min:1',
+            'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
+            'publicado' => 'nullable|boolean'
         ]);
+        
+        // Validar que o centro está associado ao curso
+        if (!\DB::table('centro_curso')->where('centro_id', $validated['centro_id'])->where('curso_id', $validated['curso_id'])->exists()) {
+            return back()->withErrors(['centro_id' => 'O centro selecionado não oferece o curso escolhido.'])->withInput();
+        }
         
         // Validar hora_inicio com base no periodo
         $this->validarHoraComPeriodo($validated);

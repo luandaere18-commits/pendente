@@ -33,7 +33,7 @@ class Turma extends Model
     ];
 
     // adiciona atributo virtual para preço do centro
-    protected $appends = ['centro_preco'];
+    protected $appends = ['centro_preco', 'vagas_disponiveis'];
 
     public function getCentroPrecoAttribute()
     {

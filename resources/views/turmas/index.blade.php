@@ -55,7 +55,13 @@
                                 <td class="ps-2"><small class="text-muted">#{{ $turma->id }}</small></td>
                                 <td><strong>{{ $turma->curso->nome ?? 'N/A' }}</strong></td>
                                 <td>{{ $turma->centro->nome ?? '—' }}</td>
-                                <td>{{ $turma->formador->nome ?? 'Sem formador' }}</td>
+                                <td>
+                                    @if($turma->formador)
+                                        <strong>{{ $turma->formador->nome }}</strong>
+                                    @else
+                                        <span class="text-muted"><i class="fas fa-exclamation-triangle text-warning me-1"></i>Não atribuído</span>
+                                    @endif
+                                </td>
                                 <td class="d-none d-lg-table-cell">
                                     @if($turma->dia_semana && is_array($turma->dia_semana))
                                         @foreach($turma->dia_semana as $dia)
@@ -83,7 +89,17 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    <span class="badge bg-primary-subtle text-primary">{{ ucfirst($turma->periodo) }}</span>
+                                    @php
+                                        $icones = [
+                                            'manhã' => 'fas fa-sun',
+                                            'tarde' => 'fas fa-cloud-sun',
+                                            'noite' => 'fas fa-moon'
+                                        ];
+                                        $icone = $icones[$turma->periodo] ?? 'fas fa-clock';
+                                    @endphp
+                                    <span class="badge bg-primary-subtle text-primary">
+                                        <i class="{{ $icone }} me-1"></i>{{ ucfirst($turma->periodo) }}
+                                    </span>
                                 </td>
                                 <td class="text-center text-nowrap">
                                     @if($turma->hora_inicio && $turma->hora_fim)
@@ -92,7 +108,7 @@
                                         —
                                     @endif
                                 </td>
-                                <td class="text-center">{{ $turma->vagas_totais ?? '—' }}</td>
+                                <td class="text-center">{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? 0 }}</td>
                                 <td class="text-center">
                                     @if($turma->publicado)
                                         <span class="badge bg-success">Sim</span>
@@ -105,7 +121,7 @@
                                         <button type="button" class="btn btn-outline-info btn-visualizar-turma" onclick="visualizarTurma({{ $turma->id }})" title="Ver detalhes">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <a href="{{ route('cursos.show', $turma->curso_id) }}" class="btn btn-outline-primary" title="Gerenciar">
+                                        <a href="{{ route('turmas.show', $turma->id) }}" class="btn btn-outline-primary" title="Gerenciar">
                                             <i class="fas fa-cog"></i>
                                         </a>
                                         <button type="button" class="btn btn-outline-danger" onclick="eliminarTurma({{ $turma->id }})" title="Eliminar">
@@ -184,6 +200,13 @@
                                         <label class="form-label fw-medium small">Curso <span class="text-danger">*</span></label>
                                         <select name="curso_id" class="form-select form-select-sm" required>
                                             <option value="">Selecione o curso</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium small">Centro <span class="text-danger">*</span></label>
+                                        <select name="centro_id" class="form-select form-select-sm" required>
+                                            <option value="">Selecione o centro</option>
                                         </select>
                                     </div>
 
@@ -547,6 +570,28 @@ function carregarCursos() {
 }
 
 /**
+ * Carregar centros associados a um curso
+ */
+function carregarCentrosPorCurso(cursoId) {
+    $.ajax({
+        url: `/api/cursos/${cursoId}`,
+        method: 'GET',
+        success: function(curso) {
+            let options = '<option value="">Selecione o centro</option>';
+            if (curso.centros && curso.centros.length > 0) {
+                curso.centros.forEach(function(centro) {
+                    options += `<option value="${centro.id}">${centro.nome}</option>`;
+                });
+            }
+            $('select[name="centro_id"]').html(options);
+        },
+        error: function() {
+            $('select[name="centro_id"]').html('<option value="">Erro ao carregar centros</option>');
+        }
+    });
+}
+
+/**
  * Carregar lista de formadores disponíveis
  */
 function carregarFormadores() {
@@ -600,6 +645,17 @@ function configurarEventosModal() {
     $('#modalNovasTurma').on('show.bs.modal', function() {
         $('#formNovaTurmaAjax')[0].reset();
         $('.dia-semana').prop('checked', false);
+        carregarCursos();
+    });
+
+    // Carregar centros quando curso for selecionado
+    $('select[name="curso_id"]').on('change', function() {
+        const cursoId = $(this).val();
+        if (cursoId) {
+            carregarCentrosPorCurso(cursoId);
+        } else {
+            $('select[name="centro_id"]').html('<option value="">Selecione o centro</option>');
+        }
     });
 
     // Submit CREATE

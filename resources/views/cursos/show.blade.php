@@ -642,7 +642,7 @@
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="periodo" required>
                                 <option value="" disabled selected>Selecione</option>
-                                <option value="manha">Manha</option>
+                                <option value="manhã">Manhã</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -734,7 +734,7 @@
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="edit_periodo" id="editturmaPeriodo" required>
                                 <option value="">Selecione</option>
-                                <option value="manha">Manha</option>
+                                <option value="manhã">Manhã</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -939,17 +939,22 @@ $(document).on("click", ".btn-remover-centro", function() {
  * Adicionar turma - Popula centros quando modal abre
  */
 $("#modalAdicionarturma").on("show.bs.modal", function() {
+    console.log("DEBUG: Modal adicionar turma aberto, cursoId =", cursoId);
     // Limpar e popular o select de centros
     $.ajax({
         url: `/api/cursos/${cursoId}`,
         method: "GET",
-        success: function(curso) {
+        success: function(response) {
+            console.log("DEBUG: Resposta da API para curso:", response);
+            const curso = response.dados || response;
             let options = '<option value="" disabled selected>Selecione um centro</option>';
             if (curso.centros && curso.centros.length > 0) {
+                console.log("DEBUG: Centros encontrados:", curso.centros);
                 curso.centros.forEach(function(centro) {
                     options += `<option value="${centro.id}">${centro.nome}</option>`;
                 });
             } else {
+                console.log("DEBUG: Nenhum centro associado ao curso");
                 options = '<option value="" disabled>Nenhum centro associado</option>';
             }
             $("#adicionarturmaCentro").html(options);
@@ -1043,9 +1048,9 @@ $(document).on("click", ".btn-editar-turma", function() {
         dias = JSON.parse(dias);
     }
     
-    // Normalizar período: "manha" -> "manha"
-    if (periodo === "manha") {
-        periodo = "manha";
+    // Normalizar período: "manhã" -> "manhã"
+    if (periodo === "manhã") {
+        periodo = "manhã";
     }
     
     $("#editturmaId").val(id);
@@ -1192,6 +1197,9 @@ $('#modalEditarCurso').on('show.bs.modal', function() {
     $('#centrosContainerEdit').empty();
     centrosEditCount = 0;
     
+    // Carregar centros disponíveis
+    carregarCentrosEdit();
+    
     // Carregar dados existentes
     carregarCentrosExistentesEdit();
     
@@ -1234,6 +1242,10 @@ function carregarCentrosExistentesEdit() {
             lastSelect.val(centro.id);
             const preco = centro.pivot && centro.pivot.preco ? centro.pivot.preco : '';
             $('#centrosContainerEdit').find('.preco-edit').last().val(preco);
+            
+            // Desabilitar campos para centros já associados
+            lastSelect.prop('disabled', true);
+            $('#centrosContainerEdit').find('.preco-edit').last().prop('disabled', true);
             
             centrosEditCount++;
         } catch(e) {

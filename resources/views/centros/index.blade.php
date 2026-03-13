@@ -97,7 +97,7 @@
                                                 data-centro-nome="{{ $centro->nome }}"
                                                 data-localizacao="{{ $centro->localizacao }}"
                                                 data-email="{{ $centro->email }}"
-                                                onclick="editarCentro({{ $centro->id }})" 
+                                                onclick="abrirEdicaoCentro({{ $centro->id }})" 
                                                 title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -597,8 +597,10 @@ function eliminarCentro(centroId) {
                     Swal.fire('Eliminado!', 'Centro eliminado com sucesso', 'success');
                     carregarCentros();
                 },
-                error: function() {
-                    Swal.fire('Erro', 'Erro ao eliminar centro', 'error');
+                error: function(xhr) {
+                    const response = xhr.responseJSON;
+                    const mensagem = response?.mensagem || 'Erro ao eliminar centro';
+                    Swal.fire('Erro', mensagem, 'error');
                 }
             });
         }

@@ -82,7 +82,7 @@
                                 <label for="periodo" class="form-label">Período <span class="text-danger">*</span></label>
                                 <select class="form-select" id="periodo" name="periodo" required>
                                     <option value="">Selecione o período</option>
-                                    <option value="manha">Manha</option>
+                                    <option value="manhã">Manhã</option>
                                     <option value="tarde">Tarde</option>
                                     <option value="noite">Noite</option>
                                 </select>
@@ -108,6 +108,43 @@
                                 <label for="duracao_semanas" class="form-label">Duração (Semanas) <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="duracao_semanas" name="duracao_semanas" min="1" max="52" required>
                                 <div class="form-text">Número de semanas de duração da turma</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="data_arranque" class="form-label">Data de Arranque <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="data_arranque" name="data_arranque" required>
+                                <div class="form-text">Data de início da turma</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="vagas_totais" class="form-label">Vagas Totais <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="vagas_totais" name="vagas_totais" min="1" required>
+                                <div class="form-text">Número total de vagas disponíveis</div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="planeada">Planeada</option>
+                                    <option value="inscricoes_abertas">Inscrições Abertas</option>
+                                    <option value="em_andamento">Em Andamento</option>
+                                    <option value="concluida">Concluída</option>
+                                </select>
+                                <div class="form-text">Status atual da turma</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="publicado" name="publicado" value="1">
+                                    <label class="form-check-label" for="publicado">
+                                        Publicar Turma
+                                    </label>
+                                    <div class="form-text">Marque para tornar a turma visível para inscrições</div>
+                                </div>
                             </div>
                         </div>
 
