@@ -664,6 +664,18 @@
                                 <option value="concluida">Concluída</option>
                             </select>
                         </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Vagas Totais</label>
+                            <input type="number" class="form-control" name="vagas_totais" min="1" placeholder="Ex: 20">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="publicado" id="publicadoAddTurma" value="1">
+                                <label class="form-check-label" for="publicadoAddTurma">
+                                    Publicar Turma
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
@@ -996,13 +1008,26 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         formador_id: $form.find("select[name=\"formador_id\"]").val() || null,
         hora_inicio: $form.find("input[name=\"hora_inicio\"]").val() || null,
         hora_fim: $form.find("input[name=\"hora_fim\"]").val() || null,
-        status: $form.find("select[name=\"status\"]").val()
+        status: $form.find("select[name=\"status\"]").val(),
+        vagas_totais: $form.find("input[name=\"vagas_totais\"]").val() || null,
+        publicado: $form.find("input[name=\"publicado\"]").is(":checked") ? 1 : 0
     };
+    
+    // Garantir que apenas os campos esperados sejam enviados
+    const allowedFields = ['curso_id', 'centro_id', 'dia_semana', 'data_arranque', 'duracao_semanas', 'periodo', 'formador_id', 'hora_inicio', 'hora_fim', 'status', 'vagas_totais', 'publicado'];
+    const cleanFormData = {};
+    allowedFields.forEach(field => {
+        if (formData.hasOwnProperty(field)) {
+            cleanFormData[field] = formData[field];
+        }
+    });
+    
+    console.log("DEBUG: Dados limpos a enviar para API:", cleanFormData);
     
     $.ajax({
         url: `/api/turmas`,
         type: "POST",
-        data: JSON.stringify(formData),
+        data: JSON.stringify(cleanFormData),
         contentType: "application/json",
         headers: {
             "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")

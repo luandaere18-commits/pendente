@@ -576,10 +576,10 @@ function carregarCentrosPorCurso(cursoId) {
     $.ajax({
         url: `/api/cursos/${cursoId}`,
         method: 'GET',
-        success: function(curso) {
+        success: function(response) {
             let options = '<option value="">Selecione o centro</option>';
-            if (curso.centros && curso.centros.length > 0) {
-                curso.centros.forEach(function(centro) {
+            if (response.dados && response.dados.centros && response.dados.centros.length > 0) {
+                response.dados.centros.forEach(function(centro) {
                     options += `<option value="${centro.id}">${centro.nome}</option>`;
                 });
             }
