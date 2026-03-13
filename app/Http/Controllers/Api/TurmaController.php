@@ -58,13 +58,13 @@ class TurmaController extends Controller
                 'curso_id' => 'required|exists:cursos,id',
                 'centro_id' => 'required|exists:centros,id',
                 'formador_id' => 'nullable|exists:formadores,id',
-                'data_arranque' => 'required|date',
+                'data_arranque' => 'required|date|after:yesterday', // CORREÇÃO: permitir hoje, mas não datas passadas
                 'duracao_semanas' => 'nullable|integer|min:1',
                 'dia_semana' => 'required|array|min:1',
                 'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-                'periodo' => 'required|in:manhã,tarde,noite', // CORRIGIDO: sem duplicatas
-                'hora_inicio' => 'required|date_format:H:i',
-                'hora_fim' => 'nullable|date_format:H:i',
+                'periodo' => 'required|in:manha,tarde,noite', // CORREÇÃO: usar valores da BD (sem acento)
+                'hora_inicio' => 'required|date_format:H:i:s',
+                'hora_fim' => 'nullable|date_format:H:i:s',
                 'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
                 'vagas_totais' => 'nullable|integer|min:1',
                 'publicado' => 'nullable|boolean'
@@ -72,9 +72,9 @@ class TurmaController extends Controller
             
             \Log::info('Dados validados com sucesso:', $validated);
 
-        // Normalizar período (caso venha 'manha' sem acento)
-        if ($validated['periodo'] === 'manha') {
-            $validated['periodo'] = 'manhã';
+        // Normalizar período (caso venha 'manhã' com acento)
+        if ($validated['periodo'] === 'manhã') {
+            $validated['periodo'] = 'manha';
         }
         
         \Log::info('Api\TurmaController@store - Período normalizado:', ['periodo' => $validated['periodo']]); // CORRIGIDO: array
@@ -211,23 +211,23 @@ class TurmaController extends Controller
         
         // Não permite editar curso_id
         $validated = $request->validate([
-            'centro_id' => 'nullable|exists:centros,id',
+            'centro_id' => 'required|exists:centros,id', // CORREÇÃO: obrigatório conforme BD
             'formador_id' => 'nullable|exists:formadores,id',
-            'data_arranque' => 'nullable|date|after:today',
+            'data_arranque' => 'required|date', // CORREÇÃO: obrigatório conforme BD, sem restrição de data para edição
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manhã,tarde,noite', // CORRIGIDO: sem duplicatas
-            'hora_inicio' => 'required|date_format:H:i',
-            'hora_fim' => 'nullable|date_format:H:i',
+            'periodo' => 'required|in:manha,tarde,noite', // CORREÇÃO: usar valores da BD (sem acento)
+            'hora_inicio' => 'required|date_format:H:i:s', // CORREÇÃO: aceitar formato H:i:s
+            'hora_fim' => 'nullable|date_format:H:i:s', // CORREÇÃO: aceitar formato H:i:s
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
             'vagas_totais' => 'nullable|integer|min:1',
             'publicado' => 'nullable|boolean'
         ]);
         
-        // Normalizar período (caso venha 'manha' sem acento)
-        if ($validated['periodo'] === 'manha') {
-            $validated['periodo'] = 'manhã';
+        // Normalizar período (caso venha 'manhã' com acento)
+        if ($validated['periodo'] === 'manhã') {
+            $validated['periodo'] = 'manha';
         }
         
         // Definir status padrão se não fornecido
@@ -323,7 +323,7 @@ class TurmaController extends Controller
 
         $validacoes = [
             'manha' => ['07:00', '12:00'],   // 07:00 até 11:59
-            'manhã' => ['07:00', '12:00'],   // 07:00 até 11:59
+            'manhã' => ['07:00', '12:00'],   // 07:00 até 11:59 (compatibilidade)
             'tarde' => ['12:00', '18:00'],   // 12:00 até 17:59
             'noite' => ['18:00', '22:00'],   // 18:00 até 21:59
         ];

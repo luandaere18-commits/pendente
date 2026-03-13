@@ -91,7 +91,7 @@
                                 <td class="text-center">
                                     @php
                                         $icones = [
-                                            'manhã' => 'fas fa-sun',
+                                            'manha' => 'fas fa-sun',
                                             'tarde' => 'fas fa-cloud-sun',
                                             'noite' => 'fas fa-moon'
                                         ];
@@ -221,7 +221,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select name="periodo" id="periodoNovo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manhã">Manha</option>
+                                            <option value="manha">Manhã</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -402,7 +402,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select id="editPeriodo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manhã">Manha</option>
+                                            <option value="manha">Manhã</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -777,7 +777,7 @@ function configurarAutoPreenchimento() {
         const horas = parseInt(hora.split(':')[0]);
         
         // Manha: 6h até 12h
-        if (horas >= 6 && horas < 12) return 'manhã';
+        if (horas >= 6 && horas < 12) return 'manha';
         // Tarde: 12h até 18h
         if (horas >= 12 && horas < 18) return 'tarde';
         // Noite: 18h até 6h
@@ -942,7 +942,7 @@ function criarTurma() {
         curso_id: $('select[name="curso_id"]').val(),
         centro_id: $('#modalNovasTurma select[name="centro_id"]').val(),
         formador_id: formador_id || null,
-        periodo: $('select[name="periodo"]').val() === 'manha' ? 'manhã' : $('select[name="periodo"]').val(),
+        periodo: $('select[name="periodo"]').val(), // Já vem no formato correto da BD
         status: status || 'planeada',
         hora_inicio: $('input[name="hora_inicio"]').val(),
         hora_fim: $('input[name="hora_fim"]').val(),
@@ -1055,7 +1055,7 @@ function atualizarTurma() {
     const dados = {
         curso_id: $('#editCursoId').val(),
         formador_id: formador_id || null,
-        periodo: $('#editPeriodo').val() === 'manha' ? 'manhã' : $('#editPeriodo').val(),
+        periodo: $('#editPeriodo').val(), // Já vem no formato correto da BD
         status: status || 'planeada',
         hora_inicio: $('#editHoraInicio').val(),
         hora_fim: $('#editHoraFim').val(),
@@ -1124,7 +1124,7 @@ window.eliminarTurma = function(id) {
  */
 function getPeriodoBadge(periodo) {
     const badges = {
-        'manhã': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manha</span>',
+        'manha': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manhã</span>',
         'tarde': '<span class="badge bg-primary"><i class="fas fa-cloud-sun me-1"></i>Tarde</span>',
         'noite': '<span class="badge bg-dark"><i class="fas fa-moon me-1"></i>Noite</span>'
     };

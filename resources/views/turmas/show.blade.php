@@ -242,9 +242,15 @@
                     
                     <div class="row g-3">
                         <div class="col-md-6">
+                            <label class="form-label fw-medium">Centro <span class="text-danger">*</span></label>
+                            <select id="centroIdShow" class="form-select" required>
+                                <option value="">Selecione o centro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-medium">Período</label>
                             <select id="periodoShow" class="form-select" required>
-                                <option value="manhã" {{ $turma->periodo === 'manhã' ? 'selected' : '' }}>Manhã</option>
+                                <option value="manha" {{ $turma->periodo === 'manha' ? 'selected' : '' }}>Manhã</option>
                                 <option value="tarde" {{ $turma->periodo === 'tarde' ? 'selected' : '' }}>Tarde</option>
                                 <option value="noite" {{ $turma->periodo === 'noite' ? 'selected' : '' }}>Noite</option>
                             </select>
@@ -322,23 +328,55 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
+    carregarCentros();
     carregarFormadores();
     preencherDiasSemana();
     configurarFormulario();
 });
+
+// Carregar centros disponíveis
+function carregarCentros() {
+    const cursoId = {{ $turma->curso_id }};
+    $.ajax({
+        url: `/api/cursos/${cursoId}`,
+        method: 'GET',
+        success: function(response) {
+            const centros = response.dados?.centros || [];
+            const select = $('#centroIdShow');
+            select.empty().append('<option value="">Selecione um centro</option>');
+            
+            centros.forEach(c => {
+                const selected = c.id === {{ $turma->centro_id }} ? 'selected' : '';
+                select.append(`<option value="${c.id}" ${selected}>${c.nome}</option>`);
+            });
+        },
+        error: function(err) {
+            console.error('Erro ao carregar centros:', err);
+            $('#centroIdShow').html('<option value="">Erro ao carregar centros</option>');
+        }
+    });
+}
 
 // Carregar formadores
 function carregarFormadores() {
     $.ajax({
         url: '/api/formadores',
         method: 'GET',
-        success: function(data) {
+        success: function(response) {
+            // CORREÇÃO: tratar diferentes formatos de resposta
+            const data = Array.isArray(response) ? response : (response.data || []);
             const select = $('#formadorIdShow');
-            select.append('<option value="">Sem formador</option>');
+            select.empty().append('<option value="">Sem formador</option>');
+            
+            const formadorAtual = {{ $turma->formador_id ?? 'null' }};
+            
             data.forEach(f => {
-                const selected = f.id === {{ $turma->formador_id ?? 'null' }} ? 'selected' : '';
+                const selected = f.id === formadorAtual ? 'selected' : '';
                 select.append(`<option value="${f.id}" ${selected}>${f.nome}</option>`);
             });
+        },
+        error: function(xhr) {
+            console.error('Erro ao carregar formadores:', xhr);
         }
     });
 }
@@ -355,6 +393,7 @@ function preencherDiasSemana() {
 function configurarFormulario() {
     $('#formEditarTurmaShow').on('submit', function(e) {
         e.preventDefault();
+        
         const dias = [];
         $('.dia-semana-show:checked').each(function() {
             dias.push($(this).val());
@@ -365,18 +404,37 @@ function configurarFormulario() {
             return;
         }
 
+        // CORREÇÃO 1: Adicionar centro_id
+        const centroId = $('#centroIdShow').val();
+        if (!centroId) {
+            Swal.fire('Aviso', 'Selecione um centro', 'warning');
+            return;
+        }
+
+        // CORREÇÃO 2: Formatar horas corretamente (adicionar :00)
+        const horaInicio = $('#horaInicioShow').val();
+        const horaFim = $('#horaFimShow').val();
+        
+        if (!horaInicio) {
+            Swal.fire('Aviso', 'Hora de início é obrigatória', 'warning');
+            return;
+        }
+
         const dados = {
-            periodo: $('#periodoShow').val() === 'manha' ? 'manhã' : $('#periodoShow').val(),
+            centro_id: centroId, // CAMPO ADICIONADO
+            periodo: $('#periodoShow').val(), // Já vem no formato correto da BD
             status: $('#statusShow').val(),
-            hora_inicio: $('#horaInicioShow').val(),
-            hora_fim: $('#horaFimShow').val(),
-            duracao_semanas: $('#duracaoShow').val(),
+            hora_inicio: horaInicio + ':00', // CORREÇÃO: adicionar segundos
+            hora_fim: horaFim ? horaFim + ':00' : null, // CORREÇÃO: adicionar segundos se existir
+            duracao_semanas: $('#duracaoShow').val() || null,
             data_arranque: $('#dataArranqueShow').val(),
             formador_id: $('#formadorIdShow').val() || null,
             vagas_totais: $('#vagasTotaisShow').val() || null,
-            publicado: $('#publicadoShow').is(':checked'),
+            publicado: $('#publicadoShow').is(':checked') ? 1 : 0, // CORREÇÃO: enviar como 0/1
             dia_semana: dias
         };
+
+        console.log('Enviando dados:', dados); // Para debug
 
         $.ajax({
             url: `/api/turmas/{{ $turma->id }}`,
@@ -384,13 +442,21 @@ function configurarFormulario() {
             contentType: 'application/json',
             data: JSON.stringify(dados),
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            success: function() {
-                Swal.fire('Sucesso!', 'Turma atualizada', 'success').then(() => {
+            success: function(response) {
+                Swal.fire('Sucesso!', 'Turma atualizada com sucesso', 'success').then(() => {
                     location.reload();
                 });
             },
             error: function(xhr) {
-                Swal.fire('Erro', 'Erro ao atualizar turma', 'error');
+                console.error('Erro detalhado:', xhr.responseJSON);
+                const errors = xhr.responseJSON?.errors || {};
+                let mensagem = xhr.responseJSON?.mensagem || 'Erro ao atualizar turma';
+                
+                if (Object.keys(errors).length > 0) {
+                    mensagem = Object.values(errors).flat().join('<br>');
+                }
+                
+                Swal.fire('Erro', mensagem, 'error');
             }
         });
     });

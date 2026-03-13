@@ -642,7 +642,7 @@
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="periodo" required>
                                 <option value="" disabled selected>Selecione</option>
-                                <option value="manhã">Manhã</option>
+                                <option value="manha">Manhã</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -746,7 +746,7 @@
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="edit_periodo" id="editturmaPeriodo" required>
                                 <option value="">Selecione</option>
-                                <option value="manhã">Manhã</option>
+                                <option value="manha">Manhã</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -1073,10 +1073,8 @@ $(document).on("click", ".btn-editar-turma", function() {
         dias = JSON.parse(dias);
     }
     
-    // Normalizar período: "manhã" -> "manhã"
-    if (periodo === "manhã") {
-        periodo = "manhã";
-    }
+    // Período já vem no formato correto da BD
+    // Não precisa normalizar
     
     $("#editturmaId").val(id);
     $("#editturmaDataArranque").val(dataArranque);
