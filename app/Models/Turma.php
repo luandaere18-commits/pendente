@@ -30,6 +30,7 @@ class Turma extends Model
     protected $casts = [
         'dia_semana' => 'array',
         'publicado' => 'boolean',
+        'data_arranque' => 'date',
     ];
 
     // adiciona atributo virtual para preço do centro

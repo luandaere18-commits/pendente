@@ -310,6 +310,7 @@ class TurmaController extends Controller
         $periodo = $data['periodo'];
 
         $validacoes = [
+            'manha' => ['07:00', '12:00'],   // 07:00 até 11:59
             'manhã' => ['07:00', '12:00'],   // 07:00 até 11:59
             'tarde' => ['12:00', '18:00'],   // 12:00 até 17:59
             'noite' => ['18:00', '22:00'],   // 18:00 até 21:59
