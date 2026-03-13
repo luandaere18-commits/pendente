@@ -871,6 +871,8 @@ $("#formEditarCursoAjax").on("submit", function(e) {
                 
                 if (xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                } else if (xhr.responseJSON?.mensagem) {
+                    message = xhr.responseJSON.mensagem;
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
                 } else if (xhr.responseJSON?.error) {
