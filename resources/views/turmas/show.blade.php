@@ -272,7 +272,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Data Arranque</label>
-                            <input type="date" id="dataArranqueShow" value="{{ $turma->data_arranque }}" class="form-control" required>
+                            <input type="date" id="dataArranqueShow" value="{{ \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') }}" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Formador</label>
@@ -366,7 +366,7 @@ function configurarFormulario() {
         }
 
         const dados = {
-            periodo: $('#periodoShow').val(),
+            periodo: $('#periodoShow').val() === 'manha' ? 'manhã' : $('#periodoShow').val(),
             status: $('#statusShow').val(),
             hora_inicio: $('#horaInicioShow').val(),
             hora_fim: $('#horaFimShow').val(),
