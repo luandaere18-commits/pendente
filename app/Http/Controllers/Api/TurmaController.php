@@ -62,7 +62,7 @@ class TurmaController extends Controller
                 'duracao_semanas' => 'nullable|integer|min:1',
                 'dia_semana' => 'required|array|min:1',
                 'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-                'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
+                'periodo' => 'required|in:manhã,tarde,noite', // CORRIGIDO: sem duplicatas
                 'hora_inicio' => 'required|date_format:H:i',
                 'hora_fim' => 'nullable|date_format:H:i',
                 'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
@@ -72,10 +72,12 @@ class TurmaController extends Controller
             
             \Log::info('Dados validados com sucesso:', $validated);
 
-        // Normalizar período (adicionar acento conforme migration)
-        $validated['periodo'] = str_replace('manha', 'manhã', $validated['periodo']);
+        // Normalizar período (caso venha 'manha' sem acento)
+        if ($validated['periodo'] === 'manha') {
+            $validated['periodo'] = 'manhã';
+        }
         
-        \Log::info('Api\TurmaController@store - Período normalizado:', $validated['periodo']);
+        \Log::info('Api\TurmaController@store - Período normalizado:', ['periodo' => $validated['periodo']]); // CORRIGIDO: array
         
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {
@@ -92,7 +94,15 @@ class TurmaController extends Controller
         }
 
         // Validar hora_inicio com base no periodo
-        $this->validarHoraComPeriodo($validated);
+        try {
+            $this->validarHoraComPeriodo($validated);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'erro',
+                'mensagem' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 422);
+        }
         
         // Validar que hora_fim > hora_inicio se ambas estão preenchidas
         if (!empty($validated['hora_inicio']) && !empty($validated['hora_fim'])) {
@@ -207,7 +217,7 @@ class TurmaController extends Controller
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manha,tarde,noite,manha,tarde,noite',
+            'periodo' => 'required|in:manhã,tarde,noite', // CORRIGIDO: sem duplicatas
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
@@ -215,8 +225,10 @@ class TurmaController extends Controller
             'publicado' => 'nullable|boolean'
         ]);
         
-        // Normalizar período (adicionar acento conforme migration)
-        $validated['periodo'] = str_replace('manha', 'manha', $validated['periodo']);
+        // Normalizar período (caso venha 'manha' sem acento)
+        if ($validated['periodo'] === 'manha') {
+            $validated['periodo'] = 'manhã';
+        }
         
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {

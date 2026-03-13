@@ -221,7 +221,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select name="periodo" id="periodoNovo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manha">Manha</option>
+                                            <option value="manhã">Manha</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -290,43 +290,43 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana" value="Segunda" id="dia_segunda_novo">
+                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana[]" value="Segunda" id="dia_segunda_novo">
                                     <label class="form-check-label small" for="dia_segunda_novo">Segunda</label>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana" value="Terça" id="dia_terca_novo">
+                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana[]" value="Terça" id="dia_terca_novo">
                                     <label class="form-check-label small" for="dia_terca_novo">Terça</label>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana" value="Quarta" id="dia_quarta_novo">
+                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana[]" value="Quarta" id="dia_quarta_novo">
                                     <label class="form-check-label small" for="dia_quarta_novo">Quarta</label>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana" value="Quinta" id="dia_quinta_novo">
+                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana[]" value="Quinta" id="dia_quinta_novo">
                                     <label class="form-check-label small" for="dia_quinta_novo">Quinta</label>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana" value="Sexta" id="dia_sexta_novo">
+                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana[]" value="Sexta" id="dia_sexta_novo">
                                     <label class="form-check-label small" for="dia_sexta_novo">Sexta</label>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana" value="Sábado" id="dia_sabado_novo">
+                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana[]" value="Sábado" id="dia_sabado_novo">
                                     <label class="form-check-label small" for="dia_sabado_novo">Sábado</label>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-check">
-                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana" value="Domingo" id="dia_domingo_novo">
+                                    <input class="form-check-input dia-semana" type="checkbox" name="dia_semana[]" value="Domingo" id="dia_domingo_novo">
                                     <label class="form-check-label small" for="dia_domingo_novo">Domingo</label>
                                 </div>
                             </div>
@@ -402,7 +402,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select id="editPeriodo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manha">Manha</option>
+                                            <option value="manhã">Manha</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -543,6 +543,7 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
+    console.log('JavaScript das turmas carregado');
     carregarFormadores();
     configurarEventosModal();
     configurarValidacoes();
@@ -553,40 +554,98 @@ $(document).ready(function() {
  * Carregar lista de cursos disponíveis
  */
 function carregarCursos() {
-    $.ajax({
-        url: '/api/cursos',
-        method: 'GET',
-        success: function(data) {
+    console.log('Iniciando carregamento de cursos...');
+    
+    // Teste simples primeiro
+    const $selectCurso = $('select[name="curso_id"]');
+    console.log('Select curso encontrado:', $selectCurso.length);
+    
+    if ($selectCurso.length === 0) {
+        console.error('Select de curso não encontrado!');
+        return;
+    }
+    
+    // Fazer requisição
+    fetch('/api/cursos')
+        .then(response => {
+            console.log('Resposta HTTP:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Dados recebidos:', data);
+            
             let options = '<option value="">Selecione o curso</option>';
-            data.forEach(function(curso) {
-                if (curso.ativo) {
-                    options += `<option value="${curso.id}">${curso.nome}</option>`;
-                }
-            });
-            $('select[name="curso_id"]').html(options);
-            $('#editCursoId').html(options);
-        }
-    });
+            if (Array.isArray(data)) {
+                data.forEach(function(curso) {
+                    if (curso.ativo) {
+                        options += `<option value="${curso.id}">${curso.nome}</option>`;
+                    }
+                });
+                console.log('Options criadas:', options);
+                $selectCurso.html(options);
+                console.log('Options aplicadas ao select');
+            } else {
+                console.error('Dados não são array:', data);
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+        });
 }
 
 /**
  * Carregar centros associados a um curso
  */
 function carregarCentrosPorCurso(cursoId) {
+    const $select = $('#modalNovasTurma select[name="centro_id"]');
+    console.log('Iniciando carregarCentrosPorCurso com cursoId:', cursoId);
+    console.log('Select encontrado:', $select.length);
+    console.log('Select element:', $select);
+
+    if (!cursoId) {
+        console.log('CursoId vazio, desabilitando select');
+        $select.html('<option value="">Selecione um curso primeiro</option>').prop('disabled', true);
+        return;
+    }
+
+    console.log('Desabilitando select e mostrando loading');
+    $select.html('<option value="">Carregando centros...</option>').prop('disabled', true);
+
     $.ajax({
         url: `/api/cursos/${cursoId}`,
         method: 'GET',
-        success: function(response) {
-            let options = '<option value="">Selecione o centro</option>';
-            if (response.dados && response.dados.centros && response.dados.centros.length > 0) {
-                response.dados.centros.forEach(function(centro) {
-                    options += `<option value="${centro.id}">${centro.nome}</option>`;
-                });
-            }
-            $('select[name="centro_id"]').html(options);
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
-        error: function() {
-            $('select[name="centro_id"]').html('<option value="">Erro ao carregar centros</option>');
+        success: function(response) {
+            console.log('Resposta completa da API:', response);
+            console.log('Status:', response.status);
+            console.log('Dados:', response.dados);
+            console.log('Centros:', response.dados ? response.dados.centros : 'undefined');
+
+            let options = '<option value="">Selecione um centro</option>';
+            if (response.dados && response.dados.centros && response.dados.centros.length > 0) {
+                console.log('Encontrados', response.dados.centros.length, 'centros');
+                response.dados.centros.forEach(function(centro) {
+                    const preco = centro.pivot && centro.pivot.preco ? parseFloat(centro.pivot.preco).toLocaleString('pt-PT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' Kz' : '';
+                    options += `<option value="${centro.id}" data-preco="${centro.pivot ? centro.pivot.preco : ''}">${centro.nome}${preco ? ' ('+preco+')' : ''}</option>`;
+                });
+                console.log('Habilitando select');
+                $select.html(options);
+                setTimeout(function() {
+                    $select.prop('disabled', false).removeAttr('disabled');
+                    console.log('Select habilitado após timeout?', !$select.prop('disabled'));
+                }, 100);
+            } else {
+                console.log('Nenhum centro encontrado');
+                options = '<option value="">Nenhum centro disponível para este curso</option>';
+                $select.html(options).prop('disabled', true);
+            }
+        },
+        error: function(xhr) {
+            console.error('Erro ao carregar centros:', xhr);
+            $select.html('<option value="">Erro ao carregar centros</option>').prop('disabled', true);
+            Swal.fire('Erro', 'Não foi possível carregar os centros para este curso.', 'error');
         }
     });
 }
@@ -641,20 +700,35 @@ function carregarTurmas() {
  * Configurar eventos do modal
  */
 function configurarEventosModal() {
+    // Carregar cursos na inicialização
+    carregarCursos();
+    
     // Limpar form ao abrir modal CREATE
     $('#modalNovasTurma').on('show.bs.modal', function() {
+        console.log('Modal de nova turma aberto');
+        // Resetar formulário
         $('#formNovaTurmaAjax')[0].reset();
+        $('#diasError').hide();
+        $('#formNovaTurmaAjax .is-invalid').removeClass('is-invalid');
         $('.dia-semana').prop('checked', false);
+
+        // Inicializar selects
+        $('#modalNovasTurma select[name="centro_id"]').html('<option value="">Selecione um curso primeiro</option>').prop('disabled', true);
+
+        // Carregar dados
         carregarCursos();
+        carregarFormadores();
     });
 
     // Carregar centros quando curso for selecionado
-    $('select[name="curso_id"]').on('change', function() {
+    $(document).on('change', 'select[name="curso_id"]', function() {
         const cursoId = $(this).val();
+        console.log('Evento change no select de curso disparado. Valor selecionado:', cursoId);
         if (cursoId) {
             carregarCentrosPorCurso(cursoId);
         } else {
-            $('select[name="centro_id"]').html('<option value="">Selecione o centro</option>');
+            console.log('Nenhum curso selecionado, desabilitando select de centro');
+            $('#modalNovasTurma select[name="centro_id"]').html('<option value="">Selecione o centro</option>').prop('disabled', true);
         }
     });
 
@@ -703,7 +777,7 @@ function configurarAutoPreenchimento() {
         const horas = parseInt(hora.split(':')[0]);
         
         // Manha: 6h até 12h
-        if (horas >= 6 && horas < 12) return 'manha';
+        if (horas >= 6 && horas < 12) return 'manhã';
         // Tarde: 12h até 18h
         if (horas >= 12 && horas < 18) return 'tarde';
         // Noite: 18h até 6h
@@ -838,29 +912,37 @@ window.abrirEdicaoTurma = function(id) {
  * Criar turma
  */
 function criarTurma() {
+    // Resetar validações anteriores
+    $('#formNovaTurmaAjax .is-invalid').removeClass('is-invalid');
+    $('#diasError').hide();
+
     const dia_semana = [];
     $('.dia-semana:checked').each(function() {
         dia_semana.push($(this).val());
     });
-    
+
     if (dia_semana.length === 0) {
+        $('#diasError').show();
         Swal.fire('Aviso', 'Selecione pelo menos um dia da semana', 'warning');
         return;
     }
-    
+
     const formador_id = $('select[name="formador_id"]').val();
     const status = $('select[name="status"]').val();
-    
+
     // Validação: formador obrigatório se status = inscrições_abertas
     if (status === 'inscricoes_abertas' && !formador_id) {
+        $('select[name="formador_id"]').addClass('is-invalid');
         Swal.fire('Aviso', 'Para "Inscrições Abertas" é obrigatório selecionar um formador', 'warning');
         return;
     }
-    
+
+    // Coletar dados do formulário
     const dados = {
         curso_id: $('select[name="curso_id"]').val(),
+        centro_id: $('#modalNovasTurma select[name="centro_id"]').val(),
         formador_id: formador_id || null,
-        periodo: $('select[name="periodo"]').val(),
+        periodo: $('select[name="periodo"]').val() === 'manha' ? 'manhã' : $('select[name="periodo"]').val(),
         status: status || 'planeada',
         hora_inicio: $('input[name="hora_inicio"]').val(),
         hora_fim: $('input[name="hora_fim"]').val(),
@@ -870,26 +952,78 @@ function criarTurma() {
         publicado: $('input[name="publicado"]').is(':checked'),
         dia_semana: dia_semana
     };
-    
+
+    // Validações básicas
+    const erros = [];
+    if (!dados.curso_id) {
+        $('select[name="curso_id"]').addClass('is-invalid');
+        erros.push('Curso é obrigatório');
+    }
+    if (!dados.centro_id) {
+        $('#modalNovasTurma select[name="centro_id"]').addClass('is-invalid');
+        erros.push('Centro é obrigatório');
+    }
+    if (!dados.periodo) {
+        $('select[name="periodo"]').addClass('is-invalid');
+        erros.push('Período é obrigatório');
+    }
+    if (!dados.hora_inicio) {
+        $('input[name="hora_inicio"]').addClass('is-invalid');
+        erros.push('Hora de início é obrigatória');
+    }
+    if (!dados.data_arranque) {
+        $('input[name="data_arranque"]').addClass('is-invalid');
+        erros.push('Data de arranque é obrigatória');
+    }
+
+    if (erros.length > 0) {
+        Swal.fire('Erro', erros.join('<br>'), 'error');
+        return;
+    }
+
+    // Desabilitar botão durante o envio
+    const $btn = $('#btnCriarTurma');
+    const textoOriginal = $btn.html();
+    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Criando...');
+
     $.ajax({
         url: '/api/turmas',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(dados),
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        success: function() {
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'Accept': 'application/json'
+        },
+        success: function(response) {
             Swal.fire('Sucesso!', 'Turma criada com sucesso', 'success');
             bootstrap.Modal.getInstance(document.getElementById('modalNovasTurma')).hide();
             $('#formNovaTurmaAjax')[0].reset();
+            $('#diasError').hide();
             carregarTurmas();
         },
         error: function(xhr) {
-            const errors = xhr.responseJSON?.errors || {};
-            let mensagem = 'Erro ao criar turma';
+            console.error('Erro na criação:', xhr);
+            const response = xhr.responseJSON || {};
+            const errors = response.errors || {};
+            let mensagem = response.mensagem || 'Erro ao criar turma';
+
+            // Mostrar erros específicos nos campos
+            Object.keys(errors).forEach(field => {
+                const $field = $(`[name="${field}"]`);
+                if ($field.length) {
+                    $field.addClass('is-invalid');
+                }
+            });
+
             if (Object.keys(errors).length > 0) {
-                mensagem = Object.values(errors).flat().join(', ');
+                mensagem += '<br><small>' + Object.values(errors).flat().join('<br>') + '</small>';
             }
+
             Swal.fire('Erro', mensagem, 'error');
+        },
+        complete: function() {
+            $btn.prop('disabled', false).html(textoOriginal);
         }
     });
 }
@@ -921,7 +1055,7 @@ function atualizarTurma() {
     const dados = {
         curso_id: $('#editCursoId').val(),
         formador_id: formador_id || null,
-        periodo: $('#editPeriodo').val(),
+        periodo: $('#editPeriodo').val() === 'manha' ? 'manhã' : $('#editPeriodo').val(),
         status: status || 'planeada',
         hora_inicio: $('#editHoraInicio').val(),
         hora_fim: $('#editHoraFim').val(),
@@ -990,7 +1124,7 @@ window.eliminarTurma = function(id) {
  */
 function getPeriodoBadge(periodo) {
     const badges = {
-        'manha': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manha</span>',
+        'manhã': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manha</span>',
         'tarde': '<span class="badge bg-primary"><i class="fas fa-cloud-sun me-1"></i>Tarde</span>',
         'noite': '<span class="badge bg-dark"><i class="fas fa-moon me-1"></i>Noite</span>'
     };
