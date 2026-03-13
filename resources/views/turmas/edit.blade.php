@@ -106,13 +106,13 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="hora_inicio" class="form-label">Hora de Início <span class="text-danger">*</span></label>
-                                <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" value="{{ $turma->hora_inicio ? substr($turma->hora_inicio, 0, 5) : '' }}" required>
+                                <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" value="{{ $turma->hora_inicio }}" required>
                                 <div class="form-text">Hora específica de início</div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="hora_fim" class="form-label">Hora de Fim <span class="text-danger">*</span></label>
-                                <input type="time" class="form-control" id="hora_fim" name="hora_fim" value="{{ $turma->hora_fim ? substr($turma->hora_fim, 0, 5) : '' }}" required>
+                                <input type="time" class="form-control" id="hora_fim" name="hora_fim" value="{{ $turma->hora_fim }}" required>
                                 <div class="form-text">Hora específica de término</div>
                             </div>
                         </div>

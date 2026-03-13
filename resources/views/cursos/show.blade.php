@@ -268,14 +268,14 @@
                                             </td>
                                             <td>
                                                 @if($turma->hora_inicio)
-                                                    <strong>{{ substr($turma->hora_inicio, 0, 5) }}</strong>
+                                                    <strong>{{ $turma->hora_inicio }}</strong>
                                                 @else
                                                     <span class="text-muted">—</span>
                                                 @endif
                                             </td>
                                             <td>
                                                 @if($turma->hora_fim)
-                                                    <strong>{{ substr($turma->hora_fim, 0, 5) }}</strong>
+                                                    <strong>{{ $turma->hora_fim }}</strong>
                                                 @else
                                                     <span class="text-muted">—</span>
                                                 @endif
@@ -1082,8 +1082,8 @@ $(document).on("click", ".btn-editar-turma", function() {
     $("#editturmaDuracao").val(duracaoSemanas || "");
     $("#editturmaFormador").val(formadorId || "");
     $("#editturmaPeriodo").val(periodo);
-    $("#editturmaHoraInicio").val(horaInicio ? horaInicio.substring(0, 5) : "");
-    $("#editturmaHoraFim").val(horaFim ? horaFim.substring(0, 5) : "");
+    $("#editturmaHoraInicio").val(horaInicio || "");
+    $("#editturmaHoraFim").val(horaFim || "");
     $("#editturmaStatus").val(status);
     
     // Popular centros

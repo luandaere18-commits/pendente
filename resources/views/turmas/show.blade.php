@@ -61,8 +61,8 @@
                         <div class="col-md-4">
                             <p class="mb-1"><strong><i class="fas fa-clock me-1"></i>Horário:</strong></p>
                             <p class="text-muted">
-                                {{ $turma->hora_inicio }} - 
-                                {{ $turma->hora_fim }}
+                                {{ $turma->hora_inicio ?: '—' }} - 
+                                {{ $turma->hora_fim ?: '—' }}
                             </p>
                         </div>
                     </div>

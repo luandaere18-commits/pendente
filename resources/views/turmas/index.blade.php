@@ -103,7 +103,7 @@
                                 </td>
                                 <td class="text-center text-nowrap">
                                     @if($turma->hora_inicio && $turma->hora_fim)
-                                        {{ substr($turma->hora_inicio, 0, 5) }} - {{ substr($turma->hora_fim, 0, 5) }}
+                                        {{ $turma->hora_inicio }} - {{ $turma->hora_fim }}
                                     @else
                                         —
                                     @endif
@@ -823,8 +823,8 @@ window.visualizarTurma = function(id) {
             const formadorNome = turma.formador ? turma.formador.nome : '<span class="text-muted">Sem atribuição</span>';
             const diaSemana = turma.dia_semana ? turma.dia_semana.join(', ') : '—';
             const periodoBadge = getPeriodoBadge(turma.periodo);
-            const horaInicio = turma.hora_inicio ? turma.hora_inicio.substring(0, 5) : '—';
-            const horaFim = turma.hora_fim ? turma.hora_fim.substring(0, 5) : '—';
+            const horaInicio = turma.hora_inicio || '—';
+            const horaFim = turma.hora_fim || '—';
             const duracao = turma.duracao_semanas || '—';
             const dataArranque = turma.data_arranque ? new Date(turma.data_arranque).toLocaleDateString('pt-PT') : '—';
             
@@ -889,8 +889,8 @@ window.abrirEdicaoTurma = function(id) {
             $('#editFormadorId').val(turma.formador_id || '');
             $('#editPeriodo').val(turma.periodo);
             $('#editStatus').val(turma.status || 'planeada');
-            $('#editHoraInicio').val(turma.hora_inicio ? turma.hora_inicio.substring(0, 5) : '');
-            $('#editHoraFim').val(turma.hora_fim ? turma.hora_fim.substring(0, 5) : '');
+            $('#editHoraInicio').val(turma.hora_inicio || '');
+            $('#editHoraFim').val(turma.hora_fim || '');
             $('#editDuracaoSemanas').val(turma.duracao_semanas || '');
             $('#editDataArranque').val(turma.data_arranque);
             $('#editVagasTotais').val(turma.vagas_totais || '');

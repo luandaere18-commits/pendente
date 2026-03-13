@@ -52,6 +52,18 @@ class Turma extends Model
         return $this->vagas_totais - $this->vagas_preenchidas;
     }
 
+    // Accessor para formatar hora_inicio no formato H:i
+    public function getHoraInicioAttribute($value)
+    {
+        return $value ? substr($value, 0, 5) : null;
+    }
+
+    // Accessor para formatar hora_fim no formato H:i
+    public function getHoraFimAttribute($value)
+    {
+        return $value ? substr($value, 0, 5) : null;
+    }
+
     // Uma turma pertence a um curso
     public function curso()
     {
