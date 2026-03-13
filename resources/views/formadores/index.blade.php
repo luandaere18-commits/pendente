@@ -89,66 +89,26 @@
                                 <td class="d-none d-lg-table-cell"><small>{{ $formador->especialidade ?? '—' }}</small></td>
                                 <td class="text-center">
                                     @php
-                                        if (is_object($formador->cursos) && method_exists($formador->cursos, 'all')) {
-                                            $cursos = $formador->cursos->all();
-                                        } else {
-                                            $cursos = $formador->cursos ?? [];
-                                        }
+                                        $cursoCount = ($formador->cursos && is_countable($formador->cursos)) ? count($formador->cursos) : 0;
                                     @endphp
-                                    @if(is_countable($cursos) && count($cursos) > 0)
-                                        @foreach(array_slice($cursos, 0, 2) as $curso)
-                                            <span class="badge bg-info text-white me-1 mb-1"><i class="fas fa-book me-1"></i>{{ is_object($curso) ? ($curso->nome ?? 'Curso') : ($curso['nome'] ?? 'Curso') }}</span>
-                                        @endforeach
-                                        @if(count($cursos) > 2)
-                                            <span class="badge bg-secondary text-white mb-1">+{{ count($cursos) - 2 }}</span>
-                                        @endif
-                                    @else
-                                        <span class="text-muted small">Nenhum</span>
-                                    @endif
+                                    <span class="badge bg-info-subtle text-info">{{ $cursoCount }}</span>
                                 </td>
                                 <td class="text-center">
-                                    @php
-                                        $contactos = $formador->contactos ?? [];
-                                        $telefoneFormatado = [];
-                                    @endphp
-                                    @if(is_array($contactos) && count($contactos) > 0)
-                                        @foreach(array_slice($contactos, 0, 2) as $contacto)
-                                            @php
-                                                if (is_array($contacto)) {
-                                                    $telefone = $contacto['valor'] ?? $contacto['telefone'] ?? $contacto['value'] ?? null;
-                                                } else {
-                                                    $telefone = $contacto;
-                                                }
-                                                if ($telefone) {
-                                                    $telefoneFormatado[] = $telefone;
-                                                }
-                                            @endphp
-                                        @endforeach
-                                    @endif
-                                    @if(count($telefoneFormatado) > 0)
-                                        @foreach($telefoneFormatado as $tel)
-                                            <div class="badge bg-success text-white me-1 mb-1"><i class="fas fa-phone me-1"></i>{{ $tel }}</div>
-                                        @endforeach
+                                    @if($formador->contactos && is_array($formador->contactos))
+                                        <small class="text-muted">{{ count($formador->contactos) }}</small>
                                     @else
-                                        <small class="text-muted">Sem contactos</small>
+                                        <small class="text-muted">0</small>
                                     @endif
                                 </td>
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-info btn-visualizar-formador" 
-                                                onclick="visualizarFormador({{ $formador->id }})"
-                                                title="Ver detalhes">
+                                        <button type="button" class="btn btn-outline-info btn-visualizar-formador" data-formador-id="{{ $formador->id }}" title="Ver detalhes">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button type="button" class="btn btn-outline-primary btn-editar-formador" 
-                                                onclick="abrirEdicaoFormador({{ $formador->id }})"
-                                                data-formador-id="{{ $formador->id }}"
-                                                title="Editar">
+                                        <button type="button" class="btn btn-outline-primary btn-editar-formador" data-formador-id="{{ $formador->id }}" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger btn-eliminar-formador" 
-                                                onclick="eliminarFormador({{ $formador->id }})"
-                                                title="Eliminar">
+                                        <button type="button" class="btn btn-outline-danger btn-eliminar-formador" data-formador-id="{{ $formador->id }}" title="Eliminar">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -507,6 +467,28 @@ function configurarEventosModal() {
         $(this).closest('.col-12').remove();
         atualizarNumeroCentros();
     });
+
+    // Delegated actions on table buttons
+    $(document).on('click', '.btn-visualizar-formador', function() {
+        const id = $(this).data('formador-id');
+        if (id) {
+            visualizarFormador(id);
+        }
+    });
+
+    $(document).on('click', '.btn-editar-formador', function() {
+        const id = $(this).data('formador-id');
+        if (id) {
+            abrirEdicaoFormador(id);
+        }
+    });
+
+    $(document).on('click', '.btn-eliminar-formador', function() {
+        const id = $(this).data('formador-id');
+        if (id) {
+            eliminarFormador(id);
+        }
+    });
 }
 
 /**
@@ -668,89 +650,15 @@ function atualizarSelectsDeCentrosEditar() {
 /**
  * Carrega a lista de formadores via API
  */
-function carregarFormadores() {
-    $.ajax({
-        url: '/api/formadores',
-        method: 'GET',
-        success: function(response) {
-            console.log('Resposta da API:', response);
-            // Suportar { data: [...] } ou array direto
-            const data = Array.isArray(response) ? response : (response.data || []);
-            console.log('Dados processados:', data);
-            let html = '';
-            
-            if (data.length === 0) {
-                html = '<tr><td colspan="7" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhum formador encontrado</td></tr>';
-            } else {
-                data.forEach(function(formador) {
-                    try {
-                        const email = formador.email || '<span class="text-muted">—</span>';
-                        const especialidade = formador.especialidade || '<span class="text-muted">—</span>';
-                        
-                        // Cursos (via turmas)
-                        let cursosBadges = '<span class="text-muted small">Nenhum</span>';
-                        if (formador.cursos && Array.isArray(formador.cursos) && formador.cursos.length > 0) {
-                            cursosBadges = formador.cursos.slice(0, 2).map(function(curso) {
-                                return `<span class="badge bg-info text-white me-1 mb-1\"><i class="fas fa-book me-1"></i>${curso.nome}</span>`;
-                            }).join('');
-                            if (formador.cursos.length > 2) {
-                                cursosBadges += `<span class="badge bg-secondary text-white me-1 mb-1">+${formador.cursos.length - 2}</span>`;
-                            }
-                        }
-                        
-                        let contactos = '<span class="text-muted small">Nenhum</span>';
-                        if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
-                            contactos = formador.contactos.map(function(c) {
-                                let telefone = typeof c === 'string' ? c : (c.valor || c);
-                                return `<span class="badge bg-success text-white me-1 mb-1"><i class="fas fa-phone me-1"></i>${telefone}</span>`;
-                            }).join('');
-                        }
-                        
-                        html += `
-                            <tr>
-                                <td class="ps-3"><strong class="text-muted">#${formador.id}</strong></td>
-                                <td><strong>${formador.nome}</strong></td>
-                                <td class="d-none d-md-table-cell"><small>${email}</small></td>
-                                <td class="d-none d-lg-table-cell"><small>${especialidade}</small></td>
-                                <td class="text-center"><small>${cursosBadges}</small></td>
-                                <td class="text-center">${contactos}</td>
-                                <td class="text-end pe-3">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="visualizarFormador(${formador.id})" title="Visualizar"><i class="fas fa-eye"></i></button>
-                                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="abrirEdicaoFormador(${formador.id})" title="Editar"><i class="fas fa-edit"></i></button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminarFormador(${formador.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    } catch (e) {
-                        console.error('Erro ao processar formador:', formador, e);
-                    }
-                });
-            }
-            
-            $('#formadoresTable tbody').html(html);
-        },
-        error: function(err) {
-            console.error('Erro ao carregar formadores:', err);
-            console.error('Status:', err.status);
-            console.error('Response:', err.responseText);
-            $('#formadoresTable tbody').html(
-                '<tr><td colspan="7" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
-            );
-        }
-    });
-}
-
 /**
  * Visualizar detalhes do formador
  */
 window.visualizarFormador = function(id) {
     $.ajax({
-        url: `/api/formadores/${id}`,
+        url: `/formadores/${id}`,
         method: 'GET',
         success: function(response) {
-            const formador = response.data;
+            const formador = response.data || response;
             let contactosHtml = '<span class="text-muted">Sem contactos</span>';
             
             if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
@@ -801,10 +709,10 @@ window.visualizarFormador = function(id) {
  */
 window.abrirEdicaoFormador = function(id) {
     $.ajax({
-        url: `/api/formadores/${id}`,
+        url: `/formadores/${id}`,
         method: 'GET',
         success: function(response) {
-            const formador = response.data;
+            const formador = response.data || response;
             $('#editFormadorId').val(formador.id);
             $('#editNome').val(formador.nome);
             $('#editEmail').val(formador.email || '');
@@ -869,22 +777,16 @@ window.abrirEdicaoFormador = function(id) {
 $('#formNovoFormadorAjax').on('submit', function(e) {
     e.preventDefault();
     
-    // Construir objeto com dados do formulário
-    const dados = {
-        nome: $('input[name="nome"]').val(),
-        email: $('input[name="email"]').val(),
-        especialidade: $('input[name="especialidade"]').val(),
-        bio: $('textarea[name="bio"]').val(),
-        contactos: []
-    };
-    
-    // Adicionar contacto se existir
+    const form = $(this)[0];
+    const formData = new FormData(form);
+
+    const contatos = [];
     const telefone = $('input[name="contacto_telefone"]').val();
-    if (telefone) {
-        dados.contactos.push(telefone);
+    if (telefone && telefone.trim() !== '') {
+        contatos.push(telefone.trim());
     }
-    
-    // Coletar centros selecionados
+    formData.set('contactos', JSON.stringify(contatos));
+
     const centrosArray = [];
     $('#centrosContainerNovoFormador').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
@@ -892,25 +794,22 @@ $('#formNovoFormadorAjax').on('submit', function(e) {
             centrosArray.push(parseInt(centroId));
         }
     });
-    dados.centros = centrosArray;
-    
-    console.log('Enviando dados:', dados);
-    
+    formData.set('centros', JSON.stringify(centrosArray));
+
     $.ajax({
-        url: "{{ route('api.formadores.store') }}",
+        url: "{{ route('formadores.store') }}",
         method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(dados),
+        data: formData,
+        processData: false,
+        contentType: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function(response) {
-            console.log('Sucesso:', response);
             Swal.fire('Sucesso!', 'Formador criado com sucesso', 'success');
             bootstrap.Modal.getInstance(document.getElementById('modalNovoFormador')).hide();
             $('#formNovoFormadorAjax')[0].reset();
             location.reload();
         },
         error: function(xhr) {
-            console.error('Erro:', xhr);
             const errors = xhr.responseJSON?.errors || {};
             let mensagem = 'Erro ao criar formador';
             if (Object.keys(errors).length > 0) {
@@ -957,10 +856,9 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
     console.log('Enviando dados:', dados);
     
     $.ajax({
-        url: `/api/formadores/${formadorId}`,
-        method: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify(dados),
+        url: `/formadores/${formadorId}`,
+        method: 'POST',
+        data: dados,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function(response) {
             console.log('Sucesso:', response);
@@ -996,8 +894,9 @@ window.eliminarFormador = function(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/formadores/${id}`,
-                method: 'DELETE',
+                url: `/formadores/${id}`,
+                method: 'POST',
+                data: {_method: 'DELETE'},
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {
                     Swal.fire('Eliminado!', 'Formador eliminado com sucesso', 'success');
