@@ -64,9 +64,9 @@
 
     /* Table card */
     .pi-table-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; }
-    .pi-table-header { border-bottom: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; }
+    .pi-table-header { border-bottom: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
     .pi-table-header h2 { font-size: 0.875rem; font-weight: 600; margin: 0; }
-    .pi-table-header small { font-size: 0.75rem; color: var(--pi-text-muted); }
+    .pi-table-header small { font-size: 0.75rem; color: var(--pi-text-muted); white-space: nowrap; }
 
     /* Table */
     .pi-table { width: 100%; margin: 0; font-size: 0.92rem; }
@@ -89,6 +89,7 @@
 
     /* Status badges */
     .pi-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.01em; }
+    .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; font-size: 0.6875rem; margin-right: 0.25rem; }
     .pi-badge-pendente { background: var(--pi-warning-light); color: #92610a; }
     .pi-badge-confirmado { background: var(--pi-success-light); color: #1e6e49; }
     .pi-badge-cancelado { background: var(--pi-danger-light); color: #a71d2a; }
@@ -663,7 +664,7 @@
     function renderDiaBadges(dias) {
         if (!dias || !Array.isArray(dias) || dias.length === 0) return '—';
         return dias.map(function(d) {
-            return '<span class="pi-badge pi-badge-dia" style="margin-right:0.25rem">' + esc(d.substring(0, 3)) + '</span>';
+            return '<span class="pi-badge pi-badge-dia">' + esc(d.substring(0, 3)) + '</span>';
         }).join('');
     }
 
