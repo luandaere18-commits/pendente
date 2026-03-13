@@ -11,6 +11,7 @@ class Turma extends Model
 
     protected $fillable = [
         'curso_id',
+        'centro_id',
         'formador_id',
         'duracao_semanas',
         'dia_semana',
@@ -31,6 +32,18 @@ class Turma extends Model
         'publicado' => 'boolean',
     ];
 
+    // adiciona atributo virtual para preço do centro
+    protected $appends = ['centro_preco'];
+
+    public function getCentroPrecoAttribute()
+    {
+        if ($this->centro_id && $this->curso) {
+            $pivot = $this->curso->centros()->where('centros.id', $this->centro_id)->first();
+            return $pivot ? $pivot->pivot->preco : null;
+        }
+        return null;
+    }
+
     // Accessor para calcular vagas disponíveis
     public function getVagasDisponiveisAttribute()
     {
@@ -42,6 +55,12 @@ class Turma extends Model
     public function curso()
     {
         return $this->belongsTo(Curso::class);
+    }
+
+    // Uma turma pertence a um centro (ligado ao curso)
+    public function centro()
+    {
+        return $this->belongsTo(Centro::class);
     }
 
     // Uma turma pertence a um formador

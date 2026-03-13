@@ -23,9 +23,9 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,    // Primeiro criar o admin
             CentroSeeder::class,
             CursoSeeder::class,
+            CentroCursoSeeder::class,  // Antes dos turmas para criar relacionamentos
             FormadorSeeder::class,
-            TurmaSeeder::class,
-            CentroCursoSeeder::class, 
+            TurmaSeeder::class,        // Depois dos relacionamentos centro-curso
             CentroFormadorSeeder::class,
             CategoriaSeeder::class,   // Antes dos produtos
             ProdutoSeeder::class,     // Depois das categorias

@@ -38,6 +38,14 @@
                                 </select>
                                 <div class="form-text">Escolha o curso para esta turma</div>
                             </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="centro_id" class="form-label">Centro <span class="text-danger">*</span></label>
+                                <select class="form-select" id="centro_id" name="centro_id" required disabled>
+                                    <option value="">Selecione um curso primeiro</option>
+                                </select>
+                                <div class="form-text">Ao escolher o curso, selecione o centro onde a turma será ministrada</div>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -174,9 +182,13 @@
 $(document).ready(function() {
     carregarCursos();
     
-    // Preview em tempo real
-    $('#turmaForm select, #turmaForm input').on('change input', function() {
+    // quando o curso mudar carregamos centros relacionados
+    $('#curso_id').on('change', function() {
+        const cursoId = $(this).val();
+        carregarCentros(cursoId);
         atualizarPreview();
+    });
+
         validarHorarios();
     });
 
@@ -199,6 +211,67 @@ function carregarCursos() {
         });
         $('#curso_id').html(options);
     });
+}
+
+function carregarCentros(cursoId, selectedCentro) {
+    const $centroSelect = $('#centro_id');
+    if (!cursoId) {
+        $centroSelect.html('<option value="">Selecione um curso primeiro</option>')
+            .prop('disabled', true);
+        return;
+    }
+
+    $.get(`/api/cursos/${cursoId}`, function(response) {
+        const curso = response.dados || response;
+        let opts = '<option value="">Selecione um centro</option>';
+        curso.centros.forEach(function(c) {
+            const preco = c.pivot && c.pivot.preco ? parseFloat(c.pivot.preco).toLocaleString('pt-PT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' Kz' : '';
+            opts += `<option value="${c.id}" data-preco="${c.pivot ? c.pivot.preco : ''}"${selectedCentro==c.id ? ' selected' : ''}>${c.nome}${preco ? ' ('+preco+')' : ''}</option>`;
+        });
+        $centroSelect.html(opts).prop('disabled', false);
+    }).fail(function() {
+        $centroSelect.html('<option value="">Erro ao carregar centros</option>').prop('disabled', true);
+    });
+}
+
+// atualiza preview deve incluir centro/price
+function atualizarPreview() {
+    const cursoId = $('#curso_id').val();
+    const centroId = $('#centro_id').val();
+    const diasSelecionados = $('#dia_semana').val();
+    const periodo = $('#periodo').val();
+    const horaInicio = $('#hora_inicio').val();
+    const horaFim = $('#hora_fim').val();
+    const duracao = $('#duracao_semanas').val();
+
+    if (cursoId || diasSelecionados || periodo) {
+        const cursoNome = $('#curso_id option:selected').text();
+        const centroText = centroId ? $('#centro_id option:selected').text() : '';
+
+        const periodoBadge = getPeriodoBadge(periodo);
+        const diasFormatados = diasSelecionados ? diasSelecionados.map(dia => getDiaFormatado(dia)).join(', ') : '';
+        const horarios = (horaInicio && horaFim) 
+            ? `<p class="mb-1"><i class="fas fa-clock me-1"></i> ${horaInicio} - ${horaFim}</p>`
+            : '';
+
+        let preview = `
+            <div class="text-center mb-3">
+                <h6><i class="fas fa-calendar-alt me-2"></i>Turma</h6>
+            </div>
+            
+            ${cursoId ? `<p class="mb-2"><strong><i class="fas fa-book me-1"></i> Curso:</strong><br>${cursoNome}</p>` : ''}
+            ${centroText ? `<p class="mb-2"><strong><i class="fas fa-building me-1"></i> Centro:</strong><br>${centroText}</p>` : ''}
+            ${diasFormatados ? `<p class="mb-2"><strong><i class="fas fa-calendar-day me-1"></i> Dias:</strong><br>${diasFormatados}</p>` : ''}
+            ${periodo ? `<p class="mb-2"><strong><i class="fas fa-sun me-1"></i> Período:</strong><br>${periodoBadge}</p>` : ''}
+            ${duracao ? `<p class="mb-2"><strong><i class="fas fa-hourglass-half me-1"></i> Duração:</strong><br>${duracao} semana(s)</p>` : ''}
+            ${horarios}
+        `;
+
+        $('#previewContent').html(preview);
+        $('#previewCard').show();
+    } else {
+        $('#previewCard').hide();
+    }
 }
 
 function validarHorarios() {
@@ -325,6 +398,8 @@ function getDiaFormatado(dia) {
 function criarTurma() {
     const formData = {
         curso_id: parseInt($('#curso_id').val()),
+        centro_id: parseInt($('#centro_id').val()),
+        formador_id: $('#formador_id').val() ? parseInt($('#formador_id').val()) : null,
         dia_semana: $('#dia_semana').val(),
         periodo: $('#periodo').val(),
         hora_inicio: $('#hora_inicio').val(),

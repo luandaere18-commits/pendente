@@ -24,6 +24,7 @@ class TurmaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'centro_id' => 'required|exists:centros,id',
             'formador_id' => 'nullable|exists:formadores,id',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
@@ -62,6 +63,7 @@ class TurmaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'centro_id' => 'required|exists:centros,id',
             'formador_id' => 'nullable|exists:formadores,id',
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',

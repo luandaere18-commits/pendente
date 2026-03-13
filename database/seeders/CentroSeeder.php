@@ -30,11 +30,34 @@ class CentroSeeder extends Seeder
         // ]);
 
     $now = now();
-    Centro::insert([
-        ['nome' => 'Centro de Formação Luanda', 'localizacao' => 'Avenida Príncipe Nero, Talatona, Luanda', 'contactos' => json_encode(['923111222']), 'email' => 'luanda@centro.ao', 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Instituto Técnico Benguela', 'localizacao' => 'Av. 21 de Janeiro, Benguela', 'contactos' => json_encode(['931222333']), 'email' => 'benguela@instituto.ao', 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Academia Huambo', 'localizacao' => 'Rua da Independência, Huambo', 'contactos' => json_encode(['943333444']), 'email' => 'huambo@academia.ao', 'created_at' => $now, 'updated_at' => $now],
-    ]);
+
+    $centros = [
+        [
+            'nome' => 'Centro de Formação Luanda',
+            'localizacao' => 'Avenida Príncipe Nero, Talatona, Luanda',
+            'contactos' => ['923111222'],
+            'email' => 'luanda@centro.ao',
+        ],
+        [
+            'nome' => 'Instituto Técnico Benguela',
+            'localizacao' => 'Av. 21 de Janeiro, Benguela',
+            'contactos' => ['931222333'],
+            'email' => 'benguela@instituto.ao',
+        ],
+        [
+            'nome' => 'Academia Huambo',
+            'localizacao' => 'Rua da Independência, Huambo',
+            'contactos' => ['943333444'],
+            'email' => 'huambo@academia.ao',
+        ],
+    ];
+
+    foreach ($centros as $centro) {
+        Centro::updateOrCreate(
+            ['nome' => $centro['nome']],
+            array_merge($centro, ['updated_at' => $now, 'created_at' => $now])
+        );
+    }
 
     }
 }

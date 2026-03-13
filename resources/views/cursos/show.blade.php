@@ -200,6 +200,8 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>#</th>
+                                        <th>Centro</th>
+                                        <th>Preço</th>
                                         <th><i class="fas fa-calendar-week me-1 text-muted"></i>Dias da Semana</th>
                                         <th><i class="fas fa-sun me-1 text-muted"></i>Período</th>
                                         <th><i class="fas fa-chalkboard-teacher me-1 text-muted"></i>Formador</th>
@@ -210,9 +212,41 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($curso->turmas as $turma)
+                                    @php
+                                        $turmasList = [];
+                                        foreach($curso->turmas as $t) {
+                                            if (!empty($t->centro_id)) {
+                                                // já possui centro associado
+                                                $t->centro = $t->centro ?? null;
+                                                $turmasList[] = $t;
+                                            } else {
+                                                // replica para cada centro do curso
+                                                foreach($curso->centros as $centro) {
+                                                    $clone = clone $t;
+                                                    $clone->centro = $centro;
+                                                    $clone->centro_preco = $centro->pivot->preco ?? null;
+                                                    $turmasList[] = $clone;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+                                    @foreach($turmasList as $turma)
                                         <tr>
                                             <td><span class="text-muted">{{ $loop->iteration }}</span></td>
+                                            <td>
+                                                @if($turma->centro)
+                                                    <span class="fw-semibold">{{ $turma->centro->nome }}</span>
+                                                @else
+                                                    <span class="text-muted small">N/A</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if(isset($turma->centro_preco))
+                                                    {{ number_format($turma->centro_preco,2,',','.') }} Kz
+                                                @else
+                                                    <span class="text-muted small">—</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if(is_array($turma->dia_semana))
                                                     @foreach($turma->dia_semana as $dia)
@@ -305,74 +339,171 @@
 {{-- MODAL: Editar Curso                           --}}
 {{-- ============================================= --}}
 <div class="modal fade" id="modalEditarCurso" tabindex="-1" aria-labelledby="modalEditarCursoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalEditarCursoLabel">
-                    <i class="fas fa-edit me-2"></i>Editar Curso: {{ $curso->nome }}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-3">
+
+            {{-- Header --}}
+            <div class="modal-header bg-primary bg-opacity-10 border-0 py-3 px-4">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
+                        <i class="fas fa-edit text-white small"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold mb-0" id="modalEditarCursoLabel">Editar Curso: {{ $curso->nome }}</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form id="formEditarCursoAjax">
-                @csrf
-                <div class="modal-body p-4">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Nome <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="nome" value="{{ $curso->nome }}" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Descrição</label>
-                            <textarea class="form-control" name="descricao" rows="2">{{ $curso->descricao }}</textarea>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Programa do Curso</label>
-                            <textarea class="form-control" name="programa" rows="2">{{ $curso->programa }}</textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Área <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="area" value="{{ $curso->area }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Modalidade <span class="text-danger">*</span></label>
-                            <select class="form-select" name="modalidade" required>
-                                <option value="presencial" {{ $curso->modalidade === "presencial" ? "selected" : "" }}>Presencial</option>
-                                <option value="online" {{ $curso->modalidade === "online" ? "selected" : "" }}>Online</option>
-                                <option value="hibrido" {{ $curso->modalidade === "hibrido" ? "selected" : "" }}>Híbrido</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Imagem do Curso</label>
-                            <input type="file" class="form-control" name="imagem" accept="image/*">
-                            <small class="text-muted">JPEG, PNG, JPG ou GIF (máx 2MB)</small>
-                            @if($curso->imagem_url)
-                                <div class="mt-2">
-                                    <small class="d-block text-muted mb-1">Imagem atual:</small>
-                                    <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" style="max-width: 100px; border-radius: 4px;">
+
+            {{-- Body --}}
+            <div class="modal-body p-4">
+                <form id="formEditarCursoAjax" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="curso_id" value="{{ $curso->id }}">
+                    
+                    <div class="row g-4">
+
+                        {{-- ====== COLUNA ESQUERDA ====== --}}
+                        <div class="col-12 col-lg-6">
+                            <div class="card border rounded-3 h-100">
+                                <div class="card-header bg-light border-bottom py-2 px-3">
+                                    <h6 class="mb-0 fw-semibold">
+                                        <i class="fas fa-info-circle text-primary me-2"></i>Informações do Curso
+                                    </h6>
                                 </div>
-                            @endif
+                                <div class="card-body d-flex flex-column gap-3 p-3">
+
+                                    {{-- Nome --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Nome <span class="text-danger">*</span></label>
+                                        <input type="text" name="nome" class="form-control form-control-sm" value="{{ $curso->nome }}" required maxlength="100">
+                                    </div>
+
+                                    {{-- Área --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Área <span class="text-danger">*</span></label>
+                                        <input type="text" name="area" class="form-control form-control-sm" value="{{ $curso->area }}" required maxlength="100">
+                                    </div>
+
+                                    {{-- Modalidade + Status --}}
+                                    <div class="row g-3">
+                                        <div class="col-7">
+                                            <label class="form-label fw-medium small mb-1">Modalidade <span class="text-danger">*</span></label>
+                                            <select name="modalidade" class="form-select form-select-sm" required>
+                                                <option value="presencial" {{ $curso->modalidade === 'presencial' ? 'selected' : '' }}>Presencial</option>
+                                                <option value="online" {{ $curso->modalidade === 'online' ? 'selected' : '' }}>Online</option>
+                                                <option value="hibrido" {{ $curso->modalidade === 'hibrido' ? 'selected' : '' }}>Híbrido</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-5 d-flex align-items-end">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" name="ativo" id="editCursoAtivo" value="1" {{ $curso->ativo ? 'checked' : '' }}>
+                                                <label class="form-check-label small" for="editCursoAtivo">Ativo</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Imagem --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">
+                                            <i class="fas fa-image text-muted me-1"></i>Imagem
+                                        </label>
+                                        <input type="file" name="imagem" class="form-control form-control-sm" accept="image/jpeg,image/png,image/jpg,image/gif">
+                                        <div class="form-text small">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
+                                        @if($curso->imagem_url)
+                                            <div class="mt-2">
+                                                <small class="text-muted d-block mb-1">Imagem atual:</small>
+                                                <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" style="max-width: 100px; border-radius: 4px;">
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Status</label>
-                            <div class="form-check" style="margin-top: 32px;">
-                                <input type="checkbox" class="form-check-input" name="ativo" value="1" id="editCursoAtivo" {{ $curso->ativo ? "checked" : "" }}>
-                                <label class="form-check-label" for="editCursoAtivo">Curso Ativo</label>
+
+                        {{-- ====== COLUNA DIREITA ====== --}}
+                        <div class="col-12 col-lg-6">
+                            <div class="card border rounded-3 h-100">
+                                <div class="card-header bg-light border-bottom py-2 px-3">
+                                    <h6 class="mb-0 fw-semibold">
+                                        <i class="fas fa-file-alt text-primary me-2"></i>Conteúdo
+                                    </h6>
+                                </div>
+                                <div class="card-body d-flex flex-column gap-3 p-3">
+
+                                    {{-- Descrição --}}
+                                    <div>
+                                        <label class="form-label fw-medium small mb-1">Descrição</label>
+                                        <textarea name="descricao" class="form-control form-control-sm" rows="4" placeholder="Breve descrição do curso..." maxlength="1000">{{ $curso->descricao }}</textarea>
+                                    </div>
+
+                                    {{-- Programa --}}
+                                    <div class="flex-grow-1 d-flex flex-column">
+                                        <label class="form-label fw-medium small mb-1">Programa do Curso</label>
+                                        <textarea name="programa" class="form-control form-control-sm flex-grow-1" rows="6" placeholder="Conteúdo programático..." maxlength="5000">{{ $curso->programa }}</textarea>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Atualizar
-                    </button>
-                </div>
-            </form>
+
+                    {{-- ====== SEÇÃO DE CENTROS ====== --}}
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="fw-semibold mb-0">
+                                <i class="fas fa-building text-primary me-2"></i>Centros de Formação
+                            </h6>
+                            <button type="button" id="adicionarCentroEditBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Adicionar Centro
+                            </button>
+                        </div>
+                        <div id="centrosContainerEdit" class="row g-3">
+                            {{-- centros dinâmicos aqui --}}
+                        </div>
+                    </div>
+
+                    {{-- Footer buttons (dentro do form) --}}
+                    <div class="mt-4 d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary px-4" id="submitEditBtn">
+                            <i class="fas fa-save me-1"></i>Atualizar Curso
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+
+{{-- ============================================= --}}
+{{-- Template para Centro no Modal de Edição      --}}
+{{-- ============================================= --}}
+<template id="centroCursoEditTemplate">
+    <div class="col-12 col-md-6">
+        <div class="centro-card card border rounded-3 shadow-sm">
+            <div class="card-header bg-light d-flex align-items-center justify-content-between py-2 px-3">
+                <span class="badge bg-primary numero-centro-edit">Centro 1</span>
+                <button type="button" class="btn btn-outline-danger btn-sm remover-centro-edit py-0 px-2" title="Remover">
+                    <i class="fas fa-trash-alt small"></i>
+                </button>
+            </div>
+            <div class="card-body p-3">
+                <div class="d-flex flex-column gap-2">
+                    <div>
+                        <label class="form-label small mb-1 fw-medium">Centro <span class="text-danger">*</span></label>
+                        <select class="form-select form-select-sm centro-id-edit" required>
+                            <option value="">Selecione</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label small mb-1 fw-medium">Preço (Kz) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" min="0" class="form-control form-control-sm preco-edit" placeholder="0,00" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 
 {{-- ============================================= --}}
 {{-- MODAL: Associar Centro                        --}}
@@ -1077,6 +1208,312 @@ $("#formEditarturmaAjax").on("submit", function(e) {
             });
         }
     });
+});
+
+/**
+ * Modal Editar Curso - Lógica
+ */
+let centrosEditCount = 0;
+let centrosDisponiveisEditList = [];
+
+// Dados do curso para edição
+const cursoDataEdit = {!! json_encode([
+    'id' => $curso->id,
+    'centros' => $curso->centros
+]) !!};
+
+// Carregar centros disponíveis para edição
+function carregarCentrosEdit() {
+    $.ajax({
+        url: '/api/centros',
+        method: 'GET',
+        success: function(data) {
+            centrosDisponiveisEditList = data;
+        },
+        error: function(err) {
+            console.error('Erro ao carregar centros:', err);
+        }
+    });
+}
+
+// Abrir modal de edição
+$('#modalEditarCurso').on('show.bs.modal', function() {
+    $('#formEditarCursoAjax')[0].reset();
+    $('#centrosContainerEdit').empty();
+    centrosEditCount = 0;
+    
+    // Carregar dados existentes
+    carregarCentrosExistentesEdit();
+    
+    // Se não há centros, adicionar um vazio
+    if ($('#centrosContainerEdit').find('.col-12').length === 0) {
+        adicionarCentroEdit();
+    }
+});
+
+// Carregar centros existentes para edição
+function carregarCentrosExistentesEdit() {
+    if (!cursoDataEdit || !cursoDataEdit.centros || cursoDataEdit.centros.length === 0) {
+        return;
+    }
+    
+    cursoDataEdit.centros.forEach((centro, index) => {
+        try {
+            const template = document.getElementById('centroCursoEditTemplate');
+            if (!template) return;
+            
+            const clone = template.content.cloneNode(true);
+            const wrapper = document.createElement('div');
+            wrapper.appendChild(clone);
+            
+            let html = wrapper.innerHTML
+                .replace(/numero-centro-edit">Centro 1</, `numero-centro-edit">Centro ${index + 1}<`);
+            
+            const colDiv = document.createElement('div');
+            colDiv.innerHTML = html;
+            $('#centrosContainerEdit').append(colDiv.firstElementChild);
+            
+            // Preencher com dados existentes
+            const selects = $('#centrosContainerEdit').find('.centro-id-edit');
+            const lastSelect = selects.last();
+            
+            centrosDisponiveisEditList.forEach(c => {
+                lastSelect.append(`<option value="${c.id}">${c.nome}</option>`);
+            });
+            
+            lastSelect.val(centro.id);
+            const preco = centro.pivot && centro.pivot.preco ? centro.pivot.preco : '';
+            $('#centrosContainerEdit').find('.preco-edit').last().val(preco);
+            
+            centrosEditCount++;
+        } catch(e) {
+            console.error('Erro ao carregar centro:', e, centro);
+        }
+    });
+}
+
+// Adicionar centro no modal de edição
+function adicionarCentroEdit() {
+    try {
+        const template = document.getElementById('centroCursoEditTemplate');
+        if (!template) return;
+        
+        const clone = template.content.cloneNode(true);
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(clone);
+        
+        let html = wrapper.innerHTML
+            .replace(/numero-centro-edit">Centro 1</g, `numero-centro-edit">Centro ${centrosEditCount + 1}<`);
+        
+        const colDiv = document.createElement('div');
+        colDiv.innerHTML = html;
+        $('#centrosContainerEdit').append(colDiv.firstElementChild);
+        
+        const selects = $('#centrosContainerEdit').find('.centro-id-edit');
+        const lastSelect = selects.last();
+        
+        centrosDisponiveisEditList.forEach(centro => {
+            lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
+        });
+        
+        centrosEditCount++;
+        atualizarNumeroCentrosEdit();
+    } catch(e) {
+        console.error('Erro ao adicionar centro:', e);
+    }
+}
+
+// Atualizar numeração dos centros
+function atualizarNumeroCentrosEdit() {
+    const badges = $('#centrosContainerEdit').find('.numero-centro-edit');
+    badges.each((index, badge) => {
+        $(badge).text('Centro ' + (index + 1));
+    });
+
+    const btnsRemover = $('#centrosContainerEdit').find('.remover-centro-edit');
+    btnsRemover.prop('disabled', btnsRemover.length <= 1);
+}
+
+// Eventos do modal de edição
+$(document).on('click', '#adicionarCentroEditBtn', function(e) {
+    e.preventDefault();
+    adicionarCentroEdit();
+});
+
+$(document).on('click', '.remover-centro-edit', function(e) {
+    e.preventDefault();
+    $(this).closest('.col-12').remove();
+    atualizarNumeroCentrosEdit();
+});
+
+// Handler do formulário de edição
+$("#formEditarCursoAjax").on("submit", function(e) {
+    e.preventDefault();
+    
+    const $form = $(this);
+    const cursoId = $form.find("[name=\"curso_id\"]").val();
+    
+    const nome = $form.find("[name=\"nome\"]").val().trim();
+    const area = $form.find("[name=\"area\"]").val().trim();
+    const modalidade = $form.find("[name=\"modalidade\"]").val().trim();
+    
+    if (!nome || !area || !modalidade) {
+        Swal.fire("Erro!", "Preencha os campos obrigatórios (Nome, Área, Modalidade)", "error");
+        return;
+    }
+    
+    const centrosCount = $('#centrosContainerEdit').find('.centro-id-edit').length;
+    if (centrosCount === 0) {
+        Swal.fire("Erro!", "Adicione pelo menos um centro", "error");
+        return;
+    }
+    
+    let centroValido = true;
+    $('#centrosContainerEdit').find('.centro-card').each(function() {
+        const centroId = $(this).find('.centro-id-edit').val();
+        const preco = $(this).find('.preco-edit').val();
+        
+        if (!centroId || !preco) {
+            centroValido = false;
+            return false;
+        }
+    });
+    
+    if (!centroValido) {
+        Swal.fire("Erro!", "Preencha todos os dados dos centros (Centro, Preço)", "error");
+        return;
+    }
+    
+    const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
+    
+    if (imagemFile) {
+        // Com arquivo de imagem
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('descricao', $form.find("[name=\"descricao\"]").val().trim());
+        formData.append('programa', $form.find("[name=\"programa\"]").val().trim());
+        formData.append('area', area);
+        formData.append('modalidade', modalidade);
+        formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
+        formData.append('imagem', imagemFile);
+        
+        let index = 0;
+        $('#centrosContainerEdit').find('.centro-card').each(function() {
+            const centroId = $(this).find('.centro-id-edit').val();
+            const preco = $(this).find('.preco-edit').val();
+            
+            formData.append(`centros[${index}][centro_id]`, centroId);
+            formData.append(`centros[${index}][preco]`, preco);
+            index++;
+        });
+        
+        $.ajax({
+            url: `/api/cursos/${cursoId}`,
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            headers: {
+                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
+                "Accept": "application/json",
+                "X-HTTP-Method-Override": "PUT"
+            },
+            success: function(response) {
+                console.log("Sucesso:", response);
+                $("#modalEditarCurso").modal("hide");
+                Swal.fire({
+                    icon: "success",
+                    title: "Sucesso!",
+                    text: "Curso atualizado com sucesso!",
+                    timer: 2000
+                }).then(() => location.reload());
+            },
+            error: function(xhr, status, error) {
+                console.error("Status:", xhr.status);
+                console.error("Response:", xhr.responseText);
+                
+                let message = "Erro desconhecido";
+                
+                if (xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Erro!",
+                    text: message || "Erro ao atualizar curso."
+                });
+            }
+        });
+    } else {
+        // Sem arquivo - usar JSON
+        const formData = {
+            nome: nome,
+            descricao: $form.find("[name=\"descricao\"]").val().trim(),
+            programa: $form.find("[name=\"programa\"]").val().trim(),
+            area: area,
+            modalidade: modalidade,
+            ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0,
+            centros: []
+        };
+        
+        $('#centrosContainerEdit').find('.centro-card').each(function() {
+            const centroId = $(this).find('.centro-id-edit').val();
+            const preco = $(this).find('.preco-edit').val();
+            
+            formData.centros.push({
+                centro_id: centroId,
+                preco: preco
+            });
+        });
+        
+        $.ajax({
+            url: `/api/cursos/${cursoId}`,
+            type: "PUT",
+            data: JSON.stringify(formData),
+            contentType: "application/json",
+            dataType: "json",
+            headers: {
+                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
+                "Accept": "application/json"
+            },
+            success: function(response) {
+                console.log("Sucesso:", response);
+                $("#modalEditarCurso").modal("hide");
+                Swal.fire({
+                    icon: "success",
+                    title: "Sucesso!",
+                    text: "Curso atualizado com sucesso!",
+                    timer: 2000
+                }).then(() => location.reload());
+            },
+            error: function(xhr, status, error) {
+                console.error("Status:", xhr.status);
+                console.error("Response:", xhr.responseText);
+                
+                let message = "Erro desconhecido";
+                
+                if (xhr.responseJSON?.errors) {
+                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                
+                Swal.fire({
+                    icon: "error",
+                    title: "Erro!",
+                    text: message || "Erro ao atualizar curso."
+                });
+            }
+        });
+    }
+});
+
+// Inicializar
+$(document).ready(function() {
+    carregarCentrosEdit();
 });
 
 /**

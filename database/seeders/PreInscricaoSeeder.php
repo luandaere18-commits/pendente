@@ -32,14 +32,22 @@ class PreInscricaoSeeder extends Seeder
         // ]);
 
         $now = now();
-        PreInscricao::insert([
-            ['turma_id' => 1, 'nome_completo' => 'João Pedro', 'contactos' => json_encode(['923111111']), 'email' => 'joao@teste.com', 'status' => 'pendente', 'observacoes' => 'Quero estudar à tarde.', 'created_at' => $now, 'updated_at' => $now],
-            ['turma_id' => 2, 'nome_completo' => 'Maria Luísa', 'contactos' => json_encode(['923222222']), 'email' => 'maria@teste.com', 'status' => 'confirmado', 'observacoes' => null, 'created_at' => $now, 'updated_at' => $now],
-            ['turma_id' => 3, 'nome_completo' => 'Carlos Pinto', 'contactos' => json_encode(['923333333']), 'email' => 'carlos@teste.com', 'status' => 'pendente', 'observacoes' => 'Preferência para manhã.', 'created_at' => $now, 'updated_at' => $now],
-            ['turma_id' => 4, 'nome_completo' => 'Ana Paula', 'contactos' => json_encode(['923444444']), 'email' => 'ana@teste.com', 'status' => 'pendente', 'observacoes' => null, 'created_at' => $now, 'updated_at' => $now],
-            ['turma_id' => 5, 'nome_completo' => 'Bruno Dias', 'contactos' => json_encode(['923555555']), 'email' => 'bruno@teste.com', 'status' => 'pendente', 'observacoes' => 'Quero estudar online.', 'created_at' => $now, 'updated_at' => $now],
-            ['turma_id' => 6, 'nome_completo' => 'Carla Torres', 'contactos' => json_encode(['923666666']), 'email' => 'carla@teste.com', 'status' => 'pendente', 'observacoes' => null, 'created_at' => $now, 'updated_at' => $now],
-            ['turma_id' => 7, 'nome_completo' => 'Daniel Lima', 'contactos' => json_encode(['923777777']), 'email' => 'daniel@teste.com', 'status' => 'pendente', 'observacoes' => null, 'created_at' => $now, 'updated_at' => $now],
-        ]);
+
+        $inscricoes = [
+            ['turma_id' => 1, 'nome_completo' => 'João Pedro', 'contactos' => ['923111111'], 'email' => 'joao@teste.com', 'status' => 'pendente', 'observacoes' => 'Quero estudar à tarde.'],
+            ['turma_id' => 2, 'nome_completo' => 'Maria Luísa', 'contactos' => ['923222222'], 'email' => 'maria@teste.com', 'status' => 'confirmado', 'observacoes' => null],
+            ['turma_id' => 3, 'nome_completo' => 'Carlos Pinto', 'contactos' => ['923333333'], 'email' => 'carlos@teste.com', 'status' => 'pendente', 'observacoes' => 'Preferência para manhã.'],
+            ['turma_id' => 4, 'nome_completo' => 'Ana Paula', 'contactos' => ['923444444'], 'email' => 'ana@teste.com', 'status' => 'pendente', 'observacoes' => null],
+            ['turma_id' => 5, 'nome_completo' => 'Bruno Dias', 'contactos' => ['923555555'], 'email' => 'bruno@teste.com', 'status' => 'pendente', 'observacoes' => 'Quero estudar online.'],
+            ['turma_id' => 6, 'nome_completo' => 'Carla Torres', 'contactos' => ['923666666'], 'email' => 'carla@teste.com', 'status' => 'pendente', 'observacoes' => null],
+            ['turma_id' => 7, 'nome_completo' => 'Daniel Lima', 'contactos' => ['923777777'], 'email' => 'daniel@teste.com', 'status' => 'pendente', 'observacoes' => null],
+        ];
+
+        foreach ($inscricoes as $inscricao) {
+            PreInscricao::updateOrCreate(
+                ['turma_id' => $inscricao['turma_id'], 'email' => $inscricao['email']],
+                array_merge($inscricao, ['updated_at' => $now, 'created_at' => $now])
+            );
+        }
     }
 }

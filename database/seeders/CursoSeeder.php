@@ -36,14 +36,22 @@ class CursoSeeder extends Seeder
         // ]);
 
         $now = now();
-        Curso::insert([
-        ['nome' => 'Informática Básica', 'descricao' => 'Curso de introdução à informática.', 'programa' => 'Windows, Word, Excel', 'area' => 'Tecnologia', 'modalidade' => 'presencial', 'ativo' => true, 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Gestão Empresarial', 'descricao' => 'Curso de gestão.', 'programa' => 'Administração, RH', 'area' => 'Gestão', 'modalidade' => 'presencial', 'ativo' => true, 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Inglês', 'descricao' => 'Curso de inglês básico.', 'programa' => 'Gramática, Conversação', 'area' => 'Idiomas', 'modalidade' => 'online', 'ativo' => true, 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Matemática Aplicada', 'descricao' => 'Curso de matemática.', 'programa' => 'Álgebra, Estatística', 'area' => 'Ciências', 'modalidade' => 'presencial', 'ativo' => true, 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Programação Web', 'descricao' => 'Curso de web.', 'programa' => 'HTML, CSS, JS', 'area' => 'Tecnologia', 'modalidade' => 'online', 'ativo' => true, 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Contabilidade', 'descricao' => 'Curso de contabilidade.', 'programa' => 'Balanço, Fiscal', 'area' => 'Gestão', 'modalidade' => 'presencial', 'ativo' => true, 'created_at' => $now, 'updated_at' => $now],
-        ['nome' => 'Design Gráfico', 'descricao' => 'Curso de design.', 'programa' => 'Photoshop, Illustrator', 'area' => 'Artes', 'modalidade' => 'online', 'ativo' => true, 'created_at' => $now, 'updated_at' => $now],
-    ]);
+
+        $cursos = [
+            ['nome' => 'Informática Básica', 'descricao' => 'Curso de introdução à informática.', 'programa' => 'Windows, Word, Excel', 'area' => 'Tecnologia', 'modalidade' => 'presencial', 'ativo' => true],
+            ['nome' => 'Gestão Empresarial', 'descricao' => 'Curso de gestão.', 'programa' => 'Administração, RH', 'area' => 'Gestão', 'modalidade' => 'presencial', 'ativo' => true],
+            ['nome' => 'Inglês', 'descricao' => 'Curso de inglês básico.', 'programa' => 'Gramática, Conversação', 'area' => 'Idiomas', 'modalidade' => 'online', 'ativo' => true],
+            ['nome' => 'Matemática Aplicada', 'descricao' => 'Curso de matemática.', 'programa' => 'Álgebra, Estatística', 'area' => 'Ciências', 'modalidade' => 'presencial', 'ativo' => true],
+            ['nome' => 'Programação Web', 'descricao' => 'Curso de web.', 'programa' => 'HTML, CSS, JS', 'area' => 'Tecnologia', 'modalidade' => 'online', 'ativo' => true],
+            ['nome' => 'Contabilidade', 'descricao' => 'Curso de contabilidade.', 'programa' => 'Balanço, Fiscal', 'area' => 'Gestão', 'modalidade' => 'presencial', 'ativo' => true],
+            ['nome' => 'Design Gráfico', 'descricao' => 'Curso de design.', 'programa' => 'Photoshop, Illustrator', 'area' => 'Artes', 'modalidade' => 'online', 'ativo' => true],
+        ];
+
+        foreach ($cursos as $curso) {
+            Curso::updateOrCreate(
+                ['nome' => $curso['nome']],
+                array_merge($curso, ['updated_at' => $now, 'created_at' => $now])
+            );
+        }
     }
 }

@@ -97,7 +97,8 @@ class CursoController extends Controller
 
     public function show(Curso $curso)
     {
-        $curso->load(['centros', 'turmas']);
+        // Eager load relationships to avoid N+1 when exibiting turmas com centro/formador
+        $curso->load(['centros', 'turmas.centro', 'turmas.formador']);
         $centros = Centro::all();
         $formadores = Formador::all();
         return view('cursos.show', compact('curso', 'centros', 'formadores'));
@@ -105,7 +106,7 @@ class CursoController extends Controller
 
     public function edit(Curso $curso)
     {
-        $curso->load(['centros', 'turmas']);
+        $curso->load(['centros', 'turmas.centro', 'turmas.formador']);
         $centros = Centro::all();
         $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
         $periodos = ['manhã', 'tarde', 'noite'];

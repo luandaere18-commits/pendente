@@ -38,6 +38,7 @@
                         <tr>
                             <th class="ps-2" style="width:50px">ID</th>
                             <th style="width:200px">Curso</th>
+                            <th style="width:150px">Centro</th>
                             <th style="width:160px">Formador</th>
                             <th class="d-none d-lg-table-cell" style="width:150px">Dias</th>
                             <th class="text-center" style="width:110px">Status</th>
@@ -50,7 +51,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
+                            <td colspan="11" class="text-center py-5 text-muted">
                                 <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
                                 Carregando turmas...
                             </td>
@@ -511,10 +512,11 @@ function carregarTurmas() {
             let html = '';
             
             if (data.length === 0) {
-                html = '<tr><td colspan="10" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhuma turma encontrada</td></tr>';
+                html = '<tr><td colspan="11" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhuma turma encontrada</td></tr>';
             } else {
                 data.forEach(function(turma) {
                     const cursoNome = turma.curso ? turma.curso.nome : 'N/A';
+                    const centroNome = turma.centro ? turma.centro.nome : 'N/A';
                     
                     // Formador com indicador claro
                     let formadorDisplay = '';
@@ -545,6 +547,7 @@ function carregarTurmas() {
                         <tr>
                             <td class="ps-2"><strong class="text-muted small">#${turma.id}</strong></td>
                             <td><strong class="small">${cursoNome}</strong></td>
+                            <td><small class="text-primary"><i class="fas fa-building me-1"></i>${centroNome}</small></td>
                             <td>${formadorDisplay}</td>
                             <td class="d-none d-lg-table-cell"><small>${diaSemana}</small></td>
                             <td class="text-center">${statusBadge}</td>
@@ -569,7 +572,7 @@ function carregarTurmas() {
         error: function(err) {
             console.error('Erro ao carregar turmas:', err);
             $('#turmasTable tbody').html(
-                '<tr><td colspan="10" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
+                '<tr><td colspan="11" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
             );
         }
     });

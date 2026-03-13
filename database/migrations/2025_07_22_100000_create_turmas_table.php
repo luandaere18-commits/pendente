@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('turmas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('curso_id')->constrained('cursos')->onDelete('cascade');
+            // campo para especificar em qual centro do curso a turma será oferecida
+            $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
             $table->foreignId('formador_id')->nullable()->constrained('formadores')
                 ->onDelete('set null');
             $table->unsignedInteger('duracao_semanas')->nullable();

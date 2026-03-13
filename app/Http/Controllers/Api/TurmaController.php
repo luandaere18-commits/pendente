@@ -29,7 +29,7 @@ class TurmaController extends Controller
      */
     public function index()
     {
-        $turmas = Turma::with(['curso', 'formador'])->get();
+        $turmas = Turma::with(['curso', 'formador', 'centro'])->get();
         return response()->json($turmas);
     }
 
@@ -54,6 +54,7 @@ class TurmaController extends Controller
     {
         $validated = $request->validate([
             'curso_id' => 'required|exists:cursos,id',
+            'centro_id' => 'required|exists:centros,id',
             'formador_id' => 'nullable|exists:formadores,id',
             'data_arranque' => 'required|date|after:today',
             'duracao_semanas' => 'nullable|integer|min:1',
@@ -182,6 +183,7 @@ class TurmaController extends Controller
         
         // Não permite editar curso_id
         $validated = $request->validate([
+            'centro_id' => 'nullable|exists:centros,id',
             'formador_id' => 'nullable|exists:formadores,id',
             'data_arranque' => 'nullable|date|after:today',
             'duracao_semanas' => 'nullable|integer|min:1',
