@@ -147,10 +147,36 @@ class CursoController extends Controller
 
         // Processar upload de imagem
         if ($request->hasFile('imagem')) {
-            $file = $request->file('imagem');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('cursos', $filename, 'public');
-            $cursoData['imagem_url'] = '/storage/' . $path;
+            try {
+                \Log::info('Upload de imagem iniciado', [
+                    'file_name' => $request->file('imagem')->getClientOriginalName(),
+                    'file_size' => $request->file('imagem')->getSize(),
+                    'file_mime' => $request->file('imagem')->getMimeType(),
+                ]);
+                
+                // Garantir que o directório existe
+                $storePath = storage_path('app/public/cursos');
+                if (!is_dir($storePath)) {
+                    mkdir($storePath, 0755, true);
+                    \Log::info('Directório criado: ' . $storePath);
+                }
+                
+                $file = $request->file('imagem');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('cursos', $filename, 'public');
+                $cursoData['imagem_url'] = '/storage/' . $path;
+                
+                \Log::info('Imagem guardada com sucesso', [
+                    'path' => $path,
+                    'url' => $cursoData['imagem_url'],
+                ]);
+            } catch (\Exception $imgError) {
+                \Log::error('Erro ao processar imagem: ' . $imgError->getMessage(), [
+                    'exception' => $imgError,
+                    'trace' => $imgError->getTraceAsString(),
+                ]);
+                throw $imgError;
+            }
         }
 
         // Atualizar o Curso
@@ -187,10 +213,21 @@ class CursoController extends Controller
         return redirect()->route('cursos.index')
             ->with('success', 'Curso atualizado com sucesso!');
         } catch (\Exception $e) {
+            \Log::error('Erro ao atualizar curso: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all(),
+            ]);
+            
             if ($isApi) {
-                return response()->json(['error' => 'Erro ao atualizar curso: ' . $e->getMessage()], 500);
+                return response()->json([
+                    'status' => 'erro',
+                    'error' => $e->getMessage(),
+                    'debug' => config('app.debug') ? $e->getTraceAsString() : null,
+                    'message' => 'Erro ao atualizar curso'
+                ], 500);
             }
-            return redirect()->back()->withErrors(['error' => 'Erro desconhecido ao atualizar curso: ' . $e->getMessage()])->withInput();
+            return redirect()->back()->withErrors(['error' => 'Erro ao atualizar curso: ' . $e->getMessage()])->withInput();
         }
     }
 

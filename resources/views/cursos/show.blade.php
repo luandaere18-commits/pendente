@@ -765,131 +765,6 @@
 const cursoId = {{ $curso->id }};
 
 /**
- * Editar Curso - AJAX
- */
-$("#formEditarCursoAjax").on("submit", function(e) {
-    e.preventDefault();
-    
-    const $form = $(this);
-    const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
-    
-    // Validação básica
-    const nome = $form.find("[name=\"nome\"]").val().trim();
-    const area = $form.find("[name=\"area\"]").val().trim();
-    if (!nome || !area) {
-        Swal.fire("Erro!", "Preencha os campos obrigatórios", "error");
-        return;
-    }
-    
-    // Se houver arquivo, usar FormData, senão usar JSON
-    if (imagemFile) {
-        const formData = new FormData();
-        formData.append('nome', nome);
-        formData.append('descricao', $form.find("[name=\"descricao\"]").val().trim());
-        formData.append('programa', $form.find("[name=\"programa\"]").val().trim());
-        formData.append('area', area);
-        formData.append('modalidade', $form.find("[name=\"modalidade\"]").val().trim());
-        formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
-        formData.append('imagem', imagemFile);
-        
-        $.ajax({
-            url: `/api/cursos/${cursoId}`,
-            type: "PUT",
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: {
-                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                console.log("Sucesso:", response);
-                $("#modalEditarCurso").modal("hide");
-                Swal.fire({
-                    icon: "success",
-                    title: "Sucesso!",
-                    text: "Curso atualizado com sucesso!",
-                    timer: 2000
-                }).then(() => location.reload());
-            },
-            error: function(xhr, status, error) {
-                console.error("Status:", xhr.status);
-                console.error("Response:", xhr.responseText);
-                
-                let message = "Erro desconhecido";
-                if (xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                }
-                
-                Swal.fire({
-                    icon: "error",
-                    title: "Erro!",
-                    text: message || "Erro ao atualizar curso."
-                });
-            }
-        });
-    } else {
-        // Sem arquivo - usar JSON como antes
-        const formData = {
-            nome: nome,
-            descricao: $form.find("[name=\"descricao\"]").val().trim(),
-            programa: $form.find("[name=\"programa\"]").val().trim(),
-            area: area,
-            modalidade: $form.find("[name=\"modalidade\"]").val().trim(),
-            ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0
-        };
-        
-        $.ajax({
-            url: `/api/cursos/${cursoId}`,
-            type: "PUT",
-            data: JSON.stringify(formData),
-            contentType: "application/json",
-            dataType: "json",
-            headers: {
-                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
-                "Accept": "application/json"
-            },
-            success: function(response) {
-                console.log("Sucesso:", response);
-                $("#modalEditarCurso").modal("hide");
-                Swal.fire({
-                    icon: "success",
-                    title: "Sucesso!",
-                    text: "Curso atualizado com sucesso!",
-                    timer: 2000
-                }).then(() => location.reload());
-            },
-            error: function(xhr, status, error) {
-                console.error("Status:", xhr.status);
-                console.error("Status Text:", xhr.statusText);
-                console.error("Response:", xhr.responseText);
-                console.error("Response JSON:", xhr.responseJSON);
-                
-                let message = "Erro desconhecido";
-                
-                if (xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
-                } else if (xhr.responseJSON?.mensagem) {
-                    message = xhr.responseJSON.mensagem;
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                } else if (xhr.responseJSON?.error) {
-                    message = xhr.responseJSON.error;
-                }
-                
-                Swal.fire({
-                    icon: "error",
-                    title: "Erro!",
-                    text: message || "Erro ao atualizar curso."
-                });
-            }
-        });
-    }
-});
-
-/**
  * Adicionar Centro - AJAX
  */
 $("#formAdicionarCentroAjax").on("submit", function(e) {
@@ -1240,7 +1115,14 @@ function carregarCentrosEdit() {
 
 // Abrir modal de edição
 $('#modalEditarCurso').on('show.bs.modal', function() {
+    // Guardar o curso_id antes de resetar
+    const cursoIdValue = $('#formEditarCursoAjax').find("[name=\"curso_id\"]").val();
+    
     $('#formEditarCursoAjax')[0].reset();
+    
+    // Restaurar o curso_id após reset
+    $('#formEditarCursoAjax').find("[name=\"curso_id\"]").val(cursoIdValue);
+    
     $('#centrosContainerEdit').empty();
     centrosEditCount = 0;
     
@@ -1355,6 +1237,14 @@ $("#formEditarCursoAjax").on("submit", function(e) {
     const $form = $(this);
     const cursoId = $form.find("[name=\"curso_id\"]").val();
     
+    console.log("DEBUG: cursoId =", cursoId);
+    console.log("DEBUG: form data =", $form.serializeArray());
+    
+    if (!cursoId) {
+        Swal.fire("Erro!", "ID do curso não encontrado no formulário", "error");
+        return;
+    }
+    
     const nome = $form.find("[name=\"nome\"]").val().trim();
     const area = $form.find("[name=\"area\"]").val().trim();
     const modalidade = $form.find("[name=\"modalidade\"]").val().trim();
@@ -1404,8 +1294,8 @@ $("#formEditarCursoAjax").on("submit", function(e) {
             const centroId = $(this).find('.centro-id-edit').val();
             const preco = $(this).find('.preco-edit').val();
             
-            formData.append(`centros[${index}][centro_id]`, centroId);
-            formData.append(`centros[${index}][preco]`, preco);
+            formData.append(`centro_curso[${index}][centro_id]`, centroId);
+            formData.append(`centro_curso[${index}][preco]`, preco);
             index++;
         });
         
@@ -1432,14 +1322,24 @@ $("#formEditarCursoAjax").on("submit", function(e) {
             },
             error: function(xhr, status, error) {
                 console.error("Status:", xhr.status);
-                console.error("Response:", xhr.responseText);
+                console.error("StatusText:", xhr.statusText);
+                console.error("Response Text:", xhr.responseText);
+                console.error("Response JSON:", xhr.responseJSON);
+                console.error("Error:", error);
                 
                 let message = "Erro desconhecido";
                 
+                // Tentar diferentes estruturas de resposta
                 if (xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors).flat().join("\n");
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
+                } else if (xhr.responseJSON?.error) {
+                    message = xhr.responseJSON.error;
+                } else if (xhr.responseJSON?.data?.message) {
+                    message = xhr.responseJSON.data.message;
+                } else if (xhr.responseText) {
+                    message = "Resposta: " + xhr.responseText.substring(0, 200);
                 }
                 
                 Swal.fire({
@@ -1458,14 +1358,14 @@ $("#formEditarCursoAjax").on("submit", function(e) {
             area: area,
             modalidade: modalidade,
             ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0,
-            centros: []
+            centro_curso: []
         };
         
         $('#centrosContainerEdit').find('.centro-card').each(function() {
             const centroId = $(this).find('.centro-id-edit').val();
             const preco = $(this).find('.preco-edit').val();
             
-            formData.centros.push({
+            formData.centro_curso.push({
                 centro_id: centroId,
                 preco: preco
             });
@@ -1493,14 +1393,24 @@ $("#formEditarCursoAjax").on("submit", function(e) {
             },
             error: function(xhr, status, error) {
                 console.error("Status:", xhr.status);
-                console.error("Response:", xhr.responseText);
+                console.error("StatusText:", xhr.statusText);
+                console.error("Response Text:", xhr.responseText);
+                console.error("Response JSON:", xhr.responseJSON);
+                console.error("Error:", error);
                 
                 let message = "Erro desconhecido";
                 
+                // Tentar diferentes estruturas de resposta
                 if (xhr.responseJSON?.errors) {
                     message = Object.values(xhr.responseJSON.errors).flat().join("\n");
                 } else if (xhr.responseJSON?.message) {
                     message = xhr.responseJSON.message;
+                } else if (xhr.responseJSON?.error) {
+                    message = xhr.responseJSON.error;
+                } else if (xhr.responseJSON?.data?.message) {
+                    message = xhr.responseJSON.data.message;
+                } else if (xhr.responseText) {
+                    message = "Resposta: " + xhr.responseText.substring(0, 200);
                 }
                 
                 Swal.fire({
