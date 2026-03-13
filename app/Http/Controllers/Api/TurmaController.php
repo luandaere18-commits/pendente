@@ -72,13 +72,6 @@ class TurmaController extends Controller
             
             \Log::info('Dados validados com sucesso:', $validated);
 
-        // Normalizar período (caso venha 'manha' com acento)
-        if ($validated['periodo'] === 'manha') {
-            $validated['periodo'] = 'manha';
-        }
-        
-        \Log::info('Api\TurmaController@store - Período normalizado:', ['periodo' => $validated['periodo']]); // CORRIGIDO: array
-        
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {
             $validated['status'] = 'planeada';
@@ -224,11 +217,6 @@ class TurmaController extends Controller
             'vagas_totais' => 'nullable|integer|min:1',
             'publicado' => 'nullable|boolean'
         ]);
-        
-        // Normalizar período (caso venha 'manha' com acento)
-        if ($validated['periodo'] === 'manha') {
-            $validated['periodo'] = 'manha';
-        }
         
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {

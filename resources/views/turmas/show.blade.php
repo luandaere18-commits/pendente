@@ -61,8 +61,8 @@
                         <div class="col-md-4">
                             <p class="mb-1"><strong><i class="fas fa-clock me-1"></i>Horário:</strong></p>
                             <p class="text-muted">
-                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $turma->hora_inicio)->format('H:i') }} - 
-                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $turma->hora_fim)->format('H:i') }}
+                                {{ $turma->hora_inicio }} - 
+                                {{ $turma->hora_fim }}
                             </p>
                         </div>
                     </div>
@@ -250,7 +250,7 @@
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Período</label>
                             <select id="periodoShow" class="form-select" required>
-                                <option value="manha" {{ $turma->periodo === 'manha' ? 'selected' : '' }}>Manha</option>
+                                <option value="manha" {{ $turma->periodo === 'manha' || $turma->periodo === 'manhã' ? 'selected' : '' }}>Manha</option>
                                 <option value="tarde" {{ $turma->periodo === 'tarde' ? 'selected' : '' }}>Tarde</option>
                                 <option value="noite" {{ $turma->periodo === 'noite' ? 'selected' : '' }}>Noite</option>
                             </select>
@@ -266,11 +266,11 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Hora Início</label>
-                            <input type="time" id="horaInicioShow" value="{{ \Carbon\Carbon::createFromFormat('H:i:s', $turma->hora_inicio)->format('H:i') }}" class="form-control" required>
+                            <input type="time" id="horaInicioShow" value="{{ $turma->hora_inicio }}" class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Hora Fim</label>
-                            <input type="time" id="horaFimShow" value="{{ \Carbon\Carbon::createFromFormat('H:i:s', $turma->hora_fim)->format('H:i') }}" class="form-control">
+                            <input type="time" id="horaFimShow" value="{{ $turma->hora_fim }}" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Duração (Semanas)</label>
@@ -411,7 +411,7 @@ function configurarFormulario() {
             return;
         }
 
-        // CORREÇÃO 2: Formatar horas corretamente (adicionar :00)
+        // CORREÇÃO 2: Formatar horas corretamente (sem adicionar :00)
         const horaInicio = $('#horaInicioShow').val();
         const horaFim = $('#horaFimShow').val();
         
@@ -424,8 +424,8 @@ function configurarFormulario() {
             centro_id: centroId, // CAMPO ADICIONADO
             periodo: $('#periodoShow').val(), // Já vem no formato correto da BD
             status: $('#statusShow').val(),
-            hora_inicio: horaInicio + ':00', // CORREÇÃO: adicionar segundos
-            hora_fim: horaFim ? horaFim + ':00' : null, // CORREÇÃO: adicionar segundos se existir
+            hora_inicio: horaInicio, // CORRIGIDO: enviar apenas H:i
+            hora_fim: horaFim || null, // CORRIGIDO: enviar apenas H:i ou null
             duracao_semanas: $('#duracaoShow').val() || null,
             data_arranque: $('#dataArranqueShow').val(),
             formador_id: $('#formadorIdShow').val() || null,
