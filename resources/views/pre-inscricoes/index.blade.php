@@ -96,7 +96,7 @@
                                 </td>
                                 <td class="text-center">
                                     @if($preInscricao->turma)
-                                        <span class="badge bg-secondary">{{ ucfirst(str_replace('manhã', 'Manhã', str_replace('tarde', 'Tarde', str_replace('noite', 'Noite', $preInscricao->turma->periodo)))) }}</span>
+                                        <span class="badge bg-secondary">{{ ucfirst(str_replace('manha', 'Manha', str_replace('tarde', 'Tarde', str_replace('noite', 'Noite', $preInscricao->turma->periodo)))) }}</span>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif

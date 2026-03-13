@@ -22,7 +22,7 @@ return new class extends Migration
             $table->enum('status', ['planeada', 'inscricoes_abertas', 'em_andamento', 'concluida'])->default('planeada');
             $table->date('data_arranque');
             $table->json('dia_semana', ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']);
-            $table->enum('periodo', ['manhã', 'tarde', 'noite']);
+            $table->enum('periodo', ['manha', 'tarde', 'noite']);
             $table->time('hora_inicio')->nullable();   // Hora de início da aula
             $table->time('hora_fim')->nullable();      // Hora de fim da aula
             $table->unsignedInteger('vagas_totais')->nullable();  // Total de vagas disponíveis

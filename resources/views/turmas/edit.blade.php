@@ -96,7 +96,7 @@
                                 <label for="periodo" class="form-label">Período <span class="text-danger">*</span></label>
                                 <select class="form-select" id="periodo" name="periodo" required>
                                     <option value="">Selecione o período</option>
-                                    <option value="manha" {{ $turma->periodo == 'manha' ? 'selected' : '' }}>Manhã</option>
+                                    <option value="manha" {{ $turma->periodo == 'manha' ? 'selected' : '' }}>Manha</option>
                                     <option value="tarde" {{ $turma->periodo == 'tarde' ? 'selected' : '' }}>Tarde</option>
                                     <option value="noite" {{ $turma->periodo == 'noite' ? 'selected' : '' }}>Noite</option>
                                 </select>
@@ -155,21 +155,21 @@
                     <ul class="small">
                         <li><strong>Curso:</strong> Selecione o curso que será ministrado</li>
                         <li><strong>Dias:</strong> Dias da semana das aulas (pode selecionar múltiplos)</li>
-                        <li><strong>Período:</strong> Manhã, tarde ou noite</li>
+                        <li><strong>Período:</strong> Manha, tarde ou noite</li>
                         <li><strong>Horas:</strong> Especifique horários exatos de início e fim</li>
                         <li><strong>Duração:</strong> Número de semanas da turma</li>
                     </ul>
                     
                     <h6 class="mt-3">Períodos sugeridos:</h6>
                     <ul class="small">
-                        <li><strong>Manhã:</strong> 07:00 - 12:00</li>
+                        <li><strong>Manha:</strong> 07:00 - 12:00</li>
                         <li><strong>Tarde:</strong> 12:00 - 18:00</li>
                         <li><strong>Noite:</strong> 18:00 - 22:00</li>
                     </ul>
                     
                     <h6 class="mt-3">Validação de Horários:</h6>
                     <ul class="small">
-                        <li><strong>Manhã:</strong> 07:00 até 11:59</li>
+                        <li><strong>Manha:</strong> 07:00 até 11:59</li>
                         <li><strong>Tarde:</strong> 12:00 até 17:59</li>
                         <li><strong>Noite:</strong> 18:00 até 21:59</li>
                     </ul>
@@ -342,7 +342,7 @@ function atualizarPreview() {
 function getPeriodoBadge(periodo) {
     switch(periodo) {
         case 'manha':
-            return '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manhã</span>';
+            return '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manha</span>';
         case 'tarde':
             return '<span class="badge bg-primary"><i class="fas fa-cloud-sun me-1"></i>Tarde</span>';
         case 'noite':

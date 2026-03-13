@@ -52,7 +52,7 @@ fetch('/api/turmas')
 {
   "id": 1,
   "curso_id": 7,
-  "periodo": "manhã",
+  "periodo": "manha",
   "hora_inicio": "08:00",
   "hora_fim": "12:00",
   "data_arranque": "2024-03-15",

@@ -309,6 +309,7 @@
                                                         data-periodo="{{ $turma->periodo }}"
                                                         data-hora-inicio="{{ $turma->hora_inicio }}"
                                                         data-hora-fim="{{ $turma->hora_fim }}"
+                                                        data-centro-id="{{ $turma->centro_id }}"
                                                         data-status="{{ $turma->status }}"
                                                         type="button"
                                                         title="Editar">
@@ -631,11 +632,17 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Centro <span class="text-danger">*</span></label>
+                            <select class="form-select" name="centro_id" id="adicionarturmaCentro" required>
+                                <option value="" disabled selected>Selecione um centro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="periodo" required>
                                 <option value="" disabled selected>Selecione</option>
-                                <option value="manhã">Manhã</option>
+                                <option value="manha">Manha</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -717,11 +724,17 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Centro <span class="text-danger">*</span></label>
+                            <select class="form-select" name="edit_centro_id" id="edittturmaCentro" required>
+                                <option value="" disabled selected>Selecione um centro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
                             <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
                             <select class="form-select" name="edit_periodo" id="editturmaPeriodo" required>
                                 <option value="">Selecione</option>
-                                <option value="manha">Manhã</option>
+                                <option value="manha">Manha</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
@@ -923,6 +936,32 @@ $(document).on("click", ".btn-remover-centro", function() {
 });
 
 /**
+ * Adicionar turma - Popula centros quando modal abre
+ */
+$("#modalAdicionarturma").on("show.bs.modal", function() {
+    // Limpar e popular o select de centros
+    $.ajax({
+        url: `/api/cursos/${cursoId}`,
+        method: "GET",
+        success: function(curso) {
+            let options = '<option value="" disabled selected>Selecione um centro</option>';
+            if (curso.centros && curso.centros.length > 0) {
+                curso.centros.forEach(function(centro) {
+                    options += `<option value="${centro.id}">${centro.nome}</option>`;
+                });
+            } else {
+                options = '<option value="" disabled>Nenhum centro associado</option>';
+            }
+            $("#adicionarturmaCentro").html(options);
+        },
+        error: function(err) {
+            console.error("Erro ao carregar centros:", err);
+            $("#adicionarturmaCentro").html('<option value="" disabled>Erro ao carregar centros</option>');
+        }
+    });
+});
+
+/**
  * Adicionar turma - AJAX
  */
 $("#formAdicionarturmaAjax").on("submit", function(e) {
@@ -944,6 +983,7 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
     
     const formData = {
         curso_id: cursoId,
+        centro_id: $form.find("select[name=\"centro_id\"]").val(),
         dia_semana: dias,
         data_arranque: $form.find("input[name=\"data_arranque\"]").val(),
         duracao_semanas: $form.find("input[name=\"duracao_semanas\"]").val() || null,
@@ -985,7 +1025,7 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
 });
 
 /**
- * Editar turma - Abre Modal
+ * Editar turma - Abre Modal e Popula centros
  */
 $(document).on("click", ".btn-editar-turma", function() {
     const id = $(this).data("turma-id");
@@ -997,13 +1037,14 @@ $(document).on("click", ".btn-editar-turma", function() {
     const horaFim = $(this).data("hora-fim");
     const formadorId = $(this).data("formador-id");
     const status = $(this).data("status");
+    const centroId = $(this).data("centro-id");
     
     if (typeof dias === "string") {
         dias = JSON.parse(dias);
     }
     
-    // Normalizar período: "manhã" -> "manha"
-    if (periodo === "manhã") {
+    // Normalizar período: "manha" -> "manha"
+    if (periodo === "manha") {
         periodo = "manha";
     }
     
@@ -1015,6 +1056,30 @@ $(document).on("click", ".btn-editar-turma", function() {
     $("#editturmaHoraInicio").val(horaInicio ? horaInicio.substring(0, 5) : "");
     $("#editturmaHoraFim").val(horaFim ? horaFim.substring(0, 5) : "");
     $("#editturmaStatus").val(status);
+    
+    // Popular centros
+    $.ajax({
+        url: `/api/cursos/${cursoId}`,
+        method: "GET",
+        success: function(curso) {
+            let options = '<option value="">Selecione um centro</option>';
+            if (curso.centros && curso.centros.length > 0) {
+                curso.centros.forEach(function(centro) {
+                    options += `<option value="${centro.id}">${centro.nome}</option>`;
+                });
+            }
+            $("#edittturmaCentro").html(options);
+            
+            // Preencher o centro_id existente
+            if (centroId) {
+                $("#edittturmaCentro").val(centroId);
+            }
+        },
+        error: function(err) {
+            console.error("Erro ao carregar centros:", err);
+            $("#edittturmaCentro").html('<option value="">Erro ao carregar centros</option>');
+        }
+    });
     
     $("input[name=\"edit_dia_semana[]\"]").prop("checked", false).each(function() {
         if (dias && dias.includes($(this).val())) {
@@ -1047,6 +1112,7 @@ $("#formEditarturmaAjax").on("submit", function(e) {
     }
     
     const formData = {
+        centro_id: $form.find("select[name=\"edit_centro_id\"]").val(),
         data_arranque: $form.find("input[name=\"edit_data_arranque\"]").val(),
         duracao_semanas: $form.find("input[name=\"edit_duracao_semanas\"]").val() || null,
         dia_semana: dias,

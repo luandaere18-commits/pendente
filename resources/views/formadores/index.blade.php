@@ -28,6 +28,35 @@
     </div>
 
     {{-- ============================================= --}}
+    {{-- FILTROS                                       --}}
+    {{-- ============================================= --}}
+    <div class="card mb-3 border-0 shadow-sm">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label for="filtroNome" class="form-label small fw-semibold text-muted">Nome</label>
+                    <input type="text" id="filtroNome" class="form-control form-control-sm" 
+                           placeholder="Pesquisar por nome..." value="{{ $filtroNome ?? '' }}"
+                           onchange="aplicarFiltros()">
+                </div>
+                <div class="col-12 col-md-6">
+                    <label for="filtroEspecialidade" class="form-label small fw-semibold text-muted">Especialidade</label>
+                    <input type="text" id="filtroEspecialidade" class="form-control form-control-sm" 
+                           placeholder="Pesquisar por especialidade..." value="{{ $filtroEspecialidade ?? '' }}"
+                           onchange="aplicarFiltros()">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()">
+                        <i class="fas fa-undo me-1"></i>Limpar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ============================================= --}}
     {{-- TABELA DE FORMADORES                          --}}
     {{-- ============================================= --}}
     <div class="card border-0 shadow-sm">
@@ -52,12 +81,53 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">
-                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                Carregando formadores...
-                            </td>
-                        </tr>
+                        @forelse($formadores as $formador)
+                            <tr>
+                                <td class="ps-3"><small class="text-muted">#{{ $formador->id }}</small></td>
+                                <td><strong>{{ $formador->nome }}</strong></td>
+                                <td class="d-none d-md-table-cell"><small>{{ $formador->email ?? '—' }}</small></td>
+                                <td class="d-none d-lg-table-cell"><small>{{ $formador->especialidade ?? '—' }}</small></td>
+                                <td class="text-center">
+                                    @php
+                                        $cursoCount = ($formador->cursos && is_countable($formador->cursos)) ? count($formador->cursos) : 0;
+                                    @endphp
+                                    <span class="badge bg-info-subtle text-info">{{ $cursoCount }}</span>
+                                </td>
+                                <td class="text-center">
+                                    @if($formador->contactos && is_array($formador->contactos))
+                                        <small class="text-muted">{{ count($formador->contactos) }}</small>
+                                    @else
+                                        <small class="text-muted">0</small>
+                                    @endif
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-info btn-visualizar-formador" 
+                                                onclick="visualizarFormador({{ $formador->id }})"
+                                                title="Ver detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary btn-editar-formador" 
+                                                data-formador-id="{{ $formador->id }}"
+                                                title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-eliminar-formador" 
+                                                onclick="eliminarFormador({{ $formador->id }})"
+                                                title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <div class="mb-2"><i class="fas fa-inbox fa-2x text-muted"></i></div>
+                                    Nenhum formador cadastrado
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -353,7 +423,6 @@ let centrosContainerEditarFormadorCount = 0;
 
 $(document).ready(function() {
     carregarCentros();
-    carregarFormadores();
     configurarEventosModal();
 });
 
@@ -804,7 +873,7 @@ $('#formNovoFormadorAjax').on('submit', function(e) {
             Swal.fire('Sucesso!', 'Formador criado com sucesso', 'success');
             bootstrap.Modal.getInstance(document.getElementById('modalNovoFormador')).hide();
             $('#formNovoFormadorAjax')[0].reset();
-            carregarFormadores();
+            location.reload();
         },
         error: function(xhr) {
             console.error('Erro:', xhr);
@@ -863,7 +932,7 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
             console.log('Sucesso:', response);
             Swal.fire('Sucesso!', 'Formador atualizado com sucesso', 'success');
             bootstrap.Modal.getInstance(document.getElementById('modalEditarFormador')).hide();
-            carregarFormadores();
+            location.reload();
         },
         error: function(xhr) {
             console.error('Erro:', xhr);
@@ -898,7 +967,7 @@ window.eliminarFormador = function(id) {
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {
                     Swal.fire('Eliminado!', 'Formador eliminado com sucesso', 'success');
-                    carregarFormadores();
+                    location.reload();
                 },
                 error: function() {
                     Swal.fire('Erro', 'Erro ao eliminar formador', 'error');
@@ -907,5 +976,30 @@ window.eliminarFormador = function(id) {
         }
     });
 };
+
+/**
+ * Aplicar filtros na tabela de formadores
+ */
+function aplicarFiltros() {
+    let filtroNome = $('#filtroNome').val();
+    let filtroEspecialidade = $('#filtroEspecialidade').val();
+    
+    let url = '/formadores?';
+    
+    if (filtroNome) url += 'filtroNome=' + encodeURIComponent(filtroNome) + '&';
+    if (filtroEspecialidade) url += 'filtroEspecialidade=' + encodeURIComponent(filtroEspecialidade) + '&';
+    
+    // Remove o último '&' se existir
+    url = url.replace(/&$/, '');
+    
+    window.location.href = url;
+}
+
+/**
+ * Limpar todos os filtros
+ */
+function limparFiltros() {
+    window.location.href = '/formadores';
+}
 </script>
 @endsection

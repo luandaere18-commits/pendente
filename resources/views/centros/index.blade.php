@@ -21,9 +21,30 @@
             </div>
         </div>
         <div class="col-12 col-md-4 text-md-end">
-            <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#modalNovoCentro">
+            <button class="btn btn-primary px-4" data-bs-toggle="modal" data-bs-target="#modalNovoCentro">
                 <i class="fas fa-plus me-2"></i>Novo Centro
             </button>
+        </div>
+    </div>
+
+    {{-- FILTROS --}}
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="filtroNome" class="form-label small fw-semibold">Nome do Centro</label>
+                    <input type="text" class="form-control form-control-sm" id="filtroNome" value="{{ $filtroNome ?? '' }}" onchange="aplicarFiltros()" placeholder="Filtrar por nome...">
+                </div>
+                <div class="col-md-4">
+                    <label for="filtroLocalizacao" class="form-label small fw-semibold">Localização</label>
+                    <input type="text" class="form-control form-control-sm" id="filtroLocalizacao" value="{{ $filtroLocalizacao ?? '' }}" onchange="aplicarFiltros()" placeholder="Filtrar por localização...">
+                </div>
+                <div class="col-md-4 d-flex align-items-end gap-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()">
+                        <i class="fas fa-redo me-1"></i>Limpar
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -51,12 +72,49 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
-                                Carregando centros...
-                            </td>
-                        </tr>
+                        @forelse($centros as $centro)
+                            <tr>
+                                <td class="ps-3"><small class="text-muted">#{{ $centro->id }}</small></td>
+                                <td><strong>{{ $centro->nome }}</strong></td>
+                                <td><small>{{ $centro->localizacao ?? '—' }}</small></td>
+                                <td>
+                                    @if($centro->contactos && is_array($centro->contactos))
+                                        @foreach($centro->contactos as $contacto)
+                                            <small class="d-block">{{ $contacto }}</small>
+                                        @endforeach
+                                    @else
+                                        <span class="text-muted small">—</span>
+                                    @endif
+                                </td>
+                                <td><small>{{ $centro->email ?? '—' }}</small></td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-info btn-visualizar-centro" onclick="visualizarCentro({{ $centro->id }})" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary btn-editar-centro" 
+                                                data-centro-id="{{ $centro->id }}"
+                                                data-centro-nome="{{ $centro->nome }}"
+                                                data-localizacao="{{ $centro->localizacao }}"
+                                                data-email="{{ $centro->email }}"
+                                                onclick="editarCentro({{ $centro->id }})" 
+                                                title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-eliminar-centro" onclick="eliminarCentro({{ $centro->id }})" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <div class="mb-2"><i class="fas fa-inbox fa-2x text-muted"></i></div>
+                                    Nenhum centro cadastrado
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -280,59 +338,37 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
-    carregarCentros();
     configurarEventos();
 });
 
 /**
- * Carregar lista de centros da API
+ * Recarregar página para atualizar lista de centros
  */
 function carregarCentros() {
-    $.ajax({
-        url: '/api/centros',
-        method: 'GET',
-        success: function(data) {
-            let html = '';
+    location.reload();
+}
 
-            if (data.length === 0) {
-                html = '<tr><td colspan="8" class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x d-block mb-2"></i>Nenhum centro encontrado</td></tr>';
-            } else {
-                data.forEach(function(centro) {
-                    const statusBadge = centro.ativo
-                        ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
-                        : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
+/**
+ * Aplicar filtros à tabela
+ */
+function aplicarFiltros() {
+    const nome = $('#filtroNome').val() || '';
+    const localizacao = $('#filtroLocalizacao').val() || '';
+    
+    let url = '/centros?';
+    if (nome) url += `nome=${encodeURIComponent(nome)}&`;
+    if (localizacao) url += `localizacao=${encodeURIComponent(localizacao)}`;
+    
+    window.location.href = url;
+}
 
-                    html += `
-                        <tr>
-                            <td class="ps-3"><strong>#${centro.id}</strong></td>
-                            <td><strong>${centro.nome}</strong></td>
-                            <td><small>${centro.localizacao || 'N/A'}</small></td>
-                            <td><small>${(centro.contactos && centro.contactos.length > 0) ? centro.contactos.join(', ') : 'N/A'}</small></td>
-                            <td><small>${centro.email || 'N/A'}</small></td>
-                            <td class="text-end pe-3">
-                                <div class="d-flex gap-2 justify-content-end">
-                                    <button class="btn btn-sm btn-outline-info btn-visualizar" data-centro-id="${centro.id}" title="Visualizar">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-warning btn-editar" data-centro-id="${centro.id}" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger btn-eliminar" data-centro-id="${centro.id}" title="Eliminar">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            $('#centrosTable tbody').html(html);
-        },
-        error: function(err) {
-            console.error('Erro ao carregar centros:', err);
-        }
-    });
+/**
+ * Limpar todos os filtros
+ */
+function limparFiltros() {
+    $('#filtroNome').val('');
+    $('#filtroLocalizacao').val('');
+    window.location.href = '/centros';
 }
 
 /**

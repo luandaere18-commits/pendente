@@ -12,17 +12,36 @@ use Illuminate\Validation\ValidationException;
 
 class CursoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cursos = Curso::with(['centros', 'turmas'])->get();
-        return view('cursos.index', compact('cursos'));
+        $query = Curso::with(['centros', 'turmas']);
+        
+        if ($request->has('nome') && $request->nome) {
+            $query->where('nome', 'like', '%' . $request->nome . '%');
+        }
+        
+        if ($request->has('modalidade') && $request->modalidade) {
+            $query->where('modalidade', $request->modalidade);
+        }
+        
+        if ($request->has('ativo') && $request->ativo !== '') {
+            $query->where('ativo', (bool)$request->ativo);
+        }
+        
+        $cursos = $query->get();
+        
+        return view('cursos.index', compact('cursos'))->with([
+            'filtroNome' => $request->nome,
+            'filtroModalidade' => $request->modalidade,
+            'filtroStatus' => $request->ativo
+        ]);
     }
 
     public function create()
     {
         $centros = Centro::all();
         $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-        $periodos = ['manhã', 'tarde', 'noite'];
+        $periodos = ['manha', 'tarde', 'noite'];
         
         return view('cursos.create', compact('centros', 'diasSemana', 'periodos'));
     }
@@ -42,8 +61,8 @@ class CursoController extends Controller
                     }
                 },
             ],
-            'descricao' => 'nullable|string',
-            'programa' => 'nullable|string',
+            'descricao' => 'nullable|string|max:1000',
+            'programa' => 'nullable|string|max:5000',
             'area' => 'required|string|max:100',
             'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -109,7 +128,7 @@ class CursoController extends Controller
         $curso->load(['centros', 'turmas.centro', 'turmas.formador']);
         $centros = Centro::all();
         $diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
-        $periodos = ['manhã', 'tarde', 'noite'];
+        $periodos = ['manha', 'tarde', 'noite'];
         
         return view('cursos.edit', compact('curso', 'centros', 'diasSemana', 'periodos'));
     }
@@ -122,8 +141,8 @@ class CursoController extends Controller
         
         $rules = [
             'nome' => 'required|string|max:100|unique:cursos,nome,' . $curso->id,
-            'descricao' => 'nullable|string',
-            'programa' => 'nullable|string',
+            'descricao' => 'nullable|string|max:1000',
+            'programa' => 'nullable|string|max:5000',
             'area' => 'required|string|max:100',
             'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',

@@ -7,10 +7,24 @@ use Illuminate\Http\Request;
 
 class CentroController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $centros = Centro::with(['cursos', 'formadores'])->get();
-        return view('centros.index', compact('centros'));
+        $query = Centro::with(['cursos', 'formadores']);
+        
+        if ($request->has('nome') && $request->nome) {
+            $query->where('nome', 'like', '%' . $request->nome . '%');
+        }
+        
+        if ($request->has('localizacao') && $request->localizacao) {
+            $query->where('localizacao', 'like', '%' . $request->localizacao . '%');
+        }
+        
+        $centros = $query->get();
+        
+        return view('centros.index', compact('centros'))->with([
+            'filtroNome' => $request->nome,
+            'filtroLocalizacao' => $request->localizacao
+        ]);
     }
 
     public function create()

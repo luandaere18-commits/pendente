@@ -8,11 +8,25 @@ use Illuminate\Http\Request;
 
 class FormadorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $formadores = Formador::with(['centros'])->get();
+        $query = Formador::with(['cursos']);
+        
+        if ($request->has('nome') && $request->nome) {
+            $query->where('nome', 'like', '%' . $request->nome . '%');
+        }
+        
+        if ($request->has('especialidade') && $request->especialidade) {
+            $query->where('especialidade', 'like', '%' . $request->especialidade . '%');
+        }
+        
+        $formadores = $query->get();
         $centros = Centro::all();
-        return view('formadores.index', compact('formadores', 'centros'));
+        
+        return view('formadores.index', compact('formadores', 'centros'))->with([
+            'filtroNome' => $request->nome,
+            'filtroEspecialidade' => $request->especialidade
+        ]);
     }
 
     public function create()

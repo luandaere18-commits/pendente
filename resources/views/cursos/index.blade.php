@@ -52,12 +52,62 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                Carregando cursos...
-                            </td>
-                        </tr>
+                        @forelse($cursos as $curso)
+                            <tr>
+                                <td class="ps-3"><small class="text-muted">#{{ $curso->id }}</small></td>
+                                <td><strong>{{ $curso->nome }}</strong></td>
+                                <td>
+                                    <span class="badge {{ $curso->modalidade === 'presencial' ? 'bg-primary-subtle text-primary' : ($curso->modalidade === 'online' ? 'bg-info-subtle text-info' : 'bg-warning-subtle text-warning') }}">
+                                        {{ ucfirst($curso->modalidade) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($curso->centros->count() > 0)
+                                        {{ $curso->centros->count() }} centro(s)
+                                    @else
+                                        <span class="text-muted small">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($curso->centros->count() > 0)
+                                        {{ number_format($curso->centros->avg('pivot.preco'), 2, ',', '.') }} Kz
+                                    @else
+                                        <span class="text-muted small">—</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($curso->ativo)
+                                        <span class="badge bg-success-subtle text-success">Ativo</span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary">Inativo</span>
+                                    @endif
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-info btn-visualizar-curso" 
+                                                data-curso-id="{{ $curso->id }}"
+                                                title="Ver detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <a href="{{ route('cursos.show', $curso->id) }}" class="btn btn-outline-primary" title="Gerenciar">
+                                            <i class="fas fa-cog"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger btn-eliminar-curso" 
+                                                data-curso-id="{{ $curso->id }}"
+                                                title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-5 text-muted">
+                                    <div class="mb-2"><i class="fas fa-inbox fa-2x text-muted"></i></div>
+                                    Nenhum curso cadastrado
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -259,7 +309,6 @@ let centrosContainerModalCount = 0;
 let centrosDisponiveisList = [];
 
 $(document).ready(function() {
-    carregarCursos();
     carregarCentros();
     configurarEventosModal();
 });
@@ -335,7 +384,7 @@ function carregarDetalhesCurso(cursoId) {
                         }).join(', ')
                         : (turma.dia_semana || 'N/A');
                     
-                    const periodo = turma.periodo === 'manha' ? 'Manhã' : 
+                    const periodo = turma.periodo === 'manha' ? 'Manha' : 
                                    turma.periodo === 'tarde' ? 'Tarde' : 
                                    turma.periodo === 'noite' ? 'Noite' : (turma.periodo || 'N/A');
                     
@@ -566,91 +615,30 @@ $("#formNovoCursoAjax").on("submit", function(e) {
 });
 
 /**
- * Carrega a lista de cursos da API
+ * Recarregar página para atualizar lista de cursos
  */
+function aplicarFiltros() {
+    const nome = $('#filtroNome').val() || '';
+    const modalidade = $('#filtroModalidade').val() || '';
+    const ativo = $('#filtroStatus').val() || '';
+    
+    let url = '/cursos?';
+    if (nome) url += `nome=${encodeURIComponent(nome)}&`;
+    if (modalidade) url += `modalidade=${encodeURIComponent(modalidade)}&`;
+    if (ativo !== '') url += `ativo=${ativo}`;
+    
+    window.location.href = url;
+}
+
+function limparFiltros() {
+    $('#filtroNome').val('');
+    $('#filtroModalidade').val('');
+    $('#filtroStatus').val('');
+    window.location.href = '/cursos';
+}
+
 function carregarCursos() {
-    $.ajax({
-        url: '/api/cursos',
-        method: 'GET',
-        success: function(data) {
-            let html = '';
-
-            if (data.length === 0) {
-                html = '<tr><td colspan="8" class="text-center text-muted py-5"><i class="fas fa-inbox fa-2x d-block mb-2 text-muted"></i>Nenhum curso encontrado</td></tr>';
-            } else {
-                data.forEach(function(curso) {
-                    const statusBadge = curso.ativo
-                        ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
-                        : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
-
-                    const modalidadeBadge = curso.modalidade === 'online'
-                        ? '<span class="badge bg-info"><i class="fas fa-globe me-1"></i>Online</span>'
-                        : curso.modalidade === 'presencial'
-                        ? '<span class="badge bg-warning text-dark"><i class="fas fa-building me-1"></i>Presencial</span>'
-                        : '<span class="badge bg-primary"><i class="fas fa-arrows-alt me-1"></i>Híbrido</span>';
-
-                    let centroCells = '';
-                    if (curso.centros && curso.centros.length > 0) {
-                        const centro = curso.centros[0];
-                        const preco = centro.pivot.preco;
-                        centroCells = `<td><span class="fw-medium">${centro.nome}</span></td><td>${parseFloat(preco).toLocaleString('pt-PT', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Kz</td>`;
-                    } else {
-                        centroCells = `<td class="text-muted"><small>N/A</small></td><td class="text-muted"><small>N/A</small></td>`;
-                    }
-
-                    html += `
-                        <tr>
-                            <td class="ps-3 text-muted">${curso.id}</td>
-                            <td>
-                                <div class="fw-semibold">${curso.nome}</div>
-                                ${curso.descricao ? `<small class="text-muted">${curso.descricao.substring(0, 60)}...</small>` : ''}
-                            </td>
-                            <td>${modalidadeBadge}</td>
-                            ${centroCells}
-                            <td class="text-center">${statusBadge}</td>
-                            <td class="text-end pe-3">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-primary btn-visualizar-curso" data-curso-id="${curso.id}" title="Visualizar detalhes">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <a href="/cursos/${curso.id}" class="btn btn-outline-info" title="Gerenciar curso">
-                                        <i class="fas fa-cog"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-outline-danger" onclick="eliminarCurso(${curso.id})" title="Eliminar">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            $('#cursosTable tbody').html(html);
-
-            if ($.fn.DataTable.isDataTable('#cursosTable')) {
-                $('#cursosTable').DataTable().destroy();
-            }
-
-            $('#cursosTable').DataTable({
-                language: window.dataTablesPortuguese,
-                responsive: true,
-                pageLength: 25,
-                order: [[0, 'desc']],
-                columnDefs: [
-                    { targets: 6, orderable: false }
-                ],
-                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-                     '<"row"<"col-sm-12"tr>>' +
-                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
-            });
-        },
-        error: function(xhr) {
-            console.error('Erro ao carregar cursos:', xhr);
-            $('#cursosTable tbody').html('<tr><td colspan="8" class="text-center text-danger py-4"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>');
-        }
-    });
+    location.reload();
 }
 
 /**

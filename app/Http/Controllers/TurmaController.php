@@ -7,10 +7,30 @@ use Illuminate\Http\Request;
 
 class TurmaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $turmas = Turma::with(['curso', 'formador'])->get();
-        return view('turmas.index', compact('turmas'));
+        $query = Turma::with(['curso', 'formador', 'centro']);
+        
+        if ($request->has('curso_id') && $request->curso_id) {
+            $query->where('curso_id', $request->curso_id);
+        }
+        
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+        
+        if ($request->has('periodo') && $request->periodo) {
+            $query->where('periodo', $request->periodo);
+        }
+        
+        $turmas = $query->get();
+        $todosOsCursos = \App\Models\Curso::all();
+        
+        return view('turmas.index', compact('turmas', 'todosOsCursos'))->with([
+            'filtroCurso' => $request->curso_id,
+            'filtroStatus' => $request->status,
+            'filtroPeriodo' => $request->periodo
+        ]);
     }
 
     public function create()
@@ -29,7 +49,7 @@ class TurmaController extends Controller
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manhã,tarde,noite',
+            'periodo' => 'required|in:manha,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'data_arranque' => 'required|date',
@@ -68,7 +88,7 @@ class TurmaController extends Controller
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manhã,tarde,noite',
+            'periodo' => 'required|in:manha,tarde,noite',
             'hora_inicio' => 'nullable|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'data_arranque' => 'required|date',
@@ -107,7 +127,7 @@ class TurmaController extends Controller
         $periodo = $data['periodo'];
 
         $validacoes = [
-            'manhã' => ['07:00', '12:00'],   // 07:00 até 11:59
+            'manha' => ['07:00', '12:00'],   // 07:00 até 11:59
             'tarde' => ['12:00', '18:00'],   // 12:00 até 17:59
             'noite' => ['18:00', '22:00'],   // 18:00 até 21:59
         ];

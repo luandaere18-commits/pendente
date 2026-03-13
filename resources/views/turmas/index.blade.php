@@ -50,12 +50,78 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="11" class="text-center py-5 text-muted">
-                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                Carregando turmas...
-                            </td>
-                        </tr>
+                        @forelse($turmas as $turma)
+                            <tr>
+                                <td class="ps-2"><small class="text-muted">#{{ $turma->id }}</small></td>
+                                <td><strong>{{ $turma->curso->nome ?? 'N/A' }}</strong></td>
+                                <td>{{ $turma->centro->nome ?? '—' }}</td>
+                                <td>{{ $turma->formador->nome ?? 'Sem formador' }}</td>
+                                <td class="d-none d-lg-table-cell">
+                                    @if($turma->dia_semana && is_array($turma->dia_semana))
+                                        @foreach($turma->dia_semana as $dia)
+                                            <span class="badge bg-info-subtle text-info">{{ substr($dia, 0, 3) }}</span>
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @php
+                                        $statusColors = [
+                                            'planeada' => 'secondary',
+                                            'inscricoes_abertas' => 'success',
+                                            'em_andamento' => 'info',
+                                            'concluida' => 'dark'
+                                        ];
+                                        $statusLabels = [
+                                            'planeada' => 'Planeada',
+                                            'inscricoes_abertas' => 'Inscrições',
+                                            'em_andamento' => 'Em Andamento',
+                                            'concluida' => 'Concluída'
+                                        ];
+                                    @endphp
+                                    <span class="badge bg-{{ $statusColors[$turma->status] ?? 'secondary' }}-subtle text-{{ $statusColors[$turma->status] ?? 'secondary' }}">
+                                        {{ $statusLabels[$turma->status] ?? $turma->status }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary-subtle text-primary">{{ ucfirst($turma->periodo) }}</span>
+                                </td>
+                                <td class="text-center text-nowrap">
+                                    @if($turma->hora_inicio && $turma->hora_fim)
+                                        {{ substr($turma->hora_inicio, 0, 5) }} - {{ substr($turma->hora_fim, 0, 5) }}
+                                    @else
+                                        —
+                                    @endif
+                                </td>
+                                <td class="text-center">{{ $turma->vagas_totais ?? '—' }}</td>
+                                <td class="text-center">
+                                    @if($turma->publicado)
+                                        <span class="badge bg-success">Sim</span>
+                                    @else
+                                        <span class="badge bg-secondary">Não</span>
+                                    @endif
+                                </td>
+                                <td class="text-end pe-2">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-info btn-visualizar-turma" onclick="visualizarTurma({{ $turma->id }})" title="Ver detalhes">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <a href="{{ route('cursos.show', $turma->curso_id) }}" class="btn btn-outline-primary" title="Gerenciar">
+                                            <i class="fas fa-cog"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger" onclick="eliminarTurma({{ $turma->id }})" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="11" class="text-center py-5 text-muted">
+                                    <div class="mb-2"><i class="fas fa-inbox fa-2x text-muted"></i></div>
+                                    Nenhuma turma cadastrada
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -132,7 +198,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select name="periodo" id="periodoNovo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manhã">Manhã</option>
+                                            <option value="manha">Manha</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -313,7 +379,7 @@
                                         <label class="form-label fw-medium small">Período <span class="text-danger">*</span></label>
                                         <select id="editPeriodo" class="form-select form-select-sm" required>
                                             <option value="">Selecione ou detecte pela hora</option>
-                                            <option value="manhã">Manhã</option>
+                                            <option value="manha">Manha</option>
                                             <option value="tarde">Tarde</option>
                                             <option value="noite">Noite</option>
                                         </select>
@@ -454,9 +520,7 @@
 @section('scripts')
 <script>
 $(document).ready(function() {
-    carregarCursos();
     carregarFormadores();
-    carregarTurmas();
     configurarEventosModal();
     configurarValidacoes();
     configurarAutoPreenchimento();
@@ -502,80 +566,30 @@ function carregarFormadores() {
 }
 
 /**
- * Carregar lista de turmas
+ * Recarregar página para atualizar lista de turmas
  */
+function aplicarFiltros() {
+    const curso = $('#filtroCurso').val() || '';
+    const status = $('#filtroStatus').val() || '';
+    const periodo = $('#filtroPeriodo').val() || '';
+    
+    let url = '/turmas?';
+    if (curso) url += `curso_id=${curso}&`;
+    if (status) url += `status=${encodeURIComponent(status)}&`;
+    if (periodo) url += `periodo=${encodeURIComponent(periodo)}`;
+    
+    window.location.href = url;
+}
+
+function limparFiltros() {
+    $('#filtroCurso').val('');
+    $('#filtroStatus').val('');
+    $('#filtroPeriodo').val('');
+    window.location.href = '/turmas';
+}
+
 function carregarTurmas() {
-    $.ajax({
-        url: '/api/turmas',
-        method: 'GET',
-        success: function(data) {
-            let html = '';
-            
-            if (data.length === 0) {
-                html = '<tr><td colspan="11" class="text-center text-muted py-5"><i class="fas fa-inbox me-2"></i>Nenhuma turma encontrada</td></tr>';
-            } else {
-                data.forEach(function(turma) {
-                    const cursoNome = turma.curso ? turma.curso.nome : 'N/A';
-                    const centroNome = turma.centro ? turma.centro.nome : 'N/A';
-                    
-                    // Formador com indicador claro
-                    let formadorDisplay = '';
-                    if (turma.formador) {
-                        formadorDisplay = `<small><strong>${turma.formador.nome}</strong></small>`;
-                    } else {
-                        formadorDisplay = `<small class="text-warning d-flex align-items-center gap-1" title="Nenhum formador atribuído"><i class="fas fa-exclamation-circle"></i>Sem atribuição</small>`;
-                    }
-                    
-                    const diaSemana = turma.dia_semana ? turma.dia_semana.join(', ') : '—';
-                    const statusBadge = getStatusBadge(turma.status);
-                    const periodoBadge = getPeriodoBadge(turma.periodo);
-                    const horaInicio = turma.hora_inicio ? turma.hora_inicio.substring(0, 5) : '—';
-                    const horaFim = turma.hora_fim ? turma.hora_fim.substring(0, 5) : '—';
-                    
-                    // Vagas
-                    let vagasDisplay = '—';
-                    if (turma.vagas_totais) {
-                        vagasDisplay = `<small><span class="badge bg-info">${turma.vagas_preenchidas || 0}/${turma.vagas_totais}</span></small>`;
-                    }
-                    
-                    // Publicado
-                    const publicadoBadge = turma.publicado 
-                        ? '<span class="badge bg-success"><i class="fas fa-eye me-1"></i>Público</span>'
-                        : '<span class="badge bg-secondary"><i class="fas fa-eye-slash me-1"></i>Privado</span>';
-                    
-                    html += `
-                        <tr>
-                            <td class="ps-2"><strong class="text-muted small">#${turma.id}</strong></td>
-                            <td><strong class="small">${cursoNome}</strong></td>
-                            <td><small class="text-primary"><i class="fas fa-building me-1"></i>${centroNome}</small></td>
-                            <td>${formadorDisplay}</td>
-                            <td class="d-none d-lg-table-cell"><small>${diaSemana}</small></td>
-                            <td class="text-center">${statusBadge}</td>
-                            <td class="text-center">${periodoBadge}</td>
-                            <td class="text-center"><small>${horaInicio}-${horaFim}</small></td>
-                            <td class="text-center">${vagasDisplay}</td>
-                            <td class="text-center">${publicadoBadge}</td>
-                            <td class="text-end pe-2">
-                                <div class="d-flex gap-1 justify-content-end">
-                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="visualizarTurma(${turma.id})" title="Visualizar"><i class="fas fa-eye"></i></button>
-                                    <a href="/turmas/${turma.id}" class="btn btn-sm btn-outline-info" title="Gerenciar"><i class="fas fa-cog"></i></a>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarTurma(${turma.id})" title="Eliminar"><i class="fas fa-trash"></i></button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-            
-            $('#turmasTable tbody').html(html);
-        },
-        error: function(err) {
-            console.error('Erro ao carregar turmas:', err);
-            $('#turmasTable tbody').html(
-                '<tr><td colspan="11" class="text-center text-danger py-5"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar os dados</td></tr>'
-            );
-        }
-    });
+    location.reload();
 }
 
 /**
@@ -632,8 +646,8 @@ function configurarAutoPreenchimento() {
         if (!hora) return '';
         const horas = parseInt(hora.split(':')[0]);
         
-        // Manhã: 6h até 12h
-        if (horas >= 6 && horas < 12) return 'manhã';
+        // Manha: 6h até 12h
+        if (horas >= 6 && horas < 12) return 'manha';
         // Tarde: 12h até 18h
         if (horas >= 12 && horas < 18) return 'tarde';
         // Noite: 18h até 6h
@@ -920,7 +934,7 @@ window.eliminarTurma = function(id) {
  */
 function getPeriodoBadge(periodo) {
     const badges = {
-        'manhã': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manhã</span>',
+        'manha': '<span class="badge bg-warning text-dark"><i class="fas fa-sun me-1"></i>Manha</span>',
         'tarde': '<span class="badge bg-primary"><i class="fas fa-cloud-sun me-1"></i>Tarde</span>',
         'noite': '<span class="badge bg-dark"><i class="fas fa-moon me-1"></i>Noite</span>'
     };

@@ -60,7 +60,7 @@ class TurmaController extends Controller
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
+            'periodo' => 'required|in:manha,tarde,noite,manha,tarde,noite',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
@@ -69,7 +69,7 @@ class TurmaController extends Controller
         ]);
 
         // Normalizar período (adicionar acento conforme migration)
-        $validated['periodo'] = str_replace('manha', 'manhã', $validated['periodo']);
+        $validated['periodo'] = str_replace('manha', 'manha', $validated['periodo']);
         
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {
@@ -189,7 +189,7 @@ class TurmaController extends Controller
             'duracao_semanas' => 'nullable|integer|min:1',
             'dia_semana' => 'required|array|min:1',
             'dia_semana.*' => 'required|in:Segunda,Terça,Quarta,Quinta,Sexta,Sábado,Domingo',
-            'periodo' => 'required|in:manha,tarde,noite,manhã,tarde,noite',
+            'periodo' => 'required|in:manha,tarde,noite,manha,tarde,noite',
             'hora_inicio' => 'required|date_format:H:i',
             'hora_fim' => 'nullable|date_format:H:i',
             'status' => 'nullable|in:planeada,inscricoes_abertas,em_andamento,concluida',
@@ -198,7 +198,7 @@ class TurmaController extends Controller
         ]);
         
         // Normalizar período (adicionar acento conforme migration)
-        $validated['periodo'] = str_replace('manha', 'manhã', $validated['periodo']);
+        $validated['periodo'] = str_replace('manha', 'manha', $validated['periodo']);
         
         // Definir status padrão se não fornecido
         if (empty($validated['status'])) {
