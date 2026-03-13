@@ -356,7 +356,6 @@
                             <th>Nome</th>
                             <th>Email</th>
                             <th>Telefone</th>
-                            <th>Contactos</th>
                             <th>Observações</th>
                             <th>Data</th>
                             <th class="text-center">Status</th>
@@ -375,21 +374,12 @@
                                 <td>
                                     @php
                                         $telefone = $inscricao->telefone ?? (is_array($inscricao->contactos) && count($inscricao->contactos) ? $inscricao->contactos[0] : null);
-                                        $contatos = '';
-                                        if (is_array($inscricao->contactos)) {
-                                            $contatos = implode(', ', $inscricao->contactos);
-                                        } elseif (!empty($inscricao->contactos)) {
-                                            $contatos = $inscricao->contactos;
-                                        }
                                     @endphp
                                     @if($telefone)
                                         <a href="tel:{{ $telefone }}" style="color: var(--pi-text); text-decoration: none;">{{ $telefone }}</a>
                                     @else
                                         <span style="color: var(--pi-text-muted);">—</span>
                                     @endif
-                                </td>
-                                <td style="font-size: 0.8125rem; color: var(--pi-text-muted);">
-                                    {{ $contatos ?: '—' }}
                                 </td>
                                 <td style="font-size: 0.8125rem; color: var(--pi-text-muted);">
                                     {{ $inscricao->observacoes ?: '—' }}
@@ -442,18 +432,9 @@
                             <span><i class="fas fa-envelope me-1"></i>{{ $inscricao->email }}</span>
                             @php
                                 $telefone = $inscricao->telefone ?? (is_array($inscricao->contactos) && count($inscricao->contactos) ? $inscricao->contactos[0] : null);
-                                $contatos = '';
-                                if (is_array($inscricao->contactos)) {
-                                    $contatos = implode(', ', $inscricao->contactos);
-                                } elseif (!empty($inscricao->contactos)) {
-                                    $contatos = $inscricao->contactos;
-                                }
                             @endphp
                             @if($telefone)
                                 <span><i class="fas fa-phone me-1"></i>{{ $telefone }}</span>
-                            @endif
-                            @if($contatos)
-                                <span><i class="fas fa-list me-1"></i>{{ $contatos }}</span>
                             @endif
                             @if($inscricao->observacoes)
                                 <span><i class="fas fa-comment me-1"></i>{{ $inscricao->observacoes }}</span>
