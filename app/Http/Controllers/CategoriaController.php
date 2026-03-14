@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Grupo;
 use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
     public function index()
     {
-        $categorias = Categoria::with(['produtos'])->get();
+        $categorias = Categoria::with(['grupo', 'itens'])->ordenado()->get();
         return view('categorias.index', compact('categorias'));
     }
 
     public function create()
     {
-        return view('categorias.create');
+        $grupos = Grupo::where('ativo', true)->ordenado()->get();
+        return view('categorias.create', compact('grupos'));
     }
 
     public function store(Request $request)
@@ -23,7 +25,8 @@ class CategoriaController extends Controller
         $validated = $request->validate([
             'nome' => 'required|string|max:100|unique:categorias,nome',
             'descricao' => 'nullable|string',
-            'tipo' => 'required|in:loja,snack',
+            'grupo_id' => 'required|exists:grupos,id',
+            'ordem' => 'nullable|integer|min:0',
             'ativo' => 'boolean'
         ]);
         
@@ -36,13 +39,14 @@ class CategoriaController extends Controller
 
     public function show(Categoria $categoria)
     {
-        $categoria->load(['produtos']);
+        $categoria->load(['grupo', 'itens']);
         return view('categorias.show', compact('categoria'));
     }
 
     public function edit(Categoria $categoria)
     {
-        return view('categorias.edit', compact('categoria'));
+        $grupos = Grupo::where('ativo', true)->ordenado()->get();
+        return view('categorias.edit', compact('categoria', 'grupos'));
     }
 
     public function update(Request $request, Categoria $categoria)
@@ -50,7 +54,8 @@ class CategoriaController extends Controller
         $validated = $request->validate([
             'nome' => 'required|string|max:100|unique:categorias,nome,' . $categoria->id,
             'descricao' => 'nullable|string',
-            'tipo' => 'required|in:loja,snack',
+            'grupo_id' => 'required|exists:grupos,id',
+            'ordem' => 'nullable|integer|min:0',
             'ativo' => 'boolean'
         ]);
         

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Categoria;
+use App\Models\Grupo;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,74 +14,74 @@ class CategoriaSeeder extends Seeder
      */
     public function run(): void
     {
-        // Categorias da Loja
-        $categoriasLoja = [
-            [
-                'nome' => 'Computadores',
-                'descricao' => 'Laptops, desktops e workstations',
-                'tipo' => 'loja',
-                'ativo' => true
-            ],
-            [
-                'nome' => 'Acessórios',
-                'descricao' => 'Mouses, teclados, monitores e periféricos',
-                'tipo' => 'loja',
-                'ativo' => true
-            ],
-            [
-                'nome' => 'Material Escolar',
-                'descricao' => 'Cadernos, canetas, calculadoras e material de escritório',
-                'tipo' => 'loja',
-                'ativo' => true
-            ],
-            [
-                'nome' => 'Software',
-                'descricao' => 'Software personalizado e soluções sob medida',
-                'tipo' => 'loja',
-                'ativo' => true
-            ],
-            [
-                'nome' => 'Suporte Técnico',
-                'descricao' => 'Serviços de manutenção e suporte',
-                'tipo' => 'loja',
-                'ativo' => true
-            ]
-        ];
+        // Get grupos
+        $snackbar = Grupo::where('nome', 'snackbar')->first();
+        $produtos = Grupo::where('nome', 'produtos')->first();
+        $servicos = Grupo::where('nome', 'servicos')->first();
 
-        // Categorias do Snack Bar
-        $categoriasSnack = [
-            [
-                'nome' => 'Bebidas Quentes',
-                'descricao' => 'Café, chá e bebidas quentes',
-                'tipo' => 'snack',
-                'ativo' => true
-            ],
-            [
-                'nome' => 'Bebidas Frias',
-                'descricao' => 'Sumos, refrigerantes e águas',
-                'tipo' => 'snack',
-                'ativo' => true
-            ],
-            [
-                'nome' => 'Comidas',
-                'descricao' => 'Sandwiches, tostas e pratos ligeiros',
-                'tipo' => 'snack',
-                'ativo' => true
-            ],
-            [
-                'nome' => 'Snacks',
-                'descricao' => 'Petiscos, bolos e doces',
-                'tipo' => 'snack',
-                'ativo' => true
-            ]
-        ];
+        // SNACKBAR - COMIDA
+        Categoria::create([
+            'nome' => 'Comida',
+            'descricao' => 'Refeições rápidas',
+            'grupo_id' => $snackbar->id,
+            'ordem' => 1,
+            'ativo' => true
+        ]);
 
-        foreach ($categoriasLoja as $categoria) {
-            Categoria::create($categoria);
-        }
+        // SNACKBAR - BEBIDA
+        Categoria::create([
+            'nome' => 'Bebida',
+            'descricao' => 'Refrigerantes e sucos',
+            'grupo_id' => $snackbar->id,
+            'ordem' => 2,
+            'ativo' => true
+        ]);
 
-        foreach ($categoriasSnack as $categoria) {
-            Categoria::create($categoria);
-        }
+        // PRODUTOS - MATERIAIS ESCOLARES
+        Categoria::create([
+            'nome' => 'Materiais Escolares',
+            'descricao' => 'Cadernos, lápis, mochilas',
+            'grupo_id' => $produtos->id,
+            'ordem' => 1,
+            'ativo' => true
+        ]);
+
+        // PRODUTOS - ELETRÔNICOS
+        Categoria::create([
+            'nome' => 'Eletrônicos',
+            'descricao' => 'Computadores, impressoras e afins',
+            'grupo_id' => $produtos->id,
+            'ordem' => 2,
+            'ativo' => true
+        ]);
+
+        // SERVIÇOS - DESENVOLVIMENTO
+        Categoria::create([
+            'nome' => 'Desenvolvimento',
+            'descricao' => 'Sistemas e aplicativos',
+            'grupo_id' => $servicos->id,
+            'ordem' => 1,
+            'ativo' => true
+        ]);
+
+        // SERVIÇOS - MONOGRAFIA
+        Categoria::create([
+            'nome' => 'Monografia',
+            'descricao' => 'Orientação de TCC',
+            'grupo_id' => $servicos->id,
+            'ordem' => 2,
+            'ativo' => true
+        ]);
+
+        // SERVIÇOS - AUDITORIA
+        Categoria::create([
+            'nome' => 'Auditoria',
+            'descricao' => 'Auditoria de sistemas',
+            'grupo_id' => $servicos->id,
+            'ordem' => 3,
+            'ativo' => true
+        ]);
     }
 }
+
+

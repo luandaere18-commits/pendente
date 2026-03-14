@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 /**
  * @OA\Tag(
  *     name="Categorias",
- *     description="Operações relacionadas a categorias de produtos"
+ *     description="Operações relacionadas a categorias de produtos e serviços"
  * )
  */
 class CategoriaController extends Controller
@@ -25,13 +25,13 @@ class CategoriaController extends Controller
      *     path="/categorias",
      *     tags={"Categorias"},
      *     summary="Listar categorias",
-     *     description="Retorna uma lista de categorias, com filtro opcional por tipo.",
+     *     description="Retorna uma lista de categorias com itens",
      *     @OA\Parameter(
-     *         name="tipo",
+     *         name="grupo_id",
      *         in="query",
-     *         description="Filtrar por tipo (loja ou snack)",
+     *         description="Filtrar por ID do grupo",
      *         required=false,
-     *         @OA\Schema(type="string")
+     *         @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -43,14 +43,14 @@ class CategoriaController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = Categoria::ativas();
+        $query = Categoria::ativas()->with(['grupo', 'itens']);
 
-        // Filtrar por tipo se especificado
-        if ($request->has('tipo')) {
-            $query->porTipo($request->tipo);
+        // Filtrar por grupo se especificado
+        if ($request->has('grupo_id')) {
+            $query->where('grupo_id', $request->grupo_id);
         }
 
-        $categorias = $query->withCount('produtos')->orderBy('nome')->get();
+        $categorias = $query->withCount('itens')->ordenado()->get();
 
         return response()->json($categorias);
     }
@@ -83,11 +83,13 @@ class CategoriaController extends Controller
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'nullable|string',
-            'tipo' => 'required|in:loja,snack',
+            'grupo_id' => 'required|exists:grupos,id',
+            'ordem' => 'nullable|integer|min:0',
             'ativo' => 'boolean'
         ]);
 
         $categoria = Categoria::create($validated);
+        $categoria->load('grupo', 'itens');
 
         return response()->json($categoria, 201);
     }
@@ -101,7 +103,7 @@ class CategoriaController extends Controller
      *     path="/categorias/{id}",
      *     tags={"Categorias"},
      *     summary="Exibir categoria",
-     *     description="Exibe uma categoria pelo ID.",
+     *     description="Exibe uma categoria com seus itens e grupo.",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -118,7 +120,7 @@ class CategoriaController extends Controller
      */
     public function show(Categoria $categoria): JsonResponse
     {
-        $categoria->loadCount('produtos');
+        $categoria->load('grupo', 'itens');
         return response()->json($categoria);
     }
 
@@ -156,11 +158,13 @@ class CategoriaController extends Controller
         $validated = $request->validate([
             'nome' => 'sometimes|required|string|max:255',
             'descricao' => 'nullable|string',
-            'tipo' => 'sometimes|required|in:loja,snack',
+            'grupo_id' => 'sometimes|required|exists:grupos,id',
+            'ordem' => 'nullable|integer|min:0',
             'ativo' => 'boolean'
         ]);
 
         $categoria->update($validated);
+        $categoria->load('grupo', 'itens');
 
         return response()->json($categoria);
     }
@@ -193,3 +197,4 @@ class CategoriaController extends Controller
         return response()->json(['message' => 'Categoria excluída com sucesso']);
     }
 }
+

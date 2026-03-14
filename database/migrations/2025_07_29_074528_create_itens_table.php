@@ -11,20 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('produtos', function (Blueprint $table) {
+        Schema::create('itens', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
             $table->text('descricao')->nullable();
-            $table->decimal('preco', 10, 2);
+            $table->decimal('preco', 10, 2)->nullable()->comment('NULL ou 0 = Sob Consulta');
             $table->string('imagem')->nullable();
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->enum('tipo', ['produto', 'servico'])->default('produto')->comment('Produto físico ou Serviço');
+            $table->boolean('destaque')->default(false); // Destacar no site
+            $table->integer('ordem')->default(0); // Ordem dentro da categoria
             $table->boolean('ativo')->default(true);
-            $table->boolean('em_destaque')->default(false);
             $table->timestamps();
             
             // Índices para performance em queries
             $table->index('categoria_id');
-            $table->index('em_destaque');
+            $table->index('destaque');
+            $table->index('tipo');
+            $table->index('ordem');
         });
     }
 

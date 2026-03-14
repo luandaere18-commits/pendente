@@ -8,8 +8,9 @@ use App\Http\Controllers\CentroController;
 use App\Http\Controllers\FormadorController;
 use App\Http\Controllers\TurmaController;
 use App\Http\Controllers\PreInscricaoController;
+use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SiteController;
 
 /*
@@ -101,9 +102,12 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     ]);
     Route::patch('pre-inscricoes/{preInscricao}/status', [PreInscricaoController::class, 'updateStatus'])->name('pre-inscricoes.update-status');
     
+    // Grupos
+    Route::resource('grupos', GrupoController::class);
+    
     // Categorias
     Route::resource('categorias', CategoriaController::class);
     
-    // Produtos
-    Route::resource('produtos', ProdutoController::class);
+    // Itens
+    Route::resource('itens', ItemController::class);
 });

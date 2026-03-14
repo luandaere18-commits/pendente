@@ -27,8 +27,9 @@ use App\Http\Controllers\Api\CentroController;
 use App\Http\Controllers\Api\CursoController;
 use App\Http\Controllers\Api\TurmaController;
 use App\Http\Controllers\Api\FormadorController;
+use App\Http\Controllers\Api\GrupoController;
 use App\Http\Controllers\Api\CategoriaController;
-use App\Http\Controllers\Api\ProdutoController;
+use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\PreInscricaoController;
 
 
@@ -45,13 +46,16 @@ Route::get('/turmas/{id}', [TurmaController::class, 'show']);
 Route::get('/formadores', [FormadorController::class, 'index'])->name('api.formadores.index');
 Route::get('/formadores/{formador}', [FormadorController::class, 'show'])->name('api.formadores.show');
 
+Route::get('/grupos', [GrupoController::class, 'index']);
+Route::get('/grupos/{grupo}', [GrupoController::class, 'show']);
+
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/categorias/{categoria}', [CategoriaController::class, 'show']);
 
-Route::get('/produtos', [ProdutoController::class, 'index']);
-Route::get('/produtos/em-destaque', [ProdutoController::class, 'emDestaque']);
-Route::get('/produtos/{produto}', [ProdutoController::class, 'show']);
-Route::get('/categorias/{categoria}/produtos', [ProdutoController::class, 'porCategoria']);
+Route::get('/itens', [ItemController::class, 'index']);
+Route::get('/itens/destacados', [ItemController::class, 'destacados']);
+Route::get('/itens/{item}', [ItemController::class, 'show']);
+Route::get('/categorias/{categoria}/itens', [ItemController::class, 'porCategoria']);
 
 // Rotas protegidas de leitura admin apenas
 Route::middleware(['auth:sanctum,web'])->group(function () {
@@ -94,10 +98,15 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::put('/categorias/{categoria}', [CategoriaController::class, 'update']);
     Route::delete('/categorias/{categoria}', [CategoriaController::class, 'destroy']);
 
-    // Produtos
-    Route::post('/produtos', [ProdutoController::class, 'store']);
-    Route::put('/produtos/{produto}', [ProdutoController::class, 'update']);
-    Route::delete('/produtos/{produto}', [ProdutoController::class, 'destroy']);
+    // Grupos
+    Route::post('/grupos', [GrupoController::class, 'store']);
+    Route::put('/grupos/{grupo}', [GrupoController::class, 'update']);
+    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy']);
+
+    // Itens
+    Route::post('/itens', [ItemController::class, 'store']);
+    Route::put('/itens/{item}', [ItemController::class, 'update']);
+    Route::delete('/itens/{item}', [ItemController::class, 'destroy']);
 
     // Pre-inscrições (admin pode editar, deletar - ver está em grupo separado acima)
     Route::put('/pre-inscricoes/{id}', [PreInscricaoController::class, 'update']);

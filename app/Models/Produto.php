@@ -15,6 +15,7 @@ class Produto extends Model
         'preco',
         'imagem',
         'categoria_id',
+        'tipo_item', // 'produto' ou 'servico'
         'ativo',
         'em_destaque'
     ];
@@ -49,11 +50,24 @@ class Produto extends Model
         return $query->where('categoria_id', $categoriaId);
     }
 
+    public function scopePorTipo($query, $tipo)
+    {
+        return $query->where('tipo_item', $tipo);
+    }
+
     public function getPrecoFormatadoAttribute()
     {
-        if ($this->preco == 0) {
+        if ($this->preco == 0 || is_null($this->preco)) {
             return 'Sob Consulta';
         }
         return number_format($this->preco, 0, ',', '.') . ' Kz';
+    }
+
+    public function getImagemUrlAttribute()
+    {
+        if ($this->imagem && file_exists(public_path('storage/' . $this->imagem))) {
+            return asset('storage/' . $this->imagem);
+        }
+        return asset('images/placeholder.jpg');
     }
 }

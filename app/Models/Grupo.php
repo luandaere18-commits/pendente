@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Grupo extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'nome',
-        'descricao',
-        'grupo_id',
+        'display_name',
+        'icone',
         'ordem',
-        'ativo'
+        'ativo',
     ];
 
     protected $casts = [
@@ -23,25 +20,25 @@ class Categoria extends Model
     ];
 
     /**
-     * Get the grupo that owns this categoria
+     * Get all categorias for this grupo
      */
-    public function grupo()
+    public function categorias()
     {
-        return $this->belongsTo(Grupo::class);
+        return $this->hasMany(Categoria::class)->orderBy('ordem');
     }
 
     /**
-     * Get all itens in this categoria
+     * Get all itens for this grupo (through categorias)
      */
     public function itens()
     {
-        return $this->hasMany(Item::class)->orderBy('ordem');
+        return $this->hasManyThrough(Item::class, Categoria::class);
     }
 
     /**
-     * Scope: Get only active categorias
+     * Scope: Get only active grupos
      */
-    public function scopeAtivas($query)
+    public function scopeAtivos($query)
     {
         return $query->where('ativo', true);
     }

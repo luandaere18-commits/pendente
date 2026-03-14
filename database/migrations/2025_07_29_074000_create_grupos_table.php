@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorias', function (Blueprint $table) {
+        Schema::create('grupos', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->text('descricao')->nullable();
-            $table->foreignId('grupo_id')->constrained('grupos')->onDelete('cascade');
-            $table->integer('ordem')->default(0); // Ordem dentro do grupo
+            $table->string('nome'); // snackbar, produtos, servicos
+            $table->string('display_name'); // Snackbar, Produtos, Serviços
+            $table->string('icone')->nullable(); // fas fa-utensils, fas fa-box, fas fa-cogs
+            $table->integer('ordem')->default(0); // Ordem de exibição
             $table->boolean('ativo')->default(true);
             $table->timestamps();
             
-            // Índices para performance
-            $table->index('grupo_id');
+            $table->unique('nome');
             $table->index('ordem');
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorias');
+        Schema::dropIfExists('grupos');
     }
 };

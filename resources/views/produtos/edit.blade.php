@@ -29,26 +29,34 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form id="produtoForm" method="POST" action="{{ route('produtos.update', $produto->id) }}">
+                    <form id="produtoForm" method="POST" action="{{ route('produtos.update', $produto->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <input type="hidden" id="produto_id" name="id" value="{{ $produto->id }}">
                         
                         <div class="row">
                             <div class="col-md-8 mb-3">
-                                <label for="nome" class="form-label">Nome do Produto <span class="text-danger">*</span></label>
+                                <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="nome" name="nome" required maxlength="100" value="{{ $produto->nome }}">
                                 <div class="form-text">Máximo 100 caracteres</div>
                             </div>
                             
                             <div class="col-md-4 mb-3">
-                                <label for="preco" class="form-label">Preço (€) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="preco" name="preco" step="0.01" min="0" required value="{{ $produto->preco }}">
-                                <div class="form-text">Ex: 12.50</div>
+                                <label for="tipo_item" class="form-label">Tipo <span class="text-danger">*</span></label>
+                                <select class="form-select" id="tipo_item" name="tipo_item" required>
+                                    <option value="produto" {{ $produto->tipo_item == 'produto' ? 'selected' : '' }}>Produto</option>
+                                    <option value="servico" {{ $produto->tipo_item == 'servico' ? 'selected' : '' }}>Serviço</option>
+                                </select>
                             </div>
                         </div>
 
                         <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="preco" class="form-label">Preço (Kz)</label>
+                                <input type="number" class="form-control" id="preco" name="preco" step="0.01" min="0" value="{{ $produto->preco }}">
+                                <div class="form-text">Deixe em branco para "Sob Consulta" (em serviços)</div>
+                            </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="categoria_id" class="form-label">Categoria <span class="text-danger">*</span></label>
                                 <select class="form-select" id="categoria_id" name="categoria_id" required>
@@ -56,14 +64,16 @@
                                     @foreach($categorias as $categoria)
                                         @if($categoria->ativo)
                                             <option value="{{ $categoria->id }}" {{ $produto->categoria_id == $categoria->id ? 'selected' : '' }}>
-                                                {{ $categoria->nome }} ({{ $categoria->tipo }})
+                                                {{ $categoria->nome }} ({{ ucfirst(str_replace('_', ' ', $categoria->tipo)) }})
                                             </option>
                                         @endif
                                     @endforeach
                                 </select>
                             </div>
-                            
-                            <div class="col-md-3 mb-3">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
                                 <label for="ativo" class="form-label">Status</label>
                                 <select class="form-select" id="ativo" name="ativo">
                                     <option value="1" {{ $produto->ativo ? 'selected' : '' }}>Ativo</option>
@@ -71,12 +81,18 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label for="em_destaque" class="form-label">Em Destaque</label>
                                 <select class="form-select" id="em_destaque" name="em_destaque">
                                     <option value="0" {{ !$produto->em_destaque ? 'selected' : '' }}>Não</option>
                                     <option value="1" {{ $produto->em_destaque ? 'selected' : '' }}>Sim</option>
                                 </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="imagem" class="form-label">Imagem</label>
+                                <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*">
+                                <div class="form-text">JPEG, PNG, GIF (máx 2MB)</div>
                             </div>
                         </div>
 
