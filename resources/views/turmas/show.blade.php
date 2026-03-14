@@ -491,7 +491,10 @@
             <div class="modal-body">
                 <form id="formEditarTurmaShow" class="pi-form">
                     @csrf
-                    <input type="hidden" id="editTurmaIdShow" value="{{ $turma->id }}">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="curso_id" value="{{ $turma->curso_id }}">
+                    <input type="hidden" id="editTurmaIdShow" name="turma_id" value="{{ $turma->id }}">
+                    <input type="hidden" id="centroIdHidden" name="centro_id" value="{{ $turma->centro_id }}">
 
                     <div class="row g-3">
                         {{-- COLUNA ESQUERDA --}}
@@ -502,9 +505,10 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Centro <span class="required">*</span></label>
-                                <select id="centroIdShow" name="centro_id" class="form-select" required>
+                                <select id="centroIdShow" name="centro_id" class="form-select" required disabled>
                                     <option value="">Selecione o centro</option>
                                 </select>
+                                <div class="form-text">O centro não pode ser alterado após a criação da turma.</div>
                             </div>
 
                             <div class="mb-3">
@@ -557,7 +561,8 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Data Arranque <span class="required">*</span></label>
-                                <input type="date" id="dataArranqueShow" name="data_arranque" class="form-control" value="{{ $turma->data_arranque }}" required>
+                                <input type="date" id="dataArranqueShow" name="data_arranque" class="form-control" 
+                                       value="{{ \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') }}" required>
                             </div>
 
                             <div class="mb-3">
@@ -588,7 +593,8 @@
                         <div class="pi-days-grid">
                             @foreach(['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'] as $dia)
                                 <label class="pi-day-check">
-                                    <input type="checkbox" class="dia-semana-show" id="dia_{{ $dia }}_show" value="{{ $dia }}">
+                                    <input type="checkbox" class="dia-semana-show" name="dia_semana[]" value="{{ $dia }}"
+                                           {{ in_array($dia, $turma->dia_semana ?? []) ? 'checked' : '' }}>
                                     {{ $dia }}
                                 </label>
                             @endforeach
@@ -617,7 +623,6 @@
 $(document).ready(function() {
     carregarCentros();
     carregarFormadores();
-    preencherDiasSemana();
     configurarFormulario();
 });
 
@@ -667,18 +672,20 @@ function carregarFormadores() {
     });
 }
 
-// Preencher dias da semana
-function preencherDiasSemana() {
-    const dias = {!! json_encode($turma->dia_semana ?? []) !!};
-    dias.forEach(dia => {
-        $(`#dia_${dia}_show`).prop('checked', true);
-    });
-}
-
-// Configurar envio do formulário
+// Configurar envio do formulário - COM METHOD SPOOFING
 function configurarFormulario() {
     $('#formEditarTurmaShow').on('submit', function(e) {
         e.preventDefault();
+
+        // Extrair e validar ID da turma no início
+        const turmaId = $('#editTurmaIdShow').val();
+        console.log('ID da turma:', turmaId);
+        
+        if (!turmaId) {
+            Swal.fire('Erro', 'ID da turma não encontrado', 'error');
+            console.error('Campo #editTurmaIdShow está vazio!');
+            return;
+        }
 
         const dias = [];
         $('.dia-semana-show:checked').each(function() {
@@ -690,54 +697,70 @@ function configurarFormulario() {
             return;
         }
 
-        const centroId = $('#centroIdShow').val();
-        if (!centroId) {
-            Swal.fire('Aviso', 'Selecione um centro', 'warning');
-            return;
-        }
-
         const horaInicio = $('#horaInicioShow').val();
         if (!horaInicio) {
             Swal.fire('Aviso', 'Hora de início é obrigatória', 'warning');
             return;
         }
 
-        const dados = {
-            centro_id: centroId,
-            periodo: $('#periodoShow').val(),
-            status: $('#statusShow').val(),
-            hora_inicio: horaInicio,
-            hora_fim: $('#horaFimShow').val() || null,
-            duracao_semanas: $('#duracaoShow').val() || null,
-            data_arranque: $('#dataArranqueShow').val(),
-            formador_id: $('#formadorIdShow').val() || null,
-            vagas_totais: $('#vagasTotaisShow').val() || null,
-            publicado: $('#publicadoShow').is(':checked') ? 1 : 0,
-            dia_semana: dias
-        };
+        // Usar FormData para method spoofing
+        const formData = new FormData();
+        
+        // Method spoofing - IMPORTANTE!
+        formData.append('_method', 'PUT');
+        
+        // Adicionar todos os campos
+        formData.append('curso_id', $('input[name="curso_id"]').val());
+        formData.append('centro_id', $('#centroIdHidden').val());
+        formData.append('periodo', $('#periodoShow').val());
+        formData.append('status', $('#statusShow').val());
+        formData.append('hora_inicio', horaInicio);
+        formData.append('hora_fim', $('#horaFimShow').val() || '');
+        formData.append('duracao_semanas', $('#duracaoShow').val() || '');
+        formData.append('data_arranque', $('#dataArranqueShow').val());
+        formData.append('formador_id', $('#formadorIdShow').val() || '');
+        formData.append('vagas_totais', $('#vagasTotaisShow').val() || '');
+        formData.append('publicado', $('#publicadoShow').is(':checked') ? '1' : '0');
+        
+        // Adicionar dias da semana (array)
+        dias.forEach(function(dia, index) {
+            formData.append(`dia_semana[${index}]`, dia);
+        });
 
-        console.log('Enviando dados:', dados);
+        console.log('Enviando FormData:');
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+        console.log('URL da requisição:', `/turmas/${turmaId}`);
 
         $.ajax({
-            url: `/turmas/{{ $turma->id }}`,
-            method: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(dados),
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: `/turmas/${turmaId}`,
+            method: 'POST',  // ← POST com method spoofing
+            data: formData,
+            contentType: false,  // ← Importante para FormData
+            processData: false,  // ← Importante para FormData
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(response) {
+                console.log('Sucesso:', response);
                 Swal.fire('Sucesso!', 'Turma atualizada com sucesso', 'success').then(() => {
                     location.reload();
                 });
             },
             error: function(xhr) {
-                console.error('Erro detalhado:', xhr.responseJSON);
-                const errors = xhr.responseJSON?.errors || {};
-                let mensagem = xhr.responseJSON?.mensagem || 'Erro ao atualizar turma';
-
-                if (Object.keys(errors).length > 0) {
-                    mensagem = Object.values(errors).flat().join('<br>');
+                console.error('Erro detalhado:', xhr);
+                console.error('Status:', xhr.status);
+                console.error('URL enviada:', xhr.responseURL);
+                
+                let mensagem = 'Erro ao atualizar turma';
+                
+                if (xhr.responseJSON?.errors) {
+                    mensagem = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                } else if (xhr.responseJSON?.message) {
+                    mensagem = xhr.responseJSON.message;
                 }
-
+                
                 Swal.fire('Erro', mensagem, 'error');
             }
         });
