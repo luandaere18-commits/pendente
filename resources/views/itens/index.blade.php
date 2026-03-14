@@ -4,11 +4,11 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-6">
-            <h2>Categorias</h2>
+            <h2>Itens</h2>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('categorias.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nova Categoria
+            <a href="{{ route('itens.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Item
             </a>
         </div>
     </div>
@@ -24,38 +24,54 @@
             <thead class="table-light">
                 <tr>
                     <th>Nome</th>
-                    <th>Grupo</th>
-                    <th>Descrição</th>
-                    <th>Itens</th>
+                    <th>Categoria</th>
+                    <th>Tipo</th>
+                    <th>Preço</th>
+                    <th>Destaque</th>
                     <th>Ordem</th>
                     <th>Status</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($categorias as $categoria)
+                @forelse($itens as $item)
                     <tr>
-                        <td><strong>{{ $categoria->nome }}</strong></td>
                         <td>
-                            <span class="badge bg-secondary">{{ $categoria->grupo->display_name ?? '-' }}</span>
+                            <strong>{{ $item->nome }}</strong>
                         </td>
-                        <td>{{ Str::limit($categoria->descricao, 50) ?? '-' }}</td>
                         <td>
-                            <span class="badge bg-light text-dark">{{ $categoria->itens->count() ?? 0 }}</span>
+                            <span class="badge bg-secondary">{{ $item->categoria->nome ?? '-' }}</span>
                         </td>
-                        <td>{{ $categoria->ordem }}</td>
                         <td>
-                            @if($categoria->ativo)
+                            @if($item->tipo === 'produto')
+                                <span class="badge bg-primary">Produto</span>
+                            @else
+                                <span class="badge bg-warning">Serviço</span>
+                            @endif
+                        </td>
+                        <td>
+                            {{ $item->preco_formatado }}
+                        </td>
+                        <td>
+                            @if($item->destaque)
+                                <i class="fas fa-star text-warning"></i> Sim
+                            @else
+                                Não
+                            @endif
+                        </td>
+                        <td>{{ $item->ordem }}</td>
+                        <td>
+                            @if($item->ativo)
                                 <span class="badge bg-success">Ativo</span>
                             @else
                                 <span class="badge bg-secondary">Inativo</span>
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('categorias.edit', $categoria) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('itens.edit', $item) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('categorias.destroy', $categoria) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('itens.destroy', $item) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?')">
@@ -66,7 +82,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted">Nenhuma categoria encontrada</td>
+                        <td colspan="8" class="text-center text-muted">Nenhum item encontrado</td>
                     </tr>
                 @endforelse
             </tbody>

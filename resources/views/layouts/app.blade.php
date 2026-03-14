@@ -767,13 +767,17 @@
 
             <div class="pi-sidebar-section">
                 <div class="pi-sidebar-section-label">Loja</div>
+                <a href="{{ route('grupos.index') }}" class="pi-nav-link {{ request()->routeIs('grupos.*') ? 'active' : '' }}">
+                    <i class="fas fa-layer-group nav-icon"></i>
+                    <span>Grupos</span>
+                </a>
                 <a href="{{ route('categorias.index') }}" class="pi-nav-link {{ request()->routeIs('categorias.*') ? 'active' : '' }}">
                     <i class="fas fa-tags nav-icon"></i>
                     <span>Categorias</span>
                 </a>
-                <a href="{{ route('produtos.index') }}" class="pi-nav-link {{ request()->routeIs('produtos.*') ? 'active' : '' }}">
+                <a href="{{ route('itens.index') }}" class="pi-nav-link {{ request()->routeIs('itens.*') ? 'active' : '' }}">
                     <i class="fas fa-box nav-icon"></i>
-                    <span>Produtos</span>
+                    <span>Itens</span>
                 </a>
             </div>
         </nav>

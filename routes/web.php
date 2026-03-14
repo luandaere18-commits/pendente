@@ -109,5 +109,5 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::resource('categorias', CategoriaController::class);
     
     // Itens
-    Route::resource('itens', ItemController::class);
+    Route::resource('itens', ItemController::class)->parameters(['itens' => 'item']);
 });

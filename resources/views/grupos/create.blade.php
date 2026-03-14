@@ -4,29 +4,14 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h2>Criar Nova Categoria</h2>
+            <h2>Criar Novo Grupo</h2>
         </div>
     </div>
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('categorias.store') }}" method="POST">
+            <form action="{{ route('grupos.store') }}" method="POST">
                 @csrf
-
-                <div class="mb-3">
-                    <label for="grupo_id" class="form-label">Grupo *</label>
-                    <select class="form-select @error('grupo_id') is-invalid @enderror" id="grupo_id" name="grupo_id" required>
-                        <option value="">Selecione um grupo</option>
-                        @foreach($grupos as $grupo)
-                            <option value="{{ $grupo->id }}" {{ old('grupo_id') == $grupo->id ? 'selected' : '' }}>
-                                {{ $grupo->display_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('grupo_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
 
                 <div class="mb-3">
                     <label for="nome" class="form-label">Nome *</label>
@@ -37,9 +22,18 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="descricao" class="form-label">Descrição</label>
-                    <textarea class="form-control @error('descricao') is-invalid @enderror" id="descricao" name="descricao" rows="3">{{ old('descricao') }}</textarea>
-                    @error('descricao')
+                    <label for="display_name" class="form-label">Display Name *</label>
+                    <input type="text" class="form-control @error('display_name') is-invalid @enderror" id="display_name" name="display_name" value="{{ old('display_name') }}" required>
+                    @error('display_name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="icone" class="form-label">Ícone (Font Awesome)</label>
+                    <input type="text" class="form-control @error('icone') is-invalid @enderror" id="icone" name="icone" value="{{ old('icone') }}" placeholder="fas fa-box">
+                    <small class="text-muted">Ex: fas fa-utensils, fas fa-box, fas fa-cogs</small>
+                    @error('icone')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -62,8 +56,8 @@
                 </div>
 
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-end">
-                    <a href="{{ route('categorias.index') }}" class="btn btn-secondary">Cancelar</a>
-                    <button type="submit" class="btn btn-primary">Criar Categoria</button>
+                    <a href="{{ route('grupos.index') }}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Criar Grupo</button>
                 </div>
             </form>
         </div>

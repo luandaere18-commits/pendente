@@ -4,11 +4,11 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-md-6">
-            <h2>Categorias</h2>
+            <h2>Grupos</h2>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('categorias.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Nova Categoria
+            <a href="{{ route('grupos.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Grupo
             </a>
         </div>
     </div>
@@ -24,49 +24,55 @@
             <thead class="table-light">
                 <tr>
                     <th>Nome</th>
-                    <th>Grupo</th>
-                    <th>Descrição</th>
-                    <th>Itens</th>
+                    <th>Display Name</th>
+                    <th>Ícone</th>
                     <th>Ordem</th>
+                    <th>Categorias</th>
                     <th>Status</th>
                     <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($categorias as $categoria)
+                @forelse($grupos as $grupo)
                     <tr>
-                        <td><strong>{{ $categoria->nome }}</strong></td>
                         <td>
-                            <span class="badge bg-secondary">{{ $categoria->grupo->display_name ?? '-' }}</span>
+                            <strong>{{ $grupo->nome }}</strong>
                         </td>
-                        <td>{{ Str::limit($categoria->descricao, 50) ?? '-' }}</td>
+                        <td>{{ $grupo->display_name }}</td>
                         <td>
-                            <span class="badge bg-light text-dark">{{ $categoria->itens->count() ?? 0 }}</span>
+                            @if($grupo->icone)
+                                <i class="{{ $grupo->icone }}"></i> {{ $grupo->icone }}
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
                         </td>
-                        <td>{{ $categoria->ordem }}</td>
+                        <td>{{ $grupo->ordem }}</td>
                         <td>
-                            @if($categoria->ativo)
+                            <span class="badge bg-info">{{ $grupo->categorias_count ?? count($grupo->categorias) }}</span>
+                        </td>
+                        <td>
+                            @if($grupo->ativo)
                                 <span class="badge bg-success">Ativo</span>
                             @else
                                 <span class="badge bg-secondary">Inativo</span>
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('categorias.edit', $categoria) }}" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-edit"></i>
+                            <a href="{{ route('grupos.edit', $grupo) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-edit"></i> Editar
                             </a>
-                            <form action="{{ route('categorias.destroy', $categoria) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('grupos.destroy', $grupo) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?')">
-                                    <i class="fas fa-trash"></i>
+                                    <i class="fas fa-trash"></i> Deletar
                                 </button>
                             </form>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted">Nenhuma categoria encontrada</td>
+                        <td colspan="7" class="text-center text-muted">Nenhum grupo encontrado</td>
                     </tr>
                 @endforelse
             </tbody>
