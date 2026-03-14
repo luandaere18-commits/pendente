@@ -625,7 +625,7 @@ $(document).ready(function() {
 function carregarCentros() {
     const cursoId = {{ $turma->curso_id }};
     $.ajax({
-        url: `/api/cursos/${cursoId}`,
+        url: `/cursos/${cursoId}`,
         method: 'GET',
         success: function(response) {
             const centros = response.dados?.centros || [];
@@ -647,7 +647,7 @@ function carregarCentros() {
 // Carregar formadores
 function carregarFormadores() {
     $.ajax({
-        url: '/api/formadores',
+        url: '/formadores',
         method: 'GET',
         success: function(response) {
             const data = Array.isArray(response) ? response : (response.data || []);
@@ -719,7 +719,7 @@ function configurarFormulario() {
         console.log('Enviando dados:', dados);
 
         $.ajax({
-            url: `/api/turmas/{{ $turma->id }}`,
+            url: `/turmas/{{ $turma->id }}`,
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(dados),
@@ -758,7 +758,7 @@ function configurarFormulario() {
 
 function atualizarStatusInscricao(id, status) {
     $.ajax({
-        url: `/api/pre-inscricoes/${id}`,
+        url: `/pre-inscricoes/${id}`,
         method: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify({ status: status }),
@@ -788,7 +788,7 @@ function eliminarTurmaShow(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/turmas/${id}`,
+                url: `/turmas/${id}`,
                 method: 'DELETE',
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {

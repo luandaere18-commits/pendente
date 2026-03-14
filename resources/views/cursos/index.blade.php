@@ -594,7 +594,7 @@ $(document).ready(function() {
  */
 function carregarCentros() {
     $.ajax({
-        url: '/api/centros',
+        url: '/centros',
         method: 'GET',
         success: function(data) {
             centrosDisponiveisList = data;
@@ -610,7 +610,7 @@ function carregarCentros() {
  */
 function carregarDetalhesCurso(cursoId) {
     $.ajax({
-        url: `/api/cursos/${cursoId}`,
+        url: `/cursos/${cursoId}`,
         method: 'GET',
         headers: {
             'Accept': 'application/json'
@@ -865,7 +865,8 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     });
 
     $.ajax({
-        url: `/api/cursos`,
+        // Usar rota web para manter consistência com o painel e a autenticação via sessão
+        url: `/cursos`,
         type: "POST",
         data: formData,
         contentType: false,

@@ -25,8 +25,10 @@ class Centro extends Model
     // Relacionamento N:N com cursos (preferencial para múltiplos centros por curso)
     public function cursos()
     {
+        // Habilita timestamps na tabela pivot (created_at / updated_at)
         return $this->belongsToMany(Curso::class, 'centro_curso')
-        ->withPivot(['preco']);
+            ->withPivot(['preco'])
+            ->withTimestamps();
     }
 
     // Relacionamento N:N com formadores

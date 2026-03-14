@@ -156,7 +156,7 @@ $(document).ready(function() {
 });
 
 function carregarCategorias() {
-    $.get('/api/categorias', function(data) {
+    $.get('/categorias', function(data) {
         let options = '<option value="">Selecione uma categoria</option>';
         
         // Filtrar apenas categorias ativas
@@ -232,7 +232,7 @@ function criarProduto() {
     };
 
     $.ajax({
-        url: '/api/produtos',
+        url: '/produtos',
         method: 'POST',
         data: JSON.stringify(formData),
         contentType: 'application/json',

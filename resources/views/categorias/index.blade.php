@@ -238,7 +238,7 @@ function eliminarCategoria(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/categorias/${id}`,
+                url: `/categorias/${id}`,
                 method: 'DELETE',
                 success: function(response) {
                     Swal.fire(

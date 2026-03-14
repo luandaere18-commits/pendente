@@ -425,7 +425,7 @@ $(document).ready(function() {
  */
 function carregarCentros() {
     $.ajax({
-        url: '/api/centros',
+        url: '/centros',
         method: 'GET',
         success: function(data) {
             centrosDisponiveisList = data;

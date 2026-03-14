@@ -165,7 +165,7 @@ function criarCategoria() {
     };
 
     $.ajax({
-        url: '/api/categorias',
+        url: '/categorias',
         method: 'POST',
         data: JSON.stringify(formData),
         contentType: 'application/json',

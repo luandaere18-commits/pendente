@@ -89,19 +89,13 @@
                                 <td><small>{{ $centro->email ?? '—' }}</small></td>
                                 <td class="text-end pe-3">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-info btn-visualizar-centro" onclick="visualizarCentro({{ $centro->id }})" title="Visualizar">
+                                        <button type="button" class="btn btn-outline-info btn-visualizar-centro" data-centro-id="{{ $centro->id }}" title="Visualizar">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button type="button" class="btn btn-outline-primary btn-editar-centro" 
-                                                data-centro-id="{{ $centro->id }}"
-                                                data-centro-nome="{{ $centro->nome }}"
-                                                data-localizacao="{{ $centro->localizacao }}"
-                                                data-email="{{ $centro->email }}"
-                                                onclick="abrirEdicaoCentro({{ $centro->id }})" 
-                                                title="Editar">
+                                        <button type="button" class="btn btn-outline-primary btn-editar-centro" data-centro-id="{{ $centro->id }}" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger btn-eliminar-centro" onclick="eliminarCentro({{ $centro->id }})" title="Eliminar">
+                                        <button type="button" class="btn btn-outline-danger btn-eliminar-centro" data-centro-id="{{ $centro->id }}" title="Eliminar">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -209,7 +203,7 @@
                                     {{-- Contacto(s) --}}
                                     <div>
                                         <label class="form-label fw-medium small mb-1">Contacto(s) - Telefones <span class="text-danger">*</span></label>
-                                        <input type="text" name="contactos_novo" class="form-control form-control-sm" placeholder="Ex: 923111111, 924222222" required>
+                                        <input type="text" id="contactosInput" class="form-control form-control-sm" placeholder="Ex: 923111111, 924222222" required>
                                         <small class="text-muted d-block mt-1">Separe múltiplos telefones por vírgula</small>
                                     </div>
 
@@ -277,13 +271,13 @@
                                     {{-- Nome --}}
                                     <div>
                                         <label class="form-label fw-medium small mb-1">Nome <span class="text-danger">*</span></label>
-                                        <input type="text" id="editNome" class="form-control form-control-sm" placeholder="Ex: Centro de Lisboa" required>
+                                        <input type="text" id="editNome" name="nome" class="form-control form-control-sm" placeholder="Ex: Centro de Lisboa" required>
                                     </div>
 
                                     {{-- Localização --}}
                                     <div>
                                         <label class="form-label fw-medium small mb-1">Localização <span class="text-danger">*</span></label>
-                                        <input type="text" id="editLocalizacao" class="form-control form-control-sm" placeholder="Ex: Avenida Principal, 123" required>
+                                        <input type="text" id="editLocalizacao" name="localizacao" class="form-control form-control-sm" placeholder="Ex: Avenida Principal, 123" required>
                                     </div>
 
 
@@ -304,14 +298,14 @@
                                     {{-- Contacto(s) --}}
                                     <div>
                                         <label class="form-label fw-medium small mb-1">Contacto(s) - Telefones <span class="text-danger">*</span></label>
-                                        <input type="text" id="editContactos" class="form-control form-control-sm" placeholder="Ex: 923111111, 924222222" required>
+                                        <input type="text" id="editContactos" name="contactos" class="form-control form-control-sm" placeholder="Ex: 923111111, 924222222" required>
                                         <small class="text-muted d-block mt-1">Separe múltiplos telefones por vírgula</small>
                                     </div>
 
                                     {{-- Email --}}
                                     <div>
                                         <label class="form-label fw-medium small mb-1">Email</label>
-                                        <input type="email" id="editEmail" class="form-control form-control-sm" placeholder="Ex: centro@email.com">
+                                        <input type="email" id="editEmail" name="email" class="form-control form-control-sm" placeholder="Ex: centro@email.com">
                                     </div>
                                 </div>
                             </div>
@@ -381,21 +375,21 @@ function configurarEventos() {
     });
 
     // Visualizar Centro
-    $(document).on('click', '.btn-visualizar', function(e) {
+    $(document).on('click', '.btn-visualizar-centro', function(e) {
         e.preventDefault();
         const centroId = $(this).data('centro-id');
         visualizarCentro(centroId);
     });
 
     // Editar Centro
-    $(document).on('click', '.btn-editar', function(e) {
+    $(document).on('click', '.btn-editar-centro', function(e) {
         e.preventDefault();
         const centroId = $(this).data('centro-id');
         abrirEdicaoCentro(centroId);
     });
 
     // Eliminar Centro
-    $(document).on('click', '.btn-eliminar', function(e) {
+    $(document).on('click', '.btn-eliminar-centro', function(e) {
         e.preventDefault();
         const centroId = $(this).data('centro-id');
         eliminarCentro(centroId);
@@ -419,14 +413,10 @@ function configurarEventos() {
  */
 function visualizarCentro(centroId) {
     $.ajax({
-        url: `/api/centros/${centroId}`,
+        url: `/centros/${centroId}`,
         method: 'GET',
         success: function(response) {
             const centro = response.dados || response;
-            
-            const statusBadge = centro.ativo 
-                ? '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>'
-                : '<span class="badge bg-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>';
             
             let conteudo = `
                 <div class="row g-3">
@@ -460,8 +450,9 @@ function visualizarCentro(centroId) {
             $('#conteudoVisualizarCentro').html(conteudo);
             new bootstrap.Modal(document.getElementById('modalVisualizarCentro')).show();
         },
-        error: function() {
-            Swal.fire('Erro', 'Erro ao carregar detalhes do centro', 'error');
+        error: function(xhr) {
+            const mensagem = xhr.responseJSON?.mensagem || 'Erro ao carregar detalhes do centro';
+            Swal.fire('Erro', mensagem, 'error');
         }
     });
 }
@@ -471,7 +462,7 @@ function visualizarCentro(centroId) {
  */
 function abrirEdicaoCentro(centroId) {
     $.ajax({
-        url: `/api/centros/${centroId}`,
+        url: `/centros/${centroId}`,
         method: 'GET',
         success: function(response) {
             const centro = response.dados || response;
@@ -494,7 +485,7 @@ function abrirEdicaoCentro(centroId) {
  * Criar novo centro
  */
 function criarCentro() {
-    const contactosInput = $('[name="contactos_novo"]').val().trim();
+    const contactosInput = $('#contactosInput').val().trim();
     const contactosArray = contactosInput.split(',').map(c => c.trim()).filter(c => c.length > 0);
     
     if (contactosArray.length === 0) {
@@ -503,14 +494,14 @@ function criarCentro() {
     }
     
     const dados = {
-        nome: $('[name="nome"]').val(),
-        localizacao: $('[name="localizacao"]').val(),
+        nome: $('#formNovoCentroAjax [name="nome"]').val(),
+        localizacao: $('#formNovoCentroAjax [name="localizacao"]').val(),
         contactos: contactosArray,
-        email: $('[name="email"]').val()
+        email: $('#formNovoCentroAjax [name="email"]').val()
     };
     
     $.ajax({
-        url: '/api/centros',
+        url: '/centros',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(dados),
@@ -522,11 +513,16 @@ function criarCentro() {
             carregarCentros();
         },
         error: function(xhr) {
-            const errors = xhr.responseJSON?.errors || {};
             let mensagem = 'Erro ao criar centro';
-            if (Object.keys(errors).length > 0) {
-                mensagem = Object.values(errors).flat().join(', ');
+            
+            if (xhr.responseJSON) {
+                if (xhr.responseJSON.errors) {
+                    mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
+                } else if (xhr.responseJSON.mensagem) {
+                    mensagem = xhr.responseJSON.mensagem;
+                }
             }
+            
             Swal.fire('Erro', mensagem, 'error');
         }
     });
@@ -553,7 +549,7 @@ function atualizarCentro() {
     };
     
     $.ajax({
-        url: `/api/centros/${centroId}`,
+        url: `/centros/${centroId}`,
         method: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(dados),
@@ -564,11 +560,16 @@ function atualizarCentro() {
             carregarCentros();
         },
         error: function(xhr) {
-            const errors = xhr.responseJSON?.errors || {};
             let mensagem = 'Erro ao atualizar centro';
-            if (Object.keys(errors).length > 0) {
-                mensagem = Object.values(errors).flat().join(', ');
+            
+            if (xhr.responseJSON) {
+                if (xhr.responseJSON.errors) {
+                    mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
+                } else if (xhr.responseJSON.mensagem) {
+                    mensagem = xhr.responseJSON.mensagem;
+                }
             }
+            
             Swal.fire('Erro', mensagem, 'error');
         }
     });
@@ -590,7 +591,7 @@ function eliminarCentro(centroId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/centros/${centroId}`,
+                url: `/centros/${centroId}`,
                 method: 'DELETE',
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {
@@ -598,8 +599,22 @@ function eliminarCentro(centroId) {
                     carregarCentros();
                 },
                 error: function(xhr) {
-                    const response = xhr.responseJSON;
-                    const mensagem = response?.mensagem || 'Erro ao eliminar centro';
+                    let mensagem = 'Erro ao eliminar centro';
+                    
+                    if (xhr.responseJSON) {
+                        if (xhr.responseJSON.mensagem) {
+                            mensagem = xhr.responseJSON.mensagem;
+                        } else if (xhr.responseJSON.message) {
+                            mensagem = xhr.responseJSON.message;
+                        }
+                    } else if (xhr.status === 409) {
+                        mensagem = 'Este centro não pode ser eliminado (existem cursos associados)';
+                    } else if (xhr.status === 404) {
+                        mensagem = 'Centro não encontrado';
+                    } else if (xhr.status === 500) {
+                        mensagem = 'Erro interno do servidor';
+                    }
+                    
                     Swal.fire('Erro', mensagem, 'error');
                 }
             });

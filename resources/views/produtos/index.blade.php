@@ -85,7 +85,7 @@ $(document).ready(function() {
  */
 function carregarProdutos() {
     $.ajax({
-        url: '/api/produtos?incluir_inativos=1',
+        url: '/produtos?incluir_inativos=1',
         method: 'GET',
         success: function(data) {
         let html = '';
@@ -183,7 +183,7 @@ function carregarProdutos() {
  */
 function visualizarProduto(id) {
     $.ajax({
-        url: `/api/produtos/${id}`,
+        url: `/produtos/${id}`,
         method: 'GET',
         success: function(response) {
             // Se a resposta vem com status e dados, extrair dados
@@ -261,7 +261,7 @@ function eliminarProduto(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/produtos/${id}`,
+                url: `/produtos/${id}`,
                 method: 'DELETE',
                 success: function(response) {
                     Swal.fire(

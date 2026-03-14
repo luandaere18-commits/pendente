@@ -1097,7 +1097,7 @@ $("#formAdicionarCentroAjax").on("submit", function(e) {
     }
     
     $.ajax({
-        url: `/api/cursos/${cursoId}/centros`,
+        url: `/cursos/${cursoId}/centros`,
         type: "POST",
         data: JSON.stringify(formData),
         contentType: "application/json",
@@ -1163,7 +1163,7 @@ $("#formEditarCentroAjax").on("submit", function(e) {
     }
     
     $.ajax({
-        url: `/api/cursos/${cursoId}/centros/${centroId}`,
+        url: `/cursos/${cursoId}/centros/${centroId}`,
         type: "PUT",
         data: JSON.stringify(formData),
         contentType: "application/json",
@@ -1216,7 +1216,7 @@ $(document).on("click", ".btn-remover-centro", function() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/cursos/${cursoId}/centros/${centroId}`,
+                url: `/cursos/${cursoId}/centros/${centroId}`,
                 type: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
@@ -1240,7 +1240,7 @@ $(document).on("click", ".btn-remover-centro", function() {
 // ============================================
 $("#modalAdicionarturma").on("show.bs.modal", function() {
     $.ajax({
-        url: `/api/cursos/${cursoId}`,
+        url: `/cursos/${cursoId}`,
         method: "GET",
         success: function(response) {
             const curso = response.dados || response;
@@ -1301,7 +1301,7 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
     });
     
     $.ajax({
-        url: `/api/turmas`,
+        url: `/turmas`,
         type: "POST",
         data: JSON.stringify(cleanFormData),
         contentType: "application/json",
@@ -1351,7 +1351,7 @@ $(document).on("click", ".btn-editar-turma", function() {
     
     // Popular centros
     $.ajax({
-        url: `/api/cursos/${cursoId}`,
+        url: `/cursos/${cursoId}`,
         method: "GET",
         success: function(curso) {
             let options = '<option value="">Selecione um centro</option>';
@@ -1410,7 +1410,7 @@ $("#formEditarturmaAjax").on("submit", function(e) {
     };
     
     $.ajax({
-        url: `/api/turmas/${turmaId}`,
+        url: `/turmas/${turmaId}`,
         type: "PUT",
         data: JSON.stringify(formData),
         contentType: "application/json",
@@ -1443,7 +1443,7 @@ const cursoDataEdit = {!! json_encode([
 
 function carregarCentrosEdit() {
     $.ajax({
-        url: '/api/centros',
+        url: '/centros',
         method: 'GET',
         success: function(data) {
             centrosDisponiveisEditList = data;
@@ -1609,7 +1609,7 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         });
         
         $.ajax({
-            url: `/api/cursos/${cursoId}`,
+            url: `/cursos/${cursoId}`,
             type: "POST",
             data: formData,
             contentType: false,
@@ -1651,7 +1651,7 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         });
         
         $.ajax({
-            url: `/api/cursos/${cursoId}`,
+            url: `/cursos/${cursoId}`,
             type: "PUT",
             data: JSON.stringify(formData),
             contentType: "application/json",

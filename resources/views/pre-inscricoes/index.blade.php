@@ -435,7 +435,7 @@
     // ── Data Loading ─────────────────────────
     function carregarDados() {
         $.ajax({
-            url: '/api/pre-inscricoes?per_page=1000',
+            url: '/pre-inscricoes?per_page=1000',
             method: 'GET',
             success: function(response) {
                 allData = response.data || response;
@@ -448,14 +448,14 @@
     }
 
     function carregarFiltros() {
-        $.get('/api/cursos', function(data) {
+        $.get('/cursos', function(data) {
             let opts = '<option value="">Todos os cursos</option>';
             (data || []).forEach(function(c) {
                 if (c.ativo) opts += '<option value="' + c.id + '">' + c.nome + '</option>';
             });
             $('#filtroCurso').html(opts);
         });
-        $.get('/api/centros', function(data) {
+        $.get('/centros', function(data) {
             let opts = '<option value="">Todos os centros</option>';
             (data || []).forEach(function(c) {
                 if (c.ativo) opts += '<option value="' + c.id + '">' + c.nome + '</option>';
@@ -465,7 +465,7 @@
     }
 
     function carregarTurmas() {
-        $.get('/api/turmas?per_page=1000', function(data) {
+        $.get('/turmas?per_page=1000', function(data) {
             let opts = '<option value="">Selecione uma turma...</option>';
             var items = data.data || data;
             (items || []).forEach(function(t) {
@@ -714,7 +714,7 @@
         modal.show();
 
         $.ajax({
-            url: '/api/pre-inscricoes/' + id,
+            url: '/pre-inscricoes/' + id,
             method: 'GET',
             success: function(r) {
                 const dados = r.dados || r;
@@ -773,7 +773,7 @@
 
     function atualizarStatus(id, status) {
         $.ajax({
-            url: '/api/pre-inscricoes/' + id,
+            url: '/pre-inscricoes/' + id,
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify({ status: status }),
@@ -826,7 +826,7 @@
         btn.prop('disabled', true).html('<span class="pi-spinner"></span> Guardando...');
 
         $.ajax({
-            url: '/api/pre-inscricoes',
+            url: '/pre-inscricoes',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),

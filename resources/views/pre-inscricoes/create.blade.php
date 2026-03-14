@@ -202,7 +202,7 @@ $(document).ready(function() {
 });
 
 function carregarturmas() {
-    $.get('/api/turmas', function(data) {
+    $.get('/turmas', function(data) {
         let options = '<option value="">Selecione a turma</option>';
         data.forEach(function(turma) {
             const horaTexto = turma.hora_inicio && turma.hora_fim 
@@ -336,7 +336,7 @@ function criarPreInscricao() {
     };
 
     $.ajax({
-        url: '/api/pre-inscricoes',
+        url: '/pre-inscricoes',
         method: 'POST',
         data: JSON.stringify(formData),
         contentType: 'application/json',

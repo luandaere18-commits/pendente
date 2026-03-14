@@ -303,7 +303,7 @@
                 $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Conectando...');
                 
                 $.ajax({
-                    url: '/api/web-login',
+                    url: '/login',
                     method: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({

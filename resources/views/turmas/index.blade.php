@@ -736,7 +736,7 @@ function carregarCursos() {
         return;
     }
     
-    fetch('/api/cursos')
+    fetch('/cursos')
         .then(response => {
             console.log('Resposta HTTP:', response.status);
             return response.json();
@@ -778,7 +778,7 @@ function carregarCentrosPorCurso(cursoId) {
     $select.html('<option value="">Carregando centros...</option>').prop('disabled', true);
 
     $.ajax({
-        url: `/api/cursos/${cursoId}`,
+        url: `/cursos/${cursoId}`,
         method: 'GET',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -814,7 +814,7 @@ function carregarCentrosPorCurso(cursoId) {
  */
 function carregarFormadores() {
     $.ajax({
-        url: '/api/formadores',
+        url: '/formadores',
         method: 'GET',
         success: function(response) {
             const data = Array.isArray(response) ? response : (response.data || []);
@@ -952,7 +952,7 @@ function configurarAutoPreenchimento() {
  */
 window.visualizarTurma = function(id) {
     $.ajax({
-        url: `/api/turmas/${id}`,
+        url: `/turmas/${id}`,
         method: 'GET',
         success: function(response) {
             const turma = response.dados || response.data;
@@ -993,7 +993,7 @@ function detailRow(icon, label, value) {
  */
 window.abrirEdicaoTurma = function(id) {
     $.ajax({
-        url: `/api/turmas/${id}`,
+        url: `/turmas/${id}`,
         method: 'GET',
         success: function(response) {
             const turma = response.dados || response.data;
@@ -1084,7 +1084,7 @@ function criarTurma() {
     $btn.prop('disabled', true).html('<span class="pi-spinner"></span> Criando...');
 
     $.ajax({
-        url: '/api/turmas',
+        url: '/turmas',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(dados),
@@ -1160,7 +1160,7 @@ function atualizarTurma() {
     };
     
     $.ajax({
-        url: `/api/turmas/${turmaId}`,
+        url: `/turmas/${turmaId}`,
         method: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(dados),
@@ -1197,7 +1197,7 @@ window.eliminarTurma = function(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/turmas/${id}`,
+                url: `/turmas/${id}`,
                 method: 'DELETE',
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {

@@ -410,7 +410,7 @@ function carregarCentros(cursoId, selectedCentro) {
         return;
     }
 
-    $.get(`/api/cursos/${cursoId}`, function(response) {
+    $.get(`/cursos/${cursoId}`, function(response) {
         const curso = response.dados || response;
         let opts = '<option value="">Selecione um centro</option>';
         curso.centros.forEach(function(c) {

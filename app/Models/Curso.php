@@ -24,8 +24,11 @@ class Curso extends Model
     // N:N com centros (caso o curso seja ministrado em vários centros)
     public function centros()
     {
+        // Como a tabela pivot possui timestamps (created_at/updated_at), habilitamos
+        // o withTimestamps() para que o Laravel atualize esses campos automaticamente
         return $this->belongsToMany(Centro::class, 'centro_curso')
-        ->withPivot(['preco']);
+            ->withPivot(['preco'])
+            ->withTimestamps();
     }
 
     // Um curso tem muitas turmas

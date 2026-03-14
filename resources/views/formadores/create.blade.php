@@ -330,7 +330,7 @@ function criarFormador() {
     };
 
     $.ajax({
-        url: '/api/formadores',
+        url: '/formadores',
         method: 'POST',
         data: JSON.stringify(formData),
         contentType: 'application/json',

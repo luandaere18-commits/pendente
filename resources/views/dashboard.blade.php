@@ -234,7 +234,7 @@ $(document).ready(function() {
 function carregarEstatisticas() {
     // Carregar total de cursos
     $.ajax({
-        url: '/api/cursos',
+        url: '/cursos',
         method: 'GET',
         success: function(data) {
         $('#total-cursos').text(data.length);
@@ -262,7 +262,7 @@ function carregarEstatisticas() {
     
     // Carregar total de centros
     $.ajax({
-        url: '/api/centros',
+        url: '/centros',
         method: 'GET',
         success: function(data) {
             $('#total-centros').text(data.length);
@@ -278,7 +278,7 @@ function carregarEstatisticas() {
     
     // Carregar total de formadores
     $.ajax({
-        url: '/api/formadores',
+        url: '/formadores',
         method: 'GET',
         success: function(data) {
             $('#total-formadores').text(data.length);
@@ -294,7 +294,7 @@ function carregarEstatisticas() {
     
     // Carregar pré-inscrições
     $.ajax({
-        url: '/api/pre-inscricoes',
+        url: '/pre-inscricoes',
         method: 'GET',
         success: function(data) {
         const pendentes = data.filter(inscricao => inscricao.status === 'pendente').length;
@@ -320,7 +320,7 @@ function carregarEstatisticas() {
  */
 function carregarUltimasInscricoes() {
     $.ajax({
-        url: '/api/pre-inscricoes',
+        url: '/pre-inscricoes',
         method: 'GET',
         success: function(data) {
         let html = '';

@@ -150,9 +150,10 @@ $(document).ready(function() {
 });
 
 function carregarCentro(id) {
-    $.get(`/api/centros/${id}`)
-        .done(function(centro) {
+    $.get(`/centros/${id}`)
+        .done(function(response) {
             // Preencher formulário
+            const centro = response.dados || response;
             // ID já disponível na view
             $('#nome').val(centro.nome);
             $('#localizacao').val(centro.localizacao);

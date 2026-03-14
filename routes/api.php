@@ -64,11 +64,10 @@ Route::post('/pre-inscricoes', [PreInscricaoController::class, 'store'])->name('
 
 // Rotas protegidas para admin (CRUD completo, exceto POST de pre-inscricoes)
 // Aceita tanto autenticação via sessão web quanto token API
-// OU sem autenticação por enquanto (para debug)
-Route::put('/cursos/{id}', [CursoController::class, 'update']);
-Route::put('/cursos/{id}/centros/{centroId}', [CursoController::class, 'updateCentro']);
-
 Route::middleware(['auth:sanctum,web'])->group(function () {
+    // Cursos - TODOS os updates protegidos
+    Route::put('/cursos/{id}', [CursoController::class, 'update']);
+    Route::put('/cursos/{id}/centros/{centroId}', [CursoController::class, 'updateCentro']);
     // Centros
     Route::post('/centros', [CentroController::class, 'store']);
     Route::put('/centros/{id}', [CentroController::class, 'update']);
