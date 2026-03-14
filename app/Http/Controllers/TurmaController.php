@@ -76,6 +76,12 @@ class TurmaController extends Controller
     public function show(Turma $turma)
     {
         $turma->load(['curso', 'formador', 'centro']);
+        
+        // Retornar JSON para requisições AJAX
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json(['dados' => $turma], 200);
+        }
+        
         return view('turmas.show', compact('turma'));
     }
 

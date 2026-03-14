@@ -816,14 +816,21 @@ function carregarFormadores() {
     $.ajax({
         url: '/formadores',
         method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'Accept': 'application/json'
+        },
         success: function(response) {
-            const data = Array.isArray(response) ? response : (response.data || []);
+            const data = Array.isArray(response) ? response : (response.data || response.formadores || []);
             let options = '<option value="">Selecione (opcional)</option>';
             data.forEach(function(formador) {
                 options += `<option value="${formador.id}">${formador.nome}</option>`;
             });
             $('select[name="formador_id"]').html(options);
             $('#editFormadorId').html(options);
+        },
+        error: function(xhr) {
+            console.error('Erro ao carregar formadores:', xhr);
         }
     });
 }
@@ -954,6 +961,10 @@ window.visualizarTurma = function(id) {
     $.ajax({
         url: `/turmas/${id}`,
         method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(response) {
             const turma = response.dados || response.data;
             
@@ -995,6 +1006,10 @@ window.abrirEdicaoTurma = function(id) {
     $.ajax({
         url: `/turmas/${id}`,
         method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(response) {
             const turma = response.dados || response.data;
             
@@ -1145,25 +1160,26 @@ function atualizarTurma() {
         return;
     }
     
-    const dados = {
-        curso_id: $('#editCursoId').val(),
-        formador_id: formador_id || null,
-        periodo: $('#editPeriodo').val(),
-        status: status || 'planeada',
-        hora_inicio: $('#editHoraInicio').val(),
-        hora_fim: $('#editHoraFim').val(),
-        duracao_semanas: $('#editDuracaoSemanas').val(),
-        data_arranque: $('#editDataArranque').val(),
-        vagas_totais: $('#editVagasTotais').val() || null,
-        publicado: $('#editPublicado').is(':checked'),
-        dia_semana: dia_semana
-    };
+    const formData = new FormData();
+    formData.append('_method', 'PUT');
+    formData.append('curso_id', $('#editCursoId').val());
+    formData.append('formador_id', formador_id || null);
+    formData.append('periodo', $('#editPeriodo').val());
+    formData.append('status', status || 'planeada');
+    formData.append('hora_inicio', $('#editHoraInicio').val());
+    formData.append('hora_fim', $('#editHoraFim').val());
+    formData.append('duracao_semanas', $('#editDuracaoSemanas').val());
+    formData.append('data_arranque', $('#editDataArranque').val());
+    formData.append('vagas_totais', $('#editVagasTotais').val() || null);
+    formData.append('publicado', $('#editPublicado').is(':checked') ? 1 : 0);
+    dia_semana.forEach(dia => formData.append('dia_semana[]', dia));
     
     $.ajax({
         url: `/turmas/${turmaId}`,
-        method: 'PUT',
-        contentType: 'application/json',
-        data: JSON.stringify(dados),
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function() {
             Swal.fire('Sucesso!', 'Turma atualizada com sucesso', 'success');
@@ -1185,6 +1201,11 @@ function atualizarTurma() {
  * Eliminar turma
  */
 window.eliminarTurma = function(id) {
+    if (!id || id === '') {
+        Swal.fire('Erro', 'ID da turma inválido', 'error');
+        return;
+    }
+    
     Swal.fire({
         title: 'Confirmar Eliminação',
         text: 'Tem a certeza que deseja eliminar esta turma?',
@@ -1196,9 +1217,15 @@ window.eliminarTurma = function(id) {
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('_method', 'DELETE');
+            
             $.ajax({
                 url: `/turmas/${id}`,
-                method: 'DELETE',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {
                     Swal.fire('Eliminada!', 'Turma eliminada com sucesso', 'success');
