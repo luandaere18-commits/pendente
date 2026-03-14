@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Curso;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @OA\Tag(
@@ -172,8 +173,13 @@ class CursoController extends Controller
         if ($request->hasFile('imagem')) {
             $file = $request->file('imagem');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('cursos', $filename, 'public');
-            $cursoData['imagem_url'] = '/storage/' . $path;
+            $path = Storage::disk('public')->putFileAs('cursos', $file, $filename);
+
+            if (Storage::disk('public')->exists($path)) {
+                $cursoData['imagem_url'] = '/storage/' . $path;
+            } else {
+                \Log::warning('Falha ao salvar imagem do curso (arquivo não encontrado): ' . $path);
+            }
         }
 
         $curso = Curso::create($cursoData);

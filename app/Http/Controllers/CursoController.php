@@ -8,6 +8,7 @@ use App\Models\Formador;
 use App\Models\Turma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;  
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class CursoController extends Controller
@@ -90,8 +91,14 @@ class CursoController extends Controller
             if ($request->hasFile('imagem')) {
                 $file = $request->file('imagem');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('cursos', $filename, 'public');
-                $cursoData['imagem_url'] = '/storage/' . $path;
+                $path = Storage::disk('public')->putFileAs('cursos', $file, $filename);
+
+                // Garantir que o arquivo existe antes de salvar a URL
+                if (Storage::disk('public')->exists($path)) {
+                    $cursoData['imagem_url'] = Storage::disk('public')->url($path);
+                } else {
+                    \Log::warning('Falha ao salvar imagem do curso (arquivo não encontrado): ' . $path);
+                }
             }
 
             // Criar o Curso
@@ -181,23 +188,21 @@ class CursoController extends Controller
                     'file_size' => $request->file('imagem')->getSize(),
                     'file_mime' => $request->file('imagem')->getMimeType(),
                 ]);
-                
-                // Garantir que o directório existe
-                $storePath = storage_path('app/public/cursos');
-                if (!is_dir($storePath)) {
-                    mkdir($storePath, 0755, true);
-                    \Log::info('Directório criado: ' . $storePath);
-                }
-                
+
                 $file = $request->file('imagem');
                 $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('cursos', $filename, 'public');
-                $cursoData['imagem_url'] = '/storage/' . $path;
-                
-                \Log::info('Imagem guardada com sucesso', [
-                    'path' => $path,
-                    'url' => $cursoData['imagem_url'],
-                ]);
+                $path = Storage::disk('public')->putFileAs('cursos', $file, $filename);
+
+                if (Storage::disk('public')->exists($path)) {
+                    // Usar caminho relativo para evitar problemas de host/porta (ex: localhost:8000)
+                    $cursoData['imagem_url'] = '/storage/' . $path;
+                    \Log::info('Imagem guardada com sucesso', [
+                        'path' => $path,
+                        'url' => $cursoData['imagem_url'],
+                    ]);
+                } else {
+                    \Log::warning('Falha ao salvar imagem do curso (arquivo não encontrado): ' . $path);
+                }
             } catch (\Exception $imgError) {
                 \Log::error('Erro ao processar imagem: ' . $imgError->getMessage(), [
                     'exception' => $imgError,
