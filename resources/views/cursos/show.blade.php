@@ -1018,9 +1018,10 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Centro <span class="required">*</span></label>
-                            <select name="edit_centro_id" id="edittturmaCentro" class="form-select" required>
-                                <option value="" disabled selected>Selecione um centro</option>
+                            <select name="edit_centro_id" id="editturmaCentro" class="form-select" required disabled>
+                                <option value="" disabled selected>Carregando...</option>
                             </select>
+                            <small class="text-muted d-block mt-1">Centro não pode ser editado</small>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Período <span class="required">*</span></label>
@@ -1436,20 +1437,57 @@ $("#formEditarturmaAjax").on("submit", function(e) {
 let centrosEditCount = 0;
 let centrosDisponiveisEditList = [];
 
+/**
+ * Objeto com dados do curso para edição
+ * Inclui todos os centros associados com seus dados de pivot
+ */
 const cursoDataEdit = {!! json_encode([
     'id' => $curso->id,
-    'centros' => $curso->centros
+    'nome' => $curso->nome,
+    'descricao' => $curso->descricao,
+    'programa' => $curso->programa,
+    'area' => $curso->area,
+    'modalidade' => $curso->modalidade,
+    'ativo' => $curso->ativo,
+    'centros' => $curso->centros->map(function($centro) {
+        return [
+            'id' => $centro->id,
+            'nome' => $centro->nome,
+            'localizacao' => $centro->localizacao,
+            'contactos' => $centro->contactos,
+            'email' => $centro->email,
+            'pivot' => [
+                'preco' => $centro->pivot ? $centro->pivot->preco : null,
+                'created_at' => $centro->pivot ? $centro->pivot->created_at : null,
+                'updated_at' => $centro->pivot ? $centro->pivot->updated_at : null
+            ]
+        ];
+    })->toArray()
 ]) !!};
+
+console.log('Dados do curso carregados:', {
+    id: cursoDataEdit.id,
+    nome: cursoDataEdit.nome,
+    centros_count: cursoDataEdit.centros ? cursoDataEdit.centros.length : 0
+});
 
 function carregarCentrosEdit() {
     $.ajax({
         url: '/centros',
         method: 'GET',
         success: function(data) {
-            centrosDisponiveisEditList = data;
+            centrosDisponiveisEditList = data || [];
+            console.log('Centros disponíveis carregados:', centrosDisponiveisEditList.length);
         },
         error: function(err) {
             console.error('Erro ao carregar centros:', err);
+            centrosDisponiveisEditList = [];
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atenção!',
+                text: 'Não foi possível carregar a lista de centros. Verifique sua conexão.',
+                timer: 3000
+            });
         }
     });
 }
@@ -1465,38 +1503,102 @@ $('#modalEditarCurso').on('show.bs.modal', function() {
     if ($('#centrosContainerEdit').find('.col-12').length === 0) {
         adicionarCentroEdit();
     }
+    
+    // Adicionar listener para mudanças nos selects
+    $(document).on('change', '.centro-id-edit', function() {
+        atualizarOpcoesDisponiveisEdit();
+    });
+    
+    // Adicionar listener para remover centro
+    $(document).on('click', '.remover-centro-edit', function(e) {
+        e.preventDefault();
+        $(this).closest('.col-12').remove();
+        atualizarNumeroCentrosEdit();
+        atualizarOpcoesDisponiveisEdit();
+    });
 });
 
 function carregarCentrosExistentesEdit() {
-    if (!cursoDataEdit || !cursoDataEdit.centros || cursoDataEdit.centros.length === 0) return;
+    // Verificações robustas
+    if (!cursoDataEdit) {
+        console.warn('cursoDataEdit não está definido');
+        return;
+    }
     
-    cursoDataEdit.centros.forEach((centro, index) => {
+    const centros = cursoDataEdit.centros || [];
+    
+    if (!Array.isArray(centros) || centros.length === 0) {
+        console.log('Nenhum centro existente para carregar');
+        return;
+    }
+    
+    console.log('Carregando centros existentes:', centros.length);
+    
+    centros.forEach((centro, index) => {
         try {
+            // Verificar se centro é válido
+            if (!centro || typeof centro !== 'object') {
+                console.warn('Centro inválido:', centro);
+                return;
+            }
+            
             const template = document.getElementById('centroCursoEditTemplate');
-            if (!template) return;
+            if (!template) {
+                console.warn('Template centroCursoEditTemplate não encontrado');
+                return;
+            }
+            
             const clone = template.content.cloneNode(true);
             const wrapper = document.createElement('div');
             wrapper.appendChild(clone);
             let html = wrapper.innerHTML.replace(/numero-centro-edit">Centro 1</, `numero-centro-edit">Centro ${index + 1}<`);
+            
             const colDiv = document.createElement('div');
             colDiv.innerHTML = html;
             $('#centrosContainerEdit').append(colDiv.firstElementChild);
             
             const selects = $('#centrosContainerEdit').find('.centro-id-edit');
             const lastSelect = selects.last();
-            centrosDisponiveisEditList.forEach(c => {
-                lastSelect.append(`<option value="${c.id}">${c.nome}</option>`);
-            });
+            
+            // Preencher dropdown com centros disponíveis
+            if (centrosDisponiveisEditList && Array.isArray(centrosDisponiveisEditList)) {
+                centrosDisponiveisEditList.forEach(c => {
+                    lastSelect.append(`<option value="${c.id}">${c.nome}</option>`);
+                });
+            }
+            
+            // Definir valor do centro
             lastSelect.val(centro.id);
-            const preco = centro.pivot && centro.pivot.preco ? centro.pivot.preco : '';
+            
+            // Carregar preço da pivot com fallback robusto
+            let preco = '';
+            if (centro.pivot && typeof centro.pivot === 'object' && centro.pivot.preco !== undefined) {
+                preco = parseFloat(centro.pivot.preco).toFixed(2);
+            } else {
+                console.warn('Pivot ou preço não encontrado para centro', centro.id, centro);
+            }
             $('#centrosContainerEdit').find('.preco-edit').last().val(preco);
+            
+            // Desabilitar campo (não pode editar centros associados)
             lastSelect.prop('disabled', true);
             $('#centrosContainerEdit').find('.preco-edit').last().prop('disabled', true);
+            
             centrosEditCount++;
+            
         } catch(e) {
-            console.error('Erro ao carregar centro:', e, centro);
+            console.error('Erro ao carregar centro existente:', {
+                erro: e.message,
+                centro: centro,
+                indice: index,
+                stack: e.stack
+            });
         }
     });
+    
+    console.log(`Centros existentes carregados: ${centrosEditCount}`);
+    
+    // IMPORTANTE: Desabilitar centros já selecionados
+    atualizarOpcoesDisponiveisEdit();
 }
 
 function adicionarCentroEdit() {
@@ -1518,9 +1620,65 @@ function adicionarCentroEdit() {
         });
         centrosEditCount++;
         atualizarNumeroCentrosEdit();
+        
+        // IMPORTANTE: Desabilitar centros já selecionados nos outros campos
+        atualizarOpcoesDisponiveisEdit();
+        
     } catch(e) {
         console.error('Erro ao adicionar centro:', e);
     }
+}
+
+/**
+ * Obtém os IDs dos centros que já foram selecionados nos campos do formulário
+ * @returns {Array} Array com IDs dos centros selecionados
+ */
+function obterCentrosSelecionados() {
+    const centrosSelecionados = [];
+    
+    $('#centrosContainerEdit').find('.centro-id-edit').each(function() {
+        const valorSelecionado = $(this).val();
+        if (valorSelecionado) {
+            centrosSelecionados.push(parseInt(valorSelecionado));
+        }
+    });
+    
+    return centrosSelecionados;
+}
+
+/**
+ * Desabilita as opções dos centros que já foram selecionados em outros campos
+ * Permite que um mesmo centro não seja adicionado duas vezes
+ */
+function atualizarOpcoesDisponiveisEdit() {
+    const centrosSelecionados = obterCentrosSelecionados();
+    
+    // Iterar por todos os selects de centros
+    $('#centrosContainerEdit').find('.centro-id-edit').each(function() {
+        const selectAtual = $(this);
+        const centroAtualSelecionado = parseInt(selectAtual.val());
+        
+        // Para cada opção do select
+        selectAtual.find('option').each(function() {
+            const $option = $(this);
+            const centroId = parseInt($option.val());
+            
+            // Se o value está vazio, não fazer nada
+            if (!centroId) return;
+            
+            // Desabilitar se:
+            // - O centro está em centrosSelecionados E
+            // - NÃO é o centro atualmente selecionado neste select
+            if (centrosSelecionados.includes(centroId) && centroId !== centroAtualSelecionado) {
+                $option.prop('disabled', true);
+            } else {
+                // Caso contrário, habilitar
+                $option.prop('disabled', false);
+            }
+        });
+    });
+    
+    console.log('Opções desabilitadas para centros:', centrosSelecionados);
 }
 
 function atualizarNumeroCentrosEdit() {

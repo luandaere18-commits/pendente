@@ -326,7 +326,7 @@
                                     <a class="pi-action-btn edit" href="{{ route('cursos.show', $curso) }}" title="Gerir">
                                         <i class="fas fa-cogs"></i>
                                     </a>
-                                    <button class="pi-action-btn delete" onclick="eliminarCurso({{ $curso->id }})" title="Eliminar">
+                                    <button class="pi-action-btn delete btn-eliminar-curso" data-curso-id="{{ $curso->id }}" title="Eliminar">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -379,7 +379,7 @@
                     <div class="card-actions">
                         <button class="btn btn-sm btn-outline-secondary btn-visualizar-curso" data-curso-id="{{ $curso->id }}"><i class="fas fa-eye me-1"></i>Ver</button>
                         <a class="btn btn-sm btn-outline-primary" href="{{ route('cursos.edit', $curso) }}"><i class="fas fa-edit me-1"></i>Editar</a>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCurso({{ $curso->id }})"><i class="fas fa-trash me-1"></i>Eliminar</button>
+                        <button class="btn btn-sm btn-outline-danger btn-eliminar-curso" data-curso-id="{{ $curso->id }}"><i class="fas fa-trash me-1"></i>Eliminar</button>
                     </div>
                 </div>
             @empty
@@ -597,10 +597,20 @@ function carregarCentros() {
         url: '/centros',
         method: 'GET',
         success: function(data) {
-            centrosDisponiveisList = data;
+            centrosDisponiveisList = data || [];
+            if (centrosDisponiveisList.length === 0) {
+                console.warn('Nenhum centro disponível para associação');
+            }
         },
         error: function(err) {
             console.error('Erro ao carregar centros:', err);
+            centrosDisponiveisList = [];
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atenção!',
+                text: 'Não foi possível carregar a lista de centros. Verifique sua conexão de internet.',
+                timer: 4000
+            });
         }
     });
 }
@@ -762,6 +772,13 @@ function configurarEventosModal() {
         const cursoId = $(this).data('curso-id');
         carregarDetalhesCurso(cursoId);
     });
+
+    // Eliminar curso (substituir onclick inline)
+    $(document).on('click', '.btn-eliminar-curso', function(e) {
+        e.preventDefault();
+        const cursoId = $(this).data('curso-id');
+        eliminarCurso(cursoId);
+    });
 }
 
 /**
@@ -827,9 +844,9 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     let centroValido = true;
     $('#centrosContainerModal').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
-        const preco = $(this).find('.preco-modal').val();
+        const preco = parseFloat($(this).find('.preco-modal').val());
 
-        if (!centroId || !preco) {
+        if (!centroId || isNaN(preco) || preco <= 0) {
             centroValido = false;
             return false;
         }
@@ -856,7 +873,7 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     let index = 0;
     $('#centrosContainerModal').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
-        const preco = $(this).find('.preco-modal').val();
+        const preco = parseFloat($(this).find('.preco-modal').val());
 
         // Usar o mesmo nome de campo que o Controller espera para o pivot curso-centro
         formData.append(`centro_curso[${index}][centro_id]`, centroId);

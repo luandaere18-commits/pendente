@@ -162,7 +162,16 @@ class CursoController extends Controller
 
     public function show($id)
     {
-        $curso = Curso::with(['centros', 'turmas.centro', 'turmas.formador'])->find($id);
+        $curso = Curso::with([
+            'centros' => function($query) {
+                // Garantir que pegamos os campos necessários da relação
+                $query->select('centros.id', 'centros.nome', 'centros.localizacao', 'centros.contactos', 'centros.email');
+            },
+            'turmas' => function($query) {
+                // Eager load turmas com seus relacionamentos
+                $query->with(['centro', 'formador']);
+            }
+        ])->find($id);
         
         if (!$curso) {
             if (request()->ajax() || request()->wantsJson()) {
@@ -174,11 +183,26 @@ class CursoController extends Controller
             abort(404);
         }
 
+        // Log para debug - verificar se centros e pivot estão carregando
+        \Log::info('Curso carregado para visualização', [
+            'curso_id' => $curso->id,
+            'centros_count' => $curso->centros->count(),
+            'centros_com_pivot' => $curso->centros->map(function($c) {
+                return [
+                    'id' => $c->id,
+                    'nome' => $c->nome,
+                    'tem_pivot' => isset($c->pivot),
+                    'preco' => $c->pivot->preco ?? null
+                ];
+            })->toArray(),
+            'turmas_count' => $curso->turmas->count()
+        ]);
+
         // AJAX/JSON request
         if (request()->ajax() || request()->wantsJson()) {
             return response()->json([
                 'status' => 'sucesso',
-                'dados' => $curso
+                'dados' => $curso  // ← SEMPRE O MESMO FORMATO!
             ], 200);
         }
 
@@ -317,9 +341,8 @@ class CursoController extends Controller
             }
 
             DB::transaction(function () use ($curso) {
-                // Remover associações
+                // Remover associações com centros
                 $curso->centros()->detach();
-                $curso->formadores()->detach();
 
                 // Remover imagem
                 if ($curso->imagem_url) {
@@ -341,7 +364,11 @@ class CursoController extends Controller
             return redirect()->route('cursos.index')->with('success', 'Curso deletado com sucesso!');
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao excluir curso: ' . $e->getMessage());
+            \Log::error('Erro ao excluir curso: ' . $e->getMessage(), [
+                'curso_id' => $id,
+                'exception' => get_class($e),
+                'trace' => $e->getTraceAsString()
+            ]);
 
             $msg = 'Erro ao eliminar curso. Por favor tente novamente.';
             if (request()->ajax() || request()->wantsJson()) {
