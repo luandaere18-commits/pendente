@@ -287,7 +287,12 @@
 <script>
     async function carregarFormadores() {
         try {
-            const response = await fetch('/api/formadores?per_page=3');
+            const response = await fetch('/formadores?per_page=3', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const formadores = await response.json();
             
             const data = formadores.data || formadores;

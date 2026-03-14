@@ -182,7 +182,12 @@
     // Carregar dados do centro
     async function carregarCentro() {
         try {
-            const response = await fetch(`/api/centros/${centroId}`);
+            const response = await fetch(`/centros/${centroId}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const centro = await response.json();
             
             centroDados = centro;
@@ -218,7 +223,12 @@
     // Carregar cursos
     async function carregarCursos() {
         try {
-            const response = await fetch('/api/cursos');
+            const response = await fetch('/cursos', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const cursos = await response.json();
             
             // Filtrar cursos por centro (se tiver associação)
@@ -254,7 +264,12 @@
     // Carregar turmas
     async function carregarTurmas() {
         try {
-            const response = await fetch('/api/turmas?publicado=true&per_page=4');
+            const response = await fetch('/turmas', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const data = await response.json();
             const turmas = (data.data || data).slice(0, 4);
             
@@ -302,7 +317,12 @@
     // Carregar formadores
     async function carregarFormadores() {
         try {
-            const response = await fetch('/api/formadores');
+            const response = await fetch('/formadores', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const formadores = await response.json();
             
             document.getElementById('centro-total-formadores').textContent = formadores.length;
@@ -390,6 +410,12 @@
     async function enviarPreInscricao(turmaId, dados) {
         try {
             const response = await fetch('/api/pre-inscricoes', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -144,7 +144,7 @@ function carregarCursos() {
     const modalidade = $('#filtro-modalidade').val();
     const centro = $('#filtro-centro').val();
     
-    let url = '/api/cursos';
+    let url = '/cursos';
     let params = [];
     
     if (area) params.push(`area=${encodeURIComponent(area)}`);
@@ -155,19 +155,29 @@ function carregarCursos() {
         url += '?' + params.join('&');
     }
     
-    $.get(url, function(data) {
-        exibirCursos(data);
-    }).fail(function() {
-        $('#cursos-grid').html(`
-            <div class="col-12 text-center py-5">
-                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                <h5>Erro ao carregar cursos</h5>
-                <p class="text-muted">Tente novamente mais tarde ou contacte-nos para assistência.</p>
-                <a href="{{ route('site.contactos') }}" class="btn btn-primary">
-                    <i class="fas fa-phone me-2"></i>Contactar Suporte
-                </a>
-            </div>
-        `);
+    $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
+            exibirCursos(data);
+        },
+        error: function() {
+            $('#cursos-grid').html(`
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5>Erro ao carregar cursos</h5>
+                    <p class="text-muted">Tente novamente mais tarde ou contacte-nos para assistência.</p>
+                    <a href="{{ route('site.contactos') }}" class="btn btn-primary">
+                        <i class="fas fa-phone me-2"></i>Contactar Suporte
+                    </a>
+                </div>
+            `);
+        }
     });
 }
 
@@ -175,14 +185,24 @@ function carregarCursos() {
  * Carrega a lista de centros para o filtro
  */
 function carregarCentros() {
-    $.get('/api/centros', function(data) {
-        let options = '<option value="">Todos os centros</option>';
-        data.forEach(function(centro) {
-            options += `<option value="${centro.id}">${centro.nome}</option>`;
-        });
-        $('#filtro-centro').html(options);
-    }).fail(function() {
-        console.error('Erro ao carregar centros para filtro');
+    $.ajax({
+        url: '/centros',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
+            let options = '<option value="">Todos os centros</option>';
+            data.forEach(function(centro) {
+                options += `<option value="${centro.id}">${centro.nome}</option>`;
+            });
+            $('#filtro-centro').html(options);
+        },
+        error: function() {
+            console.error('Erro ao carregar centros para filtro');
+        }
     });
 }
 

@@ -425,13 +425,29 @@ $(document).ready(function() {
 
 function carregarDadosHome() {
     // Carregar estatísticas de cursos
-    $.get('/api/cursos', function(data) {
+    $.ajax({
+        url: '/cursos',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
         const cursosAtivos = data.filter(curso => curso.ativo);
         $('#total-cursos-home').text(cursosAtivos.length);
     });
     
     // Carregar centros
-    $.get('/api/centros', function(data) {
+    $.ajax({
+        url: '/centros',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
         $('#total-centros-home').text(data.length);
         exibirCentrosHome(data);
     });
@@ -457,7 +473,16 @@ function abrirSnackBar() {
 
 // Carregar categorias da loja
 function carregarCategoriasLoja() {
-    $.get('/api/categorias?tipo=loja', function(data) {
+    $.ajax({
+        url: '/categorias',
+        type: 'GET',
+        data: { tipo: 'loja' },
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
         if (data.length === 0) {
             $('#loja-content').html(`
                 <div class="text-center py-5">
@@ -567,7 +592,16 @@ function carregarProdutosCategoria(categoriaId) {
 
 // Carregar menu do snack bar
 function carregarMenuSnackBar() {
-    $.get('/api/categorias?tipo=snack', function(categorias) {
+    $.ajax({
+        url: '/categorias',
+        type: 'GET',
+        data: { tipo: 'snack' },
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(categorias) {
         if (categorias.length === 0) {
             $('#snack-content').html(`
                 <div class="text-center py-5">

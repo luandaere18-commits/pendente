@@ -736,9 +736,19 @@ function carregarCursos() {
         return;
     }
     
-    fetch('/cursos')
+    fetch('/cursos', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
         .then(response => {
             console.log('Resposta HTTP:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             return response.json();
         })
         .then(data => {
@@ -781,13 +791,23 @@ function carregarCentrosPorCurso(cursoId) {
         url: `/cursos/${cursoId}`,
         method: 'GET',
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'Accept': 'application/json'
         },
         success: function(response) {
             console.log('Resposta completa da API:', response);
 
             let options = '<option value="">Selecione um centro</option>';
-            if (response.dados && response.dados.centros && response.dados.centros.length > 0) {
+            if (response.centros && response.centros.length > 0) {
+                response.centros.forEach(function(centro) {
+                    const preco = centro.pivot && centro.pivot.preco ? parseFloat(centro.pivot.preco).toLocaleString('pt-PT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' Kz' : '';
+                    options += `<option value="${centro.id}" data-preco="${centro.pivot ? centro.pivot.preco : ''}">${centro.nome}${preco ? ' ('+preco+')' : ''}</option>`;
+                });
+                $select.html(options);
+                setTimeout(function() {
+                    $select.prop('disabled', false).removeAttr('disabled');
+                }, 100);
+            } else if (response.dados && response.dados.centros && response.dados.centros.length > 0) {
                 response.dados.centros.forEach(function(centro) {
                     const preco = centro.pivot && centro.pivot.preco ? parseFloat(centro.pivot.preco).toLocaleString('pt-PT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' Kz' : '';
                     options += `<option value="${centro.id}" data-preco="${centro.pivot ? centro.pivot.preco : ''}">${centro.nome}${preco ? ' ('+preco+')' : ''}</option>`;

@@ -342,29 +342,59 @@
 
         function carregarDados() {
             // Carregar cursos
-            $.get('/api/cursos', function(data) {
-                cursos = data.filter(curso => curso.ativo);
-                exibirCursos();
-                preencherFiltroAreas();
-            }).fail(function() {
-                console.error('Erro ao carregar cursos');
+            $.ajax({
+                url: '/cursos',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(data) {
+                    cursos = data.filter(curso => curso.ativo);
+                    exibirCursos();
+                    preencherFiltroAreas();
+                },
+                error: function() {
+                    console.error('Erro ao carregar cursos');
+                }
             });
 
             // Carregar centros
-            $.get('/api/centros', function(data) {
-                centros = data;
-                preencherSelectCentros();
-            }).fail(function() {
-                console.error('Erro ao carregar centros');
+            $.ajax({
+                url: '/centros',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(data) {
+                    centros = data;
+                    preencherSelectCentros();
+                },
+                error: function() {
+                    console.error('Erro ao carregar centros');
+                }
             });
 
             // Carregar turmas - IMPORTANTE para carregamento do select
-            $.get('/api/turmas?publicado=true', function(data) {
-                turmas = Array.isArray(data) ? data : (data.data || []);
-                console.log('Turmas carregadas:', turmas.length);
-            }).fail(function(xhr) {
-                console.error('Erro ao carregar turmas:', xhr);
-                turmas = [];
+            $.ajax({
+                url: '/turmas?publicado=true',
+                type: 'GET',
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(data) {
+                    turmas = Array.isArray(data) ? data : (data.data || []);
+                    console.log('Turmas carregadas:', turmas.length);
+                },
+                error: function(xhr) {
+                    console.error('Erro ao carregar turmas:', xhr);
+                    turmas = [];
+                }
             });
         }
 
@@ -576,9 +606,18 @@
             if (!cursoId || turmas.length === 0) {
                 console.log('Carregando turmas da API...');
                 // Carregar turmas se ainda não foram carregadas
-                $.get('/api/turmas?publicado=true', function(data) {
-                    turmas = Array.isArray(data) ? data : (data.data || []);
-                    exibirTurmasDisponíveis(cursoId);
+                $.ajax({
+                    url: '/turmas?publicado=true',
+                    type: 'GET',
+                    dataType: 'json',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    success: function(data) {
+                        turmas = Array.isArray(data) ? data : (data.data || []);
+                        exibirTurmasDisponíveis(cursoId);
+                    }
                 });
             } else {
                 exibirTurmasDisponíveis(cursoId);

@@ -224,13 +224,20 @@ $(document).ready(function() {
 });
 
 function carregarCentro(id) {
-    $.get(`/api/centros/${id}`)
-        .done(function(centro) {
+    $.ajax({
+        url: `/centros/${id}`,
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(centro) {
             centroAtual = centro;
             exibirCentro(centro);
-        })
-        .fail(function() {
-            $('#centro-header').html(`
+        },
+        error: function() {
+        $('#centro-header').html(`
                 <div class="container text-center py-5">
                     <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
                     <h5>Centro não encontrado</h5>
@@ -318,36 +325,63 @@ function exibirCentro(centro) {
 }
 
 function carregarCursos(centroId) {
-    $.get(`/api/cursos?centro_id=${centroId}&ativo=1`, function(cursos) {
-        // Os cursos já vêm filtrados pelo centro e apenas ativos
-        cursosDisponiveis = cursos;
-        
-        // Preencher filtro de áreas
-        const areas = [...new Set(cursosDisponiveis.map(curso => curso.area))];
-        $('#filtroArea').html('<option value="">Todas as áreas</option>');
-        areas.forEach(area => {
-            $('#filtroArea').append(`<option value="${area}">${area}</option>`);
-        });
-        
-        exibirCursos();
-    }).fail(function() {
-        $('#cursos-container').html(`
-            <div class="text-center py-5">
-                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                <h5>Erro ao carregar cursos</h5>
-                <p class="text-muted">Tente novamente mais tarde.</p>
-                <button class="btn btn-primary" onclick="carregarCursos(${centroId})">
-                    <i class="fas fa-redo me-2"></i>Tentar Novamente
-                </button>
-            </div>
-        `);
+    $.ajax({
+        url: '/cursos',
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            centro_id: centroId,
+            ativo: 1
+        },
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(cursos) {
+            // Os cursos já vêm filtrados pelo centro e apenas ativos
+            cursosDisponiveis = cursos;
+            
+            // Preencher filtro de áreas
+            const areas = [...new Set(cursosDisponiveis.map(curso => curso.area))];
+            $('#filtroArea').html('<option value="">Todas as áreas</option>');
+            areas.forEach(area => {
+                $('#filtroArea').append(`<option value="${area}">${area}</option>`);
+            });
+            
+            exibirCursos();
+        },
+        error: function() {
+            $('#cursos-container').html(`
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5>Erro ao carregar cursos</h5>
+                    <p class="text-muted">Tente novamente mais tarde.</p>
+                    <button class="btn btn-primary" onclick="carregarCursos(${centroId})">
+                        <i class="fas fa-redo me-2"></i>Tentar Novamente
+                    </button>
+                </div>
+            `);
+        }
     });
+    }
 }
 
 function carregarturmas() {
-    $.get('/api/turmas', function(turmas) {
-        turmasDisponiveis = turmas;
-        // Preencher select com todos os turmas quando modal abrir
+    $.ajax({
+        url: '/turmas',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(turmas) {
+            turmasDisponiveis = turmas;
+            // Preencher select com todos os turmas quando modal abrir
+        },
+        error: function(xhr) {
+            console.error('Erro ao carregar turmas:', xhr);
+        }
     });
 }
 

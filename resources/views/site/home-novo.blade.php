@@ -321,8 +321,12 @@
     // Carregar estatísticas
     async function carregarEstatisticas() {
         try {
-            const cursos = await fetch('/api/cursos').then(r => r.json());
-            const centros = await fetch('/api/centros').then(r => r.json());
+            const headers = {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            const cursos = await fetch('/cursos', { headers }).then(r => r.json());
+            const centros = await fetch('/centros', { headers }).then(r => r.json());
             
             document.getElementById('total-cursos-home').textContent = cursos.length || 0;
             document.getElementById('total-centros-home').textContent = centros.length || 0;
@@ -334,7 +338,12 @@
     // Carregar centros
     async function carregarCentros() {
         try {
-            const response = await fetch('/api/centros');
+            const response = await fetch('/centros', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const centros = await response.json();
             
             const container = document.getElementById('centros-home');
@@ -383,7 +392,12 @@
     // Carregar turmas
     async function carregarTurmas() {
         try {
-            const response = await fetch('/api/turmas?per_page=6&publicado=true');
+            const response = await fetch('/turmas?per_page=6&publicado=true', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const data = await response.json();
             const turmas = data.data || data;
             
@@ -484,6 +498,12 @@
     async function enviarPreInscricao(turmaId, dados) {
         try {
             const response = await fetch('/api/pre-inscricoes', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

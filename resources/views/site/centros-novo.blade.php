@@ -48,7 +48,12 @@
 <script>
     async function carregarCentros() {
         try {
-            const response = await fetch('/api/centros');
+            const response = await fetch('/centros', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const centros = await response.json();
             
             const container = document.getElementById('centros-grid');

@@ -117,8 +117,12 @@
     // Carregar filtros
     async function carregarFiltros() {
         try {
-            const cursos = await fetch('/api/cursos').then(r => r.json());
-            const centros = await fetch('/api/centros').then(r => r.json());
+            const headers = {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            const cursos = await fetch('/cursos', { headers }).then(r => r.json());
+            const centros = await fetch('/centros', { headers }).then(r => r.json());
             
             todosCursos = cursos;
             todosCentros = centros;
@@ -163,7 +167,11 @@
         
         // Carregar turmas e filtrar por modalidade e centro
         try {
-            const turmas = await fetch('/api/turmas?publicado=true').then(r => r.json());
+            const headers = {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            const turmas = await fetch('/turmas?publicado=true', { headers }).then(r => r.json());
             let turmasArray = turmas.data || turmas;
             
             if (modalidade) {
@@ -252,7 +260,12 @@
     }
     
     function mostrarTurmas(cursoId, cursoNome) {
-        fetch(`/api/turmas?curso_id=${cursoId}&publicado=true`)
+        fetch(`/turmas?curso_id=${cursoId}&publicado=true`, {
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
             .then(r => r.json())
             .then(data => {
                 const turmas = data.data || data;
@@ -354,6 +367,12 @@
     async function enviarPreInscricao(turmaId, dados) {
         try {
             const response = await fetch('/api/pre-inscricoes', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

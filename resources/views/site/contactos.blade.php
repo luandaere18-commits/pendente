@@ -303,9 +303,16 @@ $(document).ready(function() {
         enviarMensagem();
     });
 });
-
-function carregarCentros() {
-    $.get('/api/centros', function(data) {
+}
+    $.ajax({
+        url: '/centros',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
         // Preencher select de centros
         $('#centroSelect').html('<option value="">Selecione um centro (opcional)</option>');
         data.forEach(centro => {

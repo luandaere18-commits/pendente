@@ -73,19 +73,29 @@ $(document).ready(function() {
 });
 
 function carregarCentros() {
-    $.get('/api/centros', function(data) {
-        exibirCentros(data);
-    }).fail(function() {
-        $('#centros-grid').html(`
-            <div class="col-12 text-center py-5">
-                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                <h5>Erro ao carregar centros</h5>
-                <p class="text-muted">Tente novamente mais tarde ou entre em contacto connosco.</p>
-                <button class="btn btn-primary" onclick="carregarCentros()">
-                    <i class="fas fa-redo me-2"></i>Tentar Novamente
-                </button>
-            </div>
-        `);
+    $.ajax({
+        url: '/centros',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
+            exibirCentros(data);
+        },
+        error: function() {
+            $('#centros-grid').html(`
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5>Erro ao carregar centros</h5>
+                    <p class="text-muted">Tente novamente mais tarde ou entre em contacto connosco.</p>
+                    <button class="btn btn-primary" onclick="carregarCentros()">
+                        <i class="fas fa-redo me-2"></i>Tentar Novamente
+                    </button>
+                </div>
+            `);
+        }
     });
 }
 

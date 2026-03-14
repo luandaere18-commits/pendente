@@ -239,14 +239,27 @@ $(document).ready(function() {
 });
 
 function carregarCursos() {
-    $.get('/cursos', function(data) {
-        let options = '<option value="">Selecione o curso</option>';
-        data.forEach(function(curso) {
-            if (curso.ativo) {
-                options += `<option value="${curso.id}">${curso.nome} - ${curso.area}</option>`;
-            }
-        });
-        $('#curso_id').html(options);
+    $.ajax({
+        url: '/cursos',
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
+            let options = '<option value="">Selecione o curso</option>';
+            data.forEach(function(curso) {
+                if (curso.ativo) {
+                    options += `<option value="${curso.id}">${curso.nome} - ${curso.area}</option>`;
+                }
+            });
+            $('#curso_id').html(options);
+        },
+        error: function(xhr) {
+            console.error('Erro ao carregar cursos:', xhr);
+            $('#curso_id').html('<option value="">Erro ao carregar cursos</option>');
+        }
     });
 }
 
@@ -258,16 +271,28 @@ function carregarCentros(cursoId, selectedCentro) {
         return;
     }
 
-    $.get(`/cursos/${cursoId}`, function(response) {
-        const curso = response.dados || response;
-        let opts = '<option value="">Selecione um centro</option>';
-        curso.centros.forEach(function(c) {
-            const preco = c.pivot && c.pivot.preco ? parseFloat(c.pivot.preco).toLocaleString('pt-PT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' Kz' : '';
-            opts += `<option value="${c.id}" data-preco="${c.pivot ? c.pivot.preco : ''}"${selectedCentro==c.id ? ' selected' : ''}>${c.nome}${preco ? ' ('+preco+')' : ''}</option>`;
-        });
-        $centroSelect.html(opts).prop('disabled', false);
-    }).fail(function() {
-        $centroSelect.html('<option value="">Erro ao carregar centros</option>').prop('disabled', true);
+    $.ajax({
+        url: `/cursos/${cursoId}`,
+        type: 'GET',
+        dataType: 'json',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(response) {
+            const curso = response.dados || response;
+            let opts = '<option value="">Selecione um centro</option>';
+            const centros = curso.centros || [];
+            centros.forEach(function(c) {
+                const preco = c.pivot && c.pivot.preco ? parseFloat(c.pivot.preco).toLocaleString('pt-PT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' Kz' : '';
+                opts += `<option value="${c.id}" data-preco="${c.pivot ? c.pivot.preco : ''}"${selectedCentro==c.id ? ' selected' : ''}>${c.nome}${preco ? ' ('+preco+')' : ''}</option>`;
+            });
+            $centroSelect.html(opts).prop('disabled', false);
+        },
+        error: function(xhr) {
+            console.error('Erro ao carregar centros:', xhr);
+            $centroSelect.html('<option value="">Erro ao carregar centros</option>').prop('disabled', true);
+        }
     });
 }
 
