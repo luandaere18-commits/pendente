@@ -88,31 +88,29 @@
                                 <td class="d-none d-md-table-cell"><small>{{ $formador->email ?? '—' }}</small></td>
                                 <td class="d-none d-lg-table-cell"><small>{{ $formador->especialidade ?? '—' }}</small></td>
                                 <td class="text-center">
-                                    @php
-                                        // Contar cursos únicos através das turmas
-                                        $cursosCount = $formador->turmas->pluck('curso_id')->unique()->count();
-                                    @endphp
-                                    <span class="badge bg-info-subtle text-info">{{ $cursosCount }}</span>
-                                </td>
-                                <td class="text-center">
-                                    @if($formador->contactos && is_array($formador->contactos))
-                                        @php
-                                            $totalContactos = count($formador->contactos);
-                                        @endphp
-                                        
-                                        @if($totalContactos > 0)
-                                            <span class="badge bg-success-subtle text-success">{{ $totalContactos }}</span>
-                                            
-                                            {{-- Tooltip com os números --}}
+                                    @if($formador->primeiro_nome_curso)
+                                        <span class="badge bg-info">{{ $formador->primeiro_nome_curso }}</span>
+                                        @if($formador->cursos_count > 1)
                                             <i class="fas fa-info-circle text-muted ms-1" 
                                                data-bs-toggle="tooltip" 
-                                               title="{{ implode(', ', $formador->contactos) }}" 
+                                               title="{{ $formador->cursos_lista }}" 
                                                style="cursor: help;"></i>
-                                        @else
-                                            <span class="badge bg-secondary">0</span>
                                         @endif
                                     @else
-                                        <span class="badge bg-secondary">0</span>
+                                        <span class="badge bg-secondary">—</span>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    @if($formador->primeiro_contacto)
+                                        <span class="badge bg-success-subtle text-success">{{ $formador->primeiro_contacto }}</span>
+                                        @if($formador->contactos_count > 1)
+                                            <i class="fas fa-info-circle text-muted ms-1" 
+                                               data-bs-toggle="tooltip" 
+                                               title="{{ $formador->contactos_lista }}" 
+                                               style="cursor: help;"></i>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-secondary">—</span>
                                     @endif
                                 </td>
                                 <td class="text-end pe-3">

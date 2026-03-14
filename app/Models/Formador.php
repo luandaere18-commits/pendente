@@ -29,10 +29,27 @@ class Formador extends Model
      * ACCESSOR: Normalizar contactos para exibição
      * Garante que sempre retorne um array de strings
      * Lida com ambos os formatos: strings simples e objetos com 'valor'
+     * Recebe $value APÓS o cast (ja é array) ou como string JSON
      */
     public function getContactosAttribute($value)
     {
-        $contactos = json_decode($value, true) ?? [];
+        // Se value for null ou vazio, retornar array vazio
+        if (empty($value)) {
+            return [];
+        }
+        
+        // Se for string (JSON do banco), decodificar
+        if (is_string($value)) {
+            $contactos = json_decode($value, true);
+            if (!is_array($contactos)) {
+                return [];
+            }
+        } elseif (is_array($value)) {
+            // Se já for array (vem do cast), usar direto
+            $contactos = $value;
+        } else {
+            return [];
+        }
         
         if (empty($contactos)) {
             return [];
@@ -157,6 +174,70 @@ class Formador extends Model
     public function getContactosCountAttribute()
     {
         return count($this->contactos ?? []);
+    }
+
+    /**
+     * ACESSOR: Primeiro contacto
+     * Uso: $formador->primeiro_contacto
+     */
+    public function getPrimeiroContactoAttribute()
+    {
+        $contactos = $this->contactos ?? [];
+        return !empty($contactos) ? reset($contactos) : null;
+    }
+
+    /**
+     * ACESSOR: Lista de contactos para tooltip
+     * Uso: $formador->contactos_lista
+     */
+    public function getContactosListaAttribute()
+    {
+        return $this->contactos_string;
+    }
+
+    /**
+     * ACESSOR: Primeiro curso nome
+     * Uso: $formador->primeiro_nome_curso
+     */
+    public function getPrimeiroNomeCursoAttribute()
+    {
+        if ($this->relationLoaded('turmas')) {
+            $curso = $this->turmas->first()?->curso;
+            return $curso?->nome ?? null;
+        }
+        
+        return $this->turmas()
+            ->with('curso')
+            ->first()
+            ?->curso
+            ?->nome ?? null;
+    }
+
+    /**
+     * ACESSOR: Lista de nomes de cursos para tooltip
+     * Uso: $formador->cursos_lista
+     */
+    public function getCursosListaAttribute()
+    {
+        if ($this->relationLoaded('turmas')) {
+            $nomes = $this->turmas
+                ->pluck('curso')
+                ->filter()
+                ->unique('id')
+                ->pluck('nome')
+                ->toArray();
+        } else {
+            $nomes = $this->turmas()
+                ->with('curso')
+                ->get()
+                ->pluck('curso')
+                ->filter()
+                ->unique('id')
+                ->pluck('nome')
+                ->toArray();
+        }
+        
+        return implode(', ', $nomes) ?: '—';
     }
 }
 
