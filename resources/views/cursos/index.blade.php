@@ -667,7 +667,7 @@ function carregarDetalhesCurso(cursoId) {
                             <i class="fas fa-calendar"></i> Turmas
                         </div>
                         <table class="pi-table" style="font-size:0.8125rem">
-                            <thead><tr><th>Dias</th><th>Período</th><th>Início</th><th>Fim</th><th>Semanas</th></tr></thead>
+                            <thead><tr><th>Dias</th><th>Período</th><th>Data Arranque</th><th>Semanas</th></tr></thead>
                             <tbody>`;
                 curso.turmas.forEach(turma => {
                     const dias = Array.isArray(turma.dia_semana) 
@@ -681,12 +681,20 @@ function carregarDetalhesCurso(cursoId) {
                                    turma.periodo === 'tarde' ? 'Tarde' : 
                                    turma.periodo === 'noite' ? 'Noite' : (turma.periodo || 'N/A');
                     
+                    // Formatar data de arranque
+                    let dataArranque = 'N/A';
+                    if (turma.data_arranque) {
+                        const data = new Date(turma.data_arranque);
+                        if (!isNaN(data.getTime())) {
+                            dataArranque = data.toLocaleDateString('pt-PT');
+                        }
+                    }
+                    
                     turmasHtml += `
                         <tr>
                             <td><strong>${dias}</strong></td>
                             <td><span class="pi-badge pi-badge-periodo">${periodo}</span></td>
-                            <td>${turma.hora_inicio || 'N/A'}</td>
-                            <td>${turma.hora_fim || 'N/A'}</td>
+                            <td><strong>${dataArranque}</strong></td>
                             <td>${turma.duracao_semanas || 'N/A'}</td>
                         </tr>`;
                 });
