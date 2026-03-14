@@ -1006,6 +1006,48 @@ window.visualizarTurma = function(id) {
             conteudo += detailRow('fa-hourglass-half', 'Duração', duracao + ' semana(s)');
             conteudo += detailRow('fa-calendar-alt', 'Data de Arranque', dataArranque);
             
+            // Vagas
+            const vagasPreenchidas = turma.vagas_preenchidas || 0;
+            const vagasTotais = turma.vagas_totais || 0;
+            const vagasDisponiveis = vagasTotais - vagasPreenchidas;
+            const vagasStatus = vagasTotais > 0 ? vagasPreenchidas + '/' + vagasTotais : 'Ilimitado';
+            const percentualPreenchimento = vagasTotais > 0 ? Math.round((vagasPreenchidas / vagasTotais) * 100) : 0;
+            
+            let preenchimentoFormatado = '';
+            if (vagasTotais > 0) {
+                preenchimentoFormatado = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>${vagasStatus}</span>
+                        <div style="flex: 1; background: #e9ecef; height: 6px; border-radius: 3px; overflow: hidden;">
+                            <div style="background: ${percentualPreenchimento >= 80 ? '#dc3545' : percentualPreenchimento >= 50 ? '#ffc107' : '#28a745'}; height: 100%; width: ${percentualPreenchimento}%"></div>
+                        </div>
+                        <span style="font-size: 0.875rem; color: #6c757d;">${percentualPreenchimento}%</span>
+                    </div>
+                `;
+            } else {
+                preenchimentoFormatado = vagasStatus;
+            }
+            conteudo += detailRow('fa-chair', 'Vagas', preenchimentoFormatado);
+            
+            // Status de publicação
+            let statusPublicacao = '';
+            if (turma.publicado) {
+                statusPublicacao = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="badge badge-success"><i class="fas fa-globe me-1"></i>Turma Publicada</span>
+                        <span style="font-size: 0.8rem; color: #6c757d;">(Visível no site)</span>
+                    </div>
+                `;
+            } else {
+                statusPublicacao = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="badge badge-secondary"><i class="fas fa-lock me-1"></i>Turma Privada</span>
+                        <span style="font-size: 0.8rem; color: #6c757d;">(Apenas admin)</span>
+                    </div>
+                `;
+            }
+            conteudo += detailRow('fa-eye', 'Publicação', statusPublicacao);
+            
             $('#conteudoVisualizarTurma').html(conteudo);
             new bootstrap.Modal(document.getElementById('modalVisualizarTurma')).show();
         },
