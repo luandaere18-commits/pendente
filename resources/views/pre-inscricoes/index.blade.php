@@ -465,14 +465,91 @@
     }
 
     function carregarTurmas() {
-        $.get('/turmas?per_page=1000', function(data) {
-            let opts = '<option value="">Selecione uma turma...</option>';
-            var items = data.data || data;
-            (items || []).forEach(function(t) {
-                var nome = (t.curso ? t.curso.nome : 'Curso') + ' — ' + (t.periodo || '') + ' (' + (t.centro ? t.centro.nome : '') + ')';
-                opts += '<option value="' + t.id + '">' + nome + '</option>';
-            });
-            $('#criarTurmaId').html(opts);
+        console.log('Carregando turmas...');
+        
+        // Mostrar loading
+        $('#criarTurmaId').html('<option value="">Carregando turmas...</option>');
+        
+        $.ajax({
+            url: '/turmas',  // ← SEM parâmetro per_page (será ignorado se enviado)
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(data) {
+                console.log('Resposta recebida:', data);
+                
+                let opts = '<option value="">Selecione uma turma...</option>';
+                let items = [];
+                
+                // Verificar formato da resposta
+                if (Array.isArray(data)) {
+                    // Se for array direto
+                    items = data;
+                } else if (data.data && Array.isArray(data.data)) {
+                    // Se for objeto paginado com propriedade data
+                    items = data.data;
+                } else if (data.dados && Array.isArray(data.dados)) {
+                    // Se for objeto com propriedade dados
+                    items = data.dados;
+                } else {
+                    console.warn('Formato de resposta inesperado:', data);
+                    // Tentar extrair qualquer array que exista
+                    for (let key in data) {
+                        if (Array.isArray(data[key])) {
+                            items = data[key];
+                            console.log('Usando array da chave:', key);
+                            break;
+                        }
+                    }
+                }
+                
+                console.log('Items processados:', items.length);
+                
+                if (items && items.length > 0) {
+                    items.forEach(function(t) {
+                        // Acessar dados de forma segura
+                        const cursoNome = t.curso ? t.curso.nome : (t.curso_nome || 'Curso');
+                        const centroNome = t.centro ? t.centro.nome : (t.centro_nome || '');
+                        
+                        // Traduzir período
+                        let periodo = t.periodo || '';
+                        if (periodo === 'manha') periodo = 'Manhã';
+                        else if (periodo === 'tarde') periodo = 'Tarde';
+                        else if (periodo === 'noite') periodo = 'Noite';
+                        
+                        // Construir nome da turma
+                        let nome = cursoNome;
+                        if (periodo) nome += ' — ' + periodo;
+                        if (centroNome) nome += ' (' + centroNome + ')';
+                        
+                        opts += `<option value="${t.id}">${nome}</option>`;
+                    });
+                } else {
+                    opts = '<option value="">Nenhuma turma disponível</option>';
+                }
+                
+                $('#criarTurmaId').html(opts);
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao carregar turmas:');
+                console.error('Status:', xhr.status);
+                console.error('Response:', xhr.responseText);
+                console.error('Erro:', error);
+                
+                $('#criarTurmaId').html('<option value="">Erro ao carregar turmas</option>');
+                
+                // Mensagem mais amigável
+                let mensagem = 'Não foi possível carregar a lista de turmas';
+                if (xhr.status === 404) {
+                    mensagem = 'Rota de turmas não encontrada';
+                } else if (xhr.status === 500) {
+                    mensagem = 'Erro interno no servidor';
+                }
+                
+                Swal.fire('Erro', mensagem, 'error');
+            }
         });
     }
 

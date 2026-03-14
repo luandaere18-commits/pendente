@@ -607,7 +607,7 @@
                 console.log('Carregando turmas da API...');
                 // Carregar turmas se ainda não foram carregadas
                 $.ajax({
-                    url: '/turmas?publicado=true',
+                    url: '/turmas',
                     type: 'GET',
                     dataType: 'json',
                     headers: {
@@ -615,8 +615,27 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     success: function(data) {
-                        turmas = Array.isArray(data) ? data : (data.data || []);
+                        console.log('Resposta de turmas:', data);
+                        
+                        // Tratar diferentes formatos
+                        if (Array.isArray(data)) {
+                            turmas = data;
+                        } else if (data.data && Array.isArray(data.data)) {
+                            turmas = data.data;
+                        } else if (data.dados && Array.isArray(data.dados)) {
+                            turmas = data.dados;
+                        } else {
+                            console.warn('Formato inesperado:', data);
+                            turmas = [];
+                        }
+                        
+                        console.log('Turmas carregadas:', turmas.length);
                         exibirTurmasDisponíveis(cursoId);
+                    },
+                    error: function(xhr) {
+                        console.error('Erro ao carregar turmas:', xhr);
+                        console.error('Status:', xhr.status);
+                        turmas = [];
                     }
                 });
             } else {

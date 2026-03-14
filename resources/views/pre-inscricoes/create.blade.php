@@ -202,15 +202,69 @@ $(document).ready(function() {
 });
 
 function carregarturmas() {
-    $.get('/turmas', function(data) {
-        let options = '<option value="">Selecione a turma</option>';
-        data.forEach(function(turma) {
-            const horaTexto = turma.hora_inicio && turma.hora_fim 
-                ? ` (${turma.hora_inicio} - ${turma.hora_fim})`
-                : '';
-            options += `<option value="${turma.id}">${turma.dia_semana} - ${turma.periodo}${horaTexto}</option>`;
-        });
-        $('#turma_id').html(options);
+    console.log('Carregando turmas...');
+    
+    $('#turma_id').html('<option value="">Carregando turmas...</option>');
+    
+    $.ajax({
+        url: '/turmas',
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(data) {
+            console.log('Resposta recebida:', data);
+            
+            let options = '<option value="">Selecione a turma</option>';
+            let items = [];
+            
+            // Verificar formato da resposta
+            if (Array.isArray(data)) {
+                items = data;
+            } else if (data.data && Array.isArray(data.data)) {
+                items = data.data;
+            } else if (data.dados && Array.isArray(data.dados)) {
+                items = data.dados;
+            }
+            
+            console.log('Items processados:', items.length);
+            
+            if (items && items.length > 0) {
+                items.forEach(function(turma) {
+                    const horaTexto = turma.hora_inicio && turma.hora_fim 
+                        ? ` (${turma.hora_inicio} - ${turma.hora_fim})`
+                        : '';
+                    const periodo = turma.periodo || '';
+                    const dias = turma.dia_semana 
+                        ? (Array.isArray(turma.dia_semana) ? turma.dia_semana.join(', ') : turma.dia_semana) 
+                        : 'N/A';
+                    
+                    options += `<option value="${turma.id}">${dias} - ${periodo}${horaTexto}</option>`;
+                });
+            } else {
+                options = '<option value="">Nenhuma turma disponível</option>';
+            }
+            
+            $('#turma_id').html(options);
+        },
+        error: function(xhr, status, error) {
+            console.error('Erro ao carregar turmas:');
+            console.error('Status:', xhr.status);
+            console.error('Response:', xhr.responseText);
+            console.error('Erro:', error);
+            
+            $('#turma_id').html('<option value="">Erro ao carregar turmas</option>');
+            
+            let mensagem = 'Não foi possível carregar a lista de turmas';
+            if (xhr.status === 404) {
+                mensagem = 'Rota de turmas não encontrada';
+            } else if (xhr.status === 500) {
+                mensagem = 'Erro interno no servidor';
+            }
+            
+            Swal.fire('Erro', mensagem, 'error');
+        }
     });
 }
 

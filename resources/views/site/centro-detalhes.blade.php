@@ -367,6 +367,8 @@ function carregarCursos(centroId) {
 }
 
 function carregarturmas() {
+    console.log('Carregando turmas...');
+    
     $.ajax({
         url: '/turmas',
         type: 'GET',
@@ -375,12 +377,28 @@ function carregarturmas() {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
         },
-        success: function(turmas) {
-            turmasDisponiveis = turmas;
-            // Preencher select com todos os turmas quando modal abrir
+        success: function(data) {
+            console.log('Resposta recebida:', data);
+            
+            // Tratar diferentes formatos de resposta
+            if (Array.isArray(data)) {
+                turmasDisponiveis = data;
+            } else if (data.data && Array.isArray(data.data)) {
+                turmasDisponiveis = data.data;
+            } else if (data.dados && Array.isArray(data.dados)) {
+                turmasDisponiveis = data.dados;
+            } else {
+                console.warn('Formato de resposta inesperado:', data);
+                turmasDisponiveis = [];
+            }
+            
+            console.log('Turmas carregadas:', turmasDisponiveis.length);
         },
         error: function(xhr) {
             console.error('Erro ao carregar turmas:', xhr);
+            console.error('Status:', xhr.status);
+            console.error('Response:', xhr.responseText);
+            turmasDisponiveis = [];
         }
     });
 }

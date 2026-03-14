@@ -23,7 +23,18 @@ class TurmaController extends Controller
             $query->where('periodo', $request->periodo);
         }
         
-        $turmas = $query->get();
+        // Suportar paginação com per_page
+        if ($request->has('per_page')) {
+            $turmas = $query->paginate($request->per_page);
+        } else {
+            $turmas = $query->get();
+        }
+        
+        // Se for requisição AJAX, retornar JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json($turmas, 200);
+        }
+        
         $todosOsCursos = \App\Models\Curso::all();
         
         return view('turmas.index', compact('turmas', 'todosOsCursos'))->with([
