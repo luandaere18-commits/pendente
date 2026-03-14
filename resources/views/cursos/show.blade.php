@@ -6,188 +6,265 @@
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 <style>
     :root {
-        --pi-primary: #3366cc;
-        --pi-primary-light: rgba(51, 102, 204, 0.1);
-        --pi-success: #2e9e6b;
-        --pi-success-light: rgba(46, 158, 107, 0.1);
-        --pi-warning: #e89a0c;
-        --pi-warning-light: rgba(232, 154, 12, 0.1);
-        --pi-danger: #dc3545;
-        --pi-danger-light: rgba(220, 53, 69, 0.1);
-        --pi-info: #0ea5e9;
-        --pi-info-light: rgba(14, 165, 233, 0.1);
-        --pi-muted: #6b7a8d;
-        --pi-border: #e2e6ec;
-        --pi-bg: #f4f6f9;
+        --pi-primary: #1d4ed8;
+        --pi-primary-dark: #1e40af;
+        --pi-primary-light: rgba(29, 78, 216, 0.08);
+        --pi-primary-gradient: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        --pi-success: #16a34a;
+        --pi-success-light: rgba(22, 163, 74, 0.08);
+        --pi-warning: #d97706;
+        --pi-warning-light: rgba(217, 119, 6, 0.08);
+        --pi-danger: #dc2626;
+        --pi-danger-light: rgba(220, 38, 38, 0.08);
+        --pi-info: #0284c7;
+        --pi-info-light: rgba(2, 132, 199, 0.08);
+        --pi-muted: #64748b;
+        --pi-border: #dbeafe;
+        --pi-bg: #eff6ff;
         --pi-card: #ffffff;
-        --pi-text: #1a2332;
-        --pi-text-muted: #6b7a8d;
-        --pi-radius: 0.75rem;
-        --pi-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --pi-text: #1e3a8a;
+        --pi-text-muted: #64748b;
+        --pi-radius: 0.5rem;
+        --pi-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
-    body { background-color: var(--pi-bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--pi-text); }
+    body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
 
-    .pi-page { max-width: 100%; width: 100%; margin: 0 auto; padding: 1.5rem 2rem; }
+    .pi-page { width: 100%; padding: 0; }
 
-    /* Breadcrumb */
-    .pi-breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--pi-text-muted); margin-bottom: 1.25rem; }
-    .pi-breadcrumb a { color: var(--pi-primary); text-decoration: none; font-weight: 500; }
-    .pi-breadcrumb a:hover { text-decoration: underline; }
-    .pi-breadcrumb .separator { color: var(--pi-border); }
-    .pi-breadcrumb .current { color: var(--pi-text); font-weight: 500; }
-
-    /* Header */
-    .pi-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
-    .pi-header-left { display: flex; align-items: center; gap: 0.75rem; }
-    .pi-header-icon { width: 3rem; height: 3rem; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); }
-    .pi-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-    .pi-header p { font-size: 0.875rem; color: var(--pi-text-muted); margin: 0; }
-    .pi-header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-    /* Buttons */
-    .pi-btn { border: none; border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.15s; cursor: pointer; text-decoration: none; }
-    .pi-btn-primary { background: var(--pi-primary); color: #fff; }
-    .pi-btn-primary:hover { background: #2a57b3; color: #fff; }
+    /* ── BLUE HEADER ── */
+    .pi-page-header {
+        background: var(--pi-primary-gradient);
+        color: #fff;
+        padding: 1rem 1.5rem;
+    }
+    .pi-breadcrumb-bar {
+        display: flex; align-items: center; gap: 0.375rem;
+        font-size: 0.6875rem; margin-bottom: 0.5rem; opacity: 0.8;
+    }
+    .pi-breadcrumb-bar a { color: #fff; text-decoration: none; font-weight: 500; }
+    .pi-breadcrumb-bar a:hover { text-decoration: underline; }
+    .pi-breadcrumb-bar .sep { opacity: 0.5; }
+    .pi-header-row {
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 0.75rem;
+    }
+    .pi-header-row h1 { font-size: 1.25rem; font-weight: 700; margin: 0; color: #fff; }
+    .pi-header-actions { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+    .pi-btn { border: none; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; text-decoration: none; }
+    .pi-btn-white { background: #fff; color: var(--pi-primary); }
+    .pi-btn-white:hover { background: #dbeafe; color: var(--pi-primary); }
+    .pi-btn-danger-outline { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+    .pi-btn-danger-outline:hover { background: var(--pi-danger); border-color: var(--pi-danger); color: #fff; }
+    .pi-btn-ghost { background: rgba(255,255,255,0.1); color: #fff; }
+    .pi-btn-ghost:hover { background: rgba(255,255,255,0.2); }
+    .pi-btn-primary { background: var(--pi-primary); border: none; color: #fff; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; }
+    .pi-btn-primary:hover { background: var(--pi-primary-dark); color: #fff; }
+    .pi-btn-sm { padding: 0.3125rem 0.625rem; font-size: 0.75rem; }
     .pi-btn-danger { background: var(--pi-danger); color: #fff; }
-    .pi-btn-danger:hover { background: #c82333; color: #fff; }
+    .pi-btn-danger:hover { background: #b91c1c; color: #fff; }
     .pi-btn-outline { background: transparent; color: var(--pi-text-muted); border: 1px solid var(--pi-border); }
-    .pi-btn-outline:hover { background: #f0f2f5; color: var(--pi-text); }
+    .pi-btn-outline:hover { background: var(--pi-bg); color: var(--pi-text); }
     .pi-btn-success { background: var(--pi-success); color: #fff; }
-    .pi-btn-success:hover { background: #257a55; color: #fff; }
     .pi-btn-warning { background: var(--pi-warning); color: #fff; }
-    .pi-btn-warning:hover { background: #c98508; color: #fff; }
-    .pi-btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; }
 
-    /* Stats */
-    .pi-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-    .pi-stat-card { display: flex; align-items: center; gap: 0.75rem; background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.75rem 1rem; box-shadow: var(--pi-shadow); }
-    .pi-stat-card .stat-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; flex-shrink: 0; }
-    .pi-stat-card .stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
-    .pi-stat-card .stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
-    .pi-stat-card .stat-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
-    .pi-stat-card .stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
-    .pi-stat-card .stat-content { display: flex; flex-direction: column; }
-    .pi-stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); margin-bottom: 0.25rem; }
-    .pi-stat-card .stat-value { font-size: 1.5rem; font-weight: 700; }
+    /* ── STATS BAR ── */
+    .pi-stats-bar {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+        background: #fff; border-bottom: 1px solid var(--pi-border);
+    }
+    .pi-stat {
+        padding: 0.625rem 1rem; border-right: 1px solid var(--pi-border);
+        display: flex; align-items: center; gap: 0.625rem;
+    }
+    .pi-stat:last-child { border-right: none; }
+    .pi-stat-icon {
+        width: 2rem; height: 2rem; border-radius: 0.375rem;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8125rem; flex-shrink: 0;
+    }
+    .pi-stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
+    .pi-stat-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
+    .pi-stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
+    .pi-stat-label { font-size: 0.625rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-stat-value { font-size: 1.25rem; font-weight: 700; line-height: 1; }
 
-    /* Card */
-    .pi-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; margin-bottom: 1.25rem; }
-    .pi-card-header { border-bottom: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
-    .pi-card-header h2 { font-size: 0.875rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
-    .pi-card-header .count-badge { background: var(--pi-primary-light); color: var(--pi-primary); font-size: 0.75rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; }
-    .pi-card-body { padding: 1.25rem; }
+    /* ── CARD ── */
+    .pi-card { background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; margin: 0.75rem; }
+    .pi-card-header {
+        border-bottom: 1px solid var(--pi-border); padding: 0.625rem 1rem;
+        display: flex; align-items: center; justify-content: space-between;
+        background: var(--pi-primary-light);
+    }
+    .pi-card-header h2 { font-size: 0.8125rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.375rem; color: var(--pi-text); }
+    .pi-card-header .count-badge { background: var(--pi-primary); color: #fff; font-size: 0.625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; }
+    .pi-card-body { padding: 1rem; }
 
-    /* Info grid */
-    .pi-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .pi-info-item { display: flex; flex-direction: column; gap: 0.25rem; }
-    .pi-info-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
-    .pi-info-value { font-size: 0.9375rem; font-weight: 500; }
+    /* ── INFO GRID ── */
+    .pi-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    .pi-info-item { display: flex; flex-direction: column; gap: 0.125rem; }
+    .pi-info-label { font-size: 0.625rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-info-value { font-size: 0.875rem; font-weight: 500; }
 
-    /* Badges */
-    .pi-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.01em; gap: 0.25rem; }
-    .pi-badge-success { background: var(--pi-success-light); color: #1e6e49; }
-    .pi-badge-secondary { background: rgba(100, 116, 139, 0.1); color: #475569; }
+    /* ── BADGES ── */
+    .pi-badge {
+        display: inline-flex; align-items: center; gap: 0.25rem;
+        padding: 0.125rem 0.5rem; border-radius: 9999px;
+        font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em;
+    }
+    .pi-badge-success { background: var(--pi-success-light); color: #15803d; }
+    .pi-badge-secondary { background: rgba(100,116,139,0.08); color: #475569; }
     .pi-badge-info { background: var(--pi-info-light); color: #0369a1; }
-    .pi-badge-warning { background: var(--pi-warning-light); color: #92610a; }
+    .pi-badge-warning { background: var(--pi-warning-light); color: #92400e; }
     .pi-badge-primary { background: var(--pi-primary-light); color: var(--pi-primary); }
     .pi-badge-danger { background: var(--pi-danger-light); color: #b91c1c; }
-    .pi-badge-dark { background: rgba(30, 41, 59, 0.1); color: #1e293b; }
-    .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; font-size: 0.6875rem; }
+    .pi-badge-dark { background: rgba(30,41,59,0.08); color: #1e293b; }
+    .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; font-size: 0.625rem; padding: 0.0625rem 0.375rem; }
     .pi-badge-periodo { background: var(--pi-primary-light); color: var(--pi-primary); }
 
-    /* Curso image */
-    .pi-curso-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: var(--pi-radius); }
-    .pi-curso-img-placeholder { width: 100%; height: 140px; border-radius: var(--pi-radius); background: #f0f2f5; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--pi-text-muted); gap: 0.5rem; }
+    /* ── COURSE IMAGE (properly proportioned) ── */
+    .pi-curso-img-container {
+        width: 100%; max-height: 140px; border-radius: var(--pi-radius);
+        overflow: hidden; background: var(--pi-primary-light);
+    }
+    .pi-curso-img { width: 100%; height: 100%; max-height: 140px; object-fit: cover; display: block; }
+    .pi-curso-img-placeholder {
+        width: 100%; height: 100px; border-radius: var(--pi-radius);
+        background: var(--pi-primary-light); display: flex; flex-direction: column;
+        align-items: center; justify-content: center; color: var(--pi-primary); gap: 0.25rem;
+    }
 
-    /* Table */
-    .pi-table { width: 100%; margin: 0; font-size: 0.92rem; }
-    .pi-table thead th { background: rgba(51, 102, 204, 0.08); border-bottom: 1px solid var(--pi-border); font-size: 0.82rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.03em; padding: 0.75rem 1rem; white-space: nowrap; }
-    .pi-table tbody td { padding: 0.75rem 1rem; vertical-align: middle; border-bottom: 1px solid #f0f2f5; }
-    .pi-table tbody tr:hover { background: #f8f9fb; }
+    /* ── TABLE ── */
+    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; }
+    .pi-table thead th {
+        background: var(--pi-primary); color: #fff;
+        font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.05em; padding: 0.5rem 0.75rem; white-space: nowrap;
+        position: sticky; top: 0; z-index: 5;
+    }
+    .pi-table tbody td { padding: 0.5rem 0.75rem; vertical-align: middle; border-bottom: 1px solid #f0f4ff; }
+    .pi-table tbody tr { transition: background 0.1s; }
+    .pi-table tbody tr:hover { background: var(--pi-primary-light); }
     .pi-table tbody tr:last-child td { border-bottom: none; }
 
-    /* Action buttons */
-    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; }
-    .pi-action-btn { width: 2rem; height: 2rem; border: none; border-radius: 0.375rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 0.8125rem; }
+    /* ── ACTION BUTTONS ── */
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; opacity: 0; transition: opacity 0.15s; }
+    .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    .pi-action-btn {
+        width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.15s; font-size: 0.75rem;
+    }
     .pi-action-btn.edit { background: transparent; color: var(--pi-primary); border: 1px solid var(--pi-primary); }
     .pi-action-btn.edit:hover { background: var(--pi-primary); color: #fff; }
     .pi-action-btn.delete { background: transparent; color: var(--pi-danger); border: 1px solid var(--pi-danger); }
     .pi-action-btn.delete:hover { background: var(--pi-danger); color: #fff; }
 
-    /* Tabs */
-    .pi-tabs { display: flex; border-bottom: 2px solid var(--pi-border); margin-bottom: 0; }
-    .pi-tab { padding: 0.75rem 1.25rem; font-size: 0.875rem; font-weight: 500; color: var(--pi-text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.5rem; background: none; border-top: none; border-left: none; border-right: none; }
+    /* ── TABS ── */
+    .pi-tabs {
+        display: flex; border-bottom: 2px solid var(--pi-border);
+        background: var(--pi-primary-light); padding: 0 0.75rem;
+    }
+    .pi-tab {
+        padding: 0.625rem 1rem; font-size: 0.8125rem; font-weight: 500;
+        color: var(--pi-text-muted); cursor: pointer;
+        border-bottom: 2px solid transparent; margin-bottom: -2px;
+        transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.375rem;
+        background: none; border-top: none; border-left: none; border-right: none;
+    }
     .pi-tab:hover { color: var(--pi-primary); }
-    .pi-tab.active { color: var(--pi-primary); border-bottom-color: var(--pi-primary); font-weight: 600; }
-    .pi-tab .tab-count { background: var(--pi-primary-light); color: var(--pi-primary); font-size: 0.6875rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; }
+    .pi-tab.active { color: var(--pi-primary); border-bottom-color: var(--pi-primary); font-weight: 600; background: #fff; border-radius: var(--pi-radius) var(--pi-radius) 0 0; }
+    .pi-tab .tab-count { background: var(--pi-primary); color: #fff; font-size: 0.5625rem; font-weight: 700; padding: 0.0625rem 0.375rem; border-radius: 9999px; }
     .pi-tab-content { display: none; }
     .pi-tab-content.active { display: block; }
 
-    /* Empty state */
-    .pi-empty { text-align: center; padding: 3rem 1rem; color: var(--pi-text-muted); }
-    .pi-empty-icon { width: 4rem; height: 4rem; border-radius: 1rem; background: #f0f2f5; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
-    .pi-empty h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
-    .pi-empty p { font-size: 0.875rem; }
+    /* ── EMPTY STATE ── */
+    .pi-empty { text-align: center; padding: 2.5rem 1rem; color: var(--pi-text-muted); }
+    .pi-empty-icon { width: 3rem; height: 3rem; border-radius: 0.75rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--pi-primary); }
+    .pi-empty h3 { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.125rem; color: var(--pi-text); }
+    .pi-empty p { font-size: 0.75rem; }
 
-    /* Mobile cards */
-    .pi-mobile-cards { display: none; }
-    .pi-mobile-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1rem; box-shadow: var(--pi-shadow); margin-bottom: 0.75rem; }
-    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.9375rem; }
-    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; font-size: 0.8125rem; color: var(--pi-text-muted); }
-    .pi-mobile-card .card-actions { display: flex; gap: 0.5rem; }
+    /* ── MOBILE CARDS ── */
+    .pi-mobile-cards { display: none; padding: 0.75rem; }
+    .pi-mobile-card {
+        background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
+        padding: 0.625rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
+    }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); }
+    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; }
 
-    /* Modal */
+    /* ── MODAL ── */
     .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
-    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1.25rem 1.5rem; }
-    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.75rem; }
-    .pi-modal .modal-header .header-icon { width: 2.5rem; height: 2.5rem; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; }
-    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
-    .pi-modal .modal-header .header-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
-    .pi-modal .modal-header .header-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
-    .pi-modal .modal-title { font-size: 1rem; font-weight: 600; margin: 0; }
-    .pi-modal .modal-body { padding: 1.25rem 1.5rem; }
-    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 1rem 1.5rem; }
-    .pi-modal .modal-footer .btn { border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; }
+    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 0.875rem 1.25rem; background: var(--pi-primary-light); }
+    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
+    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
+    .pi-modal .modal-header .header-icon.green { background: var(--pi-success); color: #fff; }
+    .pi-modal .modal-header .header-icon.orange { background: var(--pi-warning); color: #fff; }
+    .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
+    .pi-modal .modal-body { padding: 1rem 1.25rem; }
+    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; background: var(--pi-bg); }
+    .pi-modal .modal-footer .btn { border-radius: var(--pi-radius); font-size: 0.8125rem; font-weight: 500; padding: 0.4375rem 0.875rem; }
 
-    /* Form */
-    .pi-form .form-label { font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.375rem; }
+    /* ── FORM ── */
+    .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
     .pi-form .form-label .required { color: var(--pi-danger); }
-    .pi-form .form-control, .pi-form .form-select { border-radius: 0.5rem; border-color: var(--pi-border); font-size: 0.875rem; }
-    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 3px var(--pi-primary-light); }
-    .pi-form .section-title { font-size: 0.8125rem; font-weight: 600; color: var(--pi-primary); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--pi-border); display: flex; align-items: center; gap: 0.5rem; }
+    .pi-form .form-control, .pi-form .form-select { border-radius: var(--pi-radius); border-color: var(--pi-border); font-size: 0.8125rem; height: 2.25rem; }
+    .pi-form textarea.form-control { height: auto; }
+    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light); }
+    .pi-form .form-text { font-size: 0.6875rem; color: var(--pi-text-muted); }
+    .pi-form .section-title {
+        font-size: 0.75rem; font-weight: 600; color: var(--pi-primary);
+        margin-bottom: 0.625rem; padding-bottom: 0.375rem;
+        border-bottom: 2px solid var(--pi-primary);
+        display: flex; align-items: center; gap: 0.375rem;
+        text-transform: uppercase; letter-spacing: 0.03em;
+    }
 
-    /* Days grid */
-    .pi-days-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .pi-day-check { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; }
-    .pi-day-check input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: var(--pi-primary); }
+    /* ── DAYS GRID ── */
+    .pi-days-grid { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+    .pi-day-check { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 500; }
+    .pi-day-check input[type="checkbox"] { width: 0.875rem; height: 0.875rem; accent-color: var(--pi-primary); }
 
-    /* Centro card in modal */
-    .pi-centro-card { background: #f8f9fb; border: 1px solid var(--pi-border); border-radius: 0.5rem; padding: 1rem; position: relative; }
-    .pi-centro-card .centro-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-    .pi-centro-card .centro-numero { font-size: 0.75rem; font-weight: 600; color: var(--pi-primary); background: var(--pi-primary-light); padding: 0.125rem 0.5rem; border-radius: 9999px; }
+    /* ── CENTRO CARD IN MODAL ── */
+    .pi-centro-card { background: var(--pi-bg); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.75rem; position: relative; }
+    .pi-centro-card .centro-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+    .pi-centro-card .centro-numero { font-size: 0.625rem; font-weight: 700; color: #fff; background: var(--pi-primary); padding: 0.0625rem 0.4375rem; border-radius: 9999px; }
 
-    /* Imagem atual preview */
-    .pi-img-preview { margin-top: 0.5rem; }
-    .pi-img-preview img { max-width: 120px; max-height: 80px; object-fit: cover; border-radius: 0.375rem; border: 1px solid var(--pi-border); }
+    /* ── IMAGE PREVIEW ── */
+    .pi-img-preview { margin-top: 0.375rem; }
+    .pi-img-preview img { max-width: 100px; max-height: 64px; object-fit: cover; border-radius: 0.25rem; border: 2px solid var(--pi-border); }
 
-    /* Responsive */
+    /* ── PAGINATION ── */
+    .pi-pagination-bar {
+        background: var(--pi-primary); color: #fff;
+        padding: 0.375rem 1rem;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.6875rem; font-weight: 500; opacity: 0.9;
+    }
+
+    /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
         .pi-desktop-table { display: none !important; }
         .pi-mobile-cards { display: block !important; }
         .pi-info-grid { grid-template-columns: repeat(2, 1fr); }
-        .pi-stats { grid-template-columns: repeat(2, 1fr); }
+        .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .pi-stat { border-bottom: 1px solid var(--pi-border); }
     }
     @media (max-width: 767.98px) {
-        .pi-stats { grid-template-columns: repeat(2, 1fr); }
-        .pi-header { flex-direction: column; align-items: stretch; }
+        .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .pi-header-row { flex-direction: column; align-items: stretch; }
         .pi-header-actions { justify-content: stretch; }
-        .pi-header-actions .pi-btn { flex: 1; justify-content: center; }
+        .pi-header-actions .pi-btn { flex: 1; justify-content: center; font-size: 0.75rem; }
         .pi-info-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 575.98px) {
-        .pi-page { padding: 1rem 0.75rem; }
+        .pi-page-header { padding: 0.75rem; }
+        .pi-card { margin: 0.5rem; }
+        .pi-stat { padding: 0.5rem 0.625rem; }
     }
 </style>
 @endsection
@@ -220,75 +297,77 @@
 
 <div class="pi-page">
 
-    {{-- BREADCRUMB --}}
-    <div class="pi-breadcrumb">
-        <a href="{{ route('cursos.index') }}"><i class="fas fa-graduation-cap me-1"></i>Cursos</a>
-        <span class="separator"><i class="fas fa-chevron-right"></i></span>
-        <span class="current">{{ $curso->nome }}</span>
+    {{-- ============================================= --}}
+    {{-- BLUE HEADER                                   --}}
+    {{-- ============================================= --}}
+    <div class="pi-page-header">
+        <div class="pi-breadcrumb-bar">
+            <a href="{{ route('cursos.index') }}"><i class="fas fa-graduation-cap me-1"></i>Cursos</a>
+            <span class="sep"><i class="fas fa-chevron-right" style="font-size:0.5rem"></i></span>
+            <span>{{ $curso->nome }}</span>
+        </div>
+        <div class="pi-header-row">
+            <div style="display:flex;align-items:center;gap:0.625rem">
+                <i class="fas fa-graduation-cap fa-lg" style="opacity:0.9"></i>
+                <div>
+                    <h1>{{ $curso->nome }}</h1>
+                    <div style="display:flex;gap:0.375rem;margin-top:0.25rem">
+                        @if($curso->ativo)
+                            <span class="pi-badge" style="background:rgba(255,255,255,0.2);color:#fff"><i class="fas fa-check-circle"></i> Ativo</span>
+                        @else
+                            <span class="pi-badge" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7)"><i class="fas fa-times-circle"></i> Inativo</span>
+                        @endif
+                        <span class="pi-badge" style="background:rgba(255,255,255,0.15);color:#fff">
+                            <i class="{{ $modalidadeIcones[$curso->modalidade] ?? 'fas fa-laptop-house' }}"></i>
+                            {{ ucfirst($curso->modalidade) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="pi-header-actions">
+                <button class="pi-btn pi-btn-white" data-bs-toggle="modal" data-bs-target="#modalEditarCurso">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="pi-btn pi-btn-danger-outline btn-eliminar-curso" data-curso-id="{{ $curso->id }}">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+                <a href="{{ route('cursos.index') }}" class="pi-btn pi-btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
     </div>
 
-    {{-- HEADER --}}
-    <div class="pi-header">
-        <div class="pi-header-left">
-            <div class="pi-header-icon">
-                <i class="fas fa-graduation-cap fa-lg"></i>
-            </div>
+    {{-- ============================================= --}}
+    {{-- STATS BAR                                     --}}
+    {{-- ============================================= --}}
+    <div class="pi-stats-bar">
+        <div class="pi-stat">
+            <div class="pi-stat-icon blue"><i class="fas fa-building"></i></div>
             <div>
-                <h1>{{ $curso->nome }}</h1>
-                <p>
-                    @if($curso->ativo)
-                        <span class="pi-badge pi-badge-success"><i class="fas fa-check-circle"></i> Ativo</span>
-                    @else
-                        <span class="pi-badge pi-badge-secondary"><i class="fas fa-times-circle"></i> Inativo</span>
-                    @endif
-                    <span class="pi-badge {{ $modalidadeClasses[$curso->modalidade] ?? 'pi-badge-primary' }}">
-                        <i class="{{ $modalidadeIcones[$curso->modalidade] ?? 'fas fa-laptop-house' }}"></i>
-                        {{ ucfirst($curso->modalidade) }}
-                    </span>
-                </p>
+                <div class="pi-stat-label">Centros</div>
+                <div class="pi-stat-value" style="color:var(--pi-primary)">{{ $curso->centros->count() }}</div>
             </div>
         </div>
-        <div class="pi-header-actions">
-            <button class="pi-btn pi-btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditarCurso">
-                <i class="fas fa-edit"></i> Editar
-            </button>
-            <button class="pi-btn pi-btn-danger btn-eliminar-curso" data-curso-id="{{ $curso->id }}">
-                <i class="fas fa-trash-alt"></i> Eliminar
-            </button>
-            <a href="{{ route('cursos.index') }}" class="pi-btn pi-btn-outline">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </a>
-        </div>
-    </div>
-
-    {{-- STATS --}}
-    <div class="pi-stats">
-        <div class="pi-stat-card">
-            <div class="stat-icon blue"><i class="fas fa-building"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Centros</div>
-                <div class="stat-value" style="color: var(--pi-primary);">{{ $curso->centros->count() }}</div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div>
+                <div class="pi-stat-label">Turmas</div>
+                <div class="pi-stat-value" style="color:var(--pi-success)">{{ $curso->turmas->count() }}</div>
             </div>
         </div>
-        <div class="pi-stat-card">
-            <div class="stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Turmas</div>
-                <div class="stat-value" style="color: var(--pi-success);">{{ $curso->turmas->count() }}</div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon orange"><i class="fas fa-tag"></i></div>
+            <div>
+                <div class="pi-stat-label">Área</div>
+                <div class="pi-stat-value" style="font-size:0.875rem;color:var(--pi-warning)">{{ $curso->area }}</div>
             </div>
         </div>
-        <div class="pi-stat-card">
-            <div class="stat-icon orange"><i class="fas fa-tag"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Área</div>
-                <div class="stat-value" style="font-size: 1rem; color: var(--pi-warning);">{{ $curso->area }}</div>
-            </div>
-        </div>
-        <div class="pi-stat-card">
-            <div class="stat-icon cyan"><i class="fas fa-money-bill-wave"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Preço Médio</div>
-                <div class="stat-value" style="font-size: 1rem; color: var(--pi-info);">
+        <div class="pi-stat">
+            <div class="pi-stat-icon cyan"><i class="fas fa-money-bill-wave"></i></div>
+            <div>
+                <div class="pi-stat-label">Preço Médio</div>
+                <div class="pi-stat-value" style="font-size:0.875rem;color:var(--pi-info)">
                     @if($curso->centros->count() > 0)
                         {{ number_format($curso->centros->avg('pivot.preco'), 2, ',', '.') }} Kz
                     @else
@@ -299,26 +378,30 @@
         </div>
     </div>
 
-    {{-- INFORMAÇÕES DO CURSO --}}
+    {{-- ============================================= --}}
+    {{-- INFORMAÇÕES DO CURSO                          --}}
+    {{-- ============================================= --}}
     <div class="pi-card">
         <div class="pi-card-header">
-            <h2><i class="fas fa-info-circle" style="color: var(--pi-primary);"></i> Informações do Curso</h2>
+            <h2><i class="fas fa-info-circle" style="color:var(--pi-primary)"></i> Informações do Curso</h2>
         </div>
         <div class="pi-card-body">
             <div class="row g-3">
-                {{-- Imagem --}}
-                <div class="col-md-3">
-                    @if($curso->imagem_url)
-                        <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" class="pi-curso-img">
-                    @else
-                        <div class="pi-curso-img-placeholder">
-                            <i class="fas fa-image fa-2x"></i>
-                            <span style="font-size: 0.8125rem;">Sem imagem</span>
-                        </div>
-                    @endif
+                {{-- Imagem (proporcional, sem sobreposição) --}}
+                <div class="col-md-2 col-sm-3">
+                    <div class="pi-curso-img-container">
+                        @if($curso->imagem_url)
+                            <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" class="pi-curso-img">
+                        @else
+                            <div class="pi-curso-img-placeholder">
+                                <i class="fas fa-image fa-lg"></i>
+                                <span style="font-size:0.6875rem">Sem imagem</span>
+                            </div>
+                        @endif
+                    </div>
                 </div>
                 {{-- Detalhes --}}
-                <div class="col-md-9">
+                <div class="col-md-10 col-sm-9">
                     <div class="pi-info-grid">
                         <div class="pi-info-item">
                             <span class="pi-info-label"><i class="fas fa-tag me-1"></i>Área</span>
@@ -345,15 +428,15 @@
                         </div>
                     </div>
                     @if($curso->descricao)
-                        <div class="mt-3">
+                        <div class="mt-2">
                             <span class="pi-info-label"><i class="fas fa-align-left me-1"></i>Descrição</span>
-                            <p style="font-size: 0.875rem; margin-top: 0.25rem; color: var(--pi-text);">{{ $curso->descricao }}</p>
+                            <p style="font-size:0.8125rem;margin-top:0.125rem;color:var(--pi-text)">{{ $curso->descricao }}</p>
                         </div>
                     @endif
                     @if($curso->programa)
-                        <div class="mt-2">
+                        <div class="mt-1">
                             <span class="pi-info-label"><i class="fas fa-book me-1"></i>Programa</span>
-                            <p style="font-size: 0.875rem; margin-top: 0.25rem; color: var(--pi-text); white-space: pre-line;">{{ $curso->programa }}</p>
+                            <p style="font-size:0.8125rem;margin-top:0.125rem;color:var(--pi-text);white-space:pre-line">{{ $curso->programa }}</p>
                         </div>
                     @endif
                 </div>
@@ -361,7 +444,9 @@
         </div>
     </div>
 
-    {{-- TABS: CENTROS / TURMAS --}}
+    {{-- ============================================= --}}
+    {{-- TABS: CENTROS / TURMAS                        --}}
+    {{-- ============================================= --}}
     <div class="pi-card">
         <div class="pi-tabs">
             <button class="pi-tab active" data-tab="centros">
@@ -376,15 +461,14 @@
 
         {{-- ABA: CENTROS --}}
         <div class="pi-tab-content active" id="tab-centros">
-            <div class="pi-card-header" style="border-top: none;">
-                <h2><i class="fas fa-building" style="color: var(--pi-primary);"></i> Centros de Formação</h2>
+            <div class="pi-card-header" style="border-top:none">
+                <h2><i class="fas fa-building" style="color:var(--pi-primary)"></i> Centros de Formação</h2>
                 <button class="pi-btn pi-btn-primary pi-btn-sm" data-bs-toggle="modal" data-bs-target="#modalAdicionarCentro">
-                    <i class="fas fa-plus"></i> Associar Centro
+                    <i class="fas fa-plus"></i> Associar
                 </button>
             </div>
 
             @if($curso->centros->count() > 0)
-                {{-- Desktop --}}
                 <div class="pi-desktop-table">
                     <table class="pi-table">
                         <thead>
@@ -399,7 +483,7 @@
                                 <tr>
                                     <td><strong>{{ $centro->nome }}</strong></td>
                                     <td>
-                                        <span style="color: var(--pi-success); font-weight: 600;">
+                                        <span style="color:var(--pi-success);font-weight:600">
                                             {{ number_format($centro->pivot->preco, 2, ',', '.') }} Kz
                                         </span>
                                     </td>
@@ -424,9 +508,7 @@
                         </tbody>
                     </table>
                 </div>
-
-                {{-- Mobile --}}
-                <div class="pi-mobile-cards" style="padding: 1rem;">
+                <div class="pi-mobile-cards">
                     @foreach($curso->centros as $centro)
                         <div class="pi-mobile-card">
                             <div class="card-top">
@@ -434,13 +516,13 @@
                                 <span class="pi-badge pi-badge-success">{{ number_format($centro->pivot->preco, 2, ',', '.') }} Kz</span>
                             </div>
                             <div class="card-actions">
-                                <button class="pi-btn pi-btn-primary btn-editar-centro" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;"
+                                <button class="pi-btn pi-btn-primary btn-editar-centro" style="font-size:0.6875rem;padding:0.2rem 0.5rem"
                                         data-centro-id="{{ $centro->id }}"
                                         data-centro-nome="{{ $centro->nome }}"
                                         data-preco="{{ $centro->pivot->preco }}">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="pi-btn pi-btn-danger btn-remover-centro" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;"
+                                <button class="pi-btn pi-btn-danger btn-remover-centro" style="font-size:0.6875rem;padding:0.2rem 0.5rem"
                                         data-centro-id="{{ $centro->id }}">
                                     <i class="fas fa-trash-alt"></i> Remover
                                 </button>
@@ -459,8 +541,8 @@
 
         {{-- ABA: TURMAS --}}
         <div class="pi-tab-content" id="tab-turmas">
-            <div class="pi-card-header" style="border-top: none;">
-                <h2><i class="fas fa-chalkboard-teacher" style="color: var(--pi-primary);"></i> Turmas</h2>
+            <div class="pi-card-header" style="border-top:none">
+                <h2><i class="fas fa-chalkboard-teacher" style="color:var(--pi-primary)"></i> Turmas</h2>
                 <button class="pi-btn pi-btn-primary pi-btn-sm" data-bs-toggle="modal" data-bs-target="#modalAdicionarturma">
                     <i class="fas fa-plus"></i> Nova Turma
                 </button>
@@ -484,8 +566,7 @@
                     }
                 @endphp
 
-                {{-- Desktop --}}
-                <div class="pi-desktop-table">
+                <div class="pi-desktop-table" style="overflow-x:auto">
                     <table class="pi-table">
                         <thead>
                             <tr>
@@ -494,10 +575,9 @@
                                 <th>Preço</th>
                                 <th>Dias</th>
                                 <th>Período</th>
-                                <th>Data Arranque</th>
+                                <th>Arranque</th>
                                 <th>Formador</th>
-                                <th>Hora Início</th>
-                                <th>Hora Fim</th>
+                                <th>Horário</th>
                                 <th>Vagas</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-end">Ações</th>
@@ -506,19 +586,19 @@
                         <tbody>
                             @foreach($turmasList as $index => $turma)
                                 <tr>
-                                    <td><span style="color: var(--pi-text-muted);">{{ $index + 1 }}</span></td>
+                                    <td><span style="color:var(--pi-muted);font-size:0.6875rem">{{ $index + 1 }}</span></td>
                                     <td>
                                         @if($turma->centro)
-                                            <strong>{{ $turma->centro->nome }}</strong>
+                                            <strong style="font-size:0.75rem">{{ $turma->centro->nome }}</strong>
                                         @else
-                                            <span style="color: var(--pi-text-muted); font-size: 0.8125rem;">N/A</span>
+                                            <span style="color:var(--pi-text-muted);font-size:0.75rem">N/A</span>
                                         @endif
                                     </td>
                                     <td>
                                         @if(isset($turma->centro_preco))
-                                            <span style="color: var(--pi-success); font-weight: 600;">{{ number_format($turma->centro_preco, 2, ',', '.') }} Kz</span>
+                                            <span style="color:var(--pi-success);font-weight:600;font-size:0.75rem">{{ number_format($turma->centro_preco, 2, ',', '.') }} Kz</span>
                                         @else
-                                            <span style="color: var(--pi-text-muted);">—</span>
+                                            <span style="color:var(--pi-text-muted)">—</span>
                                         @endif
                                     </td>
                                     <td>
@@ -528,46 +608,31 @@
                                             @endforeach
                                         @endif
                                     </td>
-                                    <td>
-                                        <span class="pi-badge pi-badge-periodo">{{ ucfirst($turma->periodo) }}</span>
-                                    </td>
-                                    <td>
+                                    <td><span class="pi-badge pi-badge-periodo">{{ ucfirst($turma->periodo) }}</span></td>
+                                    <td style="font-size:0.75rem">
                                         @if($turma->data_arranque)
                                             <strong>{{ \Carbon\Carbon::parse($turma->data_arranque)->format('d/m/Y') }}</strong>
                                         @else
-                                            <span style="color: var(--pi-text-muted);">—</span>
+                                            <span style="color:var(--pi-text-muted)">—</span>
                                         @endif
                                     </td>
-                                    <td>
+                                    <td style="font-size:0.75rem">
                                         @if($turma->formador_id)
-                                            <span style="color: var(--pi-success); font-weight: 600;">{{ $turma->formador->nome ?? 'N/A' }}</span>
+                                            <span style="color:var(--pi-success);font-weight:500"><i class="fas fa-user-tie me-1" style="font-size:0.625rem"></i>{{ $turma->formador->nome ?? 'N/A' }}</span>
                                         @else
-                                            <span class="pi-badge pi-badge-warning">
-                                                <i class="fas fa-exclamation-triangle"></i> Sem formador
-                                            </span>
+                                            <span class="pi-badge pi-badge-warning"><i class="fas fa-exclamation-triangle"></i> Sem</span>
                                         @endif
                                     </td>
-                                    <td>
-                                        @if($turma->hora_inicio)
-                                            <strong>{{ $turma->hora_inicio }}</strong>
-                                        @else
-                                            <span style="color: var(--pi-text-muted);">—</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($turma->hora_fim)
-                                            <strong>{{ $turma->hora_fim }}</strong>
-                                        @else
-                                            <span style="color: var(--pi-text-muted);">—</span>
-                                        @endif
+                                    <td style="font-size:0.6875rem;white-space:nowrap">
+                                        {{ $turma->hora_inicio ?? '—' }} - {{ $turma->hora_fim ?? '—' }}
                                     </td>
                                     <td>
                                         @if($turma->vagas_totais)
-                                            <span style="color: var(--pi-info); font-weight: 600;">
-                                                <i class="fas fa-chair me-1"></i>{{ $turma->vagas_totais }}
+                                            <span style="color:var(--pi-info);font-weight:600;font-size:0.75rem">
+                                                <i class="fas fa-chair" style="font-size:0.625rem"></i> {{ $turma->vagas_totais }}
                                             </span>
                                         @else
-                                            <span style="color: var(--pi-text-muted);">—</span>
+                                            <span style="color:var(--pi-text-muted)">—</span>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -601,8 +666,7 @@
                     </table>
                 </div>
 
-                {{-- Mobile --}}
-                <div class="pi-mobile-cards" style="padding: 1rem;">
+                <div class="pi-mobile-cards">
                     @foreach($turmasList as $index => $turma)
                         <div class="pi-mobile-card">
                             <div class="card-top">
@@ -628,7 +692,7 @@
                                 @endif
                             </div>
                             <div class="card-actions">
-                                <button class="pi-btn pi-btn-primary btn-editar-turma" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;"
+                                <button class="pi-btn pi-btn-primary btn-editar-turma" style="font-size:0.6875rem;padding:0.2rem 0.5rem"
                                         data-turma-id="{{ $turma->id }}"
                                         data-dias="{{ json_encode($turma->dia_semana) }}"
                                         data-data-arranque="{{ \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') }}"
@@ -666,46 +730,33 @@
 <div class="modal fade pi-modal" id="modalEditarCurso" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
-
-            {{-- Header --}}
             <div class="modal-header">
                 <div class="header-flex">
-                    <div class="header-icon blue">
-                        <i class="fas fa-edit"></i>
-                    </div>
+                    <div class="header-icon blue"><i class="fas fa-edit"></i></div>
                     <div>
                         <h5 class="modal-title">Editar Curso</h5>
-                        <p class="mb-0" style="font-size: 0.8125rem; color: var(--pi-text-muted);">{{ $curso->nome }}</p>
+                        <p class="mb-0" style="font-size:0.75rem;color:var(--pi-text-muted)">{{ $curso->nome }}</p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-
-            {{-- Body --}}
             <div class="modal-body">
                 <form id="formEditarCursoAjax" class="pi-form">
                     @csrf
                     <input type="hidden" name="_method" value="PUT">
                     <input type="hidden" name="curso_id" value="{{ $curso->id }}">
-
                     <div class="row g-3">
-                        {{-- COLUNA ESQUERDA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-info-circle"></i> Informações do Curso
-                            </div>
-
-                            <div class="mb-3">
+                            <div class="section-title"><i class="fas fa-info-circle"></i> Informações do Curso</div>
+                            <div class="mb-2">
                                 <label class="form-label">Nome <span class="required">*</span></label>
                                 <input type="text" name="nome" class="form-control" value="{{ $curso->nome }}" required>
                             </div>
-
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Área <span class="required">*</span></label>
                                 <input type="text" name="area" class="form-control" value="{{ $curso->area }}" required>
                             </div>
-
-                            <div class="row g-3 mb-3">
+                            <div class="row g-2 mb-2">
                                 <div class="col-md-7">
                                     <label class="form-label">Modalidade <span class="required">*</span></label>
                                     <select name="modalidade" class="form-select" required>
@@ -715,66 +766,47 @@
                                     </select>
                                 </div>
                                 <div class="col-md-5 d-flex align-items-end">
-                                    <div class="form-check form-switch mb-2">
+                                    <div class="form-check form-switch mb-1">
                                         <input class="form-check-input" type="checkbox" name="ativo" id="editCursoAtivo" {{ $curso->ativo ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="editCursoAtivo">Ativo</label>
+                                        <label class="form-check-label" for="editCursoAtivo" style="font-size:0.8125rem">Ativo</label>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Imagem</label>
                                 <input type="file" name="imagem" class="form-control" accept="image/jpeg,image/png,image/jpg,image/gif">
                                 <div class="form-text">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
                                 @if($curso->imagem_url)
                                     <div class="pi-img-preview">
-                                        <span style="font-size: 0.75rem; color: var(--pi-text-muted);">Imagem atual:</span>
+                                        <span style="font-size:0.6875rem;color:var(--pi-text-muted)">Atual:</span>
                                         <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}">
                                     </div>
                                 @endif
                             </div>
                         </div>
-
-                        {{-- COLUNA DIREITA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-file-alt"></i> Conteúdo
-                            </div>
-
-                            <div class="mb-3">
+                            <div class="section-title"><i class="fas fa-file-alt"></i> Conteúdo</div>
+                            <div class="mb-2">
                                 <label class="form-label">Descrição</label>
-                                <textarea name="descricao" class="form-control" rows="4">{{ $curso->descricao }}</textarea>
+                                <textarea name="descricao" class="form-control" rows="3">{{ $curso->descricao }}</textarea>
                             </div>
-
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Programa do Curso</label>
-                                <textarea name="programa" class="form-control" rows="6">{{ $curso->programa }}</textarea>
-                                <div class="form-text">Use quebras de linha para criar listas ou tópicos</div>
+                                <textarea name="programa" class="form-control" rows="5">{{ $curso->programa }}</textarea>
+                                <div class="form-text">Use quebras de linha para tópicos</div>
                             </div>
                         </div>
                     </div>
-
-                    {{-- SEÇÃO DE CENTROS --}}
-                    <div class="mt-3">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <div class="section-title mb-0" style="border: none; padding: 0;">
-                                <i class="fas fa-building"></i> Centros de Formação
-                            </div>
-                            <button type="button" class="pi-btn pi-btn-primary pi-btn-sm" id="adicionarCentroEditBtn">
-                                <i class="fas fa-plus"></i> Adicionar Centro
-                            </button>
+                    <div class="mt-2">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="section-title mb-0" style="border:none;padding:0"><i class="fas fa-building"></i> Centros</div>
+                            <button type="button" class="pi-btn pi-btn-primary pi-btn-sm" id="adicionarCentroEditBtn"><i class="fas fa-plus"></i> Adicionar</button>
                         </div>
-                        <div class="row g-2" id="centrosContainerEdit">
-                            {{-- centros dinâmicos --}}
-                        </div>
+                        <div class="row g-2" id="centrosContainerEdit"></div>
                     </div>
-
-                    {{-- Footer --}}
-                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3" style="border-top: 1px solid var(--pi-border);">
+                    <div class="d-flex justify-content-end gap-2 mt-3 pt-2" style="border-top:1px solid var(--pi-border)">
                         <button type="button" class="pi-btn pi-btn-outline" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="pi-btn pi-btn-primary">
-                            <i class="fas fa-save me-1"></i> Atualizar Curso
-                        </button>
+                        <button type="submit" class="pi-btn pi-btn-primary"><i class="fas fa-save me-1"></i> Atualizar</button>
                     </div>
                 </form>
             </div>
@@ -782,7 +814,6 @@
     </div>
 </div>
 
-{{-- Template para Centro no Modal de Edição --}}
 <template id="centroCursoEditTemplate">
     <div class="col-12">
         <div class="pi-centro-card centro-card">
@@ -792,14 +823,12 @@
             </div>
             <div class="row g-2">
                 <div class="col-md-7">
-                    <label class="form-label" style="font-size: 0.8125rem;">Centro <span style="color: var(--pi-danger);">*</span></label>
-                    <select class="form-select centro-id-edit" style="border-radius: 0.5rem; font-size: 0.875rem;" required>
-                        <option value="">Selecione um centro</option>
-                    </select>
+                    <label class="form-label" style="font-size:0.75rem">Centro <span style="color:var(--pi-danger)">*</span></label>
+                    <select class="form-select centro-id-edit" style="border-radius:var(--pi-radius);font-size:0.8125rem" required><option value="">Selecione</option></select>
                 </div>
                 <div class="col-md-5">
-                    <label class="form-label" style="font-size: 0.8125rem;">Preço (Kz) <span style="color: var(--pi-danger);">*</span></label>
-                    <input type="number" class="form-control preco-edit" step="0.01" min="0" placeholder="0,00" style="border-radius: 0.5rem; font-size: 0.875rem;" required>
+                    <label class="form-label" style="font-size:0.75rem">Preço (Kz) <span style="color:var(--pi-danger)">*</span></label>
+                    <input type="number" class="form-control preco-edit" step="0.01" min="0" placeholder="0,00" style="border-radius:var(--pi-radius);font-size:0.8125rem" required>
                 </div>
             </div>
         </div>
@@ -807,17 +836,13 @@
 </template>
 
 
-{{-- ============================================= --}}
-{{-- MODAL: Associar Centro                        --}}
-{{-- ============================================= --}}
+{{-- MODAL: Associar Centro --}}
 <div class="modal fade pi-modal" id="modalAdicionarCentro" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="header-flex">
-                    <div class="header-icon green">
-                        <i class="fas fa-plus"></i>
-                    </div>
+                    <div class="header-icon green"><i class="fas fa-plus"></i></div>
                     <h5 class="modal-title">Associar Novo Centro</h5>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -831,9 +856,7 @@
                             <select name="centro_id" class="form-select" required>
                                 <option value="" disabled selected>Selecione um centro</option>
                                 @foreach ($centros ?? [] as $centro)
-                                    <option value="{{ $centro->id }}" {{ $curso->centros->contains($centro->id) ? 'disabled' : '' }}>
-                                        {{ $centro->nome }}
-                                    </option>
+                                    <option value="{{ $centro->id }}" {{ $curso->centros->contains($centro->id) ? 'disabled' : '' }}>{{ $centro->nome }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -846,26 +869,20 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" form="formAdicionarCentroAjax" class="btn pi-btn-primary">
-                    <i class="fas fa-save me-1"></i> Salvar
-                </button>
+                <button type="submit" form="formAdicionarCentroAjax" class="btn pi-btn-primary"><i class="fas fa-save me-1"></i> Salvar</button>
             </div>
         </div>
     </div>
 </div>
 
 
-{{-- ============================================= --}}
-{{-- MODAL: Editar Centro                          --}}
-{{-- ============================================= --}}
+{{-- MODAL: Editar Centro --}}
 <div class="modal fade pi-modal" id="modalEditarCentro" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="header-flex">
-                    <div class="header-icon blue">
-                        <i class="fas fa-edit"></i>
-                    </div>
+                    <div class="header-icon blue"><i class="fas fa-edit"></i></div>
                     <h5 class="modal-title">Editar Centro: <span id="editCentroNome"></span></h5>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -884,26 +901,20 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" form="formEditarCentroAjax" class="btn pi-btn-primary">
-                    <i class="fas fa-save me-1"></i> Atualizar
-                </button>
+                <button type="submit" form="formEditarCentroAjax" class="btn pi-btn-primary"><i class="fas fa-save me-1"></i> Atualizar</button>
             </div>
         </div>
     </div>
 </div>
 
 
-{{-- ============================================= --}}
-{{-- MODAL: Adicionar Turma                        --}}
-{{-- ============================================= --}}
+{{-- MODAL: Adicionar Turma --}}
 <div class="modal fade pi-modal" id="modalAdicionarturma" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="header-flex">
-                    <div class="header-icon green">
-                        <i class="fas fa-plus"></i>
-                    </div>
+                    <div class="header-icon green"><i class="fas fa-plus"></i></div>
                     <h5 class="modal-title">Adicionar Turma</h5>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -911,7 +922,7 @@
             <div class="modal-body">
                 <form id="formAdicionarturmaAjax" class="pi-form">
                     @csrf
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <label class="form-label">Dias da Semana <span class="required">*</span></label>
                         <div class="pi-days-grid">
                             @foreach (['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'] as $dia)
@@ -922,7 +933,7 @@
                             @endforeach
                         </div>
                     </div>
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <div class="col-md-4">
                             <label class="form-label">Data de Arranque <span class="required">*</span></label>
                             <input type="date" name="data_arranque" class="form-control" required>
@@ -934,7 +945,7 @@
                         <div class="col-md-4">
                             <label class="form-label">Formador</label>
                             <select name="formador_id" class="form-select">
-                                <option value="">Sem formador atribuído</option>
+                                <option value="">Sem formador</option>
                                 @foreach ($formadores ?? [] as $formador)
                                     <option value="{{ $formador->id }}">{{ $formador->nome }}</option>
                                 @endforeach
@@ -943,7 +954,7 @@
                         <div class="col-md-4">
                             <label class="form-label">Centro <span class="required">*</span></label>
                             <select name="centro_id" id="adicionarturmaCentro" class="form-select" required>
-                                <option value="" disabled selected>Selecione um centro</option>
+                                <option value="" disabled selected>Selecione</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -979,7 +990,7 @@
                         <div class="col-md-12">
                             <div class="form-check">
                                 <input type="checkbox" name="publicado" class="form-check-input" id="addTurmaPublicado">
-                                <label class="form-check-label" for="addTurmaPublicado">Publicar Turma</label>
+                                <label class="form-check-label" for="addTurmaPublicado" style="font-size:0.8125rem">Publicar Turma</label>
                             </div>
                         </div>
                     </div>
@@ -987,26 +998,20 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" form="formAdicionarturmaAjax" class="btn pi-btn-primary">
-                    <i class="fas fa-save me-1"></i> Salvar
-                </button>
+                <button type="submit" form="formAdicionarturmaAjax" class="btn pi-btn-primary"><i class="fas fa-save me-1"></i> Salvar</button>
             </div>
         </div>
     </div>
 </div>
 
 
-{{-- ============================================= --}}
-{{-- MODAL: Editar Turma                           --}}
-{{-- ============================================= --}}
+{{-- MODAL: Editar Turma --}}
 <div class="modal fade pi-modal" id="modalEditarturma" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="header-flex">
-                    <div class="header-icon blue">
-                        <i class="fas fa-edit"></i>
-                    </div>
+                    <div class="header-icon blue"><i class="fas fa-edit"></i></div>
                     <h5 class="modal-title">Editar Turma</h5>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -1016,7 +1021,7 @@
                     @csrf
                     <input type="hidden" name="turma_id" id="editturmaId">
                     <input type="hidden" name="curso_id" value="{{ $curso->id }}">
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <label class="form-label">Dias da Semana <span class="required">*</span></label>
                         <div class="pi-days-grid">
                             @foreach (['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'] as $dia)
@@ -1027,7 +1032,7 @@
                             @endforeach
                         </div>
                     </div>
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <div class="col-md-4">
                             <label class="form-label">Data de Arranque <span class="required">*</span></label>
                             <input type="date" name="edit_data_arranque" id="editturmaDataArranque" class="form-control" required>
@@ -1039,7 +1044,7 @@
                         <div class="col-md-4">
                             <label class="form-label">Formador</label>
                             <select name="edit_formador_id" id="editturmaFormador" class="form-select">
-                                <option value="">Sem formador atribuído</option>
+                                <option value="">Sem formador</option>
                                 @foreach ($formadores ?? [] as $formador)
                                     <option value="{{ $formador->id }}">{{ $formador->nome }}</option>
                                 @endforeach
@@ -1050,7 +1055,7 @@
                             <select name="edit_centro_id" id="editturmaCentro" class="form-select" required disabled>
                                 <option value="" disabled selected>Carregando...</option>
                             </select>
-                            <small class="text-muted d-block mt-1">Centro não pode ser editado</small>
+                            <small class="text-muted d-block mt-1" style="font-size:0.625rem">Centro não pode ser editado</small>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Período <span class="required">*</span></label>
@@ -1085,7 +1090,7 @@
                         <div class="col-md-12">
                             <div class="form-check">
                                 <input type="checkbox" name="edit_publicado" class="form-check-input" id="editturmaPublicado">
-                                <label class="form-check-label" for="editturmaPublicado">Publicar Turma</label>
+                                <label class="form-check-label" for="editturmaPublicado" style="font-size:0.8125rem">Publicar Turma</label>
                             </div>
                         </div>
                     </div>
@@ -1093,9 +1098,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <button type="submit" form="formEditarturmaAjax" class="btn pi-btn-primary">
-                    <i class="fas fa-save me-1"></i> Atualizar
-                </button>
+                <button type="submit" form="formEditarturmaAjax" class="btn pi-btn-primary"><i class="fas fa-save me-1"></i> Atualizar</button>
             </div>
         </div>
     </div>
@@ -1124,44 +1127,29 @@ $(document).on('click', '.pi-tab', function() {
 // ============================================
 $("#formAdicionarCentroAjax").on("submit", function(e) {
     e.preventDefault();
-    
     const $form = $(this);
     const formData = {
         centro_id: parseInt($form.find("[name=\"centro_id\"]").val()),
         preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", "."))
     };
-    
     if (!formData.centro_id) {
-        Swal.fire("Erro!", "Selecione um centro", "error");
+        Swal.fire({ icon: "error", title: "Erro!", text: "Selecione um centro", confirmButtonColor: '#1d4ed8' });
         return;
     }
-    
     $.ajax({
         url: `/cursos/${cursoId}/centros`,
         type: "POST",
         data: JSON.stringify(formData),
         contentType: "application/json",
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-        },
+        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
         success: function(response) {
             $("#modalAdicionarCentro").modal("hide");
-            Swal.fire({
-                icon: "success",
-                title: "Sucesso!",
-                text: "Centro associado com sucesso!",
-                timer: 2000
-            }).then(() => location.reload());
+            Swal.fire({ icon: "success", title: "Sucesso!", text: "Centro associado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
         },
         error: function(xhr) {
-            console.error("Erro:", xhr);
             const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
             const message = Object.values(errors).flat().join("\n");
-            Swal.fire({
-                icon: "error",
-                title: "Erro!",
-                text: message || "Erro ao associar centro."
-            });
+            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao associar centro.", confirmButtonColor: '#1d4ed8' });
         }
     });
 });
@@ -1173,7 +1161,6 @@ $(document).on("click", ".btn-editar-centro", function() {
     const id = $(this).data("centro-id");
     const nome = $(this).data("centro-nome");
     const preco = $(this).data("preco");
-    
     $("#editCentroId").val(id);
     $("#editCentroNome").text(nome);
     $("#editCentroPreco").val(preco);
@@ -1187,47 +1174,23 @@ $("#formEditarCentroAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
     const centroId = $form.find("[name=\"centro_id\"]").val();
-    
-    if (!centroId) {
-        Swal.fire("Erro!", "Centro ID não encontrado", "error");
-        return;
-    }
-    
-    const formData = {
-        preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", "."))
-    };
-    
-    if (!formData.preco) {
-        Swal.fire("Erro!", "Preencha o preço", "error");
-        return;
-    }
-    
+    if (!centroId) { Swal.fire({ icon: "error", title: "Erro!", text: "Centro ID não encontrado", confirmButtonColor: '#1d4ed8' }); return; }
+    const formData = { preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", ".")) };
+    if (!formData.preco) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha o preço", confirmButtonColor: '#1d4ed8' }); return; }
     $.ajax({
         url: `/cursos/${cursoId}/centros/${centroId}`,
         type: "PUT",
         data: JSON.stringify(formData),
         contentType: "application/json",
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-        },
+        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
         success: function(response) {
             $("#modalEditarCentro").modal("hide");
-            Swal.fire({
-                icon: "success",
-                title: "Sucesso!",
-                text: "Centro atualizado com sucesso!",
-                timer: 2000
-            }).then(() => location.reload());
+            Swal.fire({ icon: "success", title: "Atualizado!", text: "Centro atualizado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
         },
         error: function(xhr) {
-            console.error("Erro completo:", xhr);
             const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || xhr.statusText || "Erro desconhecido"] };
             const message = Object.values(errors).flat().join("\n");
-            Swal.fire({
-                icon: "error",
-                title: "Erro!",
-                text: message || "Erro ao atualizar centro."
-            });
+            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar centro.", confirmButtonColor: '#1d4ed8' });
         }
     });
 });
@@ -1236,39 +1199,30 @@ $("#formEditarCentroAjax").on("submit", function(e) {
 // Remover Centro - AJAX
 // ============================================
 $(document).on("click", ".btn-remover-centro", function() {
-    const $btn = $(this);
-    const centroId = $btn.data("centro-id");
-    
-    if (!centroId) {
-        Swal.fire("Erro!", "ID do centro não encontrado", "error");
-        return;
-    }
-    
+    const centroId = $(this).data("centro-id");
+    if (!centroId) { Swal.fire({ icon: "error", title: "Erro!", text: "ID do centro não encontrado", confirmButtonColor: '#1d4ed8' }); return; }
     Swal.fire({
         title: "Desassociar centro?",
-        text: "O centro será desassociado deste curso. Os dados do centro permanecerão no sistema.",
+        text: "O centro será desassociado deste curso.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#dc2626",
         cancelButtonColor: "#64748b",
-        confirmButtonText: "Sim, desassociar!",
+        confirmButtonText: "<i class='fas fa-unlink me-1'></i> Sim, desassociar!",
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
                 url: `/cursos/${cursoId}/centros/${centroId}`,
                 type: "DELETE",
-                headers: {
-                    "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-                },
+                headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
                 success: function() {
-                    Swal.fire("Desassociado!", "Centro desassociado com sucesso.", "success").then(() => location.reload());
+                    Swal.fire({ icon: "success", title: "Desassociado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
                 },
                 error: function(xhr) {
-                    console.error("Erro:", xhr);
                     const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
                     const message = Object.values(errors).flat().join("\n");
-                    Swal.fire("Erro!", message || "Ocorreu um erro ao remover o centro.", "error");
+                    Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao remover centro.", confirmButtonColor: '#1d4ed8' });
                 }
             });
         }
@@ -1284,19 +1238,16 @@ $("#modalAdicionarturma").on("show.bs.modal", function() {
         method: "GET",
         success: function(response) {
             const curso = response.dados || response;
-            let options = '<option value="" disabled selected>Selecione um centro</option>';
+            let options = '<option value="" disabled selected>Selecione</option>';
             if (curso.centros && curso.centros.length > 0) {
-                curso.centros.forEach(function(centro) {
-                    options += `<option value="${centro.id}">${centro.nome}</option>`;
-                });
+                curso.centros.forEach(function(centro) { options += `<option value="${centro.id}">${centro.nome}</option>`; });
             } else {
-                options = '<option value="" disabled>Nenhum centro associado</option>';
+                options = '<option value="" disabled>Nenhum centro</option>';
             }
             $("#adicionarturmaCentro").html(options);
         },
         error: function(err) {
-            console.error("Erro ao carregar centros:", err);
-            $("#adicionarturmaCentro").html('<option value="" disabled>Erro ao carregar centros</option>');
+            $("#adicionarturmaCentro").html('<option value="" disabled>Erro ao carregar</option>');
         }
     });
 });
@@ -1306,17 +1257,9 @@ $("#modalAdicionarturma").on("show.bs.modal", function() {
 // ============================================
 $("#formAdicionarturmaAjax").on("submit", function(e) {
     e.preventDefault();
-    
     const $form = $(this);
-    const dias = $form.find("input[name=\"dia_semana[]\"]:checked").map(function() {
-        return $(this).val();
-    }).get();
-    
-    if (dias.length === 0) {
-        Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia da semana." });
-        return;
-    }
-    
+    const dias = $form.find("input[name=\"dia_semana[]\"]:checked").map(function() { return $(this).val(); }).get();
+    if (dias.length === 0) { Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia.", confirmButtonColor: '#1d4ed8' }); return; }
     const formData = {
         curso_id: cursoId,
         centro_id: $form.find("select[name=\"centro_id\"]").val(),
@@ -1331,38 +1274,29 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         vagas_totais: $form.find("input[name=\"vagas_totais\"]").val() || null,
         publicado: $form.find("input[name=\"publicado\"]").is(":checked") ? 1 : 0
     };
-    
-    const allowedFields = ['curso_id', 'centro_id', 'dia_semana', 'data_arranque', 'duracao_semanas', 'periodo', 'formador_id', 'hora_inicio', 'hora_fim', 'status', 'vagas_totais', 'publicado'];
+    const allowedFields = ['curso_id','centro_id','dia_semana','data_arranque','duracao_semanas','periodo','formador_id','hora_inicio','hora_fim','status','vagas_totais','publicado'];
     const cleanFormData = {};
-    allowedFields.forEach(field => {
-        if (formData.hasOwnProperty(field)) {
-            cleanFormData[field] = formData[field];
-        }
-    });
-    
+    allowedFields.forEach(field => { if (formData.hasOwnProperty(field)) cleanFormData[field] = formData[field]; });
     $.ajax({
         url: `/turmas`,
         type: "POST",
         data: JSON.stringify(cleanFormData),
         contentType: "application/json",
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-        },
+        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
         success: function(response) {
             $("#modalAdicionarturma").modal("hide");
-            Swal.fire({ icon: "success", title: "Sucesso!", text: "Turma adicionada com sucesso!", timer: 2000 }).then(() => location.reload());
+            Swal.fire({ icon: "success", title: "Sucesso!", text: "Turma adicionada!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
         },
         error: function(xhr) {
-            console.error("Erro:", xhr);
             const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
             const message = Object.values(errors).flat().join("\n");
-            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao adicionar turma." });
+            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao adicionar turma.", confirmButtonColor: '#1d4ed8' });
         }
     });
 });
 
 // ============================================
-// Editar Turma - Abre Modal - VERSÃO CORRIGIDA
+// Editar Turma - Abre Modal
 // ============================================
 $(document).on("click", ".btn-editar-turma", function() {
     const id = $(this).data("turma-id");
@@ -1377,226 +1311,112 @@ $(document).on("click", ".btn-editar-turma", function() {
     const centroId = $(this).data("centro-id");
     const vagasTotais = $(this).data("vagas-totais");
     const publicado = $(this).data("publicado");
-    
-    console.log('Editar turma - Dados recebidos:', {
-        id, centroId, dataArranque, periodo, dias, formadorId, status, vagasTotais, publicado
-    });
-    
-    if (typeof dias === "string") {
-        try {
-            dias = JSON.parse(dias);
-        } catch(e) {
-            console.error("Erro ao parsear dias:", e);
-            dias = [];
-        }
-    }
-    
+
+    if (typeof dias === "string") { try { dias = JSON.parse(dias); } catch(e) { dias = []; } }
+
     $("#editturmaId").val(id);
-    
-    // CORREÇÃO 1: Formatar data para o formato correto (YYYY-MM-DD)
     if (dataArranque) {
         let dataFormatada = dataArranque;
-        // Se vier no formato 'YYYY-MM-DD' (do banco), manter
-        // Se vier no formato 'DD/MM/YYYY' (formatado), converter
         if (typeof dataArranque === 'string' && dataArranque.includes('/')) {
             const partes = dataArranque.split('/');
-            if (partes.length === 3) {
-                dataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
-            }
+            if (partes.length === 3) dataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
         }
-        console.log('Data original:', dataArranque, 'Formatada:', dataFormatada);
         $("#editturmaDataArranque").val(dataFormatada);
-    } else {
-        $("#editturmaDataArranque").val('');
-    }
-    
+    } else { $("#editturmaDataArranque").val(''); }
+
     $("#editturmaDuracao").val(duracaoSemanas || "");
     $("#editturmaFormador").val(formadorId || "");
     $("#edittumaPeriodo").val(periodo);
     $("#editturmaHoraInicio").val(horaInicio || "");
     $("#editturmaHoraFim").val(horaFim || "");
     $("#editturmaStatus").val(status);
-    
-    // NOVOS CAMPOS: Vagas Totais e Publicado
     $("#editturmaVagasTotais").val(vagasTotais || "");
     $("#editturmaPublicado").prop('checked', publicado == 1 || publicado == true || publicado == 'true');
-    
-    // CORREÇÃO 2: Popular centros e manter desabilitado
+
     $.ajax({
         url: `/cursos/${cursoId}`,
         method: "GET",
         success: function(response) {
             const curso = response.dados || response;
-            
-            // Construir options com os centros disponíveis
-            let options = '<option value="" disabled>Selecione um centro</option>';
-            
+            let options = '<option value="" disabled>Selecione</option>';
             if (curso.centros && curso.centros.length > 0) {
                 curso.centros.forEach(function(centro) {
-                    // Marcar como selected se for o centro da turma
                     const selected = (centro.id == centroId) ? 'selected' : '';
                     options += `<option value="${centro.id}" ${selected}>${centro.nome}</option>`;
                 });
-                console.log(`Centro selecionado: ${centroId}, encontrado: ${curso.centros.some(c => c.id == centroId)}`);
-            } else {
-                options = '<option value="" disabled>Nenhum centro associado</option>';
-                console.warn('Nenhum centro encontrado para o curso');
-            }
-            
-            // Atualizar o select
+            } else { options = '<option value="" disabled>Nenhum centro</option>'; }
             $("#editturmaCentro").html(options);
-            
-            // Garantir que o valor selecionado está correto
-            if (centroId) {
-                $("#editturmaCentro").val(centroId);
-            }
-            
-            // IMPORTANTE: Manter o campo DESABILITADO (como diz a mensagem de "Centro não pode ser editado")
+            if (centroId) $("#editturmaCentro").val(centroId);
             $("#editturmaCentro").prop('disabled', true);
-            
-            console.log('Select após preenchimento:', $("#editturmaCentro").val());
         },
-        error: function(err) {
-            console.error("Erro ao carregar centros:", err);
-            $("#editturmaCentro").html('<option value="" disabled>Erro ao carregar centros</option>');
-        }
+        error: function(err) { $("#editturmaCentro").html('<option value="" disabled>Erro</option>'); }
     });
-    
-    // Marcar os dias da semana
+
     $("input[name=\"edit_dia_semana[]\"]").prop("checked", false).each(function() {
-        if (dias && dias.includes($(this).val())) {
-            $(this).prop("checked", true);
-        }
+        if (dias && dias.includes($(this).val())) $(this).prop("checked", true);
     });
-    
+
     $("#modalEditarturma").modal("show");
 });
 
 // ============================================
-// Atualizar Turma - AJAX - VERSÃO CORRIGIDA COM METHOD SPOOFING
+// Atualizar Turma - AJAX
 // ============================================
 $("#formEditarturmaAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
     const turmaId = $form.find("[name=\"turma_id\"]").val();
-    
-    const dias = $form.find("input[name=\"edit_dia_semana[]\"]:checked").map(function() {
-        return $(this).val();
-    }).get();
-    
-    if (dias.length === 0) {
-        Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia da semana." });
-        return;
-    }
-    
-    // Usar FormData para garantir que todos os campos sejam enviados corretamente
+    const dias = $form.find("input[name=\"edit_dia_semana[]\"]:checked").map(function() { return $(this).val(); }).get();
+    if (dias.length === 0) { Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia.", confirmButtonColor: '#1d4ed8' }); return; }
+
     const formData = new FormData();
-    
-    // Method spoofing para Laravel (POST com _method=PUT)
     formData.append('_method', 'PUT');
-    
-    // Campos obrigatórios
     formData.append('curso_id', $form.find("input[name=\"curso_id\"]").val());
     formData.append('centro_id', $form.find("select[name=\"edit_centro_id\"]").val());
     formData.append('data_arranque', $form.find("input[name=\"edit_data_arranque\"]").val());
     formData.append('periodo', $form.find("select[name=\"edit_periodo\"]").val());
     formData.append('vagas_totais', $form.find("input[name=\"edit_vagas_totais\"]").val() || 0);
-    
-    // Campos opcionais
+
     const duracaoSemanas = $form.find("input[name=\"edit_duracao_semanas\"]").val();
-    if (duracaoSemanas) {
-        formData.append('duracao_semanas', duracaoSemanas);
-    }
-    
+    if (duracaoSemanas) formData.append('duracao_semanas', duracaoSemanas);
     const formadorId = $form.find("select[name=\"edit_formador_id\"]").val();
-    if (formadorId) {
-        formData.append('formador_id', formadorId);
-    }
-    
+    if (formadorId) formData.append('formador_id', formadorId);
     const horaInicio = $form.find("input[name=\"edit_hora_inicio\"]").val();
-    if (horaInicio) {
-        formData.append('hora_inicio', horaInicio);
-    }
-    
+    if (horaInicio) formData.append('hora_inicio', horaInicio);
     const horaFim = $form.find("input[name=\"edit_hora_fim\"]").val();
-    if (horaFim) {
-        formData.append('hora_fim', horaFim);
-    }
-    
+    if (horaFim) formData.append('hora_fim', horaFim);
     const status = $form.find("select[name=\"edit_status\"]").val();
-    if (status) {
-        formData.append('status', status);
-    }
-    
+    if (status) formData.append('status', status);
     formData.append('publicado', $form.find("input[name=\"edit_publicado\"]").is(":checked") ? 1 : 0);
-    
-    // Dias da semana (array)
-    dias.forEach(function(dia, index) {
-        formData.append(`dia_semana[${index}]`, dia);
-    });
-    
-    console.log('Enviando dados para atualizar turma:');
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-    
+    dias.forEach(function(dia, index) { formData.append(`dia_semana[${index}]`, dia); });
+
     $.ajax({
         url: `/turmas/${turmaId}`,
         type: "POST",
         data: formData,
         contentType: false,
         processData: false,
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-        },
+        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
         success: function(response) {
             $("#modalEditarturma").modal("hide");
-            Swal.fire({ 
-                icon: "success", 
-                title: "Sucesso!", 
-                text: "Turma atualizada com sucesso!", 
-                timer: 2000 
-            }).then(() => location.reload());
+            Swal.fire({ icon: "success", title: "Atualizado!", text: "Turma atualizada!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
         },
         error: function(xhr) {
-            console.error("Erro completo:", xhr);
-            console.error("Response:", xhr.responseText);
-            
-            let message = "Erro ao atualizar turma.";
-            
-            if (xhr.responseJSON?.errors) {
-                message = Object.values(xhr.responseJSON.errors).flat().join("\n");
-            } else if (xhr.responseJSON?.message) {
-                message = xhr.responseJSON.message;
-            } else if (xhr.statusText) {
-                message = xhr.statusText;
-            }
-            
-            Swal.fire({ 
-                icon: "error", 
-                title: "Erro!", 
-                text: message 
-            });
+            const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
+            const message = Object.values(errors).flat().join("\n");
+            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar turma.", confirmButtonColor: '#1d4ed8' });
         }
     });
 });
 
 // ============================================
-// Modal Editar Curso - Lógica
+// Editar Curso - Centros
 // ============================================
 let centrosEditCount = 0;
 let centrosDisponiveisEditList = [];
-
-/**
- * Objeto com dados do curso para edição
- * Inclui todos os centros associados com seus dados de pivot
- */
 const cursoDataEdit = {!! json_encode([
     'id' => $curso->id,
     'nome' => $curso->nome,
-    'descricao' => $curso->descricao,
-    'programa' => $curso->programa,
-    'area' => $curso->area,
     'modalidade' => $curso->modalidade,
     'ativo' => $curso->ativo,
     'centros' => $curso->centros->map(function($centro) {
@@ -1615,29 +1435,13 @@ const cursoDataEdit = {!! json_encode([
     })->toArray()
 ]) !!};
 
-console.log('Dados do curso carregados:', {
-    id: cursoDataEdit.id,
-    nome: cursoDataEdit.nome,
-    centros_count: cursoDataEdit.centros ? cursoDataEdit.centros.length : 0
-});
-
 function carregarCentrosEdit() {
     $.ajax({
-        url: '/centros',
-        method: 'GET',
-        success: function(data) {
-            centrosDisponiveisEditList = data || [];
-            console.log('Centros disponíveis carregados:', centrosDisponiveisEditList.length);
-        },
+        url: '/centros', method: 'GET',
+        success: function(data) { centrosDisponiveisEditList = data || []; },
         error: function(err) {
-            console.error('Erro ao carregar centros:', err);
             centrosDisponiveisEditList = [];
-            Swal.fire({
-                icon: 'warning',
-                title: 'Atenção!',
-                text: 'Não foi possível carregar a lista de centros. Verifique sua conexão.',
-                timer: 3000
-            });
+            Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Não foi possível carregar centros.', timer: 3000, showConfirmButton: false, toast: true, position: 'top-end', background: '#1d4ed8', color: '#fff' });
         }
     });
 }
@@ -1650,104 +1454,41 @@ $('#modalEditarCurso').on('show.bs.modal', function() {
     centrosEditCount = 0;
     carregarCentrosEdit();
     carregarCentrosExistentesEdit();
-    if ($('#centrosContainerEdit').find('.col-12').length === 0) {
-        adicionarCentroEdit();
-    }
-    
-    // Adicionar listener para mudanças nos selects
-    $(document).on('change', '.centro-id-edit', function() {
-        atualizarOpcoesDisponiveisEdit();
-    });
-    
-    // Adicionar listener para remover centro
-    $(document).on('click', '.remover-centro-edit', function(e) {
-        e.preventDefault();
-        $(this).closest('.col-12').remove();
-        atualizarNumeroCentrosEdit();
-        atualizarOpcoesDisponiveisEdit();
-    });
+    if ($('#centrosContainerEdit').find('.col-12').length === 0) adicionarCentroEdit();
+    $(document).on('change', '.centro-id-edit', function() { atualizarOpcoesDisponiveisEdit(); });
+    $(document).on('click', '.remover-centro-edit', function(e) { e.preventDefault(); $(this).closest('.col-12').remove(); atualizarNumeroCentrosEdit(); atualizarOpcoesDisponiveisEdit(); });
 });
 
 function carregarCentrosExistentesEdit() {
-    // Verificações robustas
-    if (!cursoDataEdit) {
-        console.warn('cursoDataEdit não está definido');
-        return;
-    }
-    
+    if (!cursoDataEdit) return;
     const centros = cursoDataEdit.centros || [];
-    
-    if (!Array.isArray(centros) || centros.length === 0) {
-        console.log('Nenhum centro existente para carregar');
-        return;
-    }
-    
-    console.log('Carregando centros existentes:', centros.length);
-    
+    if (!Array.isArray(centros) || centros.length === 0) return;
     centros.forEach((centro, index) => {
         try {
-            // Verificar se centro é válido
-            if (!centro || typeof centro !== 'object') {
-                console.warn('Centro inválido:', centro);
-                return;
-            }
-            
+            if (!centro || typeof centro !== 'object') return;
             const template = document.getElementById('centroCursoEditTemplate');
-            if (!template) {
-                console.warn('Template centroCursoEditTemplate não encontrado');
-                return;
-            }
-            
+            if (!template) return;
             const clone = template.content.cloneNode(true);
             const wrapper = document.createElement('div');
             wrapper.appendChild(clone);
             let html = wrapper.innerHTML.replace(/numero-centro-edit">Centro 1</, `numero-centro-edit">Centro ${index + 1}<`);
-            
             const colDiv = document.createElement('div');
             colDiv.innerHTML = html;
             $('#centrosContainerEdit').append(colDiv.firstElementChild);
-            
             const selects = $('#centrosContainerEdit').find('.centro-id-edit');
             const lastSelect = selects.last();
-            
-            // Preencher dropdown com centros disponíveis
             if (centrosDisponiveisEditList && Array.isArray(centrosDisponiveisEditList)) {
-                centrosDisponiveisEditList.forEach(c => {
-                    lastSelect.append(`<option value="${c.id}">${c.nome}</option>`);
-                });
+                centrosDisponiveisEditList.forEach(c => { lastSelect.append(`<option value="${c.id}">${c.nome}</option>`); });
             }
-            
-            // Definir valor do centro
             lastSelect.val(centro.id);
-            
-            // Carregar preço da pivot com fallback robusto
             let preco = '';
-            if (centro.pivot && typeof centro.pivot === 'object' && centro.pivot.preco !== undefined) {
-                preco = parseFloat(centro.pivot.preco).toFixed(2);
-            } else {
-                console.warn('Pivot ou preço não encontrado para centro', centro.id, centro);
-            }
+            if (centro.pivot && typeof centro.pivot === 'object' && centro.pivot.preco !== undefined) preco = parseFloat(centro.pivot.preco).toFixed(2);
             $('#centrosContainerEdit').find('.preco-edit').last().val(preco);
-            
-            // Desabilitar campo (não pode editar centros associados)
             lastSelect.prop('disabled', true);
             $('#centrosContainerEdit').find('.preco-edit').last().prop('disabled', true);
-            
             centrosEditCount++;
-            
-        } catch(e) {
-            console.error('Erro ao carregar centro existente:', {
-                erro: e.message,
-                centro: centro,
-                indice: index,
-                stack: e.stack
-            });
-        }
+        } catch(e) { console.error('Erro ao carregar centro:', e); }
     });
-    
-    console.log(`Centros existentes carregados: ${centrosEditCount}`);
-    
-    // IMPORTANTE: Desabilitar centros já selecionados
     atualizarOpcoesDisponiveisEdit();
 }
 
@@ -1762,141 +1503,72 @@ function adicionarCentroEdit() {
         const colDiv = document.createElement('div');
         colDiv.innerHTML = html;
         $('#centrosContainerEdit').append(colDiv.firstElementChild);
-        
         const selects = $('#centrosContainerEdit').find('.centro-id-edit');
         const lastSelect = selects.last();
-        centrosDisponiveisEditList.forEach(centro => {
-            lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
-        });
+        centrosDisponiveisEditList.forEach(centro => { lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`); });
         centrosEditCount++;
         atualizarNumeroCentrosEdit();
-        
-        // IMPORTANTE: Desabilitar centros já selecionados nos outros campos
         atualizarOpcoesDisponiveisEdit();
-        
-    } catch(e) {
-        console.error('Erro ao adicionar centro:', e);
-    }
+    } catch(e) { console.error('Erro ao adicionar centro:', e); }
 }
 
-/**
- * Obtém os IDs dos centros que já foram selecionados nos campos do formulário
- * @returns {Array} Array com IDs dos centros selecionados
- */
 function obterCentrosSelecionados() {
     const centrosSelecionados = [];
-    
     $('#centrosContainerEdit').find('.centro-id-edit').each(function() {
-        const valorSelecionado = $(this).val();
-        if (valorSelecionado) {
-            centrosSelecionados.push(parseInt(valorSelecionado));
-        }
+        const v = $(this).val();
+        if (v) centrosSelecionados.push(parseInt(v));
     });
-    
     return centrosSelecionados;
 }
 
-/**
- * Desabilita as opções dos centros que já foram selecionados em outros campos
- * Permite que um mesmo centro não seja adicionado duas vezes
- */
 function atualizarOpcoesDisponiveisEdit() {
     const centrosSelecionados = obterCentrosSelecionados();
-    
-    // Iterar por todos os selects de centros
     $('#centrosContainerEdit').find('.centro-id-edit').each(function() {
         const selectAtual = $(this);
         const centroAtualSelecionado = parseInt(selectAtual.val());
-        
-        // Para cada opção do select
         selectAtual.find('option').each(function() {
             const $option = $(this);
             const centroId = parseInt($option.val());
-            
-            // Se o value está vazio, não fazer nada
             if (!centroId) return;
-            
-            // Desabilitar se:
-            // - O centro está em centrosSelecionados E
-            // - NÃO é o centro atualmente selecionado neste select
-            if (centrosSelecionados.includes(centroId) && centroId !== centroAtualSelecionado) {
-                $option.prop('disabled', true);
-            } else {
-                // Caso contrário, habilitar
-                $option.prop('disabled', false);
-            }
+            if (centrosSelecionados.includes(centroId) && centroId !== centroAtualSelecionado) $option.prop('disabled', true);
+            else $option.prop('disabled', false);
         });
     });
-    
-    console.log('Opções desabilitadas para centros:', centrosSelecionados);
 }
 
 function atualizarNumeroCentrosEdit() {
     const badges = $('#centrosContainerEdit').find('.numero-centro-edit');
-    badges.each((index, badge) => {
-        $(badge).text('Centro ' + (index + 1));
-    });
+    badges.each((index, badge) => { $(badge).text('Centro ' + (index + 1)); });
     const btnsRemover = $('#centrosContainerEdit').find('.remover-centro-edit');
     btnsRemover.prop('disabled', btnsRemover.length <= 1);
 }
 
-$(document).on('click', '#adicionarCentroEditBtn', function(e) {
-    e.preventDefault();
-    adicionarCentroEdit();
-});
-
-$(document).on('click', '.remover-centro-edit', function(e) {
-    e.preventDefault();
-    $(this).closest('.col-12').remove();
-    atualizarNumeroCentrosEdit();
-});
+$(document).on('click', '#adicionarCentroEditBtn', function(e) { e.preventDefault(); adicionarCentroEdit(); });
+$(document).on('click', '.remover-centro-edit', function(e) { e.preventDefault(); $(this).closest('.col-12').remove(); atualizarNumeroCentrosEdit(); });
 
 // ============================================
 // Formulário Editar Curso - Submit
 // ============================================
 $("#formEditarCursoAjax").on("submit", function(e) {
     e.preventDefault();
-    
     const $form = $(this);
     const cursoId = $form.find("[name=\"curso_id\"]").val();
-    
-    if (!cursoId) {
-        Swal.fire("Erro!", "ID do curso não encontrado no formulário", "error");
-        return;
-    }
-    
+    if (!cursoId) { Swal.fire({ icon: "error", title: "Erro!", text: "ID do curso não encontrado", confirmButtonColor: '#1d4ed8' }); return; }
     const nome = $form.find("[name=\"nome\"]").val().trim();
     const area = $form.find("[name=\"area\"]").val().trim();
     const modalidade = $form.find("[name=\"modalidade\"]").val().trim();
-    
-    if (!nome || !area || !modalidade) {
-        Swal.fire("Erro!", "Preencha os campos obrigatórios (Nome, Área, Modalidade)", "error");
-        return;
-    }
-    
+    if (!nome || !area || !modalidade) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha Nome, Área e Modalidade", confirmButtonColor: '#1d4ed8' }); return; }
     const centrosCount = $('#centrosContainerEdit').find('.centro-id-edit').length;
-    if (centrosCount === 0) {
-        Swal.fire("Erro!", "Adicione pelo menos um centro", "error");
-        return;
-    }
-    
+    if (centrosCount === 0) { Swal.fire({ icon: "error", title: "Erro!", text: "Adicione pelo menos um centro", confirmButtonColor: '#1d4ed8' }); return; }
     let centroValido = true;
     $('#centrosContainerEdit').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-edit').val();
         const preco = $(this).find('.preco-edit').val();
-        if (!centroId || !preco) {
-            centroValido = false;
-            return false;
-        }
+        if (!centroId || !preco) { centroValido = false; return false; }
     });
-    
-    if (!centroValido) {
-        Swal.fire("Erro!", "Preencha todos os dados dos centros (Centro, Preço)", "error");
-        return;
-    }
-    
+    if (!centroValido) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha todos os dados dos centros", confirmButtonColor: '#1d4ed8' }); return; }
+
     const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
-    
     if (imagemFile) {
         const formData = new FormData();
         formData.append('nome', nome);
@@ -1906,80 +1578,46 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         formData.append('modalidade', modalidade);
         formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
         formData.append('imagem', imagemFile);
-        
         let index = 0;
         $('#centrosContainerEdit').find('.centro-card').each(function() {
-            const centroId = $(this).find('.centro-id-edit').val();
-            const preco = $(this).find('.preco-edit').val();
-            formData.append(`centro_curso[${index}][centro_id]`, centroId);
-            formData.append(`centro_curso[${index}][preco]`, preco);
+            formData.append(`centro_curso[${index}][centro_id]`, $(this).find('.centro-id-edit').val());
+            formData.append(`centro_curso[${index}][preco]`, $(this).find('.preco-edit').val());
             index++;
         });
-        
         $.ajax({
-            url: `/cursos/${cursoId}`,
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: {
-                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
-                "Accept": "application/json",
-                "X-HTTP-Method-Override": "PUT"
-            },
-            success: function(response) {
+            url: `/cursos/${cursoId}`, type: "POST", data: formData, contentType: false, processData: false,
+            headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json", "X-HTTP-Method-Override": "PUT" },
+            success: function() {
                 $("#modalEditarCurso").modal("hide");
-                Swal.fire({ icon: "success", title: "Sucesso!", text: "Curso atualizado com sucesso!", timer: 2000 }).then(() => location.reload());
+                Swal.fire({ icon: "success", title: "Atualizado!", text: "Curso atualizado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
             },
             error: function(xhr) {
-                console.error("Status:", xhr.status);
-                console.error("Response:", xhr.responseText);
                 let message = "Erro desconhecido";
                 if (xhr.responseJSON?.errors) message = Object.values(xhr.responseJSON.errors).flat().join("\n");
                 else if (xhr.responseJSON?.message) message = xhr.responseJSON.message;
-                else if (xhr.responseJSON?.error) message = xhr.responseJSON.error;
-                Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar curso." });
+                Swal.fire({ icon: "error", title: "Erro!", text: message, confirmButtonColor: '#1d4ed8' });
             }
         });
     } else {
         const formData = {
-            nome: nome,
-            descricao: $form.find("[name=\"descricao\"]").val() || "",
-            programa: $form.find("[name=\"programa\"]").val() || "",
-            area: area,
-            modalidade: modalidade,
-            ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0,
-            centro_curso: []
+            nome, descricao: $form.find("[name=\"descricao\"]").val() || "", programa: $form.find("[name=\"programa\"]").val() || "",
+            area, modalidade, ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0, centro_curso: []
         };
-        
         $('#centrosContainerEdit').find('.centro-card').each(function() {
-            const centroId = $(this).find('.centro-id-edit').val();
-            const preco = $(this).find('.preco-edit').val();
-            formData.centro_curso.push({ centro_id: centroId, preco: preco });
+            formData.centro_curso.push({ centro_id: $(this).find('.centro-id-edit').val(), preco: $(this).find('.preco-edit').val() });
         });
-        
         $.ajax({
-            url: `/cursos/${cursoId}`,
-            type: "PUT",
-            data: JSON.stringify(formData),
-            contentType: "application/json",
-            dataType: "json",
-            headers: {
-                "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
-                "Accept": "application/json"
-            },
-            success: function(response) {
+            url: `/cursos/${cursoId}`, type: "PUT", data: JSON.stringify(formData), contentType: "application/json", dataType: "json",
+            headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json" },
+            success: function() {
                 $("#modalEditarCurso").modal("hide");
-                Swal.fire({ icon: "success", title: "Sucesso!", text: "Curso atualizado com sucesso!", timer: 2000 }).then(() => location.reload());
+                Swal.fire({ icon: "success", title: "Atualizado!", text: "Curso atualizado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
             },
             error: function(xhr) {
-                console.error("Status:", xhr.status);
-                console.error("Response:", xhr.responseText);
                 let message = "Erro desconhecido";
                 if (xhr.responseJSON?.errors) message = Object.values(xhr.responseJSON.errors).flat().join("\n");
                 else if (xhr.responseJSON?.message) message = xhr.responseJSON.message;
-                else if (xhr.responseJSON?.error) message = xhr.responseJSON.error;
-                Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar curso." });
+                Swal.fire({ icon: "error", title: "Erro!", text: message, confirmButtonColor: '#1d4ed8' });
             }
         });
     }
@@ -1988,49 +1626,37 @@ $("#formEditarCursoAjax").on("submit", function(e) {
 // ============================================
 // Inicializar
 // ============================================
-$(document).ready(function() {
-    carregarCentrosEdit();
-});
+$(document).ready(function() { carregarCentrosEdit(); });
 
 // ============================================
 // Eliminar Curso
 // ============================================
 $(document).on("click", ".btn-eliminar-curso", function() {
-    const $btn = $(this);
-    const id = $btn.data("curso-id");
-    
-    if (!id) {
-        Swal.fire("Erro!", "ID do curso não encontrado", "error");
-        return;
-    }
-    
+    const id = $(this).data("curso-id");
+    if (!id) { Swal.fire({ icon: "error", title: "Erro!", text: "ID não encontrado", confirmButtonColor: '#1d4ed8' }); return; }
     Swal.fire({
-        title: "Tem certeza?",
-        text: "Esta ação irá eliminar o curso permanentemente!",
+        title: "Eliminar curso?",
+        text: "Esta ação é irreversível!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#dc2626",
         cancelButtonColor: "#64748b",
-        confirmButtonText: "Sim, eliminar!",
+        confirmButtonText: "<i class='fas fa-trash me-1'></i> Sim, eliminar!",
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/cursos/${id}`,
-                type: "DELETE",
-                headers: {
-                    "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
-                },
+                url: `/cursos/${id}`, type: "DELETE",
+                headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
                 success: function() {
-                    Swal.fire("Eliminado!", "O curso foi eliminado com sucesso.", "success").then(() => {
+                    Swal.fire({ icon: "success", title: "Eliminado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => {
                         window.location.href = "{{ route('cursos.index') }}";
                     });
                 },
                 error: function(xhr) {
-                    console.error("Erro:", xhr);
                     const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
                     const message = Object.values(errors).flat().join("\n");
-                    Swal.fire("Erro!", message || "Ocorreu um erro ao eliminar o curso.", "error");
+                    Swal.fire({ icon: "error", title: "Erro!", text: message, confirmButtonColor: '#1d4ed8' });
                 }
             });
         }
