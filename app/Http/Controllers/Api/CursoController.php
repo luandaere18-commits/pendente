@@ -145,6 +145,9 @@ class CursoController extends Controller
 
     public function store(Request $request)
     {
+        // Aceita tanto o formato "centros" (API antiga) quanto "centro_curso" (formulário web)
+        $centroKey = $request->has('centro_curso') ? 'centro_curso' : 'centros';
+
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'nullable|string',
@@ -153,9 +156,9 @@ class CursoController extends Controller
             'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ativo' => 'nullable|boolean',
-            'centros' => 'required|array|min:1',
-            'centros.*.centro_id' => 'required|exists:centros,id',
-            'centros.*.preco' => 'required|numeric|min:0',
+            $centroKey => 'required|array|min:1',
+            "$centroKey.*.centro_id" => 'required|exists:centros,id',
+            "$centroKey.*.preco" => 'required|numeric|min:0',
             'formadores' => 'nullable|array'
         ]);
 
@@ -185,13 +188,16 @@ class CursoController extends Controller
         $curso = Curso::create($cursoData);
 
         // Associar centros com dados extras (preço)
-        $centrosPivot = [];
-        foreach ($validated['centros'] as $centro) {
-            $centrosPivot[$centro['centro_id']] = [
-                'preco' => $centro['preco'],
-            ];
+        $centrosInput = $validated[$centroKey] ?? [];
+        if (!empty($centrosInput)) {
+            $centrosPivot = [];
+            foreach ($centrosInput as $centro) {
+                $centrosPivot[$centro['centro_id']] = [
+                    'preco' => $centro['preco'],
+                ];
+            }
+            $curso->centros()->sync($centrosPivot);
         }
-        $curso->centros()->sync($centrosPivot);
 
         $curso->load(['centros', 'turmas']);
 
@@ -285,6 +291,9 @@ class CursoController extends Controller
             ], 404);
         }
 
+        // Aceita tanto o formato "centros" (API antiga) quanto "centro_curso" (formulário web)
+        $centroKey = $request->has('centro_curso') ? 'centro_curso' : 'centros';
+
         // Validação condicional: permite edição parcial quando é API JSON
         $rules = [
             'nome' => 'sometimes|required|string|max:255',
@@ -294,9 +303,9 @@ class CursoController extends Controller
             'modalidade' => 'sometimes|in:presencial,online,hibrido',
             'imagem_url' => 'nullable|url|max:255',
             'ativo' => 'nullable|boolean',
-            'centros' => 'nullable|array',
-            'centros.*.centro_id' => 'required_unless:centros,null|exists:centros,id',
-            'centros.*.preco' => 'required_unless:centros,null|numeric|min:0',
+            $centroKey => 'nullable|array',
+            "$centroKey.*.centro_id" => "required_unless:$centroKey,null|exists:centros,id",
+            "$centroKey.*.preco" => "required_unless:$centroKey,null|numeric|min:0",
             'formadores' => 'nullable|array'
         ];
 
@@ -320,9 +329,10 @@ class CursoController extends Controller
         }
 
         // Atualizar associações com centros apenas se foram fornecidos
-        if (!empty($validated['centros'])) {
+        $centrosInput = $validated[$centroKey] ?? [];
+        if (!empty($centrosInput)) {
             $centrosPivot = [];
-            foreach ($validated['centros'] as $centro) {
+            foreach ($centrosInput as $centro) {
                 $centrosPivot[$centro['centro_id']] = [
                     'preco' => $centro['preco'],
                 ];

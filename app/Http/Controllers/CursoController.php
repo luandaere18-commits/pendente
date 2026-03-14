@@ -266,16 +266,48 @@ class CursoController extends Controller
 
     public function destroy(Curso $curso)
     {
-        $curso->delete();
-        
-        if (request()->wantsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Curso deletado com sucesso'
+        try {
+            // Evitar exclusão quando existirem turmas associadas
+            if ($curso->turmas()->count() > 0) {
+                $message = 'Não é possível eliminar o curso pois existem turmas associadas.';
+                if (request()->wantsJson()) {
+                    return response()->json(['success' => false, 'message' => $message], 400);
+                }
+                return redirect()->route('cursos.index')->with('error', $message);
+            }
+
+            DB::transaction(function () use ($curso) {
+                // Remover associações com centros/formadores
+                $curso->centros()->detach();
+                $curso->formadores()->detach();
+
+                // Remover imagem (se houver)
+                if ($curso->imagem_url) {
+                    $path = ltrim(str_replace('/storage/', '', $curso->imagem_url), '/');
+                    Storage::disk('public')->delete($path);
+                }
+
+                $curso->delete();
+            });
+
+            if (request()->wantsJson()) {
+                return response()->json(['success' => true, 'message' => 'Curso deletado com sucesso']);
+            }
+
+            return redirect()->route('cursos.index')->with('success', 'Curso deletado com sucesso!');
+        } catch (\Exception $e) {
+            \Log::error('Erro ao excluir curso: ' . $e->getMessage(), [
+                'curso_id' => $curso->id,
+                'trace' => $e->getTraceAsString(),
             ]);
+
+            $msg = 'Erro ao eliminar curso. Por favor tente novamente.';
+            if (request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 500);
+            }
+
+            return redirect()->route('cursos.index')->with('error', $msg);
         }
-        
-        return redirect()->route('cursos.index')->with('success', 'Curso deletado com sucesso!');
     }
 
     public function toggleStatus(Curso $curso)

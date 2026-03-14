@@ -1708,7 +1708,7 @@ $(document).on("click", ".btn-eliminar-curso", function() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/cursos/${id}`,
+                url: `/cursos/${id}`,
                 type: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")

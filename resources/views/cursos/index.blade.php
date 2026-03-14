@@ -858,8 +858,9 @@ $("#formNovoCursoAjax").on("submit", function(e) {
         const centroId = $(this).find('.centro-id-modal').val();
         const preco = $(this).find('.preco-modal').val();
 
-        formData.append(`centros[${index}][centro_id]`, centroId);
-        formData.append(`centros[${index}][preco]`, preco);
+        // Usar o mesmo nome de campo que o Controller espera para o pivot curso-centro
+        formData.append(`centro_curso[${index}][centro_id]`, centroId);
+        formData.append(`centro_curso[${index}][preco]`, preco);
         index++;
     });
 
@@ -948,7 +949,8 @@ function eliminarCurso(id) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/api/cursos/${id}`,
+                // Usar rota web para aproveitar a sessão/autenticação do usuário
+                url: `/cursos/${id}`,
                 method: 'DELETE',
                 headers: {
                     "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
@@ -960,7 +962,11 @@ function eliminarCurso(id) {
                 },
                 error: function(xhr) {
                     console.error('Erro ao eliminar curso:', xhr);
-                    Swal.fire('Erro!', 'Ocorreu um erro ao eliminar o curso.', 'error');
+                    let message = 'Ocorreu um erro ao eliminar o curso.';
+                    if (xhr.responseJSON?.message) {
+                        message = xhr.responseJSON.message;
+                    }
+                    Swal.fire('Erro!', message, 'error');
                 }
             });
         }
