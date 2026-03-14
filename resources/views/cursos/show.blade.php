@@ -494,9 +494,11 @@
                                 <th>Preço</th>
                                 <th>Dias</th>
                                 <th>Período</th>
+                                <th>Data Arranque</th>
                                 <th>Formador</th>
                                 <th>Hora Início</th>
                                 <th>Hora Fim</th>
+                                <th>Vagas</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-end">Ações</th>
                             </tr>
@@ -530,6 +532,13 @@
                                         <span class="pi-badge pi-badge-periodo">{{ ucfirst($turma->periodo) }}</span>
                                     </td>
                                     <td>
+                                        @if($turma->data_arranque)
+                                            <strong>{{ \Carbon\Carbon::parse($turma->data_arranque)->format('d/m/Y') }}</strong>
+                                        @else
+                                            <span style="color: var(--pi-text-muted);">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
                                         @if($turma->formador_id)
                                             <span style="color: var(--pi-success); font-weight: 600;">{{ $turma->formador->nome ?? 'N/A' }}</span>
                                         @else
@@ -552,6 +561,15 @@
                                             <span style="color: var(--pi-text-muted);">—</span>
                                         @endif
                                     </td>
+                                    <td>
+                                        @if($turma->vagas_totais)
+                                            <span style="color: var(--pi-info); font-weight: 600;">
+                                                <i class="fas fa-chair me-1"></i>{{ $turma->vagas_totais }}
+                                            </span>
+                                        @else
+                                            <span style="color: var(--pi-text-muted);">—</span>
+                                        @endif
+                                    </td>
                                     <td class="text-center">
                                         <span class="pi-badge pi-badge-{{ $statusColors[$turma->status] ?? 'secondary' }}">
                                             {{ $statusLabels[$turma->status] ?? $turma->status }}
@@ -562,7 +580,7 @@
                                             <button class="pi-action-btn edit btn-editar-turma"
                                                     data-turma-id="{{ $turma->id }}"
                                                     data-dias="{{ json_encode($turma->dia_semana) }}"
-                                                    data-data-arranque="{{ $turma->data_arranque }}"
+                                                    data-data-arranque="{{ \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') }}"
                                                     data-duracao-semanas="{{ $turma->duracao_semanas }}"
                                                     data-formador-id="{{ $turma->formador_id }}"
                                                     data-periodo="{{ $turma->periodo }}"
@@ -570,6 +588,8 @@
                                                     data-hora-fim="{{ $turma->hora_fim }}"
                                                     data-centro-id="{{ $turma->centro_id }}"
                                                     data-status="{{ $turma->status }}"
+                                                    data-vagas-totais="{{ $turma->vagas_totais }}"
+                                                    data-publicado="{{ $turma->publicado }}"
                                                     title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -597,6 +617,12 @@
                                 @endif
                                 <span><i class="fas fa-clock me-1"></i>{{ $turma->hora_inicio ?? '—' }} - {{ $turma->hora_fim ?? '—' }}</span>
                                 <span><i class="fas fa-sun me-1"></i>{{ ucfirst($turma->periodo) }}</span>
+                                @if($turma->data_arranque)
+                                    <span><i class="fas fa-calendar me-1"></i>{{ \Carbon\Carbon::parse($turma->data_arranque)->format('d/m/Y') }}</span>
+                                @endif
+                                @if($turma->vagas_totais)
+                                    <span><i class="fas fa-chair me-1"></i>{{ $turma->vagas_totais }} vagas</span>
+                                @endif
                                 @if($turma->formador_id)
                                     <span><i class="fas fa-user-tie me-1"></i>{{ $turma->formador->nome ?? 'N/A' }}</span>
                                 @endif
@@ -605,14 +631,16 @@
                                 <button class="pi-btn pi-btn-primary btn-editar-turma" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;"
                                         data-turma-id="{{ $turma->id }}"
                                         data-dias="{{ json_encode($turma->dia_semana) }}"
-                                        data-data-arranque="{{ $turma->data_arranque }}"
+                                        data-data-arranque="{{ \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') }}"
                                         data-duracao-semanas="{{ $turma->duracao_semanas }}"
                                         data-formador-id="{{ $turma->formador_id }}"
                                         data-periodo="{{ $turma->periodo }}"
                                         data-hora-inicio="{{ $turma->hora_inicio }}"
                                         data-hora-fim="{{ $turma->hora_fim }}"
                                         data-centro-id="{{ $turma->centro_id }}"
-                                        data-status="{{ $turma->status }}">
+                                        data-status="{{ $turma->status }}"
+                                        data-vagas-totais="{{ $turma->vagas_totais }}"
+                                        data-publicado="{{ $turma->publicado }}">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
                             </div>
@@ -987,6 +1015,7 @@
                 <form id="formEditarturmaAjax" class="pi-form">
                     @csrf
                     <input type="hidden" name="turma_id" id="editturmaId">
+                    <input type="hidden" name="curso_id" value="{{ $curso->id }}">
                     <div class="mb-3">
                         <label class="form-label">Dias da Semana <span class="required">*</span></label>
                         <div class="pi-days-grid">
@@ -1048,6 +1077,16 @@
                                 <option value="em_andamento">Em Andamento</option>
                                 <option value="concluida">Concluída</option>
                             </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Vagas Totais <span class="required">*</span></label>
+                            <input type="number" name="edit_vagas_totais" id="editturmaVagasTotais" class="form-control" min="1" required>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input type="checkbox" name="edit_publicado" class="form-check-input" id="editturmaPublicado">
+                                <label class="form-check-label" for="editturmaPublicado">Publicar Turma</label>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -1323,7 +1362,7 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
 });
 
 // ============================================
-// Editar Turma - Abre Modal
+// Editar Turma - Abre Modal - VERSÃO CORRIGIDA
 // ============================================
 $(document).on("click", ".btn-editar-turma", function() {
     const id = $(this).data("turma-id");
@@ -1336,13 +1375,41 @@ $(document).on("click", ".btn-editar-turma", function() {
     const formadorId = $(this).data("formador-id");
     const status = $(this).data("status");
     const centroId = $(this).data("centro-id");
+    const vagasTotais = $(this).data("vagas-totais");
+    const publicado = $(this).data("publicado");
+    
+    console.log('Editar turma - Dados recebidos:', {
+        id, centroId, dataArranque, periodo, dias, formadorId, status, vagasTotais, publicado
+    });
     
     if (typeof dias === "string") {
-        dias = JSON.parse(dias);
+        try {
+            dias = JSON.parse(dias);
+        } catch(e) {
+            console.error("Erro ao parsear dias:", e);
+            dias = [];
+        }
     }
     
     $("#editturmaId").val(id);
-    $("#editturmaDataArranque").val(dataArranque);
+    
+    // CORREÇÃO 1: Formatar data para o formato correto (YYYY-MM-DD)
+    if (dataArranque) {
+        let dataFormatada = dataArranque;
+        // Se vier no formato 'YYYY-MM-DD' (do banco), manter
+        // Se vier no formato 'DD/MM/YYYY' (formatado), converter
+        if (typeof dataArranque === 'string' && dataArranque.includes('/')) {
+            const partes = dataArranque.split('/');
+            if (partes.length === 3) {
+                dataFormatada = `${partes[2]}-${partes[1]}-${partes[0]}`;
+            }
+        }
+        console.log('Data original:', dataArranque, 'Formatada:', dataFormatada);
+        $("#editturmaDataArranque").val(dataFormatada);
+    } else {
+        $("#editturmaDataArranque").val('');
+    }
+    
     $("#editturmaDuracao").val(duracaoSemanas || "");
     $("#editturmaFormador").val(formadorId || "");
     $("#edittumaPeriodo").val(periodo);
@@ -1350,28 +1417,52 @@ $(document).on("click", ".btn-editar-turma", function() {
     $("#editturmaHoraFim").val(horaFim || "");
     $("#editturmaStatus").val(status);
     
-    // Popular centros
+    // NOVOS CAMPOS: Vagas Totais e Publicado
+    $("#editturmaVagasTotais").val(vagasTotais || "");
+    $("#editturmaPublicado").prop('checked', publicado == 1 || publicado == true || publicado == 'true');
+    
+    // CORREÇÃO 2: Popular centros e manter desabilitado
     $.ajax({
         url: `/cursos/${cursoId}`,
         method: "GET",
-        success: function(curso) {
-            let options = '<option value="">Selecione um centro</option>';
+        success: function(response) {
+            const curso = response.dados || response;
+            
+            // Construir options com os centros disponíveis
+            let options = '<option value="" disabled>Selecione um centro</option>';
+            
             if (curso.centros && curso.centros.length > 0) {
                 curso.centros.forEach(function(centro) {
-                    options += `<option value="${centro.id}">${centro.nome}</option>`;
+                    // Marcar como selected se for o centro da turma
+                    const selected = (centro.id == centroId) ? 'selected' : '';
+                    options += `<option value="${centro.id}" ${selected}>${centro.nome}</option>`;
                 });
+                console.log(`Centro selecionado: ${centroId}, encontrado: ${curso.centros.some(c => c.id == centroId)}`);
+            } else {
+                options = '<option value="" disabled>Nenhum centro associado</option>';
+                console.warn('Nenhum centro encontrado para o curso');
             }
-            $("#edittturmaCentro").html(options);
+            
+            // Atualizar o select
+            $("#editturmaCentro").html(options);
+            
+            // Garantir que o valor selecionado está correto
             if (centroId) {
-                $("#edittturmaCentro").val(centroId);
+                $("#editturmaCentro").val(centroId);
             }
+            
+            // IMPORTANTE: Manter o campo DESABILITADO (como diz a mensagem de "Centro não pode ser editado")
+            $("#editturmaCentro").prop('disabled', true);
+            
+            console.log('Select após preenchimento:', $("#editturmaCentro").val());
         },
         error: function(err) {
             console.error("Erro ao carregar centros:", err);
-            $("#edittturmaCentro").html('<option value="">Erro ao carregar centros</option>');
+            $("#editturmaCentro").html('<option value="" disabled>Erro ao carregar centros</option>');
         }
     });
     
+    // Marcar os dias da semana
     $("input[name=\"edit_dia_semana[]\"]").prop("checked", false).each(function() {
         if (dias && dias.includes($(this).val())) {
             $(this).prop("checked", true);
@@ -1382,7 +1473,7 @@ $(document).on("click", ".btn-editar-turma", function() {
 });
 
 // ============================================
-// Atualizar Turma - AJAX
+// Atualizar Turma - AJAX - VERSÃO CORRIGIDA COM METHOD SPOOFING
 // ============================================
 $("#formEditarturmaAjax").on("submit", function(e) {
     e.preventDefault();
@@ -1398,35 +1489,94 @@ $("#formEditarturmaAjax").on("submit", function(e) {
         return;
     }
     
-    const formData = {
-        centro_id: $form.find("select[name=\"edit_centro_id\"]").val(),
-        data_arranque: $form.find("input[name=\"edit_data_arranque\"]").val(),
-        duracao_semanas: $form.find("input[name=\"edit_duracao_semanas\"]").val() || null,
-        dia_semana: dias,
-        periodo: $form.find("select[name=\"edit_periodo\"]").val(),
-        formador_id: $form.find("select[name=\"edit_formador_id\"]").val() || null,
-        hora_inicio: $form.find("input[name=\"edit_hora_inicio\"]").val() || "",
-        hora_fim: $form.find("input[name=\"edit_hora_fim\"]").val() || "",
-        status: $form.find("select[name=\"edit_status\"]").val()
-    };
+    // Usar FormData para garantir que todos os campos sejam enviados corretamente
+    const formData = new FormData();
+    
+    // Method spoofing para Laravel (POST com _method=PUT)
+    formData.append('_method', 'PUT');
+    
+    // Campos obrigatórios
+    formData.append('curso_id', $form.find("input[name=\"curso_id\"]").val());
+    formData.append('centro_id', $form.find("select[name=\"edit_centro_id\"]").val());
+    formData.append('data_arranque', $form.find("input[name=\"edit_data_arranque\"]").val());
+    formData.append('periodo', $form.find("select[name=\"edit_periodo\"]").val());
+    formData.append('vagas_totais', $form.find("input[name=\"edit_vagas_totais\"]").val() || 0);
+    
+    // Campos opcionais
+    const duracaoSemanas = $form.find("input[name=\"edit_duracao_semanas\"]").val();
+    if (duracaoSemanas) {
+        formData.append('duracao_semanas', duracaoSemanas);
+    }
+    
+    const formadorId = $form.find("select[name=\"edit_formador_id\"]").val();
+    if (formadorId) {
+        formData.append('formador_id', formadorId);
+    }
+    
+    const horaInicio = $form.find("input[name=\"edit_hora_inicio\"]").val();
+    if (horaInicio) {
+        formData.append('hora_inicio', horaInicio);
+    }
+    
+    const horaFim = $form.find("input[name=\"edit_hora_fim\"]").val();
+    if (horaFim) {
+        formData.append('hora_fim', horaFim);
+    }
+    
+    const status = $form.find("select[name=\"edit_status\"]").val();
+    if (status) {
+        formData.append('status', status);
+    }
+    
+    formData.append('publicado', $form.find("input[name=\"edit_publicado\"]").is(":checked") ? 1 : 0);
+    
+    // Dias da semana (array)
+    dias.forEach(function(dia, index) {
+        formData.append(`dia_semana[${index}]`, dia);
+    });
+    
+    console.log('Enviando dados para atualizar turma:');
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
     
     $.ajax({
         url: `/turmas/${turmaId}`,
-        type: "PUT",
-        data: JSON.stringify(formData),
-        contentType: "application/json",
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
         headers: {
             "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content")
         },
-        success: function() {
+        success: function(response) {
             $("#modalEditarturma").modal("hide");
-            Swal.fire({ icon: "success", title: "Sucesso!", text: "Turma atualizada com sucesso!", timer: 2000 }).then(() => location.reload());
+            Swal.fire({ 
+                icon: "success", 
+                title: "Sucesso!", 
+                text: "Turma atualizada com sucesso!", 
+                timer: 2000 
+            }).then(() => location.reload());
         },
         error: function(xhr) {
-            console.error("Erro:", xhr);
-            const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
-            const message = Object.values(errors).flat().join("\n");
-            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar turma." });
+            console.error("Erro completo:", xhr);
+            console.error("Response:", xhr.responseText);
+            
+            let message = "Erro ao atualizar turma.";
+            
+            if (xhr.responseJSON?.errors) {
+                message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+            } else if (xhr.responseJSON?.message) {
+                message = xhr.responseJSON.message;
+            } else if (xhr.statusText) {
+                message = xhr.statusText;
+            }
+            
+            Swal.fire({ 
+                icon: "error", 
+                title: "Erro!", 
+                text: message 
+            });
         }
     });
 });
