@@ -117,9 +117,20 @@ class Item extends Model
      */
     public function getImagemUrlAttribute()
     {
-        if ($this->imagem && file_exists(public_path('storage/' . $this->imagem))) {
+        if (!$this->imagem) {
+            return asset('images/placeholder.jpg');
+        }
+        
+        // Se a imagem já começa com /storage/, usar como está
+        if (strpos($this->imagem, '/storage/') === 0) {
+            return asset($this->imagem);
+        }
+        
+        // Caso contrário, adicionar /storage/
+        if (file_exists(public_path('storage/' . $this->imagem))) {
             return asset('storage/' . $this->imagem);
         }
+        
         return asset('images/placeholder.jpg');
     }
 }

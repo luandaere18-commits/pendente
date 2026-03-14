@@ -68,13 +68,16 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('itens.edit', $item) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('itens.show', $item) }}" class="btn btn-sm btn-outline-info" title="Ver detalhes">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ route('itens.edit', $item) }}" class="btn btn-sm btn-outline-primary" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </a>
                             <form action="{{ route('itens.destroy', $item) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza?')" title="Deletar">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>

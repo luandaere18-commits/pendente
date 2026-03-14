@@ -46,7 +46,7 @@ class ItemController extends Controller
             $path = Storage::disk('public')->putFileAs('itens', $file, $filename);
 
             if (Storage::disk('public')->exists($path)) {
-                $validated['imagem'] = $path;
+                $validated['imagem'] = '/storage/' . $path;
             }
         }
         
@@ -86,8 +86,12 @@ class ItemController extends Controller
         
         // Processar upload de imagem se já existe, deletar a anterior
         if ($request->hasFile('imagem')) {
-            if ($item->imagem && Storage::disk('public')->exists($item->imagem)) {
-                Storage::disk('public')->delete($item->imagem);
+            if ($item->imagem) {
+                // Remover '/storage/' se houver para obter o caminho correto
+                $oldPath = str_replace('/storage/', '', $item->imagem);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
             }
             
             $file = $request->file('imagem');
@@ -95,7 +99,7 @@ class ItemController extends Controller
             $path = Storage::disk('public')->putFileAs('itens', $file, $filename);
 
             if (Storage::disk('public')->exists($path)) {
-                $validated['imagem'] = $path;
+                $validated['imagem'] = '/storage/' . $path;
             }
         }
         
@@ -106,8 +110,11 @@ class ItemController extends Controller
     public function destroy(Item $item)
     {
         // Deletar imagem se existir
-        if ($item->imagem && Storage::disk('public')->exists($item->imagem)) {
-            Storage::disk('public')->delete($item->imagem);
+        if ($item->imagem) {
+            $imagemPath = str_replace('/storage/', '', $item->imagem);
+            if (Storage::disk('public')->exists($imagemPath)) {
+                Storage::disk('public')->delete($imagemPath);
+            }
         }
         
         $item->delete();
