@@ -236,20 +236,25 @@ function carregarEstatisticas() {
     $.ajax({
         url: '/cursos',
         method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(data) {
-        $('#total-cursos').text(data.length);
-        
-        const online = data.filter(curso => curso.modalidade === 'online').length;
-        const presencial = data.filter(curso => curso.modalidade === 'presencial').length;
-        const total = data.length;
-        
-        $('#cursos-online').text(online);
-        $('#cursos-presencial').text(presencial);
-        
-        if (total > 0) {
-            $('#progress-online').css('width', (online / total * 100) + '%');
-            $('#progress-presencial').css('width', (presencial / total * 100) + '%');
-        }
+            let cursos = Array.isArray(data) ? data : (data.data || []);
+            $('#total-cursos').text(cursos.length);
+            
+            const online = cursos.filter(curso => curso.modalidade === 'online').length;
+            const presencial = cursos.filter(curso => curso.modalidade === 'presencial').length;
+            const total = cursos.length;
+            
+            $('#cursos-online').text(online);
+            $('#cursos-presencial').text(presencial);
+            
+            if (total > 0) {
+                $('#progress-online').css('width', (online / total * 100) + '%');
+                $('#progress-presencial').css('width', (presencial / total * 100) + '%');
+            }
         },
         error: function(xhr) {
             console.error('Erro ao carregar cursos:', xhr);
@@ -264,8 +269,13 @@ function carregarEstatisticas() {
     $.ajax({
         url: '/centros',
         method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(data) {
-            $('#total-centros').text(data.length);
+            let centros = Array.isArray(data) ? data : (data.data || []);
+            $('#total-centros').text(centros.length);
         },
         error: function(xhr) {
             console.error('Erro ao carregar centros:', xhr);
@@ -280,8 +290,13 @@ function carregarEstatisticas() {
     $.ajax({
         url: '/formadores',
         method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(data) {
-            $('#total-formadores').text(data.length);
+            let formadores = Array.isArray(data) ? data : (data.data || []);
+            $('#total-formadores').text(formadores.length);
         },
         error: function(xhr) {
             console.error('Erro ao carregar formadores:', xhr);
@@ -296,14 +311,19 @@ function carregarEstatisticas() {
     $.ajax({
         url: '/pre-inscricoes',
         method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(data) {
-        const pendentes = data.filter(inscricao => inscricao.status === 'pendente').length;
-        $('#total-pre-inscricoes').text(pendentes);
-        $('#pendentes').text(pendentes);
-        
-        if (data.length > 0) {
-            $('#progress-pendentes').css('width', (pendentes / data.length * 100) + '%');
-        }
+            let inscricoes = Array.isArray(data) ? data : (data.data || []);
+            const pendentes = inscricoes.filter(inscricao => inscricao.status === 'pendente').length;
+            $('#total-pre-inscricoes').text(pendentes);
+            $('#pendentes').text(pendentes);
+            
+            if (inscricoes.length > 0) {
+                $('#progress-pendentes').css('width', (pendentes / inscricoes.length * 100) + '%');
+            }
         },
         error: function(xhr) {
             console.error('Erro ao carregar pré-inscrições:', xhr);
@@ -322,37 +342,75 @@ function carregarUltimasInscricoes() {
     $.ajax({
         url: '/pre-inscricoes',
         method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(data) {
-        let html = '';
-        
-        if (data.length === 0) {
-            html = '<tr><td colspan="5" class="text-center text-muted">Nenhuma pré-inscrição encontrada</td></tr>';
-        } else {
-            // Mostrar apenas as últimas 5
-            const ultimas = data.slice(0, 5);
+            console.log('Dados de pré-inscrições recebidos:', data);
             
-            ultimas.forEach(function(inscricao) {
-                const statusClass = getStatusClass(inscricao.status);
-                const statusText = getStatusText(inscricao.status);
-                const data_formatada = new Date(inscricao.created_at).toLocaleDateString('pt-PT');
-                const cursoNome = inscricao.curso ? inscricao.curso.nome : `#${inscricao.curso_id}`;
-                const centroNome = inscricao.centro ? inscricao.centro.nome : `#${inscricao.centro_id}`;
-                html += `
-                    <tr>
-                        <td>${inscricao.nome_completo}</td>
-                        <td><small class="text-muted">${cursoNome}</small></td>
-                        <td><small class="text-muted">${centroNome}</small></td>
-                        <td><small>${data_formatada}</small></td>
-                        <td><span class="badge ${statusClass}">${statusText}</span></td>
-                    </tr>
-                `;
-            });
-        }
-        
-        $('#ultimas-inscricoes').html(html);
+            let html = '';
+            
+            if (!data || data.length === 0) {
+                html = '<tr><td colspan="5" class="text-center text-muted">Nenhuma pré-inscrição encontrada</td></tr>';
+            } else {
+                // Ordenar por data mais recente primeiro (descendente)
+                const ordenadas = data.sort(function(a, b) {
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+                
+                // Mostrar apenas as últimas 5
+                const ultimas = ordenadas.slice(0, 5);
+                
+                ultimas.forEach(function(inscricao) {
+                    const statusClass = getStatusClass(inscricao.status);
+                    const statusText = getStatusText(inscricao.status);
+                    const data_formatada = new Date(inscricao.created_at).toLocaleDateString('pt-PT', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    // Acessar curso e centro via turma
+                    let cursoNome = 'N/A';
+                    let centroNome = 'N/A';
+                    
+                    if (inscricao.turma) {
+                        if (inscricao.turma.curso) {
+                            cursoNome = inscricao.turma.curso.nome;
+                        }
+                        if (inscricao.turma.centro) {
+                            centroNome = inscricao.turma.centro.nome;
+                        }
+                    }
+                    
+                    console.log(`Inscrição: ${inscricao.nome_completo}, Curso: ${cursoNome}, Centro: ${centroNome}`);
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${inscricao.nome_completo}</strong></td>
+                            <td><small class="text-muted">${cursoNome}</small></td>
+                            <td><small class="text-muted">${centroNome}</small></td>
+                            <td><small>${data_formatada}</small></td>
+                            <td><span class="badge ${statusClass}">${statusText}</span></td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            $('#ultimas-inscricoes').html(html);
         },
         error: function(xhr) {
             console.error('Erro ao carregar últimas inscrições:', xhr);
+            console.error('Status:', xhr.status);
+            console.error('Response:', xhr.responseText);
+            
+            $('#ultimas-inscricoes').html(
+                '<tr><td colspan="5" class="text-center text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Erro ao carregar dados</td></tr>'
+            );
+            
             if (xhr.status === 401) {
                 localStorage.removeItem('auth_token');
                 window.location.href = '/login';
