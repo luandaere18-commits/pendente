@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Formador;
 use App\Models\Centro;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FormadorController extends Controller
 {
@@ -64,7 +65,7 @@ class FormadorController extends Controller
             'contactos.*' => 'nullable|string|max:50',
             'especialidade' => 'nullable|string|max:150',
             'bio' => 'nullable|string',
-            'foto_url' => 'nullable|url|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'centros' => 'nullable|array',
             'centros.*' => 'nullable|integer|exists:centros,id'
         ]);
@@ -87,6 +88,20 @@ class FormadorController extends Controller
             // Se não há contactos, define como array vazio
             $validated['contactos'] = [];
         }
+        
+        // Upload de foto
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = Storage::disk('public')->putFileAs('formadores', $file, $filename);
+
+            if (Storage::disk('public')->exists($path)) {
+                $validated['foto_url'] = '/storage/' . $path;
+            } else {
+                \Log::warning('Falha ao salvar foto do formador: ' . $path);
+            }
+        }
+        unset($validated['foto']);
         
         // Coletar centros para associação
         $centros = $validated['centros'] ?? [];
@@ -150,7 +165,7 @@ class FormadorController extends Controller
             'contactos.*' => 'nullable|string|max:50',
             'especialidade' => 'nullable|string|max:150',
             'bio' => 'nullable|string',
-            'foto_url' => 'nullable|url|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'centros' => 'nullable|array',
             'centros.*' => 'nullable|integer|exists:centros,id'
         ]);
@@ -173,6 +188,20 @@ class FormadorController extends Controller
             // Se não há contactos, define como array vazio
             $validated['contactos'] = [];
         }
+        
+        // Upload de foto se nova foi enviada
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = Storage::disk('public')->putFileAs('formadores', $file, $filename);
+
+            if (Storage::disk('public')->exists($path)) {
+                $validated['foto_url'] = '/storage/' . $path;
+            } else {
+                \Log::warning('Falha ao salvar foto do formador: ' . $path);
+            }
+        }
+        unset($validated['foto']);
         
         // Coletar centros para associação
         $centros = $validated['centros'] ?? [];

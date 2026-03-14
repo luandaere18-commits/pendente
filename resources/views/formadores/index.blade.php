@@ -248,6 +248,12 @@
     .pi-spinner { display: inline-block; width: 0.875rem; height: 0.875rem; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.25rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── IMAGE STYLES (TABLE & MODAL) ── */
+    .pi-formador-img { width: 32px; height: 32px; border-radius: 0.375rem; object-fit: cover; border: 1px solid var(--pi-border); }
+    .pi-formador-img-placeholder { width: 32px; height: 32px; border-radius: 0.375rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; }
+    .pi-formador-detail-img { max-width: 120px; max-height: 120px; object-fit: cover; border-radius: var(--pi-radius); border: 2px solid var(--pi-border); }
+    .pi-formador-detail-img-placeholder { width: 120px; height: 120px; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 1.75rem; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
         .pi-desktop-table { display: none !important; }
@@ -574,7 +580,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="formEditarFormadorAjax" class="pi-form">
+                <form id="formEditarFormadorAjax" class="pi-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" id="editFormadorId">
                     <div class="row">
@@ -697,6 +703,31 @@ function configurarEventosModal() {
     $('#modalEditarFormador').on('show.bs.modal', function() {
         $('#centrosContainerEditarFormador').empty();
         centrosContainerEditarFormadorCount = 0;
+    });
+
+    // Image preview for create modal
+    $('input[name="foto"]').on('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                // Store the preview data (can be used to display in UI if needed)
+                console.log('Image selected for upload');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Image preview for edit modal
+    $('#editFoto').on('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                console.log('New image selected for update');
+            };
+            reader.readAsDataURL(file);
+        }
     });
 
     $(document).on('click', '#adicionarCentroNovoFormadorBtn', function(e) {
@@ -828,8 +859,8 @@ window.visualizarFormador = function(id) {
                 }).join(' ');
             }
             const fotoHtml = formador.foto_url
-                ? `<img src="${formador.foto_url}" style="width:100%;max-width:120px;aspect-ratio:1;object-fit:cover;border-radius:var(--pi-radius);border:2px solid var(--pi-border)" alt="${formador.nome}">`
-                : '<div style="width:120px;height:120px;border-radius:var(--pi-radius);background:var(--pi-primary-light);display:flex;align-items:center;justify-content:center;color:var(--pi-primary);font-size:2.5rem"><i class="fas fa-user"></i></div>';
+                ? `<img src="${formador.foto_url}" alt="${formador.nome}" class="pi-formador-detail-img">`
+                : '<div class="pi-formador-detail-img-placeholder"><i class="fas fa-user"></i></div>';
 
             const conteudo = `
                 <div class="row g-3">
@@ -956,6 +987,13 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
     formData.append('email', $('#editEmail').val());
     formData.append('especialidade', $('#editEspecialidade').val());
     formData.append('bio', $('#editBio').val());
+    
+    // Adicionar arquivo de foto se selecionado
+    const fotoFile = $('#editFoto')[0].files[0];
+    if (fotoFile) {
+        formData.append('foto', fotoFile);
+    }
+    
     const telefone = $('#editContactoTelefone').val();
     if (telefone && telefone.trim() !== '') formData.append('contactos[0]', telefone.trim());
     const centrosArray = [];

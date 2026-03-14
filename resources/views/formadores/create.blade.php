@@ -49,7 +49,7 @@
                         </div>
                     </div>
 
-                    <form id="formadorForm">
+                    <form id="formadorForm" enctype="multipart/form-data">
                         <div class="row">
                             <div class="col-md-8 mb-3">
                                 <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
@@ -72,9 +72,9 @@
                             </div>
                             
                             <div class="col-md-6 mb-3">
-                                <label for="foto_url" class="form-label">URL da Foto</label>
-                                <input type="url" class="form-control" id="foto_url" name="foto_url" maxlength="255">
-                                <div class="form-text">URL da foto do formador</div>
+                                <label for="foto" class="form-label">Foto do Formador</label>
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                                <small class="text-muted">JPEG, PNG ou GIF (máx 2MB)</small>
                             </div>
                         </div>
 
@@ -184,6 +184,11 @@ $(document).ready(function() {
     $('#formadorForm input, #formadorForm select, #formadorForm textarea').on('input change', function() {
         atualizarPreview();
     });
+    
+    // Preview quando foto é selecionada
+    $('#foto').on('change', function() {
+        atualizarPreviewFoto();
+    });
 
     // Adicionar contacto
     $('#adicionarContacto').on('click', function() {
@@ -262,51 +267,66 @@ function atualizarPreview() {
     const nome = $('#nome').val();
     const email = $('#email').val();
     const especialidade = $('#especialidade').val();
-    const foto_url = $('#foto_url').val();
     const bio = $('#bio').val();
 
     if (nome) {
-        const foto = foto_url 
-            ? `<img src="${foto_url}" alt="Preview" class="rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover;" onerror="this.style.display='none'">` 
-            : '<i class="fas fa-user-circle fa-4x text-muted mb-2"></i>';
-
-        const emailHtml = email 
-            ? `<p class="mb-1"><i class="fas fa-envelope me-2"></i>${email}</p>`
-            : '';
-
-        const especialidadeHtml = especialidade 
-            ? `<p class="mb-1"><i class="fas fa-star me-2"></i>${especialidade}</p>`
-            : '';
-
-        // Coletar contactos
-        let contactosHtml = '';
-        $('.contacto-item').each(function() {
-            const tipo = $(this).find('.contacto-tipo').val();
-            const valor = $(this).find('.contacto-valor').val();
-            if (tipo && valor) {
-                let icon = 'fas fa-phone';
-                if (tipo.toLowerCase().includes('email')) icon = 'fas fa-envelope';
-                else if (tipo.toLowerCase().includes('whatsapp')) icon = 'fab fa-whatsapp';
-                else if (tipo.toLowerCase().includes('linkedin')) icon = 'fab fa-linkedin';
-                
-                contactosHtml += `<small class="d-block"><i class="${icon} me-1"></i>${tipo}: ${valor}</small>`;
-            }
-        });
-
-        let preview = `
-            <div class="text-center mb-3">${foto}</div>
-            <h6 class="text-center">${nome}</h6>
-            ${especialidadeHtml}
-            ${emailHtml}
-            ${contactosHtml ? `<div class="mt-2">${contactosHtml}</div>` : ''}
-            ${bio ? `<div class="mt-2"><small class="text-muted">${bio.substring(0, 100)}...</small></div>` : ''}
-        `;
-
-        $('#previewContent').html(preview);
-        $('#previewCard').show();
+        const fotoFile = $('#foto')[0].files[0];
+        let foto = '<i class="fas fa-user-circle fa-4x text-muted mb-2"></i>';
+        
+        if (fotoFile) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                foto = `<img src="${e.target.result}" alt="Preview" class="rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover;">`;
+                renderizarPreview(nome, email, especialidade, bio, foto);
+            };
+            reader.readAsDataURL(fotoFile);
+        } else {
+            renderizarPreview(nome, email, especialidade, bio, foto);
+        }
     } else {
         $('#previewCard').hide();
     }
+}
+
+function atualizarPreviewFoto() {
+    atualizarPreview();
+}
+
+function renderizarPreview(nome, email, especialidade, bio, foto) {
+    const emailHtml = email 
+        ? `<p class="mb-1"><i class="fas fa-envelope me-2"></i>${email}</p>`
+        : '';
+
+    const especialidadeHtml = especialidade 
+        ? `<p class="mb-1"><i class="fas fa-star me-2"></i>${especialidade}</p>`
+        : '';
+
+    // Coletar contactos
+    let contactosHtml = '';
+    $('.contacto-item').each(function() {
+        const tipo = $(this).find('.contacto-tipo').val();
+        const valor = $(this).find('.contacto-valor').val();
+        if (tipo && valor) {
+            let icon = 'fas fa-phone';
+            if (tipo.toLowerCase().includes('email')) icon = 'fas fa-envelope';
+            else if (tipo.toLowerCase().includes('whatsapp')) icon = 'fab fa-whatsapp';
+            else if (tipo.toLowerCase().includes('linkedin')) icon = 'fab fa-linkedin';
+            
+            contactosHtml += `<small class="d-block"><i class="${icon} me-1"></i>${tipo}: ${valor}</small>`;
+        }
+    });
+
+    let preview = `
+        <div class="text-center mb-3">${foto}</div>
+        <h6 class="text-center">${nome}</h6>
+        ${especialidadeHtml}
+        ${emailHtml}
+        ${contactosHtml ? `<div class="mt-2">${contactosHtml}</div>` : ''}
+        ${bio ? `<div class="mt-2"><small class="text-muted">${bio.substring(0, 100)}...</small></div>` : ''}
+    `;
+
+    $('#previewContent').html(preview);
+    $('#previewCard').show();
 }
 
 function criarFormador() {
@@ -320,20 +340,33 @@ function criarFormador() {
         }
     });
 
-    const formData = {
-        nome: $('#nome').val(),
-        email: $('#email').val() || null,
-        especialidade: $('#especialidade').val() || null,
-        bio: $('#bio').val() || null,
-        foto_url: $('#foto_url').val() || null,
-        contactos: contactos.length > 0 ? contactos : null
-    };
+    // Usar FormData para suportar upload de arquivo
+    const formData = new FormData();
+    formData.append('nome', $('#nome').val());
+    formData.append('email', $('#email').val() || '');
+    formData.append('especialidade', $('#especialidade').val() || '');
+    formData.append('bio', $('#bio').val() || '');
+    
+    // Adicionar arquivo de foto se selecionado
+    const fotoFile = $('#foto')[0].files[0];
+    if (fotoFile) {
+        formData.append('foto', fotoFile);
+    }
+    
+    // Adicionar contactos
+    if (contactos.length > 0) {
+        contactos.forEach((contacto, index) => {
+            formData.append(`contactos[${index}][tipo]`, contacto.tipo);
+            formData.append(`contactos[${index}][valor]`, contacto.valor);
+        });
+    }
 
     $.ajax({
         url: '/formadores',
         method: 'POST',
-        data: JSON.stringify(formData),
-        contentType: 'application/json',
+        data: formData,
+        processData: false,
+        contentType: false,
         beforeSend: function() {
             $('#formadorForm button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Guardando...');
         },

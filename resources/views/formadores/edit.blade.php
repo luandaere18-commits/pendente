@@ -41,7 +41,7 @@
                         </div>
                     @endif
 
-                    <form id="formadorForm" method="POST" action="{{ route('formadores.update', $formador->id) }}">
+                    <form id="formadorForm" method="POST" action="{{ route('formadores.update', $formador->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <input type="hidden" id="formadorId" name="id" value="{{ $formador->id }}">
@@ -68,9 +68,15 @@
                             </div>
                             
                             <div class="col-md-6 mb-3">
-                                <label for="foto_url" class="form-label">URL da Foto</label>
-                                <input type="url" class="form-control" id="foto_url" name="foto_url" maxlength="255" value="{{ $formador->foto_url }}">
-                                <div class="form-text">URL da foto do formador</div>
+                                <label for="foto" class="form-label">Foto do Formador</label>
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                                <small class="text-muted">JPEG, PNG ou GIF (máx 2MB)</small>
+                                @if($formador->foto_url)
+                                    <div class="mt-2">
+                                        <small class="text-muted">Foto atual:</small><br>
+                                        <img src="{{ $formador->foto_url }}" alt="{{ $formador->nome }}" class="rounded mb-2" style="max-width: 100px; height: auto;">
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
