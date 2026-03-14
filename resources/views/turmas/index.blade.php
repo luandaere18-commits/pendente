@@ -84,9 +84,9 @@
     .pi-toolbar {
         background: #fff; border-bottom: 1px solid var(--pi-border);
         padding: 0.625rem 1.25rem;
-        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+        display: flex; flex-wrap: nowrap; align-items: center; gap: 0.5rem; overflow-x: auto;
     }
-    .pi-toolbar .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .pi-toolbar .search-wrap { position: relative; flex: 0 1 250px; min-width: 250px; }
     .pi-toolbar .search-wrap i {
         position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
         color: var(--pi-primary); font-size: 0.8125rem; pointer-events: none;
