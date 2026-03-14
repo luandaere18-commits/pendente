@@ -8,251 +8,352 @@
 <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet">
 <style>
     :root {
-        --pi-primary: #3366cc;
-        --pi-primary-light: rgba(51, 102, 204, 0.1);
-        --pi-success: #2e9e6b;
-        --pi-success-light: rgba(46, 158, 107, 0.1);
-        --pi-warning: #e89a0c;
-        --pi-warning-light: rgba(232, 154, 12, 0.1);
-        --pi-danger: #dc3545;
-        --pi-danger-light: rgba(220, 53, 69, 0.1);
-        --pi-info: #0ea5e9;
-        --pi-info-light: rgba(14, 165, 233, 0.1);
-        --pi-muted: #6b7a8d;
-        --pi-border: #e2e6ec;
-        --pi-bg: #f4f6f9;
+        --pi-primary: #1d4ed8;
+        --pi-primary-dark: #1e40af;
+        --pi-primary-light: rgba(29, 78, 216, 0.08);
+        --pi-primary-gradient: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        --pi-success: #16a34a;
+        --pi-success-light: rgba(22, 163, 74, 0.08);
+        --pi-warning: #d97706;
+        --pi-warning-light: rgba(217, 119, 6, 0.08);
+        --pi-danger: #dc2626;
+        --pi-danger-light: rgba(220, 38, 38, 0.08);
+        --pi-info: #0284c7;
+        --pi-info-light: rgba(2, 132, 199, 0.08);
+        --pi-muted: #64748b;
+        --pi-border: #dbeafe;
+        --pi-bg: #eff6ff;
         --pi-card: #ffffff;
-        --pi-text: #1a2332;
-        --pi-text-muted: #6b7a8d;
-        --pi-radius: 0.75rem;
-        --pi-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --pi-text: #1e3a8a;
+        --pi-text-muted: #64748b;
+        --pi-radius: 0.5rem;
+        --pi-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
-    body { background-color: var(--pi-bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--pi-text); }
+    body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
 
-    .pi-page { max-width: 100%; width: 100%; margin: 0 auto; padding: 1.5rem 2rem; }
+    /* ── PAGE LAYOUT ── */
+    .pi-page { width: 100%; padding: 0; }
 
-    /* Header */
-    .pi-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
-    .pi-header-left { display: flex; align-items: center; gap: 0.75rem; }
-    .pi-header-icon { width: 3rem; height: 3rem; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); }
-    .pi-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-    .pi-header p { font-size: 0.875rem; color: var(--pi-text-muted); margin: 0; }
-    .pi-btn-primary { background: var(--pi-primary); border: none; color: #fff; border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.15s; }
-    .pi-btn-primary:hover { background: #2a57b3; color: #fff; }
+    /* ── BLUE HEADER ── */
+    .pi-page-header {
+        background: var(--pi-primary-gradient);
+        color: #fff;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .pi-page-header h1 { font-size: 1.25rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; color: #fff; }
+    .pi-page-header p { font-size: 0.75rem; color: rgba(255,255,255,0.75); margin: 0; }
+    .pi-page-header .pi-btn-create {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.5rem 1rem; border-radius: var(--pi-radius);
+        background: #fff; color: var(--pi-primary); font-weight: 600;
+        font-size: 0.8125rem; border: none; cursor: pointer;
+        transition: all 0.15s;
+    }
+    .pi-page-header .pi-btn-create:hover { background: #dbeafe; }
 
-    /* Stats */
-    .pi-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-    .pi-stat-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1rem; box-shadow: var(--pi-shadow); }
-    .pi-stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); margin-bottom: 0.25rem; }
-    .pi-stat-card .stat-value { font-size: 1.5rem; font-weight: 700; }
-    .pi-stat-card .stat-value.text-primary { color: var(--pi-primary) !important; }
-    .pi-stat-card .stat-value.text-warning { color: var(--pi-warning) !important; }
-    .pi-stat-card .stat-value.text-success { color: var(--pi-success) !important; }
-    .pi-stat-card .stat-value.text-info { color: var(--pi-info) !important; }
-    .pi-stat-card .stat-value.text-muted { color: var(--pi-muted) !important; }
+    /* ── STATS BAR ── */
+    .pi-stats-bar {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+        background: #fff; border-bottom: 1px solid var(--pi-border);
+    }
+    .pi-stat {
+        padding: 0.75rem 1.25rem;
+        border-right: 1px solid var(--pi-border);
+        display: flex; align-items: center; gap: 0.75rem;
+    }
+    .pi-stat:last-child { border-right: none; }
+    .pi-stat-icon {
+        width: 2.25rem; height: 2.25rem; border-radius: 0.5rem;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.875rem; flex-shrink: 0;
+    }
+    .pi-stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
+    .pi-stat-icon.gray { background: rgba(100,116,139,0.08); color: var(--pi-muted); }
+    .pi-stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
+    .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-stat-value { font-size: 1.375rem; font-weight: 700; line-height: 1; }
 
-    /* Filters */
-    .pi-filters { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1.25rem; box-shadow: var(--pi-shadow); margin-bottom: 1.25rem; width: 100%; }
-    .pi-filters-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; font-size: 0.875rem; font-weight: 500; color: var(--pi-text-muted); }
-    .pi-filters-header .badge { font-size: 0.7rem; }
-    .pi-filters-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 0.75rem; align-items: end; }
-    .pi-filters .form-control, .pi-filters .form-select { border-radius: 0.5rem; border-color: var(--pi-border); font-size: 0.875rem; height: 2.5rem; }
-    .pi-filters .form-control:focus, .pi-filters .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 3px var(--pi-primary-light); }
-    .pi-btn-clear { border: none; background: transparent; color: var(--pi-text-muted); font-size: 0.875rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; display: inline-flex; align-items: center; gap: 0.375rem; cursor: pointer; white-space: nowrap; }
-    .pi-btn-clear:hover { background: #f0f0f0; color: var(--pi-text); }
+    /* ── TOOLBAR (filters + search) ── */
+    .pi-toolbar {
+        background: #fff; border-bottom: 1px solid var(--pi-border);
+        padding: 0.625rem 1.25rem;
+        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+    }
+    .pi-toolbar select {
+        height: 2.125rem; border: 1px solid var(--pi-border);
+        border-radius: var(--pi-radius); font-size: 0.8125rem;
+        padding: 0 2rem 0 0.625rem; background: var(--pi-bg);
+        min-width: 140px; cursor: pointer;
+    }
+    .pi-toolbar select:focus {
+        outline: none; border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light);
+    }
+    .pi-btn-clear {
+        border: none; background: transparent; color: var(--pi-text-muted);
+        font-size: 0.8125rem; padding: 0.375rem 0.5rem; border-radius: var(--pi-radius);
+        display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer;
+        white-space: nowrap;
+    }
+    .pi-btn-clear:hover { background: var(--pi-danger-light); color: var(--pi-danger); }
 
-    /* Table card */
-    .pi-table-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; }
-    .pi-table-header { border-bottom: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
-    .pi-table-header h2 { font-size: 0.875rem; font-weight: 600; margin: 0; }
-    .pi-table-header small { font-size: 0.75rem; color: var(--pi-text-muted); }
-
-    /* Table */
-    .pi-table { width: 100%; margin: 0; font-size: 0.92rem; }
-    .pi-table thead th { background: rgba(51, 102, 204, 0.08); border-bottom: 1px solid var(--pi-border); font-size: 0.82rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.03em; padding: 0.75rem 1rem; white-space: nowrap; }
-    .pi-table tbody td { padding: 0.75rem 1rem; vertical-align: middle; border-bottom: 1px solid #f0f2f5; }
-    .pi-table tbody tr:hover { background: #f8f9fb; }
+    /* ── TABLE ── */
+    .pi-table-wrap { background: #fff; overflow: auto; }
+    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; }
+    .pi-table thead th {
+        background: var(--pi-primary);
+        color: #fff;
+        font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+        padding: 0.625rem 1rem; white-space: nowrap;
+        position: sticky; top: 0; z-index: 5;
+        border-bottom: none;
+    }
+    .pi-table tbody td {
+        padding: 0.5rem 1rem; vertical-align: middle;
+        border-bottom: 1px solid #f0f4ff;
+    }
+    .pi-table tbody tr { transition: background 0.1s; }
+    .pi-table tbody tr:hover { background: var(--pi-primary-light); }
     .pi-table tbody tr:last-child td { border-bottom: none; }
-    .pi-table .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.75rem; color: var(--pi-text-muted); }
+    .pi-table .mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 0.6875rem; color: var(--pi-muted); }
 
-    /* Status badges */
-    .pi-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.01em; }
-    .pi-badge-planeada { background: rgba(100, 116, 139, 0.1); color: #475569; }
-    .pi-badge-inscricoes { background: var(--pi-success-light); color: #1e6e49; }
+    /* ── PAGINATION BAR ── */
+    .pi-pagination-bar {
+        background: var(--pi-primary);
+        color: #fff;
+        padding: 0.5rem 1.25rem;
+        display: flex; align-items: center; justify-content: space-between;
+        font-size: 0.75rem;
+    }
+    .pi-pagination-bar .info { opacity: 0.85; }
+    .pi-pagination-bar .pages { display: flex; gap: 0.25rem; }
+    .pi-pagination-bar .page-btn {
+        padding: 0.25rem 0.625rem; border-radius: 0.25rem;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: transparent; color: #fff; cursor: pointer;
+        font-size: 0.75rem; font-weight: 500; transition: all 0.15s;
+    }
+    .pi-pagination-bar .page-btn:hover { background: rgba(255,255,255,0.15); }
+    .pi-pagination-bar .page-btn.active { background: #fff; color: var(--pi-primary); font-weight: 700; border-color: #fff; }
+
+    /* ── BADGES ── */
+    .pi-badge {
+        display: inline-flex; align-items: center; gap: 0.25rem;
+        padding: 0.15rem 0.5rem; border-radius: 9999px;
+        font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em;
+    }
+    .pi-badge-planeada { background: rgba(100,116,139,0.08); color: #475569; }
+    .pi-badge-inscricoes { background: var(--pi-success-light); color: #15803d; }
     .pi-badge-andamento { background: var(--pi-info-light); color: #0369a1; }
-    .pi-badge-concluida { background: rgba(30, 41, 59, 0.1); color: #1e293b; }
+    .pi-badge-concluida { background: rgba(30,41,59,0.08); color: #1e293b; }
     .pi-badge-periodo { background: var(--pi-primary-light); color: var(--pi-primary); }
     .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; font-size: 0.6875rem; }
-    .pi-badge-pub-sim { background: var(--pi-success-light); color: #1e6e49; }
-    .pi-badge-pub-nao { background: rgba(100, 116, 139, 0.1); color: #475569; }
+    .pi-badge-pub-sim { background: var(--pi-success-light); color: #15803d; }
+    .pi-badge-pub-nao { background: rgba(100,116,139,0.08); color: #475569; }
 
-    /* Action buttons */
-    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; }
-    .pi-action-btn { width: 2rem; height: 2rem; border: none; border-radius: 0.375rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 0.8125rem; }
-    .pi-action-btn.view { background: transparent; color: var(--pi-text-muted); }
-    .pi-action-btn.view:hover { background: #f0f0f0; color: var(--pi-text); }
+    /* ── ACTION BUTTONS ── */
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; opacity: 0; transition: opacity 0.15s; }
+    .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    .pi-action-btn {
+        width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.15s; font-size: 0.75rem;
+    }
+    .pi-action-btn.view { background: transparent; color: var(--pi-primary); }
+    .pi-action-btn.view:hover { background: var(--pi-primary-light); }
     .pi-action-btn.edit { background: transparent; color: var(--pi-primary); border: 1px solid var(--pi-primary); }
     .pi-action-btn.edit:hover { background: var(--pi-primary); color: #fff; }
     .pi-action-btn.delete { background: transparent; color: var(--pi-danger); border: 1px solid var(--pi-danger); }
     .pi-action-btn.delete:hover { background: var(--pi-danger); color: #fff; }
 
-    /* Empty state */
-    .pi-empty { text-align: center; padding: 4rem 1rem; color: var(--pi-text-muted); }
-    .pi-empty-icon { width: 4rem; height: 4rem; border-radius: 1rem; background: #f0f2f5; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
-    .pi-empty h3 { font-size: 1.125rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
-    .pi-empty p { font-size: 0.875rem; }
+    /* ── EMPTY STATE ── */
+    .pi-empty { text-align: center; padding: 3rem 1rem; color: var(--pi-text-muted); }
+    .pi-empty-icon { width: 3.5rem; height: 3.5rem; border-radius: 0.75rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 0.75rem; color: var(--pi-primary); }
+    .pi-empty h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--pi-text); }
+    .pi-empty p { font-size: 0.8125rem; }
 
-    /* Mobile cards */
-    .pi-mobile-cards { display: none; }
-    .pi-mobile-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1rem; box-shadow: var(--pi-shadow); margin-bottom: 0.75rem; }
-    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.9375rem; }
-    .pi-mobile-card .card-meta { font-size: 0.75rem; color: var(--pi-text-muted); margin-bottom: 0.5rem; }
-    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; font-size: 0.8125rem; color: var(--pi-text-muted); }
-    .pi-mobile-card .card-actions { display: flex; gap: 0.5rem; }
-    .pi-mobile-card .card-actions .btn { font-size: 0.75rem; padding: 0.25rem 0.5rem; }
+    /* ── MOBILE CARDS ── */
+    .pi-mobile-cards { display: none; padding: 0.75rem; }
+    .pi-mobile-card {
+        background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
+        padding: 0.75rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
+    }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.375rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); }
+    .pi-mobile-card .card-meta { font-size: 0.6875rem; color: var(--pi-text-muted); margin-bottom: 0.375rem; }
+    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; }
+    .pi-mobile-card .card-actions .btn { font-size: 0.6875rem; padding: 0.2rem 0.5rem; }
 
-    /* Modal improvements */
+    /* ── MODAL ── */
     .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
-    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1.25rem 1.5rem; }
-    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.75rem; }
-    .pi-modal .modal-header .header-icon { width: 2.5rem; height: 2.5rem; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; }
-    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
-    .pi-modal .modal-header .header-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
-    .pi-modal .modal-title { font-size: 1rem; font-weight: 600; margin: 0; }
-    .pi-modal .modal-subtitle { font-size: 0.8125rem; color: var(--pi-text-muted); margin: 0; }
-    .pi-modal .modal-body { padding: 1.25rem 1.5rem; }
-    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 1rem 1.5rem; }
-    .pi-modal .modal-footer .btn { border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; }
+    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1rem 1.25rem; background: var(--pi-primary-light); }
+    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
+    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
+    .pi-modal .modal-header .header-icon.green { background: var(--pi-success); color: #fff; }
+    .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
+    .pi-modal .modal-subtitle { font-size: 0.75rem; color: var(--pi-text-muted); margin: 0; }
+    .pi-modal .modal-body { padding: 1rem 1.25rem; }
+    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; background: var(--pi-bg); }
+    .pi-modal .modal-footer .btn { border-radius: var(--pi-radius); font-size: 0.8125rem; font-weight: 500; padding: 0.4375rem 0.875rem; }
 
-    /* View modal detail rows */
-    .pi-detail-row { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f2f5; }
+    /* ── VIEW MODAL DETAIL ROWS ── */
+    .pi-detail-row { display: flex; align-items: flex-start; gap: 0.625rem; padding: 0.5rem 0; border-bottom: 1px solid #f0f4ff; }
     .pi-detail-row:last-child { border-bottom: none; }
-    .pi-detail-icon { width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f0f2f5; display: flex; align-items: center; justify-content: center; color: var(--pi-text-muted); font-size: 0.8125rem; flex-shrink: 0; }
-    .pi-detail-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); }
-    .pi-detail-value { font-size: 0.875rem; font-weight: 500; margin-top: 0.125rem; }
+    .pi-detail-icon { width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
+    .pi-detail-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; }
 
-    /* Form improvements */
-    .pi-form .form-label { font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.375rem; }
+    /* ── FORM ── */
+    .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
     .pi-form .form-label .required { color: var(--pi-danger); }
-    .pi-form .form-control, .pi-form .form-select { border-radius: 0.5rem; border-color: var(--pi-border); font-size: 0.875rem; }
-    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 3px var(--pi-primary-light); }
-    .pi-form .form-control.is-invalid { border-color: var(--pi-danger); }
-    .pi-form .form-control.is-invalid:focus { box-shadow: 0 0 0 3px var(--pi-danger-light); }
-    .pi-form .invalid-feedback { font-size: 0.75rem; }
-    .pi-form .form-text { font-size: 0.75rem; color: var(--pi-text-muted); }
-    .pi-form .section-title { font-size: 0.8125rem; font-weight: 600; color: var(--pi-primary); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--pi-border); display: flex; align-items: center; gap: 0.5rem; }
+    .pi-form .form-control, .pi-form .form-select { border-radius: var(--pi-radius); border-color: var(--pi-border); font-size: 0.8125rem; height: 2.25rem; }
+    .pi-form textarea.form-control { height: auto; }
+    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light); }
+    .pi-form .form-text { font-size: 0.6875rem; color: var(--pi-text-muted); }
+    .pi-form .section-title {
+        font-size: 0.75rem; font-weight: 600; color: var(--pi-primary);
+        margin-bottom: 0.625rem; padding-bottom: 0.375rem;
+        border-bottom: 2px solid var(--pi-primary);
+        display: flex; align-items: center; gap: 0.375rem;
+        text-transform: uppercase; letter-spacing: 0.03em;
+    }
 
-    /* Days grid */
-    .pi-days-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .pi-day-check { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; }
-    .pi-day-check input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: var(--pi-primary); }
+    /* ── DAYS GRID ── */
+    .pi-days-grid { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+    .pi-day-check { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 500; }
+    .pi-day-check input[type="checkbox"] { width: 0.875rem; height: 0.875rem; accent-color: var(--pi-primary); }
 
-    /* Loading spinner */
-    .pi-spinner { display: inline-block; width: 1rem; height: 1rem; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.375rem; }
+    /* ── LOADING SPINNER ── */
+    .pi-spinner { display: inline-block; width: 0.875rem; height: 0.875rem; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.25rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Responsive */
+    /* ── BUTTON PRIMARY ── */
+    .pi-btn-primary { background: var(--pi-primary); border: none; color: #fff; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; }
+    .pi-btn-primary:hover { background: var(--pi-primary-dark); color: #fff; }
+
+    /* ── SELECT2 ── */
+    .select2-container--bootstrap-5 .select2-selection { border-radius: var(--pi-radius) !important; border-color: var(--pi-border) !important; height: 2.25rem !important; font-size: 0.8125rem !important; }
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered { line-height: 2.25rem !important; }
+
+    /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
         .pi-desktop-table { display: none !important; }
         .pi-mobile-cards { display: block !important; }
     }
     @media (max-width: 767.98px) {
-        .pi-stats { grid-template-columns: repeat(2, 1fr); }
-        .pi-filters-grid { grid-template-columns: 1fr; }
-        .pi-header { flex-direction: column; align-items: stretch; }
-        .pi-header .pi-btn-primary { justify-content: center; }
+        .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .pi-stat { border-bottom: 1px solid var(--pi-border); }
+        .pi-toolbar { flex-direction: column; }
+        .pi-page-header { flex-direction: column; align-items: stretch; }
+        .pi-page-header .pi-btn-create { justify-content: center; }
+        .pi-pagination-bar { flex-direction: column; gap: 0.5rem; text-align: center; }
     }
     @media (max-width: 575.98px) {
-        .pi-page { padding: 1rem 0.75rem; }
+        .pi-page-header { padding: 0.75rem; }
+        .pi-toolbar { padding: 0.5rem 0.75rem; }
+        .pi-stat { padding: 0.5rem 0.75rem; }
     }
-
-    /* Select2 overrides */
-    .select2-container--bootstrap-5 .select2-selection { border-radius: 0.5rem !important; border-color: var(--pi-border) !important; height: 2.5rem !important; font-size: 0.875rem !important; }
-    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered { line-height: 2.5rem !important; }
 </style>
 @endsection
 
 @section('content')
 <div class="pi-page">
-    {{-- HEADER --}}
-    <div class="pi-header">
-        <div class="pi-header-left">
-            <div class="pi-header-icon">
-                <i class="fas fa-chalkboard-teacher fa-lg"></i>
-            </div>
-            <div>
-                <h1>Gestão de Turmas</h1>
-                <p>Gerir todas as turmas dos cursos no sistema</p>
+
+    {{-- ============================================= --}}
+    {{-- BLUE HEADER                                   --}}
+    {{-- ============================================= --}}
+    <div class="pi-page-header">
+        <div>
+            <div style="display:flex;align-items:center;gap:0.625rem">
+                <i class="fas fa-chalkboard-teacher fa-lg" style="opacity:0.9"></i>
+                <div>
+                    <h1>Gestão de Turmas</h1>
+                    <p>{{ $turmas->count() }} turma(s) registada(s) no sistema</p>
+                </div>
             </div>
         </div>
-        <button class="btn pi-btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovasTurma">
+        <button class="pi-btn-create" data-bs-toggle="modal" data-bs-target="#modalNovasTurma">
             <i class="fas fa-plus"></i> Nova Turma
         </button>
     </div>
 
-    {{-- STATS --}}
-    <div class="pi-stats">
-        <div class="pi-stat-card">
-            <div class="stat-label">Total de Turmas</div>
-            <div class="stat-value text-primary">{{ $turmas->count() }}</div>
+    {{-- ============================================= --}}
+    {{-- STATS BAR                                     --}}
+    {{-- ============================================= --}}
+    <div class="pi-stats-bar">
+        <div class="pi-stat">
+            <div class="pi-stat-icon blue"><i class="fas fa-chalkboard"></i></div>
+            <div>
+                <div class="pi-stat-label">Total</div>
+                <div class="pi-stat-value" style="color:var(--pi-primary)">{{ $turmas->count() }}</div>
+            </div>
         </div>
-        <div class="pi-stat-card">
-            <div class="stat-label">Inscrições Abertas</div>
-            <div class="stat-value text-success">{{ $turmas->where('status', 'inscricoes_abertas')->count() }}</div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon green"><i class="fas fa-door-open"></i></div>
+            <div>
+                <div class="pi-stat-label">Inscrições Abertas</div>
+                <div class="pi-stat-value" style="color:var(--pi-success)">{{ $turmas->where('status', 'inscricoes_abertas')->count() }}</div>
+            </div>
         </div>
-        <div class="pi-stat-card">
-            <div class="stat-label">Em Andamento</div>
-            <div class="stat-value text-info">{{ $turmas->where('status', 'em_andamento')->count() }}</div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon cyan"><i class="fas fa-play-circle"></i></div>
+            <div>
+                <div class="pi-stat-label">Em Andamento</div>
+                <div class="pi-stat-value" style="color:var(--pi-info)">{{ $turmas->where('status', 'em_andamento')->count() }}</div>
+            </div>
         </div>
-        <div class="pi-stat-card">
-            <div class="stat-label">Concluídas</div>
-            <div class="stat-value text-muted">{{ $turmas->where('status', 'concluida')->count() }}</div>
-        </div>
-    </div>
-
-    {{-- FILTERS --}}
-    <div class="pi-filters">
-        <div class="pi-filters-header">
-            <i class="fas fa-filter"></i> Filtros
-        </div>
-        <div class="pi-filters-grid">
-            <select class="form-select" id="filtroCurso">
-                <option value="">Todos os cursos</option>
-            </select>
-            <select class="form-select" id="filtroStatus">
-                <option value="">Todos os status</option>
-                <option value="planeada">Planeada</option>
-                <option value="inscricoes_abertas">Inscrições Abertas</option>
-                <option value="em_andamento">Em Andamento</option>
-                <option value="concluida">Concluída</option>
-            </select>
-            <select class="form-select" id="filtroPeriodo">
-                <option value="">Todos os períodos</option>
-                <option value="manha">Manhã</option>
-                <option value="tarde">Tarde</option>
-                <option value="noite">Noite</option>
-            </select>
-            <button class="pi-btn-clear" onclick="limparFiltros()">
-                <i class="fas fa-times"></i> Limpar
-            </button>
+        <div class="pi-stat">
+            <div class="pi-stat-icon gray"><i class="fas fa-check-double"></i></div>
+            <div>
+                <div class="pi-stat-label">Concluídas</div>
+                <div class="pi-stat-value" style="color:var(--pi-muted)">{{ $turmas->where('status', 'concluida')->count() }}</div>
+            </div>
         </div>
     </div>
 
-    {{-- TABLE --}}
-    <div class="pi-table-card">
-        <div class="pi-table-header">
-            <h2>Lista de Turmas</h2>
-            <small>{{ $turmas->count() }} turma(s)</small>
-        </div>
+    {{-- ============================================= --}}
+    {{-- TOOLBAR (filters side by side)                --}}
+    {{-- ============================================= --}}
+    <div class="pi-toolbar">
+        <select class="form-select" id="filtroCurso" style="border-color:var(--pi-border);min-width:180px">
+            <option value="">Todos os cursos</option>
+        </select>
+        <select class="form-select" id="filtroStatus" style="border-color:var(--pi-border)">
+            <option value="">Todos os status</option>
+            <option value="planeada">Planeada</option>
+            <option value="inscricoes_abertas">Inscrições Abertas</option>
+            <option value="em_andamento">Em Andamento</option>
+            <option value="concluida">Concluída</option>
+        </select>
+        <select class="form-select" id="filtroPeriodo" style="border-color:var(--pi-border)">
+            <option value="">Todos os períodos</option>
+            <option value="manha">Manhã</option>
+            <option value="tarde">Tarde</option>
+            <option value="noite">Noite</option>
+        </select>
+        <button class="pi-btn-clear" onclick="limparFiltros()">
+            <i class="fas fa-times-circle"></i> Limpar
+        </button>
+    </div>
 
+    {{-- ============================================= --}}
+    {{-- TABLE                                         --}}
+    {{-- ============================================= --}}
+    <div class="pi-table-wrap">
         {{-- Desktop Table --}}
         <div class="pi-desktop-table">
             <table class="pi-table">
                 <thead>
                     <tr>
-                        <th style="width:60px">ID</th>
+                        <th style="width:50px">ID</th>
                         <th>Curso</th>
                         <th>Centro</th>
                         <th>Formador</th>
@@ -262,20 +363,20 @@
                         <th>Horário</th>
                         <th>Vagas</th>
                         <th>Público</th>
-                        <th style="text-align:right">Ações</th>
+                        <th style="text-align:right;width:100px">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($turmas as $turma)
                         <tr>
                             <td class="mono">#{{ $turma->id }}</td>
-                            <td><strong>{{ $turma->curso->nome ?? 'N/A' }}</strong></td>
-                            <td style="font-size:0.8125rem">{{ $turma->centro->nome ?? '—' }}</td>
-                            <td style="font-size:0.8125rem">
+                            <td><strong style="font-size:0.8125rem">{{ $turma->curso->nome ?? 'N/A' }}</strong></td>
+                            <td style="font-size:0.75rem">{{ $turma->centro->nome ?? '—' }}</td>
+                            <td style="font-size:0.75rem">
                                 @if($turma->formador)
-                                    <strong>{{ $turma->formador->nome }}</strong>
+                                    <span style="color:var(--pi-success);font-weight:500"><i class="fas fa-user-tie me-1" style="font-size:0.625rem"></i>{{ $turma->formador->nome }}</span>
                                 @else
-                                    <span style="color:var(--pi-text-muted)"><i class="fas fa-exclamation-triangle" style="color:var(--pi-warning);margin-right:0.25rem"></i>Não atribuído</span>
+                                    <span class="pi-badge" style="background:var(--pi-warning-light);color:#92400e"><i class="fas fa-exclamation-triangle"></i> Sem</span>
                                 @endif
                             </td>
                             <td>
@@ -316,22 +417,22 @@
                                     $icone = $icones[$turma->periodo] ?? 'fas fa-clock';
                                 @endphp
                                 <span class="pi-badge pi-badge-periodo">
-                                    <i class="{{ $icone }}" style="margin-right:0.25rem"></i>{{ ucfirst($turma->periodo) }}
+                                    <i class="{{ $icone }}"></i> {{ ucfirst($turma->periodo) }}
                                 </span>
                             </td>
-                            <td style="font-size:0.8125rem;white-space:nowrap">
+                            <td style="font-size:0.75rem;white-space:nowrap">
                                 @if($turma->hora_inicio && $turma->hora_fim)
                                     {{ $turma->hora_inicio }} - {{ $turma->hora_fim }}
                                 @else
                                     —
                                 @endif
                             </td>
-                            <td style="font-size:0.8125rem;text-align:center">{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? 0 }}</td>
+                            <td style="font-size:0.75rem;text-align:center">{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? 0 }}</td>
                             <td>
                                 @if($turma->publicado)
-                                    <span class="pi-badge pi-badge-pub-sim">Sim</span>
+                                    <span class="pi-badge pi-badge-pub-sim"><i class="fas fa-eye"></i> Sim</span>
                                 @else
-                                    <span class="pi-badge pi-badge-pub-nao">Não</span>
+                                    <span class="pi-badge pi-badge-pub-nao"><i class="fas fa-eye-slash"></i> Não</span>
                                 @endif
                             </td>
                             <td>
@@ -391,7 +492,8 @@
                         </span>
                     </div>
                     <div class="card-details">
-                        <span class="pi-badge pi-badge-periodo"><i class="{{ $icones[$turma->periodo] ?? 'fas fa-clock' }}" style="margin-right:0.25rem"></i>{{ ucfirst($turma->periodo) }}</span>
+                        @php $icone = $icones[$turma->periodo] ?? 'fas fa-clock'; @endphp
+                        <span class="pi-badge pi-badge-periodo"><i class="{{ $icone }}"></i> {{ ucfirst($turma->periodo) }}</span>
                         @if($turma->hora_inicio && $turma->hora_fim)
                             <span>{{ $turma->hora_inicio }} - {{ $turma->hora_fim }}</span>
                         @endif
@@ -399,7 +501,7 @@
                     </div>
                     <div class="card-actions">
                         <button class="btn btn-sm btn-outline-secondary" onclick="visualizarTurma({{ $turma->id }})"><i class="fas fa-eye me-1"></i>Ver</button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ route('turmas.show', $turma) }}'" ><i class="fas fa-cogs me-1"></i>Gerir</button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ route('turmas.show', $turma) }}'"><i class="fas fa-cogs me-1"></i>Gerir</button>
                         <button class="btn btn-sm btn-outline-danger" onclick="eliminarTurma({{ $turma->id }})"><i class="fas fa-trash me-1"></i>Eliminar</button>
                     </div>
                 </div>
@@ -410,6 +512,14 @@
                     <p>Crie uma nova turma para começar</p>
                 </div>
             @endforelse
+        </div>
+    </div>
+
+    {{-- PAGINATION BAR --}}
+    <div class="pi-pagination-bar">
+        <span class="info">Mostrando {{ $turmas->count() }} turma(s)</span>
+        <div class="pages">
+            <button class="page-btn active">1</button>
         </div>
     </div>
 </div>
@@ -431,7 +541,7 @@
             <div class="modal-body" id="conteudoVisualizarTurma">
                 <div class="text-center py-4">
                     <div class="spinner-border text-primary" role="status"></div>
-                    <p class="text-muted mt-2">Carregando...</p>
+                    <p class="text-muted mt-2" style="font-size:0.8125rem">Carregando...</p>
                 </div>
             </div>
         </div>
@@ -458,32 +568,30 @@
                     <div class="row">
                         {{-- COLUNA ESQUERDA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-info-circle"></i> Informações da Turma
-                            </div>
+                            <div class="section-title"><i class="fas fa-info-circle"></i> Informações da Turma</div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Curso <span class="required">*</span></label>
                                 <select class="form-select" name="curso_id" required>
                                     <option value="">Selecione o curso</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Centro <span class="required">*</span></label>
                                 <select class="form-select" name="centro_id" disabled>
                                     <option value="">Selecione um curso primeiro</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Formador</label>
                                 <select class="form-select" name="formador_id">
                                     <option value="">Selecione (opcional)</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Período <span class="required">*</span></label>
                                 <select class="form-select" name="periodo" id="periodoNovo" required>
                                     <option value="">Selecione ou detecte pela hora</option>
@@ -494,7 +602,7 @@
                                 <div class="form-text">Detecta automaticamente baseado na hora de início</div>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Status</label>
                                 <select class="form-select" name="status">
                                     <option value="planeada">Planeada</option>
@@ -508,34 +616,32 @@
 
                         {{-- COLUNA DIREITA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-clock"></i> Horário
-                            </div>
+                            <div class="section-title"><i class="fas fa-clock"></i> Horário</div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Hora Início <span class="required">*</span></label>
                                 <input type="time" class="form-control" name="hora_inicio" id="horaInicioNovo" required>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Hora Fim</label>
                                 <input type="time" class="form-control" name="hora_fim">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Duração (Semanas)</label>
                                 <input type="number" class="form-control" name="duracao_semanas" min="1">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Vagas Disponíveis</label>
                                 <input type="number" class="form-control" name="vagas_totais" min="1">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" name="publicado" id="publicadoNovo">
-                                    <label class="form-check-label" for="publicadoNovo">Publicar no site</label>
+                                    <label class="form-check-label" for="publicadoNovo" style="font-size:0.8125rem">Publicar no site</label>
                                 </div>
                                 <div class="form-text">Marque para mostrar esta turma no site público</div>
                             </div>
@@ -543,10 +649,8 @@
                     </div>
 
                     {{-- DIAS DA SEMANA --}}
-                    <div class="mb-3">
-                        <div class="section-title">
-                            <i class="fas fa-calendar-week"></i> Dias da Semana
-                        </div>
+                    <div class="mb-2">
+                        <div class="section-title"><i class="fas fa-calendar-week"></i> Dias da Semana</div>
                         <div class="pi-days-grid">
                             <div class="pi-day-check"><input type="checkbox" class="dia-semana" value="Segunda"> Segunda</div>
                             <div class="pi-day-check"><input type="checkbox" class="dia-semana" value="Terça"> Terça</div>
@@ -598,25 +702,23 @@
                     <div class="row">
                         {{-- COLUNA ESQUERDA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-info-circle"></i> Informações da Turma
-                            </div>
+                            <div class="section-title"><i class="fas fa-info-circle"></i> Informações da Turma</div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Curso <span class="required">*</span></label>
                                 <select class="form-select" id="editCursoId" name="curso_id" required>
                                     <option value="">Selecione o curso</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Formador</label>
                                 <select class="form-select" id="editFormadorId" name="formador_id">
                                     <option value="">Selecione (opcional)</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Período <span class="required">*</span></label>
                                 <select class="form-select" id="editPeriodo" name="periodo" required>
                                     <option value="">Selecione ou detecte pela hora</option>
@@ -627,7 +729,7 @@
                                 <div class="form-text">Detecta automaticamente baseado na hora de início</div>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Status</label>
                                 <select class="form-select" id="editStatus" name="status">
                                     <option value="planeada">Planeada</option>
@@ -640,21 +742,19 @@
 
                         {{-- COLUNA DIREITA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-clock"></i> Horário
-                            </div>
+                            <div class="section-title"><i class="fas fa-clock"></i> Horário</div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Hora Início <span class="required">*</span></label>
                                 <input type="time" class="form-control" id="editHoraInicio" name="hora_inicio" required>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Hora Fim</label>
                                 <input type="time" class="form-control" id="editHoraFim" name="hora_fim">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Duração (Semanas)</label>
                                 <input type="number" class="form-control" id="editDuracaoSemanas" name="duracao_semanas" min="1">
                             </div>
@@ -662,10 +762,8 @@
                     </div>
 
                     {{-- DIAS DA SEMANA --}}
-                    <div class="mb-3">
-                        <div class="section-title">
-                            <i class="fas fa-calendar-week"></i> Dias da Semana
-                        </div>
+                    <div class="mb-2">
+                        <div class="section-title"><i class="fas fa-calendar-week"></i> Dias da Semana</div>
                         <div class="pi-days-grid">
                             <div class="pi-day-check"><input type="checkbox" class="dia-semana-edit" value="Segunda"> Segunda</div>
                             <div class="pi-day-check"><input type="checkbox" class="dia-semana-edit" value="Terça"> Terça</div>
@@ -678,7 +776,7 @@
                     </div>
 
                     {{-- DATA ARRANQUE --}}
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <label class="form-label">Data de Arranque <span class="required">*</span></label>
                         <input type="date" class="form-control" id="editDataArranque" name="data_arranque" required>
                         <div class="form-text">Selecione apenas datas futuras</div>
@@ -686,14 +784,14 @@
 
                     {{-- VAGAS E PUBLICAÇÃO --}}
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-2">
                             <label class="form-label">Vagas Disponíveis</label>
                             <input type="number" class="form-control" id="editVagasTotais" name="vagas_totais" min="1">
                         </div>
-                        <div class="col-md-6 mb-3 d-flex align-items-end">
+                        <div class="col-md-6 mb-2 d-flex align-items-end">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="editPublicado" name="publicado">
-                                <label class="form-check-label" for="editPublicado">Publicar no site</label>
+                                <label class="form-check-label" for="editPublicado" style="font-size:0.8125rem">Publicar no site</label>
                             </div>
                         </div>
                     </div>
@@ -824,7 +922,7 @@ function carregarCentrosPorCurso(cursoId) {
         error: function(xhr) {
             console.error('Erro ao carregar centros:', xhr);
             $select.html('<option value="">Erro ao carregar centros</option>').prop('disabled', true);
-            Swal.fire('Erro', 'Não foi possível carregar os centros para este curso.', 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Não foi possível carregar os centros para este curso.', confirmButtonColor: '#1d4ed8' });
         }
     });
 }
@@ -856,62 +954,19 @@ function carregarFormadores() {
 }
 
 /**
- * Recarregar página para atualizar lista de turmas
- */
-function aplicarFiltros() {
-    const curso = $('#filtroCurso').val() || '';
-    const status = $('#filtroStatus').val() || '';
-    const periodo = $('#filtroPeriodo').val() || '';
-    
-    let url = '/turmas?';
-    if (curso) url += `curso_id=${curso}&`;
-    if (status) url += `status=${encodeURIComponent(status)}&`;
-    if (periodo) url += `periodo=${encodeURIComponent(periodo)}`;
-    
-    window.location.href = url;
-}
-
-function limparFiltros() {
-    $('#filtroCurso').val('');
-    $('#filtroStatus').val('');
-    $('#filtroPeriodo').val('');
-    window.location.href = '/turmas';
-}
-
-function carregarTurmas() {
-    location.reload();
-}
-
-/**
  * Configurar eventos do modal
  */
 function configurarEventosModal() {
-    carregarCursos();
-    
-    $(window).on('focus', function() {
-        console.log('Página ganhou foco, recarregando cursos...');
-        carregarCursos();
-    });
-    
     $('#modalNovasTurma').on('show.bs.modal', function() {
-        console.log('Modal de nova turma aberto');
+        carregarCursos();
         $('#formNovaTurmaAjax')[0].reset();
         $('#diasError').hide();
-        $('#formNovaTurmaAjax .is-invalid').removeClass('is-invalid');
-        $('.dia-semana').prop('checked', false);
         $('#modalNovasTurma select[name="centro_id"]').html('<option value="">Selecione um curso primeiro</option>').prop('disabled', true);
-        carregarCursos();
-        carregarFormadores();
     });
 
-    $(document).on('change', 'select[name="curso_id"]', function() {
+    $(document).on('change', '#modalNovasTurma select[name="curso_id"]', function() {
         const cursoId = $(this).val();
-        console.log('Evento change no select de curso disparado. Valor selecionado:', cursoId);
-        if (cursoId) {
-            carregarCentrosPorCurso(cursoId);
-        } else {
-            $('#modalNovasTurma select[name="centro_id"]').html('<option value="">Selecione o centro</option>').prop('disabled', true);
-        }
+        carregarCentrosPorCurso(cursoId);
     });
 
     $('#formNovaTurmaAjax').on('submit', function(e) {
@@ -923,55 +978,51 @@ function configurarEventosModal() {
         e.preventDefault();
         atualizarTurma();
     });
-
-    // Bind filter changes
-    $('#filtroCurso, #filtroStatus, #filtroPeriodo').on('change', aplicarFiltros);
 }
 
 /**
- * Configurar validações de data
+ * Configurar validações
  */
 function configurarValidacoes() {
-    const hoje = new Date().toISOString().split('T')[0];
-    $('#dataArranqueNovo').attr('min', hoje);
-    $('#editDataArranque').attr('min', hoje);
-    
-    $('input[name="data_arranque"], #editDataArranque').on('change', function() {
-        const dataEscolhida = new Date($(this).val());
-        const dataHoje = new Date(hoje);
-        if (dataEscolhida < dataHoje) {
-            $(this).val('');
-            Swal.fire('Aviso', 'Selecione uma data futura', 'warning');
+    $(document).on('change', 'select[name="status"]', function() {
+        const status = $(this).val();
+        const formadorSelect = $(this).closest('form').find('select[name="formador_id"]');
+        if (status === 'inscricoes_abertas' && !formadorSelect.val()) {
+            formadorSelect.addClass('is-invalid');
+        } else {
+            formadorSelect.removeClass('is-invalid');
         }
     });
 }
 
 /**
- * Auto-preencher período baseado na hora de início
+ * Configurar auto preenchimento de período
  */
 function configurarAutoPreenchimento() {
-    function detectarPeriodo(hora) {
-        if (!hora) return '';
-        const horas = parseInt(hora.split(':')[0]);
-        if (horas >= 6 && horas < 12) return 'manha';
-        if (horas >= 12 && horas < 18) return 'tarde';
-        if (horas >= 18 || horas < 6) return 'noite';
-        return '';
-    }
-    
-    $('#horaInicioNovo').on('change', function() {
-        const periodo = detectarPeriodo($(this).val());
-        if (periodo) {
-            $('#periodoNovo').val(periodo);
-        }
+    $(document).on('change', '#horaInicioNovo', function() {
+        const hora = parseInt($(this).val().split(':')[0]);
+        let periodo = '';
+        if (hora >= 6 && hora < 12) periodo = 'manha';
+        else if (hora >= 12 && hora < 18) periodo = 'tarde';
+        else periodo = 'noite';
+        $('#periodoNovo').val(periodo);
     });
-    
-    $('#editHoraInicio').on('change', function() {
-        const periodo = detectarPeriodo($(this).val());
-        if (periodo) {
-            $('#editPeriodo').val(periodo);
-        }
+
+    $(document).on('change', '#editHoraInicio', function() {
+        const hora = parseInt($(this).val().split(':')[0]);
+        let periodo = '';
+        if (hora >= 6 && hora < 12) periodo = 'manha';
+        else if (hora >= 12 && hora < 18) periodo = 'tarde';
+        else periodo = 'noite';
+        $('#editPeriodo').val(periodo);
     });
+}
+
+/**
+ * Carregar turmas (reload)
+ */
+function carregarTurmas() {
+    location.reload();
 }
 
 /**
@@ -986,18 +1037,25 @@ window.visualizarTurma = function(id) {
             'X-Requested-With': 'XMLHttpRequest'
         },
         success: function(response) {
-            const turma = response.dados || response.data;
+            const turma = response.dados || response.data || response;
             
-            const cursoNome = turma.curso ? turma.curso.nome : 'N/A';
-            const formadorNome = turma.formador ? turma.formador.nome : 'Sem atribuição';
-            const diaSemana = turma.dia_semana ? turma.dia_semana.join(', ') : '—';
+            const cursoNome = turma.curso?.nome || 'N/A';
+            const centroNome = turma.centro?.nome || '—';
+            const formadorNome = turma.formador?.nome || '<span style="color:var(--pi-warning)"><i class="fas fa-exclamation-triangle"></i> Não atribuído</span>';
+            
+            let diaSemana = '—';
+            if (turma.dia_semana && Array.isArray(turma.dia_semana)) {
+                diaSemana = turma.dia_semana.map(d => '<span class="pi-badge pi-badge-dia" style="margin-right:2px">' + d.substring(0,3) + '</span>').join(' ');
+            }
+            
             const horaInicio = turma.hora_inicio || '—';
             const horaFim = turma.hora_fim || '—';
-            const duracao = turma.duracao_semanas || '—';
+            const duracao = turma.duracao_semanas || 'N/A';
             const dataArranque = turma.data_arranque ? new Date(turma.data_arranque).toLocaleDateString('pt-PT') : '—';
             
             let conteudo = '';
-            conteudo += detailRow('fa-book', 'Curso', cursoNome);
+            conteudo += detailRow('fa-graduation-cap', 'Curso', cursoNome);
+            conteudo += detailRow('fa-building', 'Centro', centroNome);
             conteudo += detailRow('fa-user-tie', 'Formador', formadorNome);
             conteudo += detailRow('fa-calendar-week', 'Dias', diaSemana);
             conteudo += detailRow('fa-sun', 'Período', getPeriodoBadge(turma.periodo));
@@ -1019,9 +1077,9 @@ window.visualizarTurma = function(id) {
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <span>${vagasStatus}</span>
                         <div style="flex: 1; background: #e9ecef; height: 6px; border-radius: 3px; overflow: hidden;">
-                            <div style="background: ${percentualPreenchimento >= 80 ? '#dc3545' : percentualPreenchimento >= 50 ? '#ffc107' : '#28a745'}; height: 100%; width: ${percentualPreenchimento}%"></div>
+                            <div style="background: ${percentualPreenchimento >= 80 ? '#dc2626' : percentualPreenchimento >= 50 ? '#d97706' : '#16a34a'}; height: 100%; width: ${percentualPreenchimento}%"></div>
                         </div>
-                        <span style="font-size: 0.875rem; color: #6c757d;">${percentualPreenchimento}%</span>
+                        <span style="font-size: 0.75rem; color: var(--pi-text-muted);">${percentualPreenchimento}%</span>
                     </div>
                 `;
             } else {
@@ -1032,19 +1090,9 @@ window.visualizarTurma = function(id) {
             // Status de publicação
             let statusPublicacao = '';
             if (turma.publicado) {
-                statusPublicacao = `
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="badge badge-success"><i class="fas fa-globe me-1"></i>Turma Publicada</span>
-                        <span style="font-size: 0.8rem; color: #6c757d;">(Visível no site)</span>
-                    </div>
-                `;
+                statusPublicacao = '<span class="pi-badge pi-badge-pub-sim"><i class="fas fa-globe me-1"></i>Publicada</span>';
             } else {
-                statusPublicacao = `
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="badge badge-secondary"><i class="fas fa-lock me-1"></i>Turma Privada</span>
-                        <span style="font-size: 0.8rem; color: #6c757d;">(Apenas admin)</span>
-                    </div>
-                `;
+                statusPublicacao = '<span class="pi-badge pi-badge-pub-nao"><i class="fas fa-lock me-1"></i>Privada</span>';
             }
             conteudo += detailRow('fa-eye', 'Publicação', statusPublicacao);
             
@@ -1052,7 +1100,7 @@ window.visualizarTurma = function(id) {
             new bootstrap.Modal(document.getElementById('modalVisualizarTurma')).show();
         },
         error: function() {
-            Swal.fire('Erro', 'Erro ao carregar detalhes da turma', 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao carregar detalhes da turma', confirmButtonColor: '#1d4ed8' });
         }
     });
 };
@@ -1097,7 +1145,7 @@ window.abrirEdicaoTurma = function(id) {
             new bootstrap.Modal(document.getElementById('modalEditarTurma')).show();
         },
         error: function() {
-            Swal.fire('Erro', 'Erro ao carregar dados da turma', 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao carregar dados da turma', confirmButtonColor: '#1d4ed8' });
         }
     });
 };
@@ -1116,7 +1164,7 @@ function criarTurma() {
 
     if (dia_semana.length === 0) {
         $('#diasError').show();
-        Swal.fire('Aviso', 'Selecione pelo menos um dia da semana', 'warning');
+        Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Selecione pelo menos um dia da semana', confirmButtonColor: '#1d4ed8' });
         return;
     }
 
@@ -1125,7 +1173,7 @@ function criarTurma() {
 
     if (status === 'inscricoes_abertas' && !formador_id) {
         $('select[name="formador_id"]').addClass('is-invalid');
-        Swal.fire('Aviso', 'Para "Inscrições Abertas" é obrigatório selecionar um formador', 'warning');
+        Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Para "Inscrições Abertas" é obrigatório selecionar um formador', confirmButtonColor: '#1d4ed8' });
         return;
     }
 
@@ -1152,7 +1200,7 @@ function criarTurma() {
     if (!dados.data_arranque) { $('input[name="data_arranque"]').addClass('is-invalid'); erros.push('Data de arranque é obrigatória'); }
 
     if (erros.length > 0) {
-        Swal.fire('Erro', erros.join('<br>'), 'error');
+        Swal.fire({ icon: 'error', title: 'Erro!', html: erros.join('<br>'), confirmButtonColor: '#1d4ed8' });
         return;
     }
 
@@ -1170,7 +1218,7 @@ function criarTurma() {
             'Accept': 'application/json'
         },
         success: function(response) {
-            Swal.fire('Sucesso!', 'Turma criada com sucesso', 'success');
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Turma criada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
             bootstrap.Modal.getInstance(document.getElementById('modalNovasTurma')).hide();
             $('#formNovaTurmaAjax')[0].reset();
             $('#diasError').hide();
@@ -1191,7 +1239,7 @@ function criarTurma() {
                 mensagem += '<br>' + Object.values(errors).flat().join('<br>');
             }
 
-            Swal.fire('Erro', mensagem, 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', html: mensagem, confirmButtonColor: '#1d4ed8' });
         },
         complete: function() {
             $btn.prop('disabled', false).html(textoOriginal);
@@ -1210,7 +1258,7 @@ function atualizarTurma() {
     });
     
     if (dia_semana.length === 0) {
-        Swal.fire('Aviso', 'Selecione pelo menos um dia da semana', 'warning');
+        Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Selecione pelo menos um dia da semana', confirmButtonColor: '#1d4ed8' });
         return;
     }
     
@@ -1218,7 +1266,7 @@ function atualizarTurma() {
     const status = $('#editStatus').val();
     
     if (status === 'inscricoes_abertas' && !formador_id) {
-        Swal.fire('Aviso', 'Para "Inscrições Abertas" é obrigatório selecionar um formador', 'warning');
+        Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Para "Inscrições Abertas" é obrigatório selecionar um formador', confirmButtonColor: '#1d4ed8' });
         return;
     }
     
@@ -1244,7 +1292,7 @@ function atualizarTurma() {
         contentType: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function() {
-            Swal.fire('Sucesso!', 'Turma atualizada com sucesso', 'success');
+            Swal.fire({ icon: 'success', title: 'Atualizado!', text: 'Turma atualizada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
             bootstrap.Modal.getInstance(document.getElementById('modalEditarTurma')).hide();
             carregarTurmas();
         },
@@ -1254,7 +1302,7 @@ function atualizarTurma() {
             if (Object.keys(errors).length > 0) {
                 mensagem = Object.values(errors).flat().join(', ');
             }
-            Swal.fire('Erro', mensagem, 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: mensagem, confirmButtonColor: '#1d4ed8' });
         }
     });
 }
@@ -1264,18 +1312,18 @@ function atualizarTurma() {
  */
 window.eliminarTurma = function(id) {
     if (!id || id === '') {
-        Swal.fire('Erro', 'ID da turma inválido', 'error');
+        Swal.fire({ icon: 'error', title: 'Erro!', text: 'ID da turma inválido', confirmButtonColor: '#1d4ed8' });
         return;
     }
     
     Swal.fire({
-        title: 'Confirmar Eliminação',
-        text: 'Tem a certeza que deseja eliminar esta turma?',
+        title: 'Eliminar turma?',
+        text: 'Esta ação é irreversível!',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sim, eliminar!',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="fas fa-trash me-1"></i> Sim, eliminar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -1290,16 +1338,26 @@ window.eliminarTurma = function(id) {
                 contentType: false,
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {
-                    Swal.fire('Eliminada!', 'Turma eliminada com sucesso', 'success');
+                    Swal.fire({ icon: 'success', title: 'Eliminada!', text: 'Turma eliminada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
                     carregarTurmas();
                 },
                 error: function() {
-                    Swal.fire('Erro', 'Erro ao eliminar turma', 'error');
+                    Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao eliminar turma', confirmButtonColor: '#1d4ed8' });
                 }
             });
         }
     });
 };
+
+/**
+ * Limpar filtros
+ */
+function limparFiltros() {
+    $('#filtroCurso').val('');
+    $('#filtroStatus').val('');
+    $('#filtroPeriodo').val('');
+    // Trigger filter logic if needed
+}
 
 /**
  * Auxiliar: Gerar badge de período
@@ -1309,7 +1367,7 @@ function getPeriodoBadge(periodo) {
     const labels = { 'manha': 'Manhã', 'tarde': 'Tarde', 'noite': 'Noite' };
     const icon = icones[periodo] || 'fa-clock';
     const label = labels[periodo] || 'N/A';
-    return '<span class="pi-badge pi-badge-periodo"><i class="fas ' + icon + '" style="margin-right:0.25rem"></i>' + label + '</span>';
+    return '<span class="pi-badge pi-badge-periodo"><i class="fas ' + icon + '"></i> ' + label + '</span>';
 }
 
 /**

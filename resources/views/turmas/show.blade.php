@@ -6,162 +6,215 @@
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 <style>
     :root {
-        --pi-primary: #3366cc;
-        --pi-primary-light: rgba(51, 102, 204, 0.1);
-        --pi-success: #2e9e6b;
-        --pi-success-light: rgba(46, 158, 107, 0.1);
-        --pi-warning: #e89a0c;
-        --pi-warning-light: rgba(232, 154, 12, 0.1);
-        --pi-danger: #dc3545;
-        --pi-danger-light: rgba(220, 53, 69, 0.1);
-        --pi-info: #0ea5e9;
-        --pi-info-light: rgba(14, 165, 233, 0.1);
-        --pi-muted: #6b7a8d;
-        --pi-border: #e2e6ec;
-        --pi-bg: #f4f6f9;
+        --pi-primary: #1d4ed8;
+        --pi-primary-dark: #1e40af;
+        --pi-primary-light: rgba(29, 78, 216, 0.08);
+        --pi-primary-gradient: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        --pi-success: #16a34a;
+        --pi-success-light: rgba(22, 163, 74, 0.08);
+        --pi-warning: #d97706;
+        --pi-warning-light: rgba(217, 119, 6, 0.08);
+        --pi-danger: #dc2626;
+        --pi-danger-light: rgba(220, 38, 38, 0.08);
+        --pi-info: #0284c7;
+        --pi-info-light: rgba(2, 132, 199, 0.08);
+        --pi-muted: #64748b;
+        --pi-border: #dbeafe;
+        --pi-bg: #eff6ff;
         --pi-card: #ffffff;
-        --pi-text: #1a2332;
-        --pi-text-muted: #6b7a8d;
-        --pi-radius: 0.75rem;
-        --pi-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --pi-text: #1e3a8a;
+        --pi-text-muted: #64748b;
+        --pi-radius: 0.5rem;
+        --pi-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
-    body { background-color: var(--pi-bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--pi-text); }
+    body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
 
-    .pi-page { max-width: 100%; width: 100%; margin: 0 auto; padding: 1.5rem 2rem; }
+    .pi-page { width: 100%; padding: 0; }
 
-    /* Breadcrumb */
-    .pi-breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--pi-text-muted); margin-bottom: 1.25rem; }
-    .pi-breadcrumb a { color: var(--pi-primary); text-decoration: none; font-weight: 500; }
-    .pi-breadcrumb a:hover { text-decoration: underline; }
-    .pi-breadcrumb .separator { color: var(--pi-border); }
-    .pi-breadcrumb .current { color: var(--pi-text); font-weight: 500; }
-
-    /* Header */
-    .pi-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
-    .pi-header-left { display: flex; align-items: center; gap: 0.75rem; }
-    .pi-header-icon { width: 3rem; height: 3rem; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); }
-    .pi-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-    .pi-header p { font-size: 0.875rem; color: var(--pi-text-muted); margin: 0; }
-    .pi-header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-    /* Buttons */
-    .pi-btn { border: none; border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.15s; cursor: pointer; text-decoration: none; }
-    .pi-btn-primary { background: var(--pi-primary); color: #fff; }
-    .pi-btn-primary:hover { background: #2a57b3; color: #fff; }
+    /* ── BLUE HEADER ── */
+    .pi-page-header {
+        background: var(--pi-primary-gradient);
+        color: #fff;
+        padding: 1rem 1.5rem;
+    }
+    .pi-breadcrumb-bar {
+        display: flex; align-items: center; gap: 0.375rem;
+        font-size: 0.6875rem; margin-bottom: 0.5rem; opacity: 0.8;
+    }
+    .pi-breadcrumb-bar a { color: #fff; text-decoration: none; font-weight: 500; }
+    .pi-breadcrumb-bar a:hover { text-decoration: underline; }
+    .pi-breadcrumb-bar .sep { opacity: 0.5; }
+    .pi-header-row {
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 0.75rem;
+    }
+    .pi-header-row h1 { font-size: 1.25rem; font-weight: 700; margin: 0; color: #fff; }
+    .pi-header-actions { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+    .pi-btn { border: none; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; text-decoration: none; }
+    .pi-btn-white { background: #fff; color: var(--pi-primary); }
+    .pi-btn-white:hover { background: #dbeafe; color: var(--pi-primary); }
+    .pi-btn-danger-outline { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
+    .pi-btn-danger-outline:hover { background: var(--pi-danger); border-color: var(--pi-danger); color: #fff; }
+    .pi-btn-ghost { background: rgba(255,255,255,0.1); color: #fff; }
+    .pi-btn-ghost:hover { background: rgba(255,255,255,0.2); }
+    .pi-btn-primary { background: var(--pi-primary); border: none; color: #fff; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; }
+    .pi-btn-primary:hover { background: var(--pi-primary-dark); color: #fff; }
+    .pi-btn-sm { padding: 0.3125rem 0.625rem; font-size: 0.75rem; }
     .pi-btn-danger { background: var(--pi-danger); color: #fff; }
-    .pi-btn-danger:hover { background: #c82333; color: #fff; }
-    .pi-btn-outline { background: transparent; color: var(--pi-text-muted); border: 1px solid var(--pi-border); }
-    .pi-btn-outline:hover { background: #f0f2f5; color: var(--pi-text); }
+    .pi-btn-danger:hover { background: #b91c1c; color: #fff; }
     .pi-btn-success { background: var(--pi-success); color: #fff; }
-    .pi-btn-success:hover { background: #257a55; color: #fff; }
 
-    /* Stats */
-    .pi-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-    .pi-stat-card { display: flex; align-items: center; gap: 0.75rem; background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.75rem 1rem; box-shadow: var(--pi-shadow); }
-    .pi-stat-card .stat-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; margin-bottom: 0; flex-shrink: 0; }
-    .pi-stat-card .stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
-    .pi-stat-card .stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
-    .pi-stat-card .stat-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
-    .pi-stat-card .stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
-    .pi-stat-card .stat-content { display: flex; flex-direction: column; }
-    .pi-stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); margin-bottom: 0.25rem; }
-    .pi-stat-card .stat-value { font-size: 1.5rem; font-weight: 700; }
+    /* ── STATS BAR ── */
+    .pi-stats-bar {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+        background: #fff; border-bottom: 1px solid var(--pi-border);
+    }
+    .pi-stat {
+        padding: 0.625rem 1rem; border-right: 1px solid var(--pi-border);
+        display: flex; align-items: center; gap: 0.625rem;
+    }
+    .pi-stat:last-child { border-right: none; }
+    .pi-stat-icon {
+        width: 2rem; height: 2rem; border-radius: 0.375rem;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8125rem; flex-shrink: 0;
+    }
+    .pi-stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
+    .pi-stat-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
+    .pi-stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
+    .pi-stat-label { font-size: 0.625rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-stat-value { font-size: 1.25rem; font-weight: 700; line-height: 1; }
 
-    /* Card */
-    .pi-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; margin-bottom: 1.25rem; }
-    .pi-card-header { border-bottom: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
-    .pi-card-header h2 { font-size: 0.875rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
-    .pi-card-header .count-badge { background: var(--pi-primary-light); color: var(--pi-primary); font-size: 0.75rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; }
-    .pi-card-body { padding: 1.25rem; }
+    /* ── CARD ── */
+    .pi-card { background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; margin: 0.75rem; }
+    .pi-card-header {
+        border-bottom: 1px solid var(--pi-border); padding: 0.625rem 1rem;
+        display: flex; align-items: center; justify-content: space-between;
+        background: var(--pi-primary-light);
+    }
+    .pi-card-header h2 { font-size: 0.8125rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.375rem; color: var(--pi-text); }
+    .pi-card-header .count-badge { background: var(--pi-primary); color: #fff; font-size: 0.625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; }
+    .pi-card-body { padding: 1rem; }
 
-    /* Info grid */
-    .pi-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .pi-info-item { display: flex; flex-direction: column; gap: 0.25rem; }
-    .pi-info-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
-    .pi-info-value { font-size: 0.9375rem; font-weight: 500; }
+    /* ── INFO GRID ── */
+    .pi-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+    .pi-info-item { display: flex; flex-direction: column; gap: 0.125rem; }
+    .pi-info-label { font-size: 0.625rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-info-value { font-size: 0.875rem; font-weight: 500; }
 
-    /* Badges */
-    .pi-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.01em; gap: 0.25rem; }
-    .pi-badge-planeada { background: rgba(100, 116, 139, 0.1); color: #475569; }
-    .pi-badge-inscricoes { background: var(--pi-success-light); color: #1e6e49; }
+    /* ── BADGES ── */
+    .pi-badge {
+        display: inline-flex; align-items: center; gap: 0.25rem;
+        padding: 0.125rem 0.5rem; border-radius: 9999px;
+        font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em;
+    }
+    .pi-badge-planeada { background: rgba(100,116,139,0.08); color: #475569; }
+    .pi-badge-inscricoes { background: var(--pi-success-light); color: #15803d; }
     .pi-badge-andamento { background: var(--pi-info-light); color: #0369a1; }
-    .pi-badge-concluida { background: rgba(30, 41, 59, 0.1); color: #1e293b; }
+    .pi-badge-concluida { background: rgba(30,41,59,0.08); color: #1e293b; }
     .pi-badge-periodo { background: var(--pi-primary-light); color: var(--pi-primary); }
-    .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; font-size: 0.6875rem; }
-    .pi-badge-pub-sim { background: var(--pi-success-light); color: #1e6e49; }
-    .pi-badge-pub-nao { background: rgba(100, 116, 139, 0.1); color: #475569; }
-    .pi-badge-pendente { background: var(--pi-warning-light); color: #92610a; }
-    .pi-badge-confirmado { background: var(--pi-success-light); color: #1e6e49; }
+    .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; font-size: 0.625rem; padding: 0.0625rem 0.375rem; }
+    .pi-badge-pub-sim { background: var(--pi-success-light); color: #15803d; }
+    .pi-badge-pub-nao { background: rgba(100,116,139,0.08); color: #475569; }
+    .pi-badge-pendente { background: var(--pi-warning-light); color: #92400e; }
+    .pi-badge-confirmado { background: var(--pi-success-light); color: #15803d; }
     .pi-badge-cancelado { background: var(--pi-danger-light); color: #b91c1c; }
 
-    /* Table */
-    .pi-table { width: 100%; margin: 0; font-size: 0.92rem; }
-    .pi-table thead th { background: rgba(51, 102, 204, 0.08); border-bottom: 1px solid var(--pi-border); font-size: 0.82rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.03em; padding: 0.75rem 1rem; white-space: nowrap; }
-    .pi-table tbody td { padding: 0.75rem 1rem; vertical-align: middle; border-bottom: 1px solid #f0f2f5; }
-    .pi-table tbody tr:hover { background: #f8f9fb; }
+    /* ── TABLE ── */
+    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; }
+    .pi-table thead th {
+        background: var(--pi-primary); color: #fff;
+        font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.05em; padding: 0.5rem 0.75rem; white-space: nowrap;
+        position: sticky; top: 0; z-index: 5;
+    }
+    .pi-table tbody td { padding: 0.5rem 0.75rem; vertical-align: middle; border-bottom: 1px solid #f0f4ff; }
+    .pi-table tbody tr { transition: background 0.1s; }
+    .pi-table tbody tr:hover { background: var(--pi-primary-light); }
     .pi-table tbody tr:last-child td { border-bottom: none; }
 
-    /* Action buttons */
-    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; }
-    .pi-action-btn { width: 2rem; height: 2rem; border: none; border-radius: 0.375rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 0.8125rem; }
+    /* ── ACTION BUTTONS ── */
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; opacity: 0; transition: opacity 0.15s; }
+    .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    .pi-action-btn {
+        width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.15s; font-size: 0.75rem;
+    }
     .pi-action-btn.accept { background: transparent; color: var(--pi-success); border: 1px solid var(--pi-success); }
     .pi-action-btn.accept:hover { background: var(--pi-success); color: #fff; }
     .pi-action-btn.reject { background: transparent; color: var(--pi-danger); border: 1px solid var(--pi-danger); }
     .pi-action-btn.reject:hover { background: var(--pi-danger); color: #fff; }
 
-    /* Empty state */
-    .pi-empty { text-align: center; padding: 3rem 1rem; color: var(--pi-text-muted); }
-    .pi-empty-icon { width: 4rem; height: 4rem; border-radius: 1rem; background: #f0f2f5; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
-    .pi-empty h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
-    .pi-empty p { font-size: 0.875rem; }
+    /* ── EMPTY STATE ── */
+    .pi-empty { text-align: center; padding: 2.5rem 1rem; color: var(--pi-text-muted); }
+    .pi-empty-icon { width: 3rem; height: 3rem; border-radius: 0.75rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; font-size: 1.125rem; margin-bottom: 0.5rem; color: var(--pi-primary); }
+    .pi-empty h3 { font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.125rem; color: var(--pi-text); }
+    .pi-empty p { font-size: 0.75rem; }
 
-    /* Mobile cards */
-    .pi-mobile-cards { display: none; }
-    .pi-mobile-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1rem; box-shadow: var(--pi-shadow); margin-bottom: 0.75rem; }
-    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.9375rem; }
-    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; font-size: 0.8125rem; color: var(--pi-text-muted); }
-    .pi-mobile-card .card-actions { display: flex; gap: 0.5rem; }
+    /* ── MOBILE CARDS ── */
+    .pi-mobile-cards { display: none; padding: 0.75rem; }
+    .pi-mobile-card {
+        background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
+        padding: 0.625rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
+    }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); }
+    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; }
 
-    /* Modal */
+    /* ── MODAL ── */
     .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
-    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1.25rem 1.5rem; }
-    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.75rem; }
-    .pi-modal .modal-header .header-icon { width: 2.5rem; height: 2.5rem; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; }
-    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
-    .pi-modal .modal-title { font-size: 1rem; font-weight: 600; margin: 0; }
-    .pi-modal .modal-body { padding: 1.25rem 1.5rem; }
-    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 1rem 1.5rem; }
-    .pi-modal .modal-footer .btn { border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; }
+    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 0.875rem 1.25rem; background: var(--pi-primary-light); }
+    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
+    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
+    .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
+    .pi-modal .modal-body { padding: 1rem 1.25rem; }
+    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; background: var(--pi-bg); }
+    .pi-modal .modal-footer .btn { border-radius: var(--pi-radius); font-size: 0.8125rem; font-weight: 500; padding: 0.4375rem 0.875rem; }
 
-    /* Form */
-    .pi-form .form-label { font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.375rem; }
+    /* ── FORM ── */
+    .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
     .pi-form .form-label .required { color: var(--pi-danger); }
-    .pi-form .form-control, .pi-form .form-select { border-radius: 0.5rem; border-color: var(--pi-border); font-size: 0.875rem; }
-    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 3px var(--pi-primary-light); }
-    .pi-form .section-title { font-size: 0.8125rem; font-weight: 600; color: var(--pi-primary); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--pi-border); display: flex; align-items: center; gap: 0.5rem; }
+    .pi-form .form-control, .pi-form .form-select { border-radius: var(--pi-radius); border-color: var(--pi-border); font-size: 0.8125rem; height: 2.25rem; }
+    .pi-form textarea.form-control { height: auto; }
+    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light); }
+    .pi-form .form-text { font-size: 0.6875rem; color: var(--pi-text-muted); }
+    .pi-form .section-title {
+        font-size: 0.75rem; font-weight: 600; color: var(--pi-primary);
+        margin-bottom: 0.625rem; padding-bottom: 0.375rem;
+        border-bottom: 2px solid var(--pi-primary);
+        display: flex; align-items: center; gap: 0.375rem;
+        text-transform: uppercase; letter-spacing: 0.03em;
+    }
 
-    /* Days grid */
-    .pi-days-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .pi-day-check { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; }
-    .pi-day-check input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: var(--pi-primary); }
+    /* ── DAYS GRID ── */
+    .pi-days-grid { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+    .pi-day-check { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 500; }
+    .pi-day-check input[type="checkbox"] { width: 0.875rem; height: 0.875rem; accent-color: var(--pi-primary); }
 
-    /* Responsive */
+    /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
         .pi-desktop-table { display: none !important; }
         .pi-mobile-cards { display: block !important; }
         .pi-info-grid { grid-template-columns: repeat(2, 1fr); }
+        .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .pi-stat { border-bottom: 1px solid var(--pi-border); }
     }
     @media (max-width: 767.98px) {
-        .pi-stats { grid-template-columns: repeat(2, 1fr); }
-        .pi-header { flex-direction: column; align-items: stretch; }
+        .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .pi-header-row { flex-direction: column; align-items: stretch; }
         .pi-header-actions { justify-content: stretch; }
-        .pi-header-actions .pi-btn { flex: 1; justify-content: center; }
+        .pi-header-actions .pi-btn { flex: 1; justify-content: center; font-size: 0.75rem; }
         .pi-info-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 575.98px) {
-        .pi-page { padding: 1rem 0.75rem; }
+        .pi-page-header { padding: 0.75rem; }
+        .pi-card { margin: 0.5rem; }
+        .pi-stat { padding: 0.5rem 0.625rem; }
     }
 </style>
 @endsection
@@ -193,77 +246,85 @@
 
 <div class="pi-page">
 
-    {{-- BREADCRUMB --}}
-    <div class="pi-breadcrumb">
-        <a href="{{ route('turmas.index') }}"><i class="fas fa-chalkboard-teacher me-1"></i>Turmas</a>
-        <span class="separator"><i class="fas fa-chevron-right"></i></span>
-        <span class="current">{{ $turma->curso->nome }}</span>
+    {{-- ============================================= --}}
+    {{-- BLUE HEADER                                   --}}
+    {{-- ============================================= --}}
+    <div class="pi-page-header">
+        <div class="pi-breadcrumb-bar">
+            <a href="{{ route('turmas.index') }}"><i class="fas fa-chalkboard-teacher me-1"></i>Turmas</a>
+            <span class="sep"><i class="fas fa-chevron-right" style="font-size:0.5rem"></i></span>
+            <span>{{ $turma->curso->nome }}</span>
+        </div>
+        <div class="pi-header-row">
+            <div style="display:flex;align-items:center;gap:0.625rem">
+                <i class="fas fa-chalkboard fa-lg" style="opacity:0.9"></i>
+                <div>
+                    <h1>{{ $turma->curso->nome }}</h1>
+                    <div style="display:flex;gap:0.375rem;margin-top:0.25rem">
+                        <span class="pi-badge" style="background:rgba(255,255,255,0.2);color:#fff">
+                            {{ $statusNomes[$turma->status] ?? 'N/A' }}
+                        </span>
+                        <span class="pi-badge" style="background:rgba(255,255,255,0.15);color:#fff">
+                            <i class="{{ $periodoIcones[$turma->periodo] ?? 'fas fa-clock' }}"></i>
+                            {{ ucfirst($turma->periodo) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="pi-header-actions">
+                <button class="pi-btn pi-btn-white" data-bs-toggle="modal" data-bs-target="#modalEditarTurmaShow">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="pi-btn pi-btn-danger-outline" onclick="eliminarTurmaShow({{ $turma->id }})">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+                <a href="{{ route('turmas.index') }}" class="pi-btn pi-btn-ghost">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
     </div>
 
-    {{-- HEADER --}}
-    <div class="pi-header">
-        <div class="pi-header-left">
-            <div class="pi-header-icon">
-                <i class="fas fa-chalkboard fa-lg"></i>
-            </div>
+    {{-- ============================================= --}}
+    {{-- STATS BAR                                     --}}
+    {{-- ============================================= --}}
+    <div class="pi-stats-bar">
+        <div class="pi-stat">
+            <div class="pi-stat-icon blue"><i class="fas fa-users"></i></div>
             <div>
-                <h1>{{ $turma->curso->nome }}</h1>
-                <p>
-                    <span class="pi-badge {{ $statusClasses[$turma->status] ?? 'pi-badge-planeada' }}">
-                        {{ $statusNomes[$turma->status] ?? 'N/A' }}
-                    </span>
-                </p>
+                <div class="pi-stat-label">Total Pré-inscrições</div>
+                <div class="pi-stat-value" style="color:var(--pi-primary)">{{ $totalInscricoes }}</div>
             </div>
         </div>
-        <div class="pi-header-actions">
-            <button class="pi-btn pi-btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditarTurmaShow">
-                <i class="fas fa-edit"></i> Editar
-            </button>
-            <button class="pi-btn pi-btn-danger" onclick="eliminarTurmaShow({{ $turma->id }})">
-                <i class="fas fa-trash-alt"></i> Eliminar
-            </button>
-            <a href="{{ route('turmas.index') }}" class="pi-btn pi-btn-outline">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </a>
-        </div>
-    </div>
-
-    {{-- STATS --}}
-    <div class="pi-stats">
-        <div class="pi-stat-card">
-            <div class="stat-icon blue"><i class="fas fa-users"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Total Pré-inscrições</div>
-                <div class="stat-value text-primary">{{ $totalInscricoes }}</div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
+            <div>
+                <div class="pi-stat-label">Pendentes</div>
+                <div class="pi-stat-value" style="color:var(--pi-warning)">{{ $pendentes }}</div>
             </div>
         </div>
-        <div class="pi-stat-card">
-            <div class="stat-icon orange"><i class="fas fa-hourglass-half"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Pendentes</div>
-                <div class="stat-value text-warning">{{ $pendentes }}</div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon green"><i class="fas fa-check-circle"></i></div>
+            <div>
+                <div class="pi-stat-label">Confirmados</div>
+                <div class="pi-stat-value" style="color:var(--pi-success)">{{ $confirmados }}</div>
             </div>
         </div>
-        <div class="pi-stat-card">
-            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Confirmados</div>
-                <div class="stat-value text-success">{{ $confirmados }}</div>
-            </div>
-        </div>
-        <div class="pi-stat-card">
-            <div class="stat-icon cyan"><i class="fas fa-chair"></i></div>
-            <div class="stat-content">
-                <div class="stat-label">Vagas</div>
-                <div class="stat-value text-info">{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? '∞' }}</div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon cyan"><i class="fas fa-chair"></i></div>
+            <div>
+                <div class="pi-stat-label">Vagas</div>
+                <div class="pi-stat-value" style="color:var(--pi-info)">{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? '∞' }}</div>
             </div>
         </div>
     </div>
 
-    {{-- INFORMAÇÕES DA TURMA --}}
+    {{-- ============================================= --}}
+    {{-- INFORMAÇÕES DA TURMA                          --}}
+    {{-- ============================================= --}}
     <div class="pi-card">
         <div class="pi-card-header">
-            <h2><i class="fas fa-info-circle" style="color: var(--pi-primary);"></i> Informações da Turma</h2>
+            <h2><i class="fas fa-info-circle" style="color:var(--pi-primary)"></i> Informações da Turma</h2>
         </div>
         <div class="pi-card-body">
             <div class="pi-info-grid">
@@ -280,9 +341,9 @@
                     <span class="pi-info-label"><i class="fas fa-user-tie me-1"></i>Formador</span>
                     <span class="pi-info-value">
                         @if($turma->formador)
-                            {{ $turma->formador->nome }}
+                            <span style="color:var(--pi-success);font-weight:500"><i class="fas fa-user-tie me-1" style="font-size:0.625rem"></i>{{ $turma->formador->nome }}</span>
                         @else
-                            <span style="color: var(--pi-warning);"><i class="fas fa-exclamation-triangle me-1"></i>Não atribuído</span>
+                            <span class="pi-badge" style="background:var(--pi-warning-light);color:#92400e"><i class="fas fa-exclamation-triangle"></i> Não atribuído</span>
                         @endif
                     </span>
                 </div>
@@ -337,11 +398,13 @@
         </div>
     </div>
 
-    {{-- PRÉ-INSCRIÇÕES --}}
+    {{-- ============================================= --}}
+    {{-- PRÉ-INSCRIÇÕES                                --}}
+    {{-- ============================================= --}}
     <div class="pi-card">
         <div class="pi-card-header">
             <h2>
-                <i class="fas fa-clipboard-list" style="color: var(--pi-primary);"></i>
+                <i class="fas fa-clipboard-list" style="color:var(--pi-primary)"></i>
                 Pré-inscrições Ligadas a Esta Turma
             </h2>
             <span class="count-badge">{{ $totalInscricoes }}</span>
@@ -349,7 +412,7 @@
 
         @if($totalInscricoes > 0)
             {{-- Desktop table --}}
-            <div class="pi-desktop-table">
+            <div class="pi-desktop-table" style="overflow-x:auto">
                 <table class="pi-table">
                     <thead>
                         <tr>
@@ -367,7 +430,7 @@
                             <tr>
                                 <td><strong>{{ $inscricao->nome_completo ?? $inscricao->nome }}</strong></td>
                                 <td>
-                                    <a href="mailto:{{ $inscricao->email }}" style="color: var(--pi-primary); text-decoration: none;">
+                                    <a href="mailto:{{ $inscricao->email }}" style="color:var(--pi-primary);text-decoration:none">
                                         {{ $inscricao->email }}
                                     </a>
                                 </td>
@@ -376,15 +439,15 @@
                                         $telefone = $inscricao->telefone ?? (is_array($inscricao->contactos) && count($inscricao->contactos) ? $inscricao->contactos[0] : null);
                                     @endphp
                                     @if($telefone)
-                                        <a href="tel:{{ $telefone }}" style="color: var(--pi-text); text-decoration: none;">{{ $telefone }}</a>
+                                        <a href="tel:{{ $telefone }}" style="color:var(--pi-text);text-decoration:none">{{ $telefone }}</a>
                                     @else
-                                        <span style="color: var(--pi-text-muted);">—</span>
+                                        <span style="color:var(--pi-text-muted)">—</span>
                                     @endif
                                 </td>
-                                <td style="font-size: 0.8125rem; color: var(--pi-text-muted);">
+                                <td style="font-size:0.75rem;color:var(--pi-text-muted)">
                                     {{ $inscricao->observacoes ?: '—' }}
                                 </td>
-                                <td style="font-size: 0.8125rem; color: var(--pi-text-muted);">
+                                <td style="font-size:0.75rem;color:var(--pi-text-muted)">
                                     {{ \Carbon\Carbon::parse($inscricao->created_at)->format('d/m/Y H:i') }}
                                 </td>
                                 <td class="text-center">
@@ -415,7 +478,7 @@
             </div>
 
             {{-- Mobile cards --}}
-            <div class="pi-mobile-cards" style="padding: 1rem;">
+            <div class="pi-mobile-cards">
                 @foreach($turma->preInscricoes as $inscricao)
                     <div class="pi-mobile-card">
                         <div class="card-top">
@@ -443,10 +506,10 @@
                         </div>
                         @if($inscricao->status === 'pendente')
                             <div class="card-actions">
-                                <button class="pi-btn pi-btn-success btn-aceitar-inscricao" data-inscricao-id="{{ $inscricao->id }}" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;">
+                                <button class="pi-btn pi-btn-success btn-aceitar-inscricao" data-inscricao-id="{{ $inscricao->id }}" style="font-size:0.6875rem;padding:0.2rem 0.5rem">
                                     <i class="fas fa-check"></i> Aceitar
                                 </button>
-                                <button class="pi-btn pi-btn-danger btn-rejeitar-inscricao" data-inscricao-id="{{ $inscricao->id }}" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;">
+                                <button class="pi-btn pi-btn-danger btn-rejeitar-inscricao" data-inscricao-id="{{ $inscricao->id }}" style="font-size:0.6875rem;padding:0.2rem 0.5rem">
                                     <i class="fas fa-times"></i> Rejeitar
                                 </button>
                             </div>
@@ -481,7 +544,7 @@
                     </div>
                     <div>
                         <h5 class="modal-title">Editar Turma</h5>
-                        <p class="mb-0" style="font-size: 0.8125rem; color: var(--pi-text-muted);">{{ $turma->curso->nome }}</p>
+                        <p class="mb-0" style="font-size:0.75rem;color:var(--pi-text-muted)">{{ $turma->curso->nome }}</p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -499,11 +562,9 @@
                     <div class="row g-3">
                         {{-- COLUNA ESQUERDA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-info-circle"></i> Informações da Turma
-                            </div>
+                            <div class="section-title"><i class="fas fa-info-circle"></i> Informações da Turma</div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Centro <span class="required">*</span></label>
                                 <select id="centroIdShow" name="centro_id" class="form-select" required disabled>
                                     <option value="">Selecione o centro</option>
@@ -511,14 +572,14 @@
                                 <div class="form-text">O centro não pode ser alterado após a criação da turma.</div>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Formador</label>
                                 <select id="formadorIdShow" name="formador_id" class="form-select">
                                     <option value="">Selecione (opcional)</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Período <span class="required">*</span></label>
                                 <select id="periodoShow" name="periodo" class="form-select" required>
                                     <option value="manha" {{ $turma->periodo === 'manha' || $turma->periodo === 'manhã' ? 'selected' : '' }}>Manha</option>
@@ -527,7 +588,7 @@
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Status</label>
                                 <select id="statusShow" name="status" class="form-select">
                                     <option value="planeada" {{ $turma->status === 'planeada' ? 'selected' : '' }}>Planeada</option>
@@ -540,56 +601,52 @@
 
                         {{-- COLUNA DIREITA --}}
                         <div class="col-md-6">
-                            <div class="section-title">
-                                <i class="fas fa-clock"></i> Horário
-                            </div>
+                            <div class="section-title"><i class="fas fa-clock"></i> Horário</div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Hora Início <span class="required">*</span></label>
                                 <input type="time" id="horaInicioShow" name="hora_inicio" class="form-control" value="{{ $turma->hora_inicio }}" required>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Hora Fim</label>
                                 <input type="time" id="horaFimShow" name="hora_fim" class="form-control" value="{{ $turma->hora_fim }}">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Duração (Semanas)</label>
                                 <input type="number" id="duracaoShow" name="duracao_semanas" class="form-control" value="{{ $turma->duracao_semanas }}" min="1">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Data Arranque <span class="required">*</span></label>
                                 <input type="date" id="dataArranqueShow" name="data_arranque" class="form-control" 
                                        value="{{ \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') }}" required>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Vagas Disponíveis</label>
                                 <input type="number" id="vagasTotaisShow" name="vagas_totais" class="form-control" value="{{ $turma->vagas_totais }}" min="1">
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label">Vagas Preenchidas</label>
                                 <input type="number" class="form-control" value="{{ $turma->vagas_preenchidas ?? 0 }}" disabled>
                                 <div class="form-text">Atualizado automaticamente quando pré-inscrições são confirmadas.</div>
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <div class="form-check">
                                     <input type="checkbox" id="publicadoShow" name="publicado" class="form-check-input" {{ $turma->publicado ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="publicadoShow">Publicar no site</label>
+                                    <label class="form-check-label" for="publicadoShow" style="font-size:0.8125rem">Publicar no site</label>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {{-- DIAS DA SEMANA --}}
-                    <div class="mt-3">
-                        <div class="section-title">
-                            <i class="fas fa-calendar-week"></i> Dias da Semana
-                        </div>
+                    <div class="mt-2">
+                        <div class="section-title"><i class="fas fa-calendar-week"></i> Dias da Semana</div>
                         <div class="pi-days-grid">
                             @foreach(['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'] as $dia)
                                 <label class="pi-day-check">
@@ -682,7 +739,7 @@ function configurarFormulario() {
         console.log('ID da turma:', turmaId);
         
         if (!turmaId) {
-            Swal.fire('Erro', 'ID da turma não encontrado', 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'ID da turma não encontrado', confirmButtonColor: '#1d4ed8' });
             console.error('Campo #editTurmaIdShow está vazio!');
             return;
         }
@@ -693,13 +750,13 @@ function configurarFormulario() {
         });
 
         if (dias.length === 0) {
-            Swal.fire('Aviso', 'Selecione pelo menos um dia', 'warning');
+            Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Selecione pelo menos um dia', confirmButtonColor: '#1d4ed8' });
             return;
         }
 
         const horaInicio = $('#horaInicioShow').val();
         if (!horaInicio) {
-            Swal.fire('Aviso', 'Hora de início é obrigatória', 'warning');
+            Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Hora de início é obrigatória', confirmButtonColor: '#1d4ed8' });
             return;
         }
 
@@ -744,7 +801,7 @@ function configurarFormulario() {
             },
             success: function(response) {
                 console.log('Sucesso:', response);
-                Swal.fire('Sucesso!', 'Turma atualizada com sucesso', 'success').then(() => {
+                Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Turma atualizada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => {
                     location.reload();
                 });
             },
@@ -761,7 +818,7 @@ function configurarFormulario() {
                     mensagem = xhr.responseJSON.message;
                 }
                 
-                Swal.fire('Erro', mensagem, 'error');
+                Swal.fire({ icon: 'error', title: 'Erro!', html: mensagem, confirmButtonColor: '#1d4ed8' });
             }
         });
     });
@@ -787,12 +844,12 @@ function atualizarStatusInscricao(id, status) {
         data: JSON.stringify({ status: status }),
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function() {
-            Swal.fire('Sucesso!', 'Status atualizado', 'success').then(() => {
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Status atualizado', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => {
                 location.reload();
             });
         },
         error: function() {
-            Swal.fire('Erro', 'Erro ao atualizar status', 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao atualizar status', confirmButtonColor: '#1d4ed8' });
         }
     });
 }
@@ -800,13 +857,13 @@ function atualizarStatusInscricao(id, status) {
 // Eliminar turma
 function eliminarTurmaShow(id) {
     Swal.fire({
-        title: 'Confirmar eliminação',
-        text: 'Tem certeza que deseja eliminar esta turma?',
+        title: 'Eliminar turma?',
+        text: 'Esta ação é irreversível!',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sim, eliminar',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="fas fa-trash me-1"></i> Sim, eliminar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -815,12 +872,12 @@ function eliminarTurmaShow(id) {
                 method: 'DELETE',
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {
-                    Swal.fire('Eliminado!', 'Turma eliminada com sucesso', 'success').then(() => {
+                    Swal.fire({ icon: 'success', title: 'Eliminada!', text: 'Turma eliminada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => {
                         window.location.href = "{{ route('turmas.index') }}";
                     });
                 },
                 error: function() {
-                    Swal.fire('Erro', 'Erro ao eliminar turma', 'error');
+                    Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao eliminar turma', confirmButtonColor: '#1d4ed8' });
                 }
             });
         }

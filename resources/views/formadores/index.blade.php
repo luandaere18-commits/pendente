@@ -2,142 +2,462 @@
 
 @section('title', 'Formadores')
 
+@section('styles')
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+<style>
+    :root {
+        --pi-primary: #1d4ed8;
+        --pi-primary-dark: #1e40af;
+        --pi-primary-light: rgba(29, 78, 216, 0.08);
+        --pi-primary-gradient: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        --pi-success: #16a34a;
+        --pi-success-light: rgba(22, 163, 74, 0.08);
+        --pi-warning: #d97706;
+        --pi-warning-light: rgba(217, 119, 6, 0.08);
+        --pi-danger: #dc2626;
+        --pi-danger-light: rgba(220, 38, 38, 0.08);
+        --pi-info: #0284c7;
+        --pi-info-light: rgba(2, 132, 199, 0.08);
+        --pi-muted: #64748b;
+        --pi-border: #dbeafe;
+        --pi-bg: #eff6ff;
+        --pi-card: #ffffff;
+        --pi-text: #1e3a8a;
+        --pi-text-muted: #64748b;
+        --pi-radius: 0.5rem;
+        --pi-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
+
+    /* ── PAGE LAYOUT ── */
+    .pi-page { width: 100%; padding: 0; }
+
+    /* ── BLUE HEADER ── */
+    .pi-page-header {
+        background: var(--pi-primary-gradient);
+        color: #fff;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .pi-page-header h1 { font-size: 1.25rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; color: #fff; }
+    .pi-page-header p { font-size: 0.75rem; color: rgba(255,255,255,0.75); margin: 0; }
+    .pi-page-header .pi-btn-create {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        padding: 0.5rem 1rem; border-radius: var(--pi-radius);
+        background: #fff; color: var(--pi-primary); font-weight: 600;
+        font-size: 0.8125rem; border: none; cursor: pointer;
+        transition: all 0.15s;
+    }
+    .pi-page-header .pi-btn-create:hover { background: #dbeafe; }
+
+    /* ── STATS ── */
+    .pi-stats-bar {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+        background: #fff; border-bottom: 1px solid var(--pi-border);
+    }
+    .pi-stat {
+        padding: 0.75rem 1.25rem;
+        border-right: 1px solid var(--pi-border);
+        display: flex; align-items: center; gap: 0.75rem;
+    }
+    .pi-stat:last-child { border-right: none; }
+    .pi-stat-icon {
+        width: 2.25rem; height: 2.25rem; border-radius: 0.5rem;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.875rem; flex-shrink: 0;
+    }
+    .pi-stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
+    .pi-stat-icon.gray { background: rgba(100,116,139,0.08); color: var(--pi-muted); }
+    .pi-stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
+    .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-stat-value { font-size: 1.375rem; font-weight: 700; line-height: 1; }
+
+    /* ── TOOLBAR ── */
+    .pi-toolbar {
+        background: #fff; border-bottom: 1px solid var(--pi-border);
+        padding: 0.625rem 1.25rem;
+        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+    }
+    .pi-toolbar .search-wrap {
+        position: relative; flex: 1; min-width: 200px;
+    }
+    .pi-toolbar .search-wrap i {
+        position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
+        color: var(--pi-primary); font-size: 0.8125rem; pointer-events: none;
+    }
+    .pi-toolbar .search-wrap input {
+        width: 100%; padding: 0.375rem 0.75rem 0.375rem 2.25rem;
+        border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
+        font-size: 0.8125rem; background: var(--pi-bg); height: 2.125rem;
+        transition: all 0.15s;
+    }
+    .pi-toolbar .search-wrap input:focus {
+        outline: none; border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light); background: #fff;
+    }
+    .pi-toolbar select {
+        height: 2.125rem; border: 1px solid var(--pi-border);
+        border-radius: var(--pi-radius); font-size: 0.8125rem;
+        padding: 0 2rem 0 0.625rem; background: var(--pi-bg);
+        min-width: 140px; cursor: pointer;
+    }
+    .pi-toolbar select:focus {
+        outline: none; border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light);
+    }
+    .pi-btn-clear {
+        border: none; background: transparent; color: var(--pi-text-muted);
+        font-size: 0.8125rem; padding: 0.375rem 0.5rem; border-radius: var(--pi-radius);
+        display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer;
+        white-space: nowrap;
+    }
+    .pi-btn-clear:hover { background: var(--pi-danger-light); color: var(--pi-danger); }
+
+    /* ── TABLE ── */
+    .pi-table-wrap { background: #fff; overflow: auto; }
+    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; }
+    .pi-table thead th {
+        background: var(--pi-primary);
+        color: #fff;
+        font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+        padding: 0.625rem 1rem; white-space: nowrap;
+        position: sticky; top: 0; z-index: 5;
+        border-bottom: none;
+    }
+    .pi-table tbody td {
+        padding: 0.5rem 1rem; vertical-align: middle;
+        border-bottom: 1px solid #f0f4ff;
+    }
+    .pi-table tbody tr { transition: background 0.1s; }
+    .pi-table tbody tr:hover { background: var(--pi-primary-light); }
+    .pi-table tbody tr:last-child td { border-bottom: none; }
+    .pi-table .mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 0.6875rem; color: var(--pi-muted); }
+
+    /* ── PAGINATION ── */
+    .pi-pagination-bar {
+        background: var(--pi-primary);
+        color: #fff;
+        padding: 0.5rem 1.25rem;
+        display: flex; align-items: center; justify-content: space-between;
+        font-size: 0.75rem;
+    }
+    .pi-pagination-bar .info { opacity: 0.85; }
+    .pi-pagination-bar .pages { display: flex; gap: 0.25rem; }
+    .pi-pagination-bar .page-btn {
+        padding: 0.25rem 0.625rem; border-radius: 0.25rem;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: transparent; color: #fff; cursor: pointer;
+        font-size: 0.75rem; font-weight: 500; transition: all 0.15s;
+    }
+    .pi-pagination-bar .page-btn:hover { background: rgba(255,255,255,0.15); }
+    .pi-pagination-bar .page-btn.active { background: #fff; color: var(--pi-primary); font-weight: 700; border-color: #fff; }
+
+    /* ── BADGES ── */
+    .pi-badge {
+        display: inline-flex; align-items: center; gap: 0.25rem;
+        padding: 0.15rem 0.5rem; border-radius: 9999px;
+        font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em;
+    }
+    .pi-badge-info { background: var(--pi-info-light); color: #0369a1; }
+    .pi-badge-success { background: var(--pi-success-light); color: #15803d; }
+
+    /* ── ACTION BUTTONS ── */
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; opacity: 0; transition: opacity 0.15s; }
+    .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    .pi-action-btn {
+        width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.15s; font-size: 0.75rem;
+    }
+    .pi-action-btn.view { background: transparent; color: var(--pi-primary); }
+    .pi-action-btn.view:hover { background: var(--pi-primary-light); }
+    .pi-action-btn.edit { background: transparent; color: var(--pi-primary); border: 1px solid var(--pi-primary); }
+    .pi-action-btn.edit:hover { background: var(--pi-primary); color: #fff; }
+    .pi-action-btn.delete { background: transparent; color: var(--pi-danger); border: 1px solid var(--pi-danger); }
+    .pi-action-btn.delete:hover { background: var(--pi-danger); color: #fff; }
+
+    /* ── EMPTY STATE ── */
+    .pi-empty { text-align: center; padding: 3rem 1rem; color: var(--pi-text-muted); }
+    .pi-empty-icon { width: 3.5rem; height: 3.5rem; border-radius: 0.75rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 0.75rem; color: var(--pi-primary); }
+    .pi-empty h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--pi-text); }
+    .pi-empty p { font-size: 0.8125rem; }
+
+    /* ── MOBILE CARDS ── */
+    .pi-mobile-cards { display: none; padding: 0.75rem; }
+    .pi-mobile-card {
+        background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
+        padding: 0.75rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
+    }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.375rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); }
+    .pi-mobile-card .card-meta { font-size: 0.6875rem; color: var(--pi-text-muted); margin-bottom: 0.375rem; }
+    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; }
+    .pi-mobile-card .card-actions .btn { font-size: 0.6875rem; padding: 0.2rem 0.5rem; }
+
+    /* ── MODAL ── */
+    .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
+    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1rem 1.25rem; background: var(--pi-primary-light); }
+    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
+    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
+    .pi-modal .modal-header .header-icon.green { background: var(--pi-success); color: #fff; }
+    .pi-modal .modal-header .header-icon.orange { background: var(--pi-warning); color: #fff; }
+    .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
+    .pi-modal .modal-subtitle { font-size: 0.75rem; color: var(--pi-text-muted); margin: 0; }
+    .pi-modal .modal-body { padding: 1rem 1.25rem; }
+    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; background: var(--pi-bg); }
+    .pi-modal .modal-footer .btn { border-radius: var(--pi-radius); font-size: 0.8125rem; font-weight: 500; padding: 0.4375rem 0.875rem; }
+
+    /* ── VIEW MODAL DETAIL ROWS ── */
+    .pi-detail-row { display: flex; align-items: flex-start; gap: 0.625rem; padding: 0.5rem 0; border-bottom: 1px solid #f0f4ff; }
+    .pi-detail-row:last-child { border-bottom: none; }
+    .pi-detail-icon { width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
+    .pi-detail-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; }
+
+    /* ── FORM ── */
+    .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
+    .pi-form .form-label .required { color: var(--pi-danger); }
+    .pi-form .form-control, .pi-form .form-select { border-radius: var(--pi-radius); border-color: var(--pi-border); font-size: 0.8125rem; height: 2.25rem; }
+    .pi-form textarea.form-control { height: auto; }
+    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light); }
+    .pi-form .form-text { font-size: 0.6875rem; color: var(--pi-text-muted); }
+    .pi-form .section-title {
+        font-size: 0.75rem; font-weight: 600; color: var(--pi-primary);
+        margin-bottom: 0.625rem; padding-bottom: 0.375rem;
+        border-bottom: 2px solid var(--pi-primary);
+        display: flex; align-items: center; gap: 0.375rem;
+        text-transform: uppercase; letter-spacing: 0.03em;
+    }
+
+    /* ── CENTRO CARD IN FORM ── */
+    .pi-centro-card { background: var(--pi-bg); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.75rem; margin-bottom: 0.5rem; position: relative; }
+    .pi-centro-card .centro-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .pi-centro-card .centro-number { font-size: 0.6875rem; font-weight: 600; color: #fff; background: var(--pi-primary); padding: 0.125rem 0.5rem; border-radius: 9999px; }
+
+    /* ── BUTTON PRIMARY ── */
+    .pi-btn-primary { background: var(--pi-primary); border: none; color: #fff; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; }
+    .pi-btn-primary:hover { background: var(--pi-primary-dark); color: #fff; }
+
+    /* ── LOADING SPINNER ── */
+    .pi-spinner { display: inline-block; width: 0.875rem; height: 0.875rem; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.25rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 991.98px) {
+        .pi-desktop-table { display: none !important; }
+        .pi-mobile-cards { display: block !important; }
+    }
+    @media (max-width: 767.98px) {
+        .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .pi-stat { border-bottom: 1px solid var(--pi-border); }
+        .pi-toolbar { flex-direction: column; }
+        .pi-page-header { flex-direction: column; align-items: stretch; }
+        .pi-page-header .pi-btn-create { justify-content: center; }
+        .pi-pagination-bar { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+    @media (max-width: 575.98px) {
+        .pi-page-header { padding: 0.75rem; }
+        .pi-toolbar { padding: 0.5rem 0.75rem; }
+        .pi-stat { padding: 0.5rem 0.75rem; }
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="pi-page">
 
-{{-- ============================================= --}}
-{{-- HEADER                                        --}}
-{{-- ============================================= --}}
-<div class="container-fluid py-4">
-    <div class="row align-items-center mb-4">
-        <div class="col-12 col-md-8 mb-3 mb-md-0">
-            <div class="d-flex align-items-center gap-3">
-                <div class="rounded-3 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:52px;height:52px;">
-                    <i class="fas fa-chalkboard-teacher text-primary fa-lg"></i>
-                </div>
+    {{-- ============================================= --}}
+    {{-- BLUE HEADER                                   --}}
+    {{-- ============================================= --}}
+    <div class="pi-page-header">
+        <div>
+            <div style="display:flex;align-items:center;gap:0.625rem">
+                <i class="fas fa-chalkboard-teacher fa-lg" style="opacity:0.9"></i>
                 <div>
-                    <h1 class="h3 fw-bold mb-0">Gestão de Formadores</h1>
-                    <p class="text-muted mb-0 small">Gerir todos os formadores disponíveis no sistema</p>
+                    <h1>Gestão de Formadores</h1>
+                    <p>Gerir todos os formadores disponíveis no sistema</p>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-4 text-md-end">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNovoFormador">
-                <i class="fas fa-plus me-2"></i>Novo Formador
-            </button>
+        <button class="pi-btn-create" data-bs-toggle="modal" data-bs-target="#modalNovoFormador">
+            <i class="fas fa-plus"></i> Novo Formador
+        </button>
+    </div>
+
+    {{-- ============================================= --}}
+    {{-- STATS BAR                                     --}}
+    {{-- ============================================= --}}
+    <div class="pi-stats-bar">
+        <div class="pi-stat">
+            <div class="pi-stat-icon blue"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="pi-stat-label">Total</div>
+                <div class="pi-stat-value" style="color:var(--pi-primary)">{{ $formadores->count() }}</div>
+            </div>
+        </div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon green"><i class="fas fa-user-check"></i></div>
+            <div>
+                <div class="pi-stat-label">Com Cursos</div>
+                <div class="pi-stat-value" style="color:var(--pi-success)">{{ $formadores->filter(fn($f) => $f->cursos_count > 0)->count() }}</div>
+            </div>
+        </div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon gray"><i class="fas fa-user-times"></i></div>
+            <div>
+                <div class="pi-stat-label">Sem Cursos</div>
+                <div class="pi-stat-value" style="color:var(--pi-muted)">{{ $formadores->filter(fn($f) => $f->cursos_count == 0)->count() }}</div>
+            </div>
+        </div>
+        <div class="pi-stat">
+            <div class="pi-stat-icon cyan"><i class="fas fa-phone"></i></div>
+            <div>
+                <div class="pi-stat-label">Com Contactos</div>
+                <div class="pi-stat-value" style="color:var(--pi-info)">{{ $formadores->filter(fn($f) => $f->contactos_count > 0)->count() }}</div>
+            </div>
         </div>
     </div>
 
     {{-- ============================================= --}}
-    {{-- FILTROS                                       --}}
+    {{-- TOOLBAR (filters)                             --}}
     {{-- ============================================= --}}
-    <div class="card mb-3 border-0 shadow-sm">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
-                    <label for="filtroNome" class="form-label small fw-semibold text-muted">Nome</label>
-                    <input type="text" id="filtroNome" class="form-control form-control-sm" 
-                           placeholder="Pesquisar por nome..." value="{{ $filtroNome ?? '' }}"
-                           onchange="aplicarFiltros()">
-                </div>
-                <div class="col-12 col-md-6">
-                    <label for="filtroEspecialidade" class="form-label small fw-semibold text-muted">Especialidade</label>
-                    <input type="text" id="filtroEspecialidade" class="form-control form-control-sm" 
-                           placeholder="Pesquisar por especialidade..." value="{{ $filtroEspecialidade ?? '' }}"
-                           onchange="aplicarFiltros()">
-                </div>
-            </div>
-            <div class="row mt-3">
-                <div class="col-12">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="limparFiltros()">
-                        <i class="fas fa-undo me-1"></i>Limpar Filtros
-                    </button>
-                </div>
-            </div>
+    <div class="pi-toolbar">
+        <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="filtroNome" placeholder="Buscar por nome do formador..." value="{{ request('nome') }}">
         </div>
+        <div class="search-wrap" style="max-width:250px">
+            <i class="fas fa-search"></i>
+            <input type="text" id="filtroEspecialidade" placeholder="Buscar por especialidade..." value="{{ request('especialidade') }}">
+        </div>
+        <button class="pi-btn-clear" onclick="limparFiltros()">
+            <i class="fas fa-times-circle"></i> Limpar
+        </button>
     </div>
 
     {{-- ============================================= --}}
-    {{-- TABELA DE FORMADORES                          --}}
+    {{-- TABLE                                         --}}
     {{-- ============================================= --}}
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom py-3">
-            <div class="d-flex align-items-center gap-2">
-                <i class="fas fa-list text-primary"></i>
-                <h5 class="mb-0 fw-semibold">Lista de Formadores</h5>
-            </div>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table id="formadoresTable" class="table table-hover align-middle mb-0" style="width:100%">
-                    <thead class="table-light">
+    <div class="pi-table-wrap">
+        {{-- Desktop Table --}}
+        <div class="pi-desktop-table">
+            <table class="pi-table" id="formadoresTable">
+                <thead>
+                    <tr>
+                        <th style="width:50px">ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Especialidade</th>
+                        <th style="text-align:center">Cursos</th>
+                        <th style="text-align:center">Contactos</th>
+                        <th style="text-align:right;width:100px">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($formadores as $formador)
                         <tr>
-                            <th class="ps-3" style="width:60px">ID</th>
-                            <th>Nome</th>
-                            <th class="d-none d-md-table-cell">Email</th>
-                            <th class="d-none d-lg-table-cell">Especialidade</th>
-                            <th class="text-center" style="width:90px">Cursos</th>
-                            <th class="text-center" style="width:90px">Contactos</th>
-                            <th class="text-end pe-3" style="width:130px">Ações</th>
+                            <td class="mono">#{{ $formador->id }}</td>
+                            <td><strong style="font-size:0.8125rem">{{ $formador->nome }}</strong></td>
+                            <td style="font-size:0.75rem;color:var(--pi-text-muted)">{{ $formador->email ?? '—' }}</td>
+                            <td style="font-size:0.75rem">{{ $formador->especialidade ?? '—' }}</td>
+                            <td style="text-align:center">
+                                @if($formador->primeiro_nome_curso)
+                                    <span class="pi-badge pi-badge-info">{{ $formador->primeiro_nome_curso }}</span>
+                                    @if($formador->cursos_count > 1)
+                                        <i class="fas fa-info-circle" style="color:var(--pi-muted);margin-left:0.25rem;cursor:help;font-size:0.6875rem"
+                                           data-bs-toggle="tooltip"
+                                           title="{{ $formador->cursos_lista }}"></i>
+                                    @endif
+                                @else
+                                    <span style="color:var(--pi-text-muted)">—</span>
+                                @endif
+                            </td>
+                            <td style="text-align:center">
+                                @if($formador->primeiro_contacto)
+                                    <span class="pi-badge pi-badge-success">{{ $formador->primeiro_contacto }}</span>
+                                    @if($formador->contactos_count > 1)
+                                        <i class="fas fa-info-circle" style="color:var(--pi-muted);margin-left:0.25rem;cursor:help;font-size:0.6875rem"
+                                           data-bs-toggle="tooltip"
+                                           title="{{ $formador->contactos_lista }}"></i>
+                                    @endif
+                                @else
+                                    <span style="color:var(--pi-text-muted)">—</span>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="pi-actions">
+                                    <button class="pi-action-btn view btn-visualizar-formador" data-formador-id="{{ $formador->id }}" title="Ver detalhes">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="pi-action-btn edit btn-editar-formador" data-formador-id="{{ $formador->id }}" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="pi-action-btn delete btn-eliminar-formador" data-formador-id="{{ $formador->id }}" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($formadores as $formador)
-                            <tr>
-                                <td class="ps-3"><small class="text-muted">#{{ $formador->id }}</small></td>
-                                <td><strong>{{ $formador->nome }}</strong></td>
-                                <td class="d-none d-md-table-cell"><small>{{ $formador->email ?? '—' }}</small></td>
-                                <td class="d-none d-lg-table-cell"><small>{{ $formador->especialidade ?? '—' }}</small></td>
-                                <td class="text-center">
-                                    @if($formador->primeiro_nome_curso)
-                                        <span class="badge bg-info">{{ $formador->primeiro_nome_curso }}</span>
-                                        @if($formador->cursos_count > 1)
-                                            <i class="fas fa-info-circle text-muted ms-1" 
-                                               data-bs-toggle="tooltip" 
-                                               title="{{ $formador->cursos_lista }}" 
-                                               style="cursor: help;"></i>
-                                        @endif
-                                    @else
-                                        <span class="badge bg-secondary">—</span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if($formador->primeiro_contacto)
-                                        <span class="badge bg-success-subtle text-success">{{ $formador->primeiro_contacto }}</span>
-                                        @if($formador->contactos_count > 1)
-                                            <i class="fas fa-info-circle text-muted ms-1" 
-                                               data-bs-toggle="tooltip" 
-                                               title="{{ $formador->contactos_lista }}" 
-                                               style="cursor: help;"></i>
-                                        @endif
-                                    @else
-                                        <span class="badge bg-secondary">—</span>
-                                    @endif
-                                </td>
-                                <td class="text-end pe-3">
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-info btn-visualizar-formador" data-formador-id="{{ $formador->id }}" title="Ver detalhes">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-primary btn-editar-formador" data-formador-id="{{ $formador->id }}" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-eliminar-formador" data-formador-id="{{ $formador->id }}" title="Eliminar">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">
-                                    <div class="mb-2"><i class="fas fa-inbox fa-2x text-muted"></i></div>
-                                    Nenhum formador cadastrado
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @empty
+                        <tr>
+                            <td colspan="7">
+                                <div class="pi-empty">
+                                    <div class="pi-empty-icon"><i class="fas fa-inbox"></i></div>
+                                    <h3>Nenhum formador cadastrado</h3>
+                                    <p>Crie um novo formador para começar</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        {{-- Mobile Cards --}}
+        <div class="pi-mobile-cards">
+            @forelse($formadores as $formador)
+                <div class="pi-mobile-card">
+                    <div class="card-top">
+                        <div>
+                            <div class="card-name">{{ $formador->nome }}</div>
+                            <div class="card-meta">{{ $formador->especialidade ?? 'Sem especialidade' }} · {{ $formador->email ?? 'Sem email' }}</div>
+                        </div>
+                    </div>
+                    <div class="card-details">
+                        @if($formador->primeiro_nome_curso)
+                            <span><i class="fas fa-book me-1"></i>{{ $formador->primeiro_nome_curso }}</span>
+                        @endif
+                        @if($formador->primeiro_contacto)
+                            <span><i class="fas fa-phone me-1"></i>{{ $formador->primeiro_contacto }}</span>
+                        @endif
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-sm btn-outline-primary btn-visualizar-formador" data-formador-id="{{ $formador->id }}"><i class="fas fa-eye me-1"></i>Ver</button>
+                        <button class="btn btn-sm btn-outline-primary btn-editar-formador" data-formador-id="{{ $formador->id }}"><i class="fas fa-edit me-1"></i>Editar</button>
+                        <button class="btn btn-sm btn-outline-danger btn-eliminar-formador" data-formador-id="{{ $formador->id }}"><i class="fas fa-trash me-1"></i>Eliminar</button>
+                    </div>
+                </div>
+            @empty
+                <div class="pi-empty">
+                    <div class="pi-empty-icon"><i class="fas fa-inbox"></i></div>
+                    <h3>Nenhum formador cadastrado</h3>
+                    <p>Crie um novo formador para começar</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- PAGINATION BAR --}}
+    <div class="pi-pagination-bar">
+        <span class="info">Mostrando {{ $formadores->count() }} formador(es)</span>
+        <div class="pages">
+            <button class="page-btn active">1</button>
         </div>
     </div>
 </div>
@@ -145,22 +465,23 @@
 {{-- ============================================= --}}
 {{-- MODAL: Visualizar Detalhes do Formador       --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalVisualizarFormador" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-light border-bottom">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="fas fa-user-tie text-primary"></i>
-                    <h5 class="modal-title fw-semibold mb-0">Detalhes do Formador</h5>
+<div class="modal fade pi-modal" id="modalVisualizarFormador" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:580px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon green"><i class="fas fa-eye"></i></div>
+                    <div>
+                        <h5 class="modal-title">Detalhes do Formador</h5>
+                        <p class="modal-subtitle">Informações completas</p>
+                    </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body p-4" id="conteudoVisualizarFormador">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Carregando...</span>
-                    </div>
-                    <p class="text-muted mt-3 mb-0">Carregando detalhes...</p>
+            <div class="modal-body" id="conteudoVisualizarFormador">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-2" style="font-size:0.8125rem">Carregando...</p>
                 </div>
             </div>
         </div>
@@ -170,113 +491,68 @@
 {{-- ============================================= --}}
 {{-- MODAL: Criar Novo Formador                   --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalNovoFormador" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow">
-
-            {{-- Header --}}
-            <div class="modal-header bg-light border-bottom">
-                <div class="d-flex align-items-center gap-2">
-                    <div class="rounded-2 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
-                        <i class="fas fa-user-plus text-primary"></i>
+<div class="modal fade pi-modal" id="modalNovoFormador" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon blue"><i class="fas fa-user-plus"></i></div>
+                    <div>
+                        <h5 class="modal-title">Criar Novo Formador</h5>
+                        <p class="modal-subtitle">Preencha os dados do formador</p>
                     </div>
-                    <h5 class="modal-title fw-semibold mb-0">Criar Novo Formador</h5>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
-            {{-- Body --}}
-            <div class="modal-body p-4">
-                <form id="formNovoFormadorAjax" enctype="multipart/form-data">
+            <div class="modal-body">
+                <form id="formNovoFormadorAjax" class="pi-form" enctype="multipart/form-data">
                     @csrf
-                    <div class="row g-4">
-
-                        {{-- COLUNA ESQUERDA --}}
-                        <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0">
-                                <div class="card-body">
-                                    <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-id-card me-2"></i>Informações do Formador
-                                    </h6>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">Nome <span class="text-danger">*</span></label>
-                                        <input type="text" name="nome" class="form-control form-control-sm" placeholder="Nome completo" required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">Email</label>
-                                        <input type="email" name="email" class="form-control form-control-sm" placeholder="email@centro.ao">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">Especialidade</label>
-                                        <input type="text" name="especialidade" class="form-control form-control-sm" placeholder="Ex: Informática, Design...">
-                                    </div>
-
-                                    <div class="mb-0">
-                                        <label class="form-label fw-medium small">
-                                            <i class="fas fa-camera me-1 text-muted"></i>Foto
-                                        </label>
-                                        <input type="file" name="foto" class="form-control form-control-sm" accept="image/*">
-                                        <div class="form-text small">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
-                                    </div>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="section-title"><i class="fas fa-id-card"></i> Informações do Formador</div>
+                            <div class="mb-2">
+                                <label class="form-label">Nome <span class="required">*</span></label>
+                                <input type="text" class="form-control" name="nome" required placeholder="Nome completo">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" placeholder="email@centro.ao">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Especialidade</label>
+                                <input type="text" class="form-control" name="especialidade" placeholder="Ex: Informática, Design...">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Foto</label>
+                                <input type="file" class="form-control" name="foto" accept="image/*">
+                                <div class="form-text">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
                             </div>
                         </div>
-
-                        {{-- COLUNA DIREITA --}}
-                        <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0">
-                                <div class="card-body">
-                                    <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-address-book me-2"></i>Contactos
-                                    </h6>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">
-                                            <i class="fas fa-phone me-1 text-muted"></i>Contacto
-                                        </label>
-                                        <input type="text" name="contacto_telefone" class="form-control form-control-sm" placeholder="+244 900 000 000">
-                                    </div>
-
-                                    <div class="mb-0">
-                                        <label class="form-label fw-medium small">Biografia</label>
-                                        <textarea name="bio" class="form-control form-control-sm" rows="7" placeholder="Breve descrição profissional..."></textarea>
-                                    </div>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="section-title"><i class="fas fa-address-book"></i> Contactos</div>
+                            <div class="mb-2">
+                                <label class="form-label">Contacto</label>
+                                <input type="text" class="form-control" name="contacto_telefone" placeholder="+244 900 000 000">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Biografia</label>
+                                <textarea class="form-control" name="bio" rows="5" placeholder="Breve descrição profissional..."></textarea>
                             </div>
                         </div>
-
                     </div>
-
-                    {{-- ====== SEÇÃO DE CENTROS ====== --}}
-                    <div class="mt-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h6 class="fw-semibold mb-0">
-                                <i class="fas fa-building text-primary me-2"></i>Centros de Formação
-                            </h6>
-                            <button type="button" id="adicionarCentroNovoFormadorBtn" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-plus me-1"></i>Adicionar Centro
-                            </button>
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="section-title mb-0 pb-0 border-0" style="border:none !important"><i class="fas fa-building"></i> Centros de Formação</div>
+                            <button type="button" class="btn btn-sm pi-btn-primary" id="adicionarCentroNovoFormadorBtn"><i class="fas fa-plus"></i> Adicionar</button>
                         </div>
-                        <div id="centrosContainerNovoFormador" class="row g-3">
-                            {{-- centros dinâmicos aqui --}}
-                        </div>
+                        <div id="centrosContainerNovoFormador"></div>
                     </div>
                 </form>
             </div>
-
-            {{-- Footer --}}
-            <div class="modal-footer bg-light border-top">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Cancelar
-                </button>
-                <button type="submit" form="formNovoFormadorAjax" class="btn btn-primary">
-                    <i class="fas fa-save me-1"></i>Salvar Formador
-                </button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formNovoFormadorAjax" class="btn pi-btn-primary"><i class="fas fa-save"></i> Salvar Formador</button>
             </div>
-
         </div>
     </div>
 </div>
@@ -284,143 +560,94 @@
 {{-- ============================================= --}}
 {{-- MODAL: Editar Formador                       --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalEditarFormador" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow">
-
-            {{-- Header --}}
-            <div class="modal-header bg-light border-bottom">
-                <div class="d-flex align-items-center gap-2">
-                    <div class="rounded-2 bg-warning bg-opacity-10 d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
-                        <i class="fas fa-user-edit text-warning"></i>
+<div class="modal fade pi-modal" id="modalEditarFormador" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon orange"><i class="fas fa-user-edit"></i></div>
+                    <div>
+                        <h5 class="modal-title">Editar Formador</h5>
+                        <p class="modal-subtitle">Atualizar dados do formador</p>
                     </div>
-                    <h5 class="modal-title fw-semibold mb-0">Editar Formador</h5>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
-            {{-- Body --}}
-            <div class="modal-body p-4">
-                <form id="formEditarFormadorAjax">
+            <div class="modal-body">
+                <form id="formEditarFormadorAjax" class="pi-form">
                     @csrf
                     <input type="hidden" id="editFormadorId">
-                    <div class="row g-4">
-
-                        {{-- COLUNA ESQUERDA --}}
-                        <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0">
-                                <div class="card-body">
-                                    <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-id-card me-2"></i>Informações do Formador
-                                    </h6>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">Nome <span class="text-danger">*</span></label>
-                                        <input type="text" id="editNome" class="form-control form-control-sm" required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">Email</label>
-                                        <input type="email" id="editEmail" class="form-control form-control-sm">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">Especialidade</label>
-                                        <input type="text" id="editEspecialidade" class="form-control form-control-sm">
-                                    </div>
-
-                                    <div class="mb-0">
-                                        <label class="form-label fw-medium small">
-                                            <i class="fas fa-camera me-1 text-muted"></i>Foto (Nova)
-                                        </label>
-                                        <input type="file" id="editFoto" name="foto" class="form-control form-control-sm" accept="image/*">
-                                        <div class="form-text small">Deixe em branco para manter a foto atual</div>
-                                    </div>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="section-title"><i class="fas fa-id-card"></i> Informações do Formador</div>
+                            <div class="mb-2">
+                                <label class="form-label">Nome <span class="required">*</span></label>
+                                <input type="text" class="form-control" id="editNome" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmail">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Especialidade</label>
+                                <input type="text" class="form-control" id="editEspecialidade">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Foto (Nova)</label>
+                                <input type="file" class="form-control" id="editFoto" name="foto" accept="image/*">
+                                <div class="form-text">Deixe em branco para manter a foto atual</div>
                             </div>
                         </div>
-
-                        {{-- COLUNA DIREITA --}}
-                        <div class="col-12 col-md-6">
-                            <div class="card border bg-light border-0">
-                                <div class="card-body">
-                                    <h6 class="fw-bold text-primary mb-3">
-                                        <i class="fas fa-address-book me-2"></i>Contactos
-                                    </h6>
-
-                                    <div class="mb-3">
-                                        <label class="form-label fw-medium small">
-                                            <i class="fas fa-phone me-1 text-muted"></i>Contacto
-                                        </label>
-                                        <input type="text" id="editContactoTelefone" class="form-control form-control-sm" placeholder="+244 900 000 000">
-                                    </div>
-
-                                    <div class="mb-0">
-                                        <label class="form-label fw-medium small">Biografia</label>
-                                        <textarea id="editBio" class="form-control form-control-sm" rows="7"></textarea>
-                                    </div>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="section-title"><i class="fas fa-address-book"></i> Contactos</div>
+                            <div class="mb-2">
+                                <label class="form-label">Contacto</label>
+                                <input type="text" class="form-control" id="editContactoTelefone" placeholder="+244 900 000 000">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Biografia</label>
+                                <textarea class="form-control" id="editBio" rows="5"></textarea>
                             </div>
                         </div>
-
                     </div>
-
-                    {{-- ====== SEÇÃO DE CENTROS ====== --}}
-                    <div class="mt-4">
-                        <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h6 class="fw-semibold mb-0">
-                                <i class="fas fa-building text-primary me-2"></i>Centros de Formação
-                            </h6>
-                            <button type="button" id="adicionarCentroEditarFormadorBtn" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-plus me-1"></i>Adicionar Centro
-                            </button>
+                    <div class="mt-2">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="section-title mb-0 pb-0 border-0" style="border:none !important"><i class="fas fa-building"></i> Centros de Formação</div>
+                            <button type="button" class="btn btn-sm pi-btn-primary" id="adicionarCentroEditarFormadorBtn"><i class="fas fa-plus"></i> Adicionar</button>
                         </div>
-                        <div id="centrosContainerEditarFormador" class="row g-3">
-                            {{-- centros dinâmicos aqui --}}
-                        </div>
+                        <div id="centrosContainerEditarFormador"></div>
                     </div>
                 </form>
             </div>
-
-            {{-- Footer --}}
-            <div class="modal-footer bg-light border-top">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Cancelar
-                </button>
-                <button type="submit" form="formEditarFormadorAjax" class="btn btn-primary">
-                    <i class="fas fa-save me-1"></i>Guardar Alterações
-                </button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formEditarFormadorAjax" class="btn pi-btn-primary"><i class="fas fa-save"></i> Guardar Alterações</button>
             </div>
-
         </div>
     </div>
 </div>
-
-@endsection
 
 {{-- ============================================= --}}
 {{-- Template para Centro no Modal                 --}}
 {{-- ============================================= --}}
 <template id="centroFormadorTemplate">
-    <div class="col-12 col-md-6">
-        <div class="centro-card card border rounded-3 shadow-sm">
-            <div class="card-header bg-light d-flex align-items-center justify-content-between py-2 px-3">
-                <span class="badge bg-primary numero-centro-modal">Centro 1</span>
-                <button type="button" class="btn btn-outline-danger btn-sm remover-centro-modal py-0 px-2" title="Remover">
-                    <i class="fas fa-trash-alt small"></i>
-                </button>
+    <div class="col-12">
+        <div class="pi-centro-card centro-card">
+            <div class="centro-header">
+                <span class="centro-number numero-centro-modal">Centro 1</span>
+                <button type="button" class="btn btn-sm btn-outline-danger remover-centro-modal" title="Remover"><i class="fas fa-times"></i></button>
             </div>
-            <div class="card-body p-3">
-                <div>
-                    <label class="form-label small mb-1 fw-medium">Centro <span class="text-danger">*</span></label>
-                    <select class="form-select form-select-sm centro-id-modal" required>
-                        <option value="">Selecione</option>
-                    </select>
+            <div class="row">
+                <div class="col-md-12 mb-2">
+                    <label class="form-label">Centro <span class="required">*</span></label>
+                    <select class="form-select centro-id-modal" required><option value="">Selecione o centro</option></select>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+@endsection
 
 @section('scripts')
 <script>
@@ -431,6 +658,13 @@ let centrosContainerEditarFormadorCount = 0;
 $(document).ready(function() {
     carregarCentros();
     configurarEventosModal();
+
+    // Filtros automáticos
+    let filtroTimeout;
+    $('#filtroNome, #filtroEspecialidade').on('input', function() {
+        clearTimeout(filtroTimeout);
+        filtroTimeout = setTimeout(aplicarFiltros, 300);
+    });
 });
 
 /**
@@ -481,251 +715,159 @@ function configurarEventosModal() {
         atualizarNumeroCentros();
     });
 
-    // Delegated actions on table buttons
     $(document).on('click', '.btn-visualizar-formador', function() {
         const id = $(this).data('formador-id');
-        if (id) {
-            visualizarFormador(id);
-        }
+        if (id) visualizarFormador(id);
     });
 
     $(document).on('click', '.btn-editar-formador', function() {
         const id = $(this).data('formador-id');
-        if (id) {
-            abrirEdicaoFormador(id);
-        }
+        if (id) abrirEdicaoFormador(id);
     });
 
     $(document).on('click', '.btn-eliminar-formador', function() {
         const id = $(this).data('formador-id');
-        if (id) {
-            eliminarFormador(id);
-        }
+        if (id) eliminarFormador(id);
     });
 
-    // Ativar tooltips do Bootstrap
+    // Ativar tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
+    tooltipTriggerList.map(function (el) { return new bootstrap.Tooltip(el) });
 }
 
-/**
- * Adicionar centro no modal de novo formador
- */
 function adicionarCentroNovoFormador() {
     const template = document.getElementById('centroFormadorTemplate');
     if (!template) return;
-
     const clone = template.content.cloneNode(true);
     const wrapper = document.createElement('div');
     wrapper.appendChild(clone);
-
-    const html = wrapper.innerHTML;
-    $('#centrosContainerNovoFormador').append(html);
-
+    $('#centrosContainerNovoFormador').append(wrapper.innerHTML);
     const selects = $('#centrosContainerNovoFormador').find('.centro-id-modal');
     const lastSelect = selects.last();
-
     centrosDisponiveisList.forEach(centro => {
         lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
     });
-
-    // Desabilitar centros já selecionados
-    lastSelect.on('change', function() {
-        atualizarSelectsDeCentros();
-    });
-
+    lastSelect.on('change', function() { atualizarSelectsDeCentros(); });
     atualizarSelectsDeCentros();
     atualizarNumeroCentros();
 }
 
-/**
- * Adicionar centro no modal de editar formador
- */
 function adicionarCentroEditarFormador(centrosAssociados = []) {
     const template = document.getElementById('centroFormadorTemplate');
     if (!template) return;
-
     const clone = template.content.cloneNode(true);
     const wrapper = document.createElement('div');
     wrapper.appendChild(clone);
-
-    const html = wrapper.innerHTML;
-    $('#centrosContainerEditarFormador').append(html);
-
+    $('#centrosContainerEditarFormador').append(wrapper.innerHTML);
     const selects = $('#centrosContainerEditarFormador').find('.centro-id-modal');
     const lastSelect = selects.last();
-
-    // Preencher opções de centros disponíveis
     centrosDisponiveisList.forEach(centro => {
         lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
     });
-
-    // Ao mudar este select, atualizar visibilidade de todos os dropdowns
-    lastSelect.on('change', function() {
-        atualizarSelectsDeCentrosEditar();
-    });
-
-    // Atualizar visibilidade e numeração
+    lastSelect.on('change', function() { atualizarSelectsDeCentrosEditar(); });
     atualizarSelectsDeCentrosEditar();
     atualizarNumeroCentros();
 }
 
-/**
- * Atualizar numeração dos centros
- */
 function atualizarNumeroCentros() {
     const badges = $('.numero-centro-modal');
-    badges.each((index, badge) => {
-        $(badge).text('Centro ' + (index + 1));
-    });
-
+    badges.each((index, badge) => { $(badge).text('Centro ' + (index + 1)); });
     const btnsRemover = $('.remover-centro-modal');
     btnsRemover.prop('disabled', btnsRemover.length <= 1);
 }
 
-/**
- * Atualizar status de centros (ocultar duplicados)
- */
 function atualizarSelectsDeCentros() {
     const selects = $('select.centro-id-modal:not(#centrosContainerEditarFormador select)');
     const allSelectedIds = [];
-    
-    // Coletar todos os valores selecionados nos dropdowns de NOVO formador
-    selects.each(function() {
-        const val = $(this).val();
-        if (val) {
-            allSelectedIds.push(val);
-        }
-    });
-    
-    // Para cada dropdown, esconder opções que já estão selecionadas em outro
+    selects.each(function() { const val = $(this).val(); if (val) allSelectedIds.push(val); });
     selects.each(function() {
         const select = $(this);
         const selectedInThis = select.val();
-        
         select.find('option').each(function() {
             const optionId = $(this).val();
-            
-            if (optionId === '') {
-                // Opção vazia sempre visível
-                $(this).prop('hidden', false);
-            } else if (optionId === selectedInThis) {
-                // Opção atualmente selecionada sempre visível
-                $(this).prop('hidden', false);
-            } else if (allSelectedIds.includes(optionId)) {
-                // Se está selecionado em outro dropdown, esconder
-                $(this).prop('hidden', true);
-            } else {
-                // Caso contrário, mostrar
-                $(this).prop('hidden', false);
-            }
+            if (optionId === '' || optionId === selectedInThis) { $(this).prop('hidden', false); }
+            else if (allSelectedIds.includes(optionId)) { $(this).prop('hidden', true); }
+            else { $(this).prop('hidden', false); }
         });
     });
 }
 
-/**
- * Atualizar dropdowns de centros no modal de editar formador
- * Oculta centros que já estão selecionados em outro dropdown
- */
 function atualizarSelectsDeCentrosEditar() {
     const selectsEditar = $('#centrosContainerEditarFormador').find('.centro-id-modal');
     const allSelectedIds = [];
-    
-    // Coletar todos os valores atualmente selecionados
-    selectsEditar.each(function() {
-        const val = $(this).val();
-        if (val) {
-            allSelectedIds.push(val);
-        }
-    });
-    
-    // Para cada dropdown, atualizar visibilidade das opções
+    selectsEditar.each(function() { const val = $(this).val(); if (val) allSelectedIds.push(val); });
     selectsEditar.each(function() {
         const select = $(this);
         const selectedInThis = select.val();
-        
         select.find('option').each(function() {
             const optionId = $(this).val();
-            
-            if (optionId === '') {
-                // Opção vazia sempre visível
-                $(this).prop('hidden', false);
-            } else if (optionId === selectedInThis) {
-                // Opção atualmente selecionada sempre visível
-                $(this).prop('hidden', false);
-            } else if (allSelectedIds.includes(optionId)) {
-                // Se está selecionado em outro dropdown, esconder
-                $(this).prop('hidden', true);
-            } else {
-                // Caso contrário, mostrar
-                $(this).prop('hidden', false);
-            }
+            if (optionId === '' || optionId === selectedInThis) { $(this).prop('hidden', false); }
+            else if (allSelectedIds.includes(optionId)) { $(this).prop('hidden', true); }
+            else { $(this).prop('hidden', false); }
         });
     });
 }
 
-/**
- * Carrega a lista de formadores via API
- */
-/**
- * Visualizar detalhes do formador
- */
 window.visualizarFormador = function(id) {
     $.ajax({
         url: `/formadores/${id}`,
         method: 'GET',
         success: function(response) {
             const formador = response.data || response;
-            let contactosHtml = '<span class="text-muted">Sem contactos</span>';
-            
+            let contactosHtml = '<span style="color:var(--pi-text-muted)">Sem contactos</span>';
             if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
-                contactosHtml = formador.contactos.map(function(c) { 
+                contactosHtml = formador.contactos.map(function(c) {
                     let telefone = typeof c === 'string' ? c : (c.valor || c);
-                    return `<span class="badge bg-info-subtle text-info me-1"><i class="fas fa-phone me-1"></i>${telefone}</span>`;
-                }).join('');
+                    return `<span class="pi-badge pi-badge-success"><i class="fas fa-phone" style="margin-right:0.25rem"></i>${telefone}</span>`;
+                }).join(' ');
             }
-            
-            let centrosHtml = '<span class="text-muted">Nenhum centro associado</span>';
+            let centrosHtml = '<span style="color:var(--pi-text-muted)">Nenhum centro associado</span>';
             if (formador.centros && Array.isArray(formador.centros) && formador.centros.length > 0) {
                 centrosHtml = formador.centros.map(function(c) {
-                    return `<span class="badge bg-primary-subtle text-primary me-1"><i class="fas fa-building me-1"></i>${c.nome}</span>`;
-                }).join('');
+                    return `<span class="pi-badge pi-badge-info"><i class="fas fa-building" style="margin-right:0.25rem"></i>${c.nome}</span>`;
+                }).join(' ');
             }
-            
             const fotoHtml = formador.foto_url
-                ? `<img src="${formador.foto_url}" class="rounded-3 shadow-sm" style="width:100%;max-width:180px;aspect-ratio:1;object-fit:cover;" alt="${formador.nome}">`
-                : '<div class="rounded-3 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto" style="width:180px;height:180px;"><i class="fas fa-user text-primary fa-4x"></i></div>';
-            
+                ? `<img src="${formador.foto_url}" style="width:100%;max-width:120px;aspect-ratio:1;object-fit:cover;border-radius:var(--pi-radius);border:2px solid var(--pi-border)" alt="${formador.nome}">`
+                : '<div style="width:120px;height:120px;border-radius:var(--pi-radius);background:var(--pi-primary-light);display:flex;align-items:center;justify-content:center;color:var(--pi-primary);font-size:2.5rem"><i class="fas fa-user"></i></div>';
+
             const conteudo = `
-                <div class="row g-4">
-                    <div class="col-12 col-md-4 text-center">${fotoHtml}</div>
-                    <div class="col-12 col-md-8">
-                        <h5 class="fw-bold mb-3">${formador.nome}</h5>
-                        <div class="row g-3">
-                            <div class="col-12"><small class="text-muted d-block fw-medium"><i class="fas fa-envelope me-1"></i>Email</small><small>${formador.email || '—'}</small></div>
-                            <div class="col-12"><small class="text-muted d-block fw-medium"><i class="fas fa-star me-1"></i>Especialidade</small><small>${formador.especialidade || '—'}</small></div>
-                            <div class="col-12"><small class="text-muted d-block fw-medium mb-1"><i class="fas fa-phone me-1"></i>Contactos</small>${contactosHtml}</div>
-                            <div class="col-12"><small class="text-muted d-block fw-medium mb-1"><i class="fas fa-building me-1"></i>Centros</small>${centrosHtml}</div>
-                            <div class="col-12"><small class="text-muted d-block fw-medium"><i class="fas fa-align-left me-1"></i>Biografia</small><small>${formador.bio || '—'}</small></div>
+                <div class="row g-3">
+                    <div class="col-md-4 text-center">${fotoHtml}</div>
+                    <div class="col-md-8">
+                        <h5 style="font-weight:700;margin-bottom:0.5rem;font-size:1rem;color:var(--pi-text)">${formador.nome}</h5>
+                        <div class="pi-detail-row">
+                            <div class="pi-detail-icon"><i class="fas fa-envelope"></i></div>
+                            <div><div class="pi-detail-label">Email</div><div class="pi-detail-value">${formador.email || '—'}</div></div>
+                        </div>
+                        <div class="pi-detail-row">
+                            <div class="pi-detail-icon"><i class="fas fa-star"></i></div>
+                            <div><div class="pi-detail-label">Especialidade</div><div class="pi-detail-value">${formador.especialidade || '—'}</div></div>
+                        </div>
+                        <div class="pi-detail-row">
+                            <div class="pi-detail-icon"><i class="fas fa-phone"></i></div>
+                            <div><div class="pi-detail-label">Contactos</div><div class="pi-detail-value">${contactosHtml}</div></div>
+                        </div>
+                        <div class="pi-detail-row">
+                            <div class="pi-detail-icon"><i class="fas fa-building"></i></div>
+                            <div><div class="pi-detail-label">Centros</div><div class="pi-detail-value">${centrosHtml}</div></div>
+                        </div>
+                        <div class="pi-detail-row">
+                            <div class="pi-detail-icon"><i class="fas fa-align-left"></i></div>
+                            <div><div class="pi-detail-label">Biografia</div><div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${formador.bio || '—'}</div></div>
                         </div>
                     </div>
                 </div>
             `;
-            
             $('#conteudoVisualizarFormador').html(conteudo);
-            new bootstrap.Modal(document.getElementById('modalVisualizarFormador')).show();
+            $('#modalVisualizarFormador').modal('show');
         },
         error: function() {
-            Swal.fire('Erro', 'Erro ao carregar detalhes', 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao carregar detalhes', confirmButtonColor: '#1d4ed8' });
         }
     });
 };
 
-/**
- * Abrir modal para editar formador
- */
 window.abrirEdicaoFormador = function(id) {
     $.ajax({
         url: `/formadores/${id}`,
@@ -737,102 +879,52 @@ window.abrirEdicaoFormador = function(id) {
             $('#editEmail').val(formador.email || '');
             $('#editEspecialidade').val(formador.especialidade || '');
             $('#editBio').val(formador.bio || '');
-            
             let primeroContacto = '';
             if (formador.contactos && Array.isArray(formador.contactos) && formador.contactos.length > 0) {
                 primeroContacto = typeof formador.contactos[0] === 'string' ? formador.contactos[0] : (formador.contactos[0].valor || '');
             }
             $('#editContactoTelefone').val(primeroContacto);
-            
-            // Coletar IDs de centros já associados a este formador
             const centrosAssociados = [];
             if (formador.centros && formador.centros.length > 0) {
-                formador.centros.forEach(function(centro) {
-                    centrosAssociados.push(centro.id);
-                });
+                formador.centros.forEach(function(centro) { centrosAssociados.push(centro.id); });
             }
-            
-            // Limpar container
             $('#centrosContainerEditarFormador').empty();
             centrosContainerEditarFormadorCount = 0;
-            
-            // Aguardar para renderizar os centros
             setTimeout(function() {
-                if (centrosAssociados && centrosAssociados.length > 0) {
-                    // Adicionar dropdowns para CADA centro associado
-                    centrosAssociados.forEach(function(centroId) {
-                        adicionarCentroEditarFormador();
-                    });
-                    
-                    // Após todos serem adicionados, selecionar os valores
+                if (centrosAssociados.length > 0) {
+                    centrosAssociados.forEach(function() { adicionarCentroEditarFormador(); });
                     setTimeout(function() {
                         const selects = $('#centrosContainerEditarFormador').find('.centro-id-modal');
-                        selects.each(function(idx) {
-                            if (idx < centrosAssociados.length) {
-                                $(this).val(centrosAssociados[idx]);
-                            }
-                        });
-                        // Atualizar visibilidade dos dropdowns
+                        selects.each(function(idx) { if (idx < centrosAssociados.length) $(this).val(centrosAssociados[idx]); });
                         atualizarSelectsDeCentrosEditar();
                         atualizarNumeroCentros();
                     }, 100);
                 } else {
-                    // Se não há centros, adicionar um vazio
                     adicionarCentroEditarFormador();
                 }
             }, 100);
-            
             new bootstrap.Modal(document.getElementById('modalEditarFormador')).show();
         },
         error: function() {
-            Swal.fire('Erro', 'Erro ao carregar dados', 'error');
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao carregar dados', confirmButtonColor: '#1d4ed8' });
         }
     });
 };
 
-/**
- * Criar novo formador
- */
 $('#formNovoFormadorAjax').on('submit', function(e) {
     e.preventDefault();
-    
     const form = $(this)[0];
     const formData = new FormData(form);
-
-    // Processar contactos como array simples de strings
     const telefone = $('input[name="contacto_telefone"]').val();
-    if (telefone && telefone.trim() !== '') {
-        formData.append('contactos[0]', telefone.trim());
-    }
-
-    // Processar centros
+    if (telefone && telefone.trim() !== '') formData.append('contactos[0]', telefone.trim());
     const centrosArray = [];
     $('#centrosContainerNovoFormador').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
-        if (centroId) {
-            centrosArray.push(parseInt(centroId));
-        }
+        if (centroId) centrosArray.push(parseInt(centroId));
     });
-    
-    // Remover centros que possam ter sido adicionados pelo formulário
     const keys = Array.from(formData.keys());
-    keys.forEach(key => {
-        if (key.startsWith('centros')) {
-            formData.delete(key);
-        }
-    });
-    
-    // Adicionar centros com indices
-    centrosArray.forEach((centroId, index) => {
-        formData.append(`centros[${index}]`, centroId);
-    });
-
-    // Debug
-    console.log('Enviando FormData - Novo Formador:');
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-
+    keys.forEach(key => { if (key.startsWith('centros')) formData.delete(key); });
+    centrosArray.forEach((centroId, index) => { formData.append(`centros[${index}]`, centroId); });
     $.ajax({
         url: "{{ route('formadores.store') }}",
         method: 'POST',
@@ -840,69 +932,38 @@ $('#formNovoFormadorAjax').on('submit', function(e) {
         processData: false,
         contentType: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        success: function(response) {
-            Swal.fire('Sucesso!', 'Formador criado com sucesso', 'success');
+        success: function() {
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Formador criado com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
             bootstrap.Modal.getInstance(document.getElementById('modalNovoFormador')).hide();
             $('#formNovoFormadorAjax')[0].reset();
             location.reload();
         },
         error: function(xhr) {
-            console.error('Erro completo:', xhr);
-            console.error('Response:', xhr.responseText);
-            
             let mensagem = 'Erro ao criar formador';
-            if (xhr.responseJSON?.errors) {
-                mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
-            } else if (xhr.responseJSON?.message) {
-                mensagem = xhr.responseJSON.message;
-            }
-            Swal.fire('Erro', mensagem, 'error');
+            if (xhr.responseJSON?.errors) mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
+            else if (xhr.responseJSON?.message) mensagem = xhr.responseJSON.message;
+            Swal.fire({ icon: 'error', title: 'Erro!', text: mensagem, confirmButtonColor: '#1d4ed8' });
         }
     });
 });
 
-/**
- * Editar formador
- */
 $('#formEditarFormadorAjax').on('submit', function(e) {
     e.preventDefault();
-    
     const formadorId = $('#editFormadorId').val();
-    
-    // Construir FormData com os dados
     const formData = new FormData();
     formData.append('_method', 'PUT');
     formData.append('nome', $('#editNome').val());
     formData.append('email', $('#editEmail').val());
     formData.append('especialidade', $('#editEspecialidade').val());
     formData.append('bio', $('#editBio').val());
-    
-    // Adicionar contacto como string simples
     const telefone = $('#editContactoTelefone').val();
-    if (telefone && telefone.trim() !== '') {
-        formData.append('contactos[0]', telefone.trim());
-    }
-    
-    // Coletar centros selecionados
+    if (telefone && telefone.trim() !== '') formData.append('contactos[0]', telefone.trim());
     const centrosArray = [];
     $('#centrosContainerEditarFormador').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
-        if (centroId) {
-            centrosArray.push(parseInt(centroId));
-        }
+        if (centroId) centrosArray.push(parseInt(centroId));
     });
-    
-    // Adicionar centros com indices
-    centrosArray.forEach((centroId, index) => {
-        formData.append(`centros[${index}]`, centroId);
-    });
-    
-    // Debug
-    console.log('Enviando FormData - Editar Formador:');
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
-    
+    centrosArray.forEach((centroId, index) => { formData.append(`centros[${index}]`, centroId); });
     $.ajax({
         url: `/formadores/${formadorId}`,
         method: 'POST',
@@ -910,39 +971,29 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
         processData: false,
         contentType: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        success: function(response) {
-            console.log('Sucesso:', response);
-            Swal.fire('Sucesso!', 'Formador atualizado com sucesso', 'success');
+        success: function() {
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Formador atualizado com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
             bootstrap.Modal.getInstance(document.getElementById('modalEditarFormador')).hide();
             location.reload();
         },
         error: function(xhr) {
-            console.error('Erro completo:', xhr);
-            console.error('Response:', xhr.responseText);
-            
             let mensagem = 'Erro ao atualizar formador';
-            if (xhr.responseJSON?.errors) {
-                mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
-            } else if (xhr.responseJSON?.message) {
-                mensagem = xhr.responseJSON.message;
-            }
-            Swal.fire('Erro', mensagem, 'error');
+            if (xhr.responseJSON?.errors) mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
+            else if (xhr.responseJSON?.message) mensagem = xhr.responseJSON.message;
+            Swal.fire({ icon: 'error', title: 'Erro!', text: mensagem, confirmButtonColor: '#1d4ed8' });
         }
     });
 });
 
-/**
- * Eliminar formador
- */
 window.eliminarFormador = function(id) {
     Swal.fire({
-        title: 'Confirmar Eliminação',
-        text: 'Tem a certeza que deseja eliminar este formador?',
+        title: 'Eliminar formador?',
+        text: 'Esta ação é irreversível!',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Sim, eliminar!',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="fas fa-trash me-1"></i> Sim, eliminar!',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -952,39 +1003,27 @@ window.eliminarFormador = function(id) {
                 data: {_method: 'DELETE'},
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 success: function() {
-                    Swal.fire('Eliminado!', 'Formador eliminado com sucesso', 'success');
+                    Swal.fire({ icon: 'success', title: 'Eliminado!', text: 'Formador eliminado com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
                     location.reload();
                 },
                 error: function() {
-                    Swal.fire('Erro', 'Erro ao eliminar formador', 'error');
+                    Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao eliminar formador', confirmButtonColor: '#1d4ed8' });
                 }
             });
         }
     });
 };
 
-/**
- * Aplicar filtros na tabela de formadores
- */
 function aplicarFiltros() {
     let nome = $('#filtroNome').val();
     let especialidade = $('#filtroEspecialidade').val();
-    
     let url = '/formadores?';
-    
     if (nome) url += 'nome=' + encodeURIComponent(nome) + '&';
     if (especialidade) url += 'especialidade=' + encodeURIComponent(especialidade) + '&';
-    
-    // Remove o último '&' se existir
     url = url.replace(/&$/, '');
-    
-    console.log('Redirecionando para:', url);
     window.location.href = url;
 }
 
-/**
- * Limpar todos os filtros
- */
 function limparFiltros() {
     window.location.href = '/formadores';
 }
