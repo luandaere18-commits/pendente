@@ -86,6 +86,17 @@
         padding: 0.625rem 1.25rem;
         display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
     }
+    .pi-toolbar .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .pi-toolbar .search-wrap i {
+        position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
+        color: var(--pi-primary); font-size: 0.8125rem; pointer-events: none;
+    }
+    .pi-toolbar .search-wrap input {
+        width: 100%; padding: 0.375rem 0.75rem 0.375rem 2.25rem;
+        border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
+        font-size: 0.8125rem; background: var(--pi-bg); height: 2.125rem; transition: all 0.15s;
+    }
+    .pi-toolbar .search-wrap input:focus { outline: none; border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light); background: #fff; }
     .pi-toolbar select {
         height: 2.125rem; border: 1px solid var(--pi-border);
         border-radius: var(--pi-radius); font-size: 0.8125rem;
@@ -323,7 +334,11 @@
     {{-- TOOLBAR (filters side by side)                --}}
     {{-- ============================================= --}}
     <div class="pi-toolbar">
-        <select class="form-select" id="filtroCurso" style="border-color:var(--pi-border);min-width:180px">
+        <div class="search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="filtroSearch" placeholder="Pesquisar por curso ou formador...">
+        </div>
+        <select class="form-select" id="filtroCurso" style="border-color:var(--pi-border);min-width:160px">
             <option value="">Todos os cursos</option>
         </select>
         <select class="form-select" id="filtroStatus" style="border-color:var(--pi-border)">
@@ -339,7 +354,7 @@
             <option value="tarde">Tarde</option>
             <option value="noite">Noite</option>
         </select>
-        <button class="pi-btn-clear" onclick="limparFiltros()">
+        <button class="pi-btn-clear" id="btnLimparFiltros" onclick="limparFiltros()">
             <i class="fas fa-times-circle"></i> Limpar
         </button>
     </div>
@@ -366,152 +381,20 @@
                         <th style="text-align:right;width:100px">Ações</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse($turmas as $turma)
-                        <tr>
-                            <td class="mono">#{{ $turma->id }}</td>
-                            <td><strong style="font-size:0.8125rem">{{ $turma->curso->nome ?? 'N/A' }}</strong></td>
-                            <td style="font-size:0.75rem">{{ $turma->centro->nome ?? '—' }}</td>
-                            <td style="font-size:0.75rem">
-                                @if($turma->formador)
-                                    <span style="color:var(--pi-success);font-weight:500"><i class="fas fa-user-tie me-1" style="font-size:0.625rem"></i>{{ $turma->formador->nome }}</span>
-                                @else
-                                    <span class="pi-badge" style="background:var(--pi-warning-light);color:#92400e"><i class="fas fa-exclamation-triangle"></i> Sem</span>
-                                @endif
-                            </td>
-                            <td>
-                                @if($turma->dia_semana && is_array($turma->dia_semana))
-                                    @foreach($turma->dia_semana as $dia)
-                                        <span class="pi-badge pi-badge-dia">{{ substr($dia, 0, 3) }}</span>
-                                    @endforeach
-                                @else
-                                    —
-                                @endif
-                            </td>
-                            <td>
-                                @php
-                                    $statusClass = [
-                                        'planeada' => 'pi-badge-planeada',
-                                        'inscricoes_abertas' => 'pi-badge-inscricoes',
-                                        'em_andamento' => 'pi-badge-andamento',
-                                        'concluida' => 'pi-badge-concluida'
-                                    ];
-                                    $statusLabels = [
-                                        'planeada' => 'Planeada',
-                                        'inscricoes_abertas' => 'Inscrições',
-                                        'em_andamento' => 'Em Andamento',
-                                        'concluida' => 'Concluída'
-                                    ];
-                                @endphp
-                                <span class="pi-badge {{ $statusClass[$turma->status] ?? 'pi-badge-planeada' }}">
-                                    {{ $statusLabels[$turma->status] ?? $turma->status }}
-                                </span>
-                            </td>
-                            <td>
-                                @php
-                                    $icones = [
-                                        'manha' => 'fas fa-sun',
-                                        'tarde' => 'fas fa-cloud-sun',
-                                        'noite' => 'fas fa-moon'
-                                    ];
-                                    $icone = $icones[$turma->periodo] ?? 'fas fa-clock';
-                                @endphp
-                                <span class="pi-badge pi-badge-periodo">
-                                    <i class="{{ $icone }}"></i> {{ ucfirst($turma->periodo) }}
-                                </span>
-                            </td>
-                            <td style="font-size:0.75rem;white-space:nowrap">
-                                @if($turma->hora_inicio && $turma->hora_fim)
-                                    {{ $turma->hora_inicio }} - {{ $turma->hora_fim }}
-                                @else
-                                    —
-                                @endif
-                            </td>
-                            <td style="font-size:0.75rem;text-align:center">{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? 0 }}</td>
-                            <td>
-                                @if($turma->publicado)
-                                    <span class="pi-badge pi-badge-pub-sim"><i class="fas fa-eye"></i> Sim</span>
-                                @else
-                                    <span class="pi-badge pi-badge-pub-nao"><i class="fas fa-eye-slash"></i> Não</span>
-                                @endif
-                            </td>
-                            <td>
-                                <div class="pi-actions">
-                                    <button class="pi-action-btn view" onclick="visualizarTurma({{ $turma->id }})" title="Ver detalhes">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="pi-action-btn edit" onclick="window.location.href='{{ route('turmas.show', $turma) }}'" title="Gerir">
-                                        <i class="fas fa-cogs"></i>
-                                    </button>
-                                    <button class="pi-action-btn delete" onclick="eliminarTurma({{ $turma->id }})" title="Eliminar">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="11">
-                                <div class="pi-empty">
-                                    <div class="pi-empty-icon"><i class="fas fa-inbox"></i></div>
-                                    <h3>Nenhuma turma cadastrada</h3>
-                                    <p>Crie uma nova turma para começar</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
+                <tbody id="tabelaBody">
                 </tbody>
             </table>
         </div>
 
         {{-- Mobile Cards --}}
-        <div class="pi-mobile-cards">
-            @forelse($turmas as $turma)
-                <div class="pi-mobile-card">
-                    <div class="card-top">
-                        <div>
-                            <div class="card-name">{{ $turma->curso->nome ?? 'N/A' }}</div>
-                            <div class="card-meta">{{ $turma->centro->nome ?? '—' }} &bull; {{ $turma->formador->nome ?? 'Sem formador' }}</div>
-                        </div>
-                        @php
-                            $statusClass = [
-                                'planeada' => 'pi-badge-planeada',
-                                'inscricoes_abertas' => 'pi-badge-inscricoes',
-                                'em_andamento' => 'pi-badge-andamento',
-                                'concluida' => 'pi-badge-concluida'
-                            ];
-                            $statusLabels = [
-                                'planeada' => 'Planeada',
-                                'inscricoes_abertas' => 'Inscrições',
-                                'em_andamento' => 'Em Andamento',
-                                'concluida' => 'Concluída'
-                            ];
-                        @endphp
-                        <span class="pi-badge {{ $statusClass[$turma->status] ?? 'pi-badge-planeada' }}">
-                            {{ $statusLabels[$turma->status] ?? $turma->status }}
-                        </span>
-                    </div>
-                    <div class="card-details">
-                        @php $icone = $icones[$turma->periodo] ?? 'fas fa-clock'; @endphp
-                        <span class="pi-badge pi-badge-periodo"><i class="{{ $icone }}"></i> {{ ucfirst($turma->periodo) }}</span>
-                        @if($turma->hora_inicio && $turma->hora_fim)
-                            <span>{{ $turma->hora_inicio }} - {{ $turma->hora_fim }}</span>
-                        @endif
-                        <span>{{ $turma->vagas_preenchidas ?? 0 }}/{{ $turma->vagas_totais ?? 0 }} vagas</span>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="visualizarTurma({{ $turma->id }})"><i class="fas fa-eye me-1"></i>Ver</button>
-                        <button class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ route('turmas.show', $turma) }}'"><i class="fas fa-cogs me-1"></i>Gerir</button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarTurma({{ $turma->id }})"><i class="fas fa-trash me-1"></i>Eliminar</button>
-                    </div>
-                </div>
-            @empty
-                <div class="pi-empty">
-                    <div class="pi-empty-icon"><i class="fas fa-inbox"></i></div>
-                    <h3>Nenhuma turma cadastrada</h3>
-                    <p>Crie uma nova turma para começar</p>
-                </div>
-            @endforelse
+        <div class="pi-mobile-cards" id="mobileCards">
+        </div>
+
+        {{-- Empty State --}}
+        <div class="pi-empty d-none" id="emptyState">
+            <div class="pi-empty-icon"><i class="fas fa-inbox"></i></div>
+            <h3>Nenhuma turma encontrada</h3>
+            <p>Tente ajustar os filtros ou criar uma nova turma</p>
         </div>
     </div>
 
@@ -812,13 +695,160 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
+// Variáveis globais para filtros
+var allData = [];
+var filteredData = [];
+
 $(document).ready(function() {
     console.log('JavaScript das turmas carregado');
+    carregarDadosFiltros();
+    carregarDadosTurmas();
+    bindEventosFiltros();
     carregarFormadores();
     configurarEventosModal();
     configurarValidacoes();
     configurarAutoPreenchimento();
 });
+
+// Carregar dados de filtros (cursos)
+function carregarDadosFiltros() {
+    $.get('/cursos', function(data) {
+        let opts = '<option value="">Todos os cursos</option>';
+        (data || []).forEach(function(c) { if (c.ativo) opts += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+        $('#filtroCurso').html(opts);
+    });
+}
+
+// Carregar dados das turmas
+function carregarDadosTurmas() {
+    $.ajax({
+        url: '/turmas?per_page=1000',
+        method: 'GET',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        success: function(response) {
+            allData = response.data || response;
+            if (!Array.isArray(allData)) {
+                allData = [];
+            }
+            aplicarFiltrosLocais();
+        },
+        error: function() {
+            console.error('Erro ao carregar turmas');
+        }
+    });
+}
+
+// Ligar eventos dos filtros
+function bindEventosFiltros() {
+    let searchTimer;
+    $('#filtroSearch').on('input', function() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(aplicarFiltrosLocais, 250);
+    });
+    $('#filtroCurso, #filtroStatus, #filtroPeriodo').on('change', aplicarFiltrosLocais);
+}
+
+// Aplicar filtros
+function aplicarFiltrosLocais() {
+    const search = ($('#filtroSearch').val() || '').toLowerCase();
+    const curso = $('#filtroCurso').val();
+    const status = $('#filtroStatus').val();
+    const periodo = $('#filtroPeriodo').val();
+    
+    filteredData = allData.filter(function(item) {
+        if (search) {
+            const nomeCurso = (item.curso && item.curso.nome || '').toLowerCase();
+            const nomeFormador = (item.formador && item.formador.nome || '').toLowerCase();
+            const nomeCentro = (item.centro && item.centro.nome || '').toLowerCase();
+            if (!nomeCurso.includes(search) && !nomeFormador.includes(search) && !nomeCentro.includes(search)) return false;
+        }
+        if (curso && (!item.curso || item.curso.id != curso)) return false;
+        if (status && item.status !== status) return false;
+        if (periodo && item.periodo !== periodo) return false;
+        return true;
+    });
+    
+    let count = 0;
+    if (search) count++;
+    if (curso) count++;
+    if (status) count++;
+    if (periodo) count++;
+    $('#btnLimparFiltros').prop('disabled', count === 0);
+    
+    renderTabela();
+}
+
+// Renderizar tabela com dados filtrados
+function renderTabela() {
+    const tbody = $('#tabelaBody');
+    tbody.empty();
+    
+    if (filteredData.length === 0) {
+        $('#emptyState').removeClass('d-none');
+        $('.pi-desktop-table').hide();
+        return;
+    }
+    
+    $('.pi-desktop-table').show();
+    $('#emptyState').addClass('d-none');
+    
+    filteredData.forEach(function(turma) {
+        const statusClass = {
+            'planeada': 'pi-badge-planeada',
+            'inscricoes_abertas': 'pi-badge-inscricoes',
+            'em_andamento': 'pi-badge-andamento',
+            'concluida': 'pi-badge-concluida'
+        };
+        const statusLabels = {
+            'planeada': 'Planeada',
+            'inscricoes_abertas': 'Inscrições',
+            'em_andamento': 'Em Andamento',
+            'concluida': 'Concluída'
+        };
+        const icones = {
+            'manha': 'fas fa-sun',
+            'tarde': 'fas fa-cloud-sun',
+            'noite': 'fas fa-moon'
+        };
+        
+        let diasHtml = '—';
+        if (turma.dia_semana && Array.isArray(turma.dia_semana)) {
+            diasHtml = turma.dia_semana.map(d => '<span class="pi-badge pi-badge-dia">' + d.substring(0, 3) + '</span>').join('');
+        }
+        
+        let formadorHtml = '—';
+        if (turma.formador && turma.formador.nome) {
+            formadorHtml = '<span style="color:var(--pi-success);font-weight:500"><i class="fas fa-user-tie me-1" style="font-size:0.625rem"></i>' + turma.formador.nome + '</span>';
+        } else {
+            formadorHtml = '<span class="pi-badge" style="background:var(--pi-warning-light);color:#92400e"><i class="fas fa-exclamation-triangle"></i> Sem</span>';
+        }
+        
+        const icone = icones[turma.periodo] || 'fas fa-clock';
+        
+        let vagasHtml = '-/-';
+        if (turma.vagas_totais) {
+            vagasHtml = (turma.vagas_preenchidas || 0) + '/' + turma.vagas_totais;
+        }
+        
+        let publicado = turma.publicado ? '<span class="pi-badge pi-badge-pub-sim"><i class="fas fa-eye"></i> Sim</span>' : '<span class="pi-badge pi-badge-pub-nao"><i class="fas fa-eye-slash"></i> Não</span>';
+        
+        let row = '<tr>';
+        row += '<td class="mono">#' + turma.id + '</td>';
+        row += '<td><strong style="font-size:0.8125rem">' + (turma.curso && turma.curso.nome || 'N/A') + '</strong></td>';
+        row += '<td style="font-size:0.75rem">' + (turma.centro && turma.centro.nome || '—') + '</td>';
+        row += '<td style="font-size:0.75rem">' + formadorHtml + '</td>';
+        row += '<td>' + diasHtml + '</td>';
+        row += '<td><span class="pi-badge ' + (statusClass[turma.status] || 'pi-badge-planeada') + '">' + (statusLabels[turma.status] || turma.status) + '</span></td>';
+        row += '<td><span class="pi-badge pi-badge-periodo"><i class="fas ' + icone + '"></i> ' + (turma.periodo ? turma.periodo.charAt(0).toUpperCase() + turma.periodo.slice(1) : 'N/A') + '</span></td>';
+        row += '<td style="font-size:0.75rem;white-space:nowrap">' + (turma.hora_inicio && turma.hora_fim ? turma.hora_inicio + ' - ' + turma.hora_fim : '—') + '</td>';
+        row += '<td style="font-size:0.75rem;text-align:center">' + vagasHtml + '</td>';
+        row += '<td>' + publicado + '</td>';
+        row += '<td><div class="pi-actions"><button class="pi-action-btn view" onclick="visualizarTurma(' + turma.id + ')" title="Ver detalhes"><i class="fas fa-eye"></i></button><button class="pi-action-btn edit" onclick="window.location.href=\'/turmas/' + turma.id + '/show\'" title="Gerir"><i class="fas fa-cogs"></i></button><button class="pi-action-btn delete" onclick="eliminarTurma(' + turma.id + ')" title="Eliminar"><i class="fas fa-trash"></i></button></div></td>';
+        row += '</tr>';
+        
+        tbody.append(row);
+    });
+}
 
 /**
  * Carregar lista de cursos disponíveis
@@ -1022,7 +1052,21 @@ function configurarAutoPreenchimento() {
  * Carregar turmas (reload)
  */
 function carregarTurmas() {
-    location.reload();
+    $.ajax({
+        url: '/turmas?per_page=1000',
+        method: 'GET',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        success: function(response) {
+            allData = response.data || response;
+            if (!Array.isArray(allData)) {
+                allData = [];
+            }
+            aplicarFiltrosLocais();
+        },
+        error: function() {
+            console.error('Erro ao recarregar turmas');
+        }
+    });
 }
 
 /**
@@ -1353,10 +1397,11 @@ window.eliminarTurma = function(id) {
  * Limpar filtros
  */
 function limparFiltros() {
+    $('#filtroSearch').val('');
     $('#filtroCurso').val('');
     $('#filtroStatus').val('');
     $('#filtroPeriodo').val('');
-    // Trigger filter logic if needed
+    aplicarFiltrosLocais();
 }
 
 /**
