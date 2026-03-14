@@ -247,9 +247,6 @@
                 <button class="pi-btn-clear" onclick="limparFiltros()">
                     <i class="fas fa-times"></i> Limpar
                 </button>
-                <button class="btn pi-btn-primary btn-sm" onclick="aplicarFiltros()">
-                    <i class="fas fa-search"></i> Filtrar
-                </button>
             </div>
         </div>
     </div>
@@ -269,7 +266,6 @@
                 <thead>
                     <tr>
                         <th style="width:60px">ID</th>
-                        <th>Imagem</th>
                         <th>Nome</th>
                         <th>Modalidade</th>
                         <th>Centro(s)</th>
@@ -282,15 +278,6 @@
                     @forelse($cursos as $curso)
                         <tr>
                             <td class="mono">#{{ $curso->id }}</td>
-                            <td>
-                                @if($curso->imagem)
-                                    <img src="{{ asset('storage/' . $curso->imagem) }}" alt="{{ $curso->nome }}" class="pi-curso-img">
-                                @else
-                                    <div class="pi-curso-img-placeholder">
-                                        <i class="fas fa-image"></i>
-                                    </div>
-                                @endif
-                            </td>
                             <td><strong>{{ $curso->nome }}</strong></td>
                             <td>
                                 @php
@@ -336,8 +323,8 @@
                                     <button class="pi-action-btn view btn-visualizar-curso" data-curso-id="{{ $curso->id }}" title="Ver detalhes">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <a class="pi-action-btn edit" href="{{ route('cursos.edit', $curso) }}" title="Editar">
-                                        <i class="fas fa-edit"></i>
+                                    <a class="pi-action-btn edit" href="{{ route('cursos.show', $curso) }}" title="Gerir">
+                                        <i class="fas fa-cogs"></i>
                                     </a>
                                     <button class="pi-action-btn delete" onclick="eliminarCurso({{ $curso->id }})" title="Eliminar">
                                         <i class="fas fa-trash"></i>
@@ -347,7 +334,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8">
+                            <td colspan="7">
                                 <div class="pi-empty">
                                     <div class="pi-empty-icon"><i class="fas fa-inbox"></i></div>
                                     <h3>Nenhum curso cadastrado</h3>
@@ -592,6 +579,14 @@ let centrosDisponiveisList = [];
 $(document).ready(function() {
     carregarCentros();
     configurarEventosModal();
+
+    // Filtros automáticos (sem botão)
+    let filtroTimeout;
+    $('#filtroNome').on('input', function() {
+        clearTimeout(filtroTimeout);
+        filtroTimeout = setTimeout(aplicarFiltros, 300);
+    });
+    $('#filtroModalidade, #filtroStatus').on('change', aplicarFiltros);
 });
 
 /**
@@ -693,7 +688,7 @@ function carregarDetalhesCurso(cursoId) {
                     <div class="col-md-3 text-center">
                         ${imagemHtml}
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-9 ps-md-3" style="min-width:0;">
                         <h5 style="font-weight:700;margin-bottom:0.5rem">${curso.nome}</h5>
                         <div class="d-flex gap-2 flex-wrap mb-3">
                             ${statusBadge}

@@ -557,7 +557,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label">Data Arranque <span class="required">*</span></label>
-                                <input type="date" id="dataArranqueShow" name="data_arranque" class="form-control" value="{{ $turma->data_arranque }}" required>
+                                <input type="date" id="dataArranqueShow" name="data_arranque" class="form-control" value="{{ $turma->data_arranque ? \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') : '' }}" required>
                             </div>
 
                             <div class="mb-3">

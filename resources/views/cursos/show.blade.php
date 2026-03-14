@@ -1,474 +1,751 @@
-@extends("layouts.app")
+@extends('layouts.app')
 
-@section("title", "Visualizar Curso - " . $curso->nome)
+@section('title', 'Visualizar Curso - ' . $curso->nome)
 
-@section("content")
-<div class="container-fluid py-4">
+@section('styles')
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+<style>
+    :root {
+        --pi-primary: #3366cc;
+        --pi-primary-light: rgba(51, 102, 204, 0.1);
+        --pi-success: #2e9e6b;
+        --pi-success-light: rgba(46, 158, 107, 0.1);
+        --pi-warning: #e89a0c;
+        --pi-warning-light: rgba(232, 154, 12, 0.1);
+        --pi-danger: #dc3545;
+        --pi-danger-light: rgba(220, 53, 69, 0.1);
+        --pi-info: #0ea5e9;
+        --pi-info-light: rgba(14, 165, 233, 0.1);
+        --pi-muted: #6b7a8d;
+        --pi-border: #e2e6ec;
+        --pi-bg: #f4f6f9;
+        --pi-card: #ffffff;
+        --pi-text: #1a2332;
+        --pi-text-muted: #6b7a8d;
+        --pi-radius: 0.75rem;
+        --pi-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
 
-    {{-- Breadcrumb --}}
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb small">
-            <li class="breadcrumb-item"><a href="{{ route("cursos.index") }}"><i class="fas fa-graduation-cap me-1"></i>Cursos</a></li>
-            <li class="breadcrumb-item active">{{ $curso->nome }}</li>
-        </ol>
-    </nav>
+    body { background-color: var(--pi-bg); font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--pi-text); }
 
-    {{-- ============================================= --}}
-    {{-- CARD PRINCIPAL - Informações do Curso         --}}
-    {{-- ============================================= --}}
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-4">
-            <div class="row align-items-start">
+    .pi-page { max-width: 100%; width: 100%; margin: 0 auto; padding: 1.5rem 2rem; }
 
-                {{-- Imagem --}}
-                <div class="col-md-2 text-center mb-3 mb-md-0">
-                    @if($curso->imagem_url)
-                        <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}"
-                             class="img-fluid rounded shadow-sm" style="max-height: 140px; object-fit: cover; width: 100%;">
+    /* Breadcrumb */
+    .pi-breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: var(--pi-text-muted); margin-bottom: 1.25rem; }
+    .pi-breadcrumb a { color: var(--pi-primary); text-decoration: none; font-weight: 500; }
+    .pi-breadcrumb a:hover { text-decoration: underline; }
+    .pi-breadcrumb .separator { color: var(--pi-border); }
+    .pi-breadcrumb .current { color: var(--pi-text); font-weight: 500; }
+
+    /* Header */
+    .pi-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+    .pi-header-left { display: flex; align-items: center; gap: 0.75rem; }
+    .pi-header-icon { width: 3rem; height: 3rem; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); }
+    .pi-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+    .pi-header p { font-size: 0.875rem; color: var(--pi-text-muted); margin: 0; }
+    .pi-header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    /* Buttons */
+    .pi-btn { border: none; border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.15s; cursor: pointer; text-decoration: none; }
+    .pi-btn-primary { background: var(--pi-primary); color: #fff; }
+    .pi-btn-primary:hover { background: #2a57b3; color: #fff; }
+    .pi-btn-danger { background: var(--pi-danger); color: #fff; }
+    .pi-btn-danger:hover { background: #c82333; color: #fff; }
+    .pi-btn-outline { background: transparent; color: var(--pi-text-muted); border: 1px solid var(--pi-border); }
+    .pi-btn-outline:hover { background: #f0f2f5; color: var(--pi-text); }
+    .pi-btn-success { background: var(--pi-success); color: #fff; }
+    .pi-btn-success:hover { background: #257a55; color: #fff; }
+    .pi-btn-warning { background: var(--pi-warning); color: #fff; }
+    .pi-btn-warning:hover { background: #c98508; color: #fff; }
+    .pi-btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; }
+
+    /* Stats */
+    .pi-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .pi-stat-card { display: flex; align-items: center; gap: 0.75rem; background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.75rem 1rem; box-shadow: var(--pi-shadow); }
+    .pi-stat-card .stat-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; flex-shrink: 0; }
+    .pi-stat-card .stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-stat-card .stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
+    .pi-stat-card .stat-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
+    .pi-stat-card .stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
+    .pi-stat-card .stat-content { display: flex; flex-direction: column; }
+    .pi-stat-card .stat-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); margin-bottom: 0.25rem; }
+    .pi-stat-card .stat-value { font-size: 1.5rem; font-weight: 700; }
+
+    /* Card */
+    .pi-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; margin-bottom: 1.25rem; }
+    .pi-card-header { border-bottom: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+    .pi-card-header h2 { font-size: 0.875rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.5rem; }
+    .pi-card-header .count-badge { background: var(--pi-primary-light); color: var(--pi-primary); font-size: 0.75rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; }
+    .pi-card-body { padding: 1.25rem; }
+
+    /* Info grid */
+    .pi-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .pi-info-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .pi-info-label { font-size: 0.75rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .pi-info-value { font-size: 0.9375rem; font-weight: 500; }
+
+    /* Badges */
+    .pi-badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.01em; gap: 0.25rem; }
+    .pi-badge-success { background: var(--pi-success-light); color: #1e6e49; }
+    .pi-badge-secondary { background: rgba(100, 116, 139, 0.1); color: #475569; }
+    .pi-badge-info { background: var(--pi-info-light); color: #0369a1; }
+    .pi-badge-warning { background: var(--pi-warning-light); color: #92610a; }
+    .pi-badge-primary { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-badge-danger { background: var(--pi-danger-light); color: #b91c1c; }
+    .pi-badge-dark { background: rgba(30, 41, 59, 0.1); color: #1e293b; }
+    .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; font-size: 0.6875rem; }
+    .pi-badge-periodo { background: var(--pi-primary-light); color: var(--pi-primary); }
+
+    /* Curso image */
+    .pi-curso-img { width: 100%; max-height: 160px; object-fit: cover; border-radius: var(--pi-radius); }
+    .pi-curso-img-placeholder { width: 100%; height: 140px; border-radius: var(--pi-radius); background: #f0f2f5; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--pi-text-muted); gap: 0.5rem; }
+
+    /* Table */
+    .pi-table { width: 100%; margin: 0; font-size: 0.92rem; }
+    .pi-table thead th { background: rgba(51, 102, 204, 0.08); border-bottom: 1px solid var(--pi-border); font-size: 0.82rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.03em; padding: 0.75rem 1rem; white-space: nowrap; }
+    .pi-table tbody td { padding: 0.75rem 1rem; vertical-align: middle; border-bottom: 1px solid #f0f2f5; }
+    .pi-table tbody tr:hover { background: #f8f9fb; }
+    .pi-table tbody tr:last-child td { border-bottom: none; }
+
+    /* Action buttons */
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; }
+    .pi-action-btn { width: 2rem; height: 2rem; border: none; border-radius: 0.375rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 0.8125rem; }
+    .pi-action-btn.edit { background: transparent; color: var(--pi-primary); border: 1px solid var(--pi-primary); }
+    .pi-action-btn.edit:hover { background: var(--pi-primary); color: #fff; }
+    .pi-action-btn.delete { background: transparent; color: var(--pi-danger); border: 1px solid var(--pi-danger); }
+    .pi-action-btn.delete:hover { background: var(--pi-danger); color: #fff; }
+
+    /* Tabs */
+    .pi-tabs { display: flex; border-bottom: 2px solid var(--pi-border); margin-bottom: 0; }
+    .pi-tab { padding: 0.75rem 1.25rem; font-size: 0.875rem; font-weight: 500; color: var(--pi-text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; display: inline-flex; align-items: center; gap: 0.5rem; background: none; border-top: none; border-left: none; border-right: none; }
+    .pi-tab:hover { color: var(--pi-primary); }
+    .pi-tab.active { color: var(--pi-primary); border-bottom-color: var(--pi-primary); font-weight: 600; }
+    .pi-tab .tab-count { background: var(--pi-primary-light); color: var(--pi-primary); font-size: 0.6875rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; }
+    .pi-tab-content { display: none; }
+    .pi-tab-content.active { display: block; }
+
+    /* Empty state */
+    .pi-empty { text-align: center; padding: 3rem 1rem; color: var(--pi-text-muted); }
+    .pi-empty-icon { width: 4rem; height: 4rem; border-radius: 1rem; background: #f0f2f5; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
+    .pi-empty h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
+    .pi-empty p { font-size: 0.875rem; }
+
+    /* Mobile cards */
+    .pi-mobile-cards { display: none; }
+    .pi-mobile-card { background: var(--pi-card); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 1rem; box-shadow: var(--pi-shadow); margin-bottom: 0.75rem; }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.9375rem; }
+    .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; font-size: 0.8125rem; color: var(--pi-text-muted); }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.5rem; }
+
+    /* Modal */
+    .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
+    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1.25rem 1.5rem; }
+    .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.75rem; }
+    .pi-modal .modal-header .header-icon { width: 2.5rem; height: 2.5rem; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-modal .modal-header .header-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
+    .pi-modal .modal-header .header-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
+    .pi-modal .modal-title { font-size: 1rem; font-weight: 600; margin: 0; }
+    .pi-modal .modal-body { padding: 1.25rem 1.5rem; }
+    .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 1rem 1.5rem; }
+    .pi-modal .modal-footer .btn { border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; padding: 0.5rem 1rem; }
+
+    /* Form */
+    .pi-form .form-label { font-size: 0.8125rem; font-weight: 500; margin-bottom: 0.375rem; }
+    .pi-form .form-label .required { color: var(--pi-danger); }
+    .pi-form .form-control, .pi-form .form-select { border-radius: 0.5rem; border-color: var(--pi-border); font-size: 0.875rem; }
+    .pi-form .form-control:focus, .pi-form .form-select:focus { border-color: var(--pi-primary); box-shadow: 0 0 0 3px var(--pi-primary-light); }
+    .pi-form .section-title { font-size: 0.8125rem; font-weight: 600; color: var(--pi-primary); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--pi-border); display: flex; align-items: center; gap: 0.5rem; }
+
+    /* Days grid */
+    .pi-days-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .pi-day-check { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; }
+    .pi-day-check input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: var(--pi-primary); }
+
+    /* Centro card in modal */
+    .pi-centro-card { background: #f8f9fb; border: 1px solid var(--pi-border); border-radius: 0.5rem; padding: 1rem; position: relative; }
+    .pi-centro-card .centro-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .pi-centro-card .centro-numero { font-size: 0.75rem; font-weight: 600; color: var(--pi-primary); background: var(--pi-primary-light); padding: 0.125rem 0.5rem; border-radius: 9999px; }
+
+    /* Imagem atual preview */
+    .pi-img-preview { margin-top: 0.5rem; }
+    .pi-img-preview img { max-width: 120px; max-height: 80px; object-fit: cover; border-radius: 0.375rem; border: 1px solid var(--pi-border); }
+
+    /* Responsive */
+    @media (max-width: 991.98px) {
+        .pi-desktop-table { display: none !important; }
+        .pi-mobile-cards { display: block !important; }
+        .pi-info-grid { grid-template-columns: repeat(2, 1fr); }
+        .pi-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 767.98px) {
+        .pi-stats { grid-template-columns: repeat(2, 1fr); }
+        .pi-header { flex-direction: column; align-items: stretch; }
+        .pi-header-actions { justify-content: stretch; }
+        .pi-header-actions .pi-btn { flex: 1; justify-content: center; }
+        .pi-info-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 575.98px) {
+        .pi-page { padding: 1rem 0.75rem; }
+    }
+</style>
+@endsection
+
+@section('content')
+@php
+    $modalidadeClasses = [
+        'online' => 'pi-badge-info',
+        'presencial' => 'pi-badge-warning',
+        'hibrido' => 'pi-badge-primary',
+    ];
+    $modalidadeIcones = [
+        'online' => 'fas fa-globe',
+        'presencial' => 'fas fa-building',
+        'hibrido' => 'fas fa-laptop-house',
+    ];
+    $statusColors = [
+        'planeada' => 'secondary',
+        'inscricoes_abertas' => 'success',
+        'em_andamento' => 'info',
+        'concluida' => 'dark',
+    ];
+    $statusLabels = [
+        'planeada' => 'Planeada',
+        'inscricoes_abertas' => 'Inscrições Abertas',
+        'em_andamento' => 'Em Andamento',
+        'concluida' => 'Concluída',
+    ];
+@endphp
+
+<div class="pi-page">
+
+    {{-- BREADCRUMB --}}
+    <div class="pi-breadcrumb">
+        <a href="{{ route('cursos.index') }}"><i class="fas fa-graduation-cap me-1"></i>Cursos</a>
+        <span class="separator"><i class="fas fa-chevron-right"></i></span>
+        <span class="current">{{ $curso->nome }}</span>
+    </div>
+
+    {{-- HEADER --}}
+    <div class="pi-header">
+        <div class="pi-header-left">
+            <div class="pi-header-icon">
+                <i class="fas fa-graduation-cap fa-lg"></i>
+            </div>
+            <div>
+                <h1>{{ $curso->nome }}</h1>
+                <p>
+                    @if($curso->ativo)
+                        <span class="pi-badge pi-badge-success"><i class="fas fa-check-circle"></i> Ativo</span>
                     @else
-                        <div class="bg-light rounded d-flex flex-column align-items-center justify-content-center" style="height: 140px;">
-                            <i class="fas fa-image fa-2x text-muted mb-1"></i>
-                            <small class="text-muted">Sem imagem</small>
-                        </div>
+                        <span class="pi-badge pi-badge-secondary"><i class="fas fa-times-circle"></i> Inativo</span>
+                    @endif
+                    <span class="pi-badge {{ $modalidadeClasses[$curso->modalidade] ?? 'pi-badge-primary' }}">
+                        <i class="{{ $modalidadeIcones[$curso->modalidade] ?? 'fas fa-laptop-house' }}"></i>
+                        {{ ucfirst($curso->modalidade) }}
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="pi-header-actions">
+            <button class="pi-btn pi-btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditarCurso">
+                <i class="fas fa-edit"></i> Editar
+            </button>
+            <button class="pi-btn pi-btn-danger btn-eliminar-curso" data-curso-id="{{ $curso->id }}">
+                <i class="fas fa-trash-alt"></i> Eliminar
+            </button>
+            <a href="{{ route('cursos.index') }}" class="pi-btn pi-btn-outline">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+
+    {{-- STATS --}}
+    <div class="pi-stats">
+        <div class="pi-stat-card">
+            <div class="stat-icon blue"><i class="fas fa-building"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Centros</div>
+                <div class="stat-value" style="color: var(--pi-primary);">{{ $curso->centros->count() }}</div>
+            </div>
+        </div>
+        <div class="pi-stat-card">
+            <div class="stat-icon green"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Turmas</div>
+                <div class="stat-value" style="color: var(--pi-success);">{{ $curso->turmas->count() }}</div>
+            </div>
+        </div>
+        <div class="pi-stat-card">
+            <div class="stat-icon orange"><i class="fas fa-tag"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Área</div>
+                <div class="stat-value" style="font-size: 1rem; color: var(--pi-warning);">{{ $curso->area }}</div>
+            </div>
+        </div>
+        <div class="pi-stat-card">
+            <div class="stat-icon cyan"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="stat-content">
+                <div class="stat-label">Preço Médio</div>
+                <div class="stat-value" style="font-size: 1rem; color: var(--pi-info);">
+                    @if($curso->centros->count() > 0)
+                        {{ number_format($curso->centros->avg('pivot.preco'), 2, ',', '.') }} Kz
+                    @else
+                        —
                     @endif
                 </div>
-
-                {{-- Info principal --}}
-                <div class="col-md-7">
-                    <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
-                        <h3 class="fw-bold mb-0">{{ $curso->nome }}</h3>
-                        @if($curso->ativo)
-                            <span class="badge bg-success-subtle text-success"><i class="fas fa-check-circle me-1"></i>Ativo</span>
-                        @else
-                            <span class="badge bg-secondary-subtle text-secondary"><i class="fas fa-times-circle me-1"></i>Inativo</span>
-                        @endif
-                        @if($curso->modalidade === "online")
-                            <span class="badge bg-info-subtle text-info"><i class="fas fa-globe me-1"></i>Online</span>
-                        @elseif($curso->modalidade === "presencial")
-                            <span class="badge bg-warning-subtle text-warning"><i class="fas fa-building me-1"></i>Presencial</span>
-                        @else
-                            <span class="badge bg-primary-subtle text-primary"><i class="fas fa-laptop-house me-1"></i>Híbrido</span>
-                        @endif
-                    </div>
-
-                    <p class="text-muted mb-2">
-                        <i class="fas fa-layer-group me-1"></i>
-                        <strong>Área:</strong> {{ $curso->area }}
-                    </p>
-
-                    <p class="text-muted mb-0" style="max-width: 600px;">
-                        <i class="fas fa-align-left me-1"></i>
-                        {{ $curso->descricao ?? "Sem descrição disponível." }}
-                    </p>
-                </div>
-
-                {{-- Ações + Contadores --}}
-                <div class="col-md-3">
-                    {{-- Botões de ação --}}
-                    <div class="d-flex gap-2 mb-3 justify-content-md-end flex-wrap">
-                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalEditarCurso">
-                            <i class="fas fa-edit me-1"></i>Editar
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger btn-eliminar-curso" data-curso-id="{{ $curso->id }}">
-                            <i class="fas fa-trash me-1"></i>Eliminar
-                        </button>
-                        <a href="{{ route("cursos.index") }}" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-arrow-left me-1"></i>Voltar
-                        </a>
-                    </div>
-
-                    {{-- Mini contadores --}}
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <div class="bg-primary-subtle rounded p-2 text-center">
-                                <div class="fw-bold text-primary fs-5">{{ $curso->centros->count() }}</div>
-                                <small class="text-muted"><i class="fas fa-building me-1"></i>Centros</small>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="bg-info-subtle rounded p-2 text-center">
-                                <div class="fw-bold text-info fs-5">{{ $curso->turmas->count() }}</div>
-                                <small class="text-muted"><i class="fas fa-calendar me-1"></i>turmas</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
 
-    {{-- ============================================= --}}
-    {{-- TABS - Centros / turmas / Pré-inscrições  --}}
-    {{-- ============================================= --}}
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white border-bottom-0 pt-3 px-4">
-            <ul class="nav nav-tabs card-header-tabs" id="cursoTabs" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active fw-semibold" id="centros-tab" data-bs-toggle="tab" data-bs-target="#centros" type="button" role="tab">
-                        <i class="fas fa-building me-1"></i>Centros
-                        <span class="badge bg-primary ms-1">{{ $curso->centros->count() }}</span>
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link fw-semibold" id="turmas-tab" data-bs-toggle="tab" data-bs-target="#turmas" type="button" role="tab">
-                        <i class="fas fa-calendar-alt me-1"></i>turmas
-                        <span class="badge bg-info ms-1">{{ $curso->turmas->count() }}</span>
-                    </button>
-                </li>
-            </ul>
+    {{-- INFORMAÇÕES DO CURSO --}}
+    <div class="pi-card">
+        <div class="pi-card-header">
+            <h2><i class="fas fa-info-circle" style="color: var(--pi-primary);"></i> Informações do Curso</h2>
+        </div>
+        <div class="pi-card-body">
+            <div class="row g-3">
+                {{-- Imagem --}}
+                <div class="col-md-3">
+                    @if($curso->imagem_url)
+                        <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" class="pi-curso-img">
+                    @else
+                        <div class="pi-curso-img-placeholder">
+                            <i class="fas fa-image fa-2x"></i>
+                            <span style="font-size: 0.8125rem;">Sem imagem</span>
+                        </div>
+                    @endif
+                </div>
+                {{-- Detalhes --}}
+                <div class="col-md-9">
+                    <div class="pi-info-grid">
+                        <div class="pi-info-item">
+                            <span class="pi-info-label"><i class="fas fa-tag me-1"></i>Área</span>
+                            <span class="pi-info-value">{{ $curso->area }}</span>
+                        </div>
+                        <div class="pi-info-item">
+                            <span class="pi-info-label"><i class="fas fa-signal me-1"></i>Modalidade</span>
+                            <span class="pi-info-value">
+                                <span class="pi-badge {{ $modalidadeClasses[$curso->modalidade] ?? 'pi-badge-primary' }}">
+                                    <i class="{{ $modalidadeIcones[$curso->modalidade] ?? 'fas fa-laptop-house' }}"></i>
+                                    {{ ucfirst($curso->modalidade) }}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="pi-info-item">
+                            <span class="pi-info-label"><i class="fas fa-toggle-on me-1"></i>Status</span>
+                            <span class="pi-info-value">
+                                @if($curso->ativo)
+                                    <span class="pi-badge pi-badge-success"><i class="fas fa-check-circle"></i> Ativo</span>
+                                @else
+                                    <span class="pi-badge pi-badge-secondary"><i class="fas fa-times-circle"></i> Inativo</span>
+                                @endif
+                            </span>
+                        </div>
+                    </div>
+                    @if($curso->descricao)
+                        <div class="mt-3">
+                            <span class="pi-info-label"><i class="fas fa-align-left me-1"></i>Descrição</span>
+                            <p style="font-size: 0.875rem; margin-top: 0.25rem; color: var(--pi-text);">{{ $curso->descricao }}</p>
+                        </div>
+                    @endif
+                    @if($curso->programa)
+                        <div class="mt-2">
+                            <span class="pi-info-label"><i class="fas fa-book me-1"></i>Programa</span>
+                            <p style="font-size: 0.875rem; margin-top: 0.25rem; color: var(--pi-text); white-space: pre-line;">{{ $curso->programa }}</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- TABS: CENTROS / TURMAS --}}
+    <div class="pi-card">
+        <div class="pi-tabs">
+            <button class="pi-tab active" data-tab="centros">
+                <i class="fas fa-building"></i> Centros
+                <span class="tab-count">{{ $curso->centros->count() }}</span>
+            </button>
+            <button class="pi-tab" data-tab="turmas">
+                <i class="fas fa-chalkboard-teacher"></i> Turmas
+                <span class="tab-count">{{ $curso->turmas->count() }}</span>
+            </button>
         </div>
 
-        <div class="card-body p-4">
-            <div class="tab-content" id="cursoTabsContent">
-
-                {{-- ======================== --}}
-                {{-- ABA: CENTROS             --}}
-                {{-- ======================== --}}
-                <div class="tab-pane fade show active" id="centros" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold mb-0"><i class="fas fa-building me-2 text-primary"></i>Centros de Formação</h5>
-                        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionarCentro">
-                            <i class="fas fa-plus me-1"></i>Associar Centro
-                        </button>
-                    </div>
-
-                    @if($curso->centros->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th><i class="fas fa-building me-1 text-muted"></i>Nome do Centro</th>
-                                        <th><i class="fas fa-coins me-1 text-muted"></i>Preço (Kz)</th>
-                                        <th class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($curso->centros as $centro)
-                                        <tr>
-                                            <td>
-                                                <div class="fw-semibold">{{ $centro->nome }}</div>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-success-subtle text-success px-2 py-1">
-                                                    {{ number_format($centro->pivot->preco, 2, ",", ".") }} Kz
-                                                </span>
-                                            </td>
-                                            <td class="text-end">
-                                                <button class="btn btn-sm btn-outline-primary me-1 btn-editar-centro"
-                                                        data-centro-id="{{ $centro->id }}"
-                                                        data-centro-nome="{{ $centro->nome }}"
-                                                        data-preco="{{ $centro->pivot->preco }}"
-                                                        type="button"
-                                                        title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger btn-remover-centro"
-                                                        data-centro-id="{{ $centro->id }}"
-                                                        type="button"
-                                                        title="Desassociar Centro">
-                                                    <i class="fas fa-unlink"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-building fa-3x mb-3 opacity-25"></i>
-                            <p class="mb-0">Nenhum centro associado a este curso.</p>
-                        </div>
-                    @endif
-                </div>
-
-                {{-- ======================== --}}
-                {{-- ABA: turmas         --}}
-                {{-- ======================== --}}
-                <div class="tab-pane fade" id="turmas" role="tabpanel">
-                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold mb-0"><i class="fas fa-calendar-alt me-2 text-info"></i>turmas</h5>
-                        <button class="btn btn-sm btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalAdicionarturma">
-                            <i class="fas fa-plus me-1"></i>Novo turma
-                        </button>
-                    </div>
-
-                    @if($curso->turmas->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Centro</th>
-                                        <th>Preço</th>
-                                        <th><i class="fas fa-calendar-week me-1 text-muted"></i>Dias da Semana</th>
-                                        <th><i class="fas fa-sun me-1 text-muted"></i>Período</th>
-                                        <th><i class="fas fa-chalkboard-teacher me-1 text-muted"></i>Formador</th>
-                                        <th><i class="fas fa-hourglass-start me-1 text-muted"></i>Hora Início</th>
-                                        <th><i class="fas fa-hourglass-end me-1 text-muted"></i>Hora Fim</th>
-                                        <th><i class="fas fa-flag me-1 text-muted"></i>Status</th>
-                                        <th class="text-end">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php
-                                        $turmasList = [];
-                                        foreach($curso->turmas as $t) {
-                                            if (!empty($t->centro_id)) {
-                                                // já possui centro associado
-                                                $t->centro = $t->centro ?? null;
-                                                $turmasList[] = $t;
-                                            } else {
-                                                // replica para cada centro do curso
-                                                foreach($curso->centros as $centro) {
-                                                    $clone = clone $t;
-                                                    $clone->centro = $centro;
-                                                    $clone->centro_preco = $centro->pivot->preco ?? null;
-                                                    $turmasList[] = $clone;
-                                                }
-                                            }
-                                        }
-                                    @endphp
-                                    @foreach($turmasList as $turma)
-                                        <tr>
-                                            <td><span class="text-muted">{{ $loop->iteration }}</span></td>
-                                            <td>
-                                                @if($turma->centro)
-                                                    <span class="fw-semibold">{{ $turma->centro->nome }}</span>
-                                                @else
-                                                    <span class="text-muted small">N/A</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if(isset($turma->centro_preco))
-                                                    {{ number_format($turma->centro_preco,2,',','.') }} Kz
-                                                @else
-                                                    <span class="text-muted small">—</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if(is_array($turma->dia_semana))
-                                                    @foreach($turma->dia_semana as $dia)
-                                                        <span class="badge bg-info-subtle text-info me-1">{{ substr($dia, 0, 3) }}</span>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-primary-subtle text-primary">{{ ucfirst($turma->periodo) }}</span>
-                                            </td>
-                                            <td>
-                                                @if($turma->formador_id)
-                                                    <span class="text-success fw-semibold">{{ $turma->formador->nome ?? 'N/A' }}</span>
-                                                @else
-                                                    <span class="badge bg-warning-subtle text-warning">
-                                                        <i class="fas fa-exclamation-triangle me-1"></i>Sem formador
-                                                    </span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($turma->hora_inicio)
-                                                    <strong>{{ $turma->hora_inicio }}</strong>
-                                                @else
-                                                    <span class="text-muted">—</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @if($turma->hora_fim)
-                                                    <strong>{{ $turma->hora_fim }}</strong>
-                                                @else
-                                                    <span class="text-muted">—</span>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $statusColors = [
-                                                        'planeada' => 'secondary',
-                                                        'inscricoes_abertas' => 'success',
-                                                        'em_andamento' => 'info',
-                                                        'concluida' => 'dark'
-                                                    ];
-                                                    $statusLabels = [
-                                                        'planeada' => 'Planeada',
-                                                        'inscricoes_abertas' => 'Inscrições Abertas',
-                                                        'em_andamento' => 'Em Andamento',
-                                                        'concluida' => 'Concluída'
-                                                    ];
-                                                @endphp
-                                                <span class="badge bg-{{ $statusColors[$turma->status] ?? 'secondary' }}-subtle text-{{ $statusColors[$turma->status] ?? 'secondary' }}">
-                                                    {{ $statusLabels[$turma->status] ?? $turma->status }}
-                                                </span>
-                                            </td>
-                                            <td class="text-end">
-                                                <button class="btn btn-sm btn-outline-primary btn-editar-turma"
-                                                        data-turma-id="{{ $turma->id }}"
-                                                        data-dias="{{ json_encode($turma->dia_semana) }}"
-                                                        data-data-arranque="{{ $turma->data_arranque }}"
-                                                        data-duracao-semanas="{{ $turma->duracao_semanas }}"
-                                                        data-formador-id="{{ $turma->formador_id }}"
-                                                        data-periodo="{{ $turma->periodo }}"
-                                                        data-hora-inicio="{{ $turma->hora_inicio }}"
-                                                        data-hora-fim="{{ $turma->hora_fim }}"
-                                                        data-centro-id="{{ $turma->centro_id }}"
-                                                        data-status="{{ $turma->status }}"
-                                                        type="button"
-                                                        title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-calendar-alt fa-3x mb-3 opacity-25"></i>
-                            <p class="mb-0">Nenhum turma cadastrado.</p>
-                        </div>
-                    @endif
-                </div>
-
-
+        {{-- ABA: CENTROS --}}
+        <div class="pi-tab-content active" id="tab-centros">
+            <div class="pi-card-header" style="border-top: none;">
+                <h2><i class="fas fa-building" style="color: var(--pi-primary);"></i> Centros de Formação</h2>
+                <button class="pi-btn pi-btn-primary pi-btn-sm" data-bs-toggle="modal" data-bs-target="#modalAdicionarCentro">
+                    <i class="fas fa-plus"></i> Associar Centro
+                </button>
             </div>
+
+            @if($curso->centros->count() > 0)
+                {{-- Desktop --}}
+                <div class="pi-desktop-table">
+                    <table class="pi-table">
+                        <thead>
+                            <tr>
+                                <th>Nome do Centro</th>
+                                <th>Preço (Kz)</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($curso->centros as $centro)
+                                <tr>
+                                    <td><strong>{{ $centro->nome }}</strong></td>
+                                    <td>
+                                        <span style="color: var(--pi-success); font-weight: 600;">
+                                            {{ number_format($centro->pivot->preco, 2, ',', '.') }} Kz
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="pi-actions">
+                                            <button class="pi-action-btn edit btn-editar-centro"
+                                                    data-centro-id="{{ $centro->id }}"
+                                                    data-centro-nome="{{ $centro->nome }}"
+                                                    data-preco="{{ $centro->pivot->preco }}"
+                                                    title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="pi-action-btn delete btn-remover-centro"
+                                                    data-centro-id="{{ $centro->id }}"
+                                                    title="Remover">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile --}}
+                <div class="pi-mobile-cards" style="padding: 1rem;">
+                    @foreach($curso->centros as $centro)
+                        <div class="pi-mobile-card">
+                            <div class="card-top">
+                                <span class="card-name">{{ $centro->nome }}</span>
+                                <span class="pi-badge pi-badge-success">{{ number_format($centro->pivot->preco, 2, ',', '.') }} Kz</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="pi-btn pi-btn-primary btn-editar-centro" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;"
+                                        data-centro-id="{{ $centro->id }}"
+                                        data-centro-nome="{{ $centro->nome }}"
+                                        data-preco="{{ $centro->pivot->preco }}">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="pi-btn pi-btn-danger btn-remover-centro" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;"
+                                        data-centro-id="{{ $centro->id }}">
+                                    <i class="fas fa-trash-alt"></i> Remover
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="pi-empty">
+                    <div class="pi-empty-icon"><i class="fas fa-building"></i></div>
+                    <h3>Nenhum centro associado</h3>
+                    <p>Nenhum centro associado a este curso.</p>
+                </div>
+            @endif
+        </div>
+
+        {{-- ABA: TURMAS --}}
+        <div class="pi-tab-content" id="tab-turmas">
+            <div class="pi-card-header" style="border-top: none;">
+                <h2><i class="fas fa-chalkboard-teacher" style="color: var(--pi-primary);"></i> Turmas</h2>
+                <button class="pi-btn pi-btn-primary pi-btn-sm" data-bs-toggle="modal" data-bs-target="#modalAdicionarturma">
+                    <i class="fas fa-plus"></i> Nova Turma
+                </button>
+            </div>
+
+            @if($curso->turmas->count() > 0)
+                @php
+                    $turmasList = [];
+                    foreach($curso->turmas as $t) {
+                        if (!empty($t->centro_id)) {
+                            $t->centro = $t->centro ?? null;
+                            $turmasList[] = $t;
+                        } else {
+                            foreach($curso->centros as $centro) {
+                                $clone = clone $t;
+                                $clone->centro = $centro;
+                                $clone->centro_preco = $centro->pivot->preco ?? null;
+                                $turmasList[] = $clone;
+                            }
+                        }
+                    }
+                @endphp
+
+                {{-- Desktop --}}
+                <div class="pi-desktop-table">
+                    <table class="pi-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Centro</th>
+                                <th>Preço</th>
+                                <th>Dias</th>
+                                <th>Período</th>
+                                <th>Formador</th>
+                                <th>Hora Início</th>
+                                <th>Hora Fim</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($turmasList as $index => $turma)
+                                <tr>
+                                    <td><span style="color: var(--pi-text-muted);">{{ $index + 1 }}</span></td>
+                                    <td>
+                                        @if($turma->centro)
+                                            <strong>{{ $turma->centro->nome }}</strong>
+                                        @else
+                                            <span style="color: var(--pi-text-muted); font-size: 0.8125rem;">N/A</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(isset($turma->centro_preco))
+                                            <span style="color: var(--pi-success); font-weight: 600;">{{ number_format($turma->centro_preco, 2, ',', '.') }} Kz</span>
+                                        @else
+                                            <span style="color: var(--pi-text-muted);">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if(is_array($turma->dia_semana))
+                                            @foreach($turma->dia_semana as $dia)
+                                                <span class="pi-badge pi-badge-dia">{{ substr($dia, 0, 3) }}</span>
+                                            @endforeach
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span class="pi-badge pi-badge-periodo">{{ ucfirst($turma->periodo) }}</span>
+                                    </td>
+                                    <td>
+                                        @if($turma->formador_id)
+                                            <span style="color: var(--pi-success); font-weight: 600;">{{ $turma->formador->nome ?? 'N/A' }}</span>
+                                        @else
+                                            <span class="pi-badge pi-badge-warning">
+                                                <i class="fas fa-exclamation-triangle"></i> Sem formador
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($turma->hora_inicio)
+                                            <strong>{{ $turma->hora_inicio }}</strong>
+                                        @else
+                                            <span style="color: var(--pi-text-muted);">—</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($turma->hora_fim)
+                                            <strong>{{ $turma->hora_fim }}</strong>
+                                        @else
+                                            <span style="color: var(--pi-text-muted);">—</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="pi-badge pi-badge-{{ $statusColors[$turma->status] ?? 'secondary' }}">
+                                            {{ $statusLabels[$turma->status] ?? $turma->status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="pi-actions">
+                                            <button class="pi-action-btn edit btn-editar-turma"
+                                                    data-turma-id="{{ $turma->id }}"
+                                                    data-dias="{{ json_encode($turma->dia_semana) }}"
+                                                    data-data-arranque="{{ $turma->data_arranque }}"
+                                                    data-duracao-semanas="{{ $turma->duracao_semanas }}"
+                                                    data-formador-id="{{ $turma->formador_id }}"
+                                                    data-periodo="{{ $turma->periodo }}"
+                                                    data-hora-inicio="{{ $turma->hora_inicio }}"
+                                                    data-hora-fim="{{ $turma->hora_fim }}"
+                                                    data-centro-id="{{ $turma->centro_id }}"
+                                                    data-status="{{ $turma->status }}"
+                                                    title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Mobile --}}
+                <div class="pi-mobile-cards" style="padding: 1rem;">
+                    @foreach($turmasList as $index => $turma)
+                        <div class="pi-mobile-card">
+                            <div class="card-top">
+                                <span class="card-name">{{ $turma->centro->nome ?? 'N/A' }}</span>
+                                <span class="pi-badge pi-badge-{{ $statusColors[$turma->status] ?? 'secondary' }}">
+                                    {{ $statusLabels[$turma->status] ?? $turma->status }}
+                                </span>
+                            </div>
+                            <div class="card-details">
+                                @if(is_array($turma->dia_semana))
+                                    <span><i class="fas fa-calendar-day me-1"></i>{{ implode(', ', array_map(fn($d) => substr($d, 0, 3), $turma->dia_semana)) }}</span>
+                                @endif
+                                <span><i class="fas fa-clock me-1"></i>{{ $turma->hora_inicio ?? '—' }} - {{ $turma->hora_fim ?? '—' }}</span>
+                                <span><i class="fas fa-sun me-1"></i>{{ ucfirst($turma->periodo) }}</span>
+                                @if($turma->formador_id)
+                                    <span><i class="fas fa-user-tie me-1"></i>{{ $turma->formador->nome ?? 'N/A' }}</span>
+                                @endif
+                            </div>
+                            <div class="card-actions">
+                                <button class="pi-btn pi-btn-primary btn-editar-turma" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;"
+                                        data-turma-id="{{ $turma->id }}"
+                                        data-dias="{{ json_encode($turma->dia_semana) }}"
+                                        data-data-arranque="{{ $turma->data_arranque }}"
+                                        data-duracao-semanas="{{ $turma->duracao_semanas }}"
+                                        data-formador-id="{{ $turma->formador_id }}"
+                                        data-periodo="{{ $turma->periodo }}"
+                                        data-hora-inicio="{{ $turma->hora_inicio }}"
+                                        data-hora-fim="{{ $turma->hora_fim }}"
+                                        data-centro-id="{{ $turma->centro_id }}"
+                                        data-status="{{ $turma->status }}">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="pi-empty">
+                    <div class="pi-empty-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3>Nenhuma turma</h3>
+                    <p>Nenhuma turma cadastrada para este curso.</p>
+                </div>
+            @endif
         </div>
     </div>
 
 </div>
 
+
 {{-- ============================================= --}}
 {{-- MODAL: Editar Curso                           --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalEditarCurso" tabindex="-1" aria-labelledby="modalEditarCursoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content border-0 rounded-3">
+<div class="modal fade pi-modal" id="modalEditarCurso" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
 
             {{-- Header --}}
-            <div class="modal-header bg-primary bg-opacity-10 border-0 py-3 px-4">
-                <div class="d-flex align-items-center gap-2">
-                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
-                        <i class="fas fa-edit text-white small"></i>
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon blue">
+                        <i class="fas fa-edit"></i>
                     </div>
-                    <h5 class="modal-title fw-bold mb-0" id="modalEditarCursoLabel">Editar Curso: {{ $curso->nome }}</h5>
+                    <div>
+                        <h5 class="modal-title">Editar Curso</h5>
+                        <p class="mb-0" style="font-size: 0.8125rem; color: var(--pi-text-muted);">{{ $curso->nome }}</p>
+                    </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
 
             {{-- Body --}}
-            <div class="modal-body p-4">
-                <form id="formEditarCursoAjax" enctype="multipart/form-data">
+            <div class="modal-body">
+                <form id="formEditarCursoAjax" class="pi-form">
                     @csrf
+                    <input type="hidden" name="_method" value="PUT">
                     <input type="hidden" name="curso_id" value="{{ $curso->id }}">
-                    
-                    <div class="row g-4">
 
-                        {{-- ====== COLUNA ESQUERDA ====== --}}
-                        <div class="col-12 col-lg-6">
-                            <div class="card border rounded-3 h-100">
-                                <div class="card-header bg-light border-bottom py-2 px-3">
-                                    <h6 class="mb-0 fw-semibold">
-                                        <i class="fas fa-info-circle text-primary me-2"></i>Informações do Curso
-                                    </h6>
+                    <div class="row g-3">
+                        {{-- COLUNA ESQUERDA --}}
+                        <div class="col-md-6">
+                            <div class="section-title">
+                                <i class="fas fa-info-circle"></i> Informações do Curso
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Nome <span class="required">*</span></label>
+                                <input type="text" name="nome" class="form-control" value="{{ $curso->nome }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Área <span class="required">*</span></label>
+                                <input type="text" name="area" class="form-control" value="{{ $curso->area }}" required>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-7">
+                                    <label class="form-label">Modalidade <span class="required">*</span></label>
+                                    <select name="modalidade" class="form-select" required>
+                                        <option value="presencial" {{ $curso->modalidade === 'presencial' ? 'selected' : '' }}>Presencial</option>
+                                        <option value="online" {{ $curso->modalidade === 'online' ? 'selected' : '' }}>Online</option>
+                                        <option value="hibrido" {{ $curso->modalidade === 'hibrido' ? 'selected' : '' }}>Híbrido</option>
+                                    </select>
                                 </div>
-                                <div class="card-body d-flex flex-column gap-3 p-3">
-
-                                    {{-- Nome --}}
-                                    <div>
-                                        <label class="form-label fw-medium small mb-1">Nome <span class="text-danger">*</span></label>
-                                        <input type="text" name="nome" class="form-control form-control-sm" value="{{ $curso->nome }}" required maxlength="100">
-                                    </div>
-
-                                    {{-- Área --}}
-                                    <div>
-                                        <label class="form-label fw-medium small mb-1">Área <span class="text-danger">*</span></label>
-                                        <input type="text" name="area" class="form-control form-control-sm" value="{{ $curso->area }}" required maxlength="100">
-                                    </div>
-
-                                    {{-- Modalidade + Status --}}
-                                    <div class="row g-3">
-                                        <div class="col-7">
-                                            <label class="form-label fw-medium small mb-1">Modalidade <span class="text-danger">*</span></label>
-                                            <select name="modalidade" class="form-select form-select-sm" required>
-                                                <option value="presencial" {{ $curso->modalidade === 'presencial' ? 'selected' : '' }}>Presencial</option>
-                                                <option value="online" {{ $curso->modalidade === 'online' ? 'selected' : '' }}>Online</option>
-                                                <option value="hibrido" {{ $curso->modalidade === 'hibrido' ? 'selected' : '' }}>Híbrido</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-5 d-flex align-items-end">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" name="ativo" id="editCursoAtivo" value="1" {{ $curso->ativo ? 'checked' : '' }}>
-                                                <label class="form-check-label small" for="editCursoAtivo">Ativo</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{-- Imagem --}}
-                                    <div>
-                                        <label class="form-label fw-medium small mb-1">
-                                            <i class="fas fa-image text-muted me-1"></i>Imagem
-                                        </label>
-                                        <input type="file" name="imagem" class="form-control form-control-sm" accept="image/jpeg,image/png,image/jpg,image/gif">
-                                        <div class="form-text small">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
-                                        @if($curso->imagem_url)
-                                            <div class="mt-2">
-                                                <small class="text-muted d-block mb-1">Imagem atual:</small>
-                                                <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" style="max-width: 100px; border-radius: 4px;">
-                                            </div>
-                                        @endif
+                                <div class="col-md-5 d-flex align-items-end">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" name="ativo" id="editCursoAtivo" {{ $curso->ativo ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="editCursoAtivo">Ativo</label>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Imagem</label>
+                                <input type="file" name="imagem" class="form-control" accept="image/jpeg,image/png,image/jpg,image/gif">
+                                <div class="form-text">JPEG, PNG, JPG, GIF (máx 2 MB)</div>
+                                @if($curso->imagem_url)
+                                    <div class="pi-img-preview">
+                                        <span style="font-size: 0.75rem; color: var(--pi-text-muted);">Imagem atual:</span>
+                                        <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}">
+                                    </div>
+                                @endif
+                            </div>
                         </div>
 
-                        {{-- ====== COLUNA DIREITA ====== --}}
-                        <div class="col-12 col-lg-6">
-                            <div class="card border rounded-3 h-100">
-                                <div class="card-header bg-light border-bottom py-2 px-3">
-                                    <h6 class="mb-0 fw-semibold">
-                                        <i class="fas fa-file-alt text-primary me-2"></i>Conteúdo
-                                    </h6>
-                                </div>
-                                <div class="card-body d-flex flex-column gap-3 p-3">
+                        {{-- COLUNA DIREITA --}}
+                        <div class="col-md-6">
+                            <div class="section-title">
+                                <i class="fas fa-file-alt"></i> Conteúdo
+                            </div>
 
-                                    {{-- Descrição --}}
-                                    <div>
-                                        <label class="form-label fw-medium small mb-1">Descrição</label>
-                                        <textarea name="descricao" class="form-control form-control-sm" rows="4" placeholder="Breve descrição do curso..." maxlength="1000">{{ $curso->descricao }}</textarea>
-                                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">Descrição</label>
+                                <textarea name="descricao" class="form-control" rows="4">{{ $curso->descricao }}</textarea>
+                            </div>
 
-                                    {{-- Programa --}}
-                                    <div class="flex-grow-1 d-flex flex-column">
-                                        <label class="form-label fw-medium small mb-1">Programa do Curso</label>
-                                        <textarea name="programa" class="form-control form-control-sm flex-grow-1" rows="8" placeholder="Conteúdo programático em formato de lista..." maxlength="10000">{{ $curso->programa }}</textarea>
-                                        <small class="text-muted">Use quebras de linha para criar listas ou tópicos</small>
-                                    </div>
-                                </div>
+                            <div class="mb-3">
+                                <label class="form-label">Programa do Curso</label>
+                                <textarea name="programa" class="form-control" rows="6">{{ $curso->programa }}</textarea>
+                                <div class="form-text">Use quebras de linha para criar listas ou tópicos</div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- ====== SEÇÃO DE CENTROS ====== --}}
-                    <div class="mt-4">
+                    {{-- SEÇÃO DE CENTROS --}}
+                    <div class="mt-3">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h6 class="fw-semibold mb-0">
-                                <i class="fas fa-building text-primary me-2"></i>Centros de Formação
-                            </h6>
-                            <button type="button" id="adicionarCentroEditBtn" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-plus me-1"></i>Adicionar Centro
+                            <div class="section-title mb-0" style="border: none; padding: 0;">
+                                <i class="fas fa-building"></i> Centros de Formação
+                            </div>
+                            <button type="button" class="pi-btn pi-btn-primary pi-btn-sm" id="adicionarCentroEditBtn">
+                                <i class="fas fa-plus"></i> Adicionar Centro
                             </button>
                         </div>
-                        <div id="centrosContainerEdit" class="row g-3">
-                            {{-- centros dinâmicos aqui --}}
+                        <div class="row g-2" id="centrosContainerEdit">
+                            {{-- centros dinâmicos --}}
                         </div>
                     </div>
 
-                    {{-- Footer buttons (dentro do form) --}}
-                    <div class="mt-4 d-flex gap-2 justify-content-end">
-                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
-                            <i class="fas fa-times me-1"></i>Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-primary px-4" id="submitEditBtn">
-                            <i class="fas fa-save me-1"></i>Atualizar Curso
+                    {{-- Footer --}}
+                    <div class="d-flex justify-content-end gap-2 mt-4 pt-3" style="border-top: 1px solid var(--pi-border);">
+                        <button type="button" class="pi-btn pi-btn-outline" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="pi-btn pi-btn-primary">
+                            <i class="fas fa-save me-1"></i> Atualizar Curso
                         </button>
                     </div>
                 </form>
@@ -477,171 +754,173 @@
     </div>
 </div>
 
-{{-- ============================================= --}}
-{{-- Template para Centro no Modal de Edição      --}}
-{{-- ============================================= --}}
+{{-- Template para Centro no Modal de Edição --}}
 <template id="centroCursoEditTemplate">
-    <div class="col-12 col-md-6">
-        <div class="centro-card card border rounded-3 shadow-sm">
-            <div class="card-header bg-light d-flex align-items-center justify-content-between py-2 px-3">
-                <span class="badge bg-primary numero-centro-edit">Centro 1</span>
-                <button type="button" class="btn btn-outline-danger btn-sm remover-centro-edit py-0 px-2" title="Remover">
-                    <i class="fas fa-trash-alt small"></i>
-                </button>
+    <div class="col-12">
+        <div class="pi-centro-card centro-card">
+            <div class="centro-header">
+                <span class="centro-numero numero-centro-edit">Centro 1</span>
+                <button type="button" class="pi-action-btn delete remover-centro-edit" title="Remover"><i class="fas fa-times"></i></button>
             </div>
-            <div class="card-body p-3">
-                <div class="d-flex flex-column gap-2">
-                    <div>
-                        <label class="form-label small mb-1 fw-medium">Centro <span class="text-danger">*</span></label>
-                        <select class="form-select form-select-sm centro-id-edit" required>
-                            <option value="">Selecione</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label small mb-1 fw-medium">Preço (Kz) <span class="text-danger">*</span></label>
-                        <input type="number" step="0.01" min="0" class="form-control form-control-sm preco-edit" placeholder="0,00" required>
-                    </div>
+            <div class="row g-2">
+                <div class="col-md-7">
+                    <label class="form-label" style="font-size: 0.8125rem;">Centro <span style="color: var(--pi-danger);">*</span></label>
+                    <select class="form-select centro-id-edit" style="border-radius: 0.5rem; font-size: 0.875rem;" required>
+                        <option value="">Selecione um centro</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label" style="font-size: 0.8125rem;">Preço (Kz) <span style="color: var(--pi-danger);">*</span></label>
+                    <input type="number" class="form-control preco-edit" step="0.01" min="0" placeholder="0,00" style="border-radius: 0.5rem; font-size: 0.875rem;" required>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
+
 {{-- ============================================= --}}
 {{-- MODAL: Associar Centro                        --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalAdicionarCentro" tabindex="-1" aria-labelledby="modalAdicionarCentroLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalAdicionarCentroLabel">
-                    <i class="fas fa-plus-circle me-2"></i>Associar Novo Centro
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+<div class="modal fade pi-modal" id="modalAdicionarCentro" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon green">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h5 class="modal-title">Associar Novo Centro</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form id="formAdicionarCentroAjax">
-                @csrf
-                <div class="modal-body p-4">
+            <div class="modal-body">
+                <form id="formAdicionarCentroAjax" class="pi-form">
+                    @csrf
                     <div class="row g-3">
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Centro <span class="text-danger">*</span></label>
-                            <select class="form-select" name="centro_id" required>
+                        <div class="col-md-7">
+                            <label class="form-label">Centro <span class="required">*</span></label>
+                            <select name="centro_id" class="form-select" required>
                                 <option value="" disabled selected>Selecione um centro</option>
                                 @foreach ($centros ?? [] as $centro)
-                                    <option value="{{ $centro->id }}" {{ $curso->centros->contains($centro->id) ? "disabled" : "" }}>
+                                    <option value="{{ $centro->id }}" {{ $curso->centros->contains($centro->id) ? 'disabled' : '' }}>
                                         {{ $centro->nome }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Preço (Kz) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" class="form-control" name="preco" required placeholder="0.00">
+                        <div class="col-md-5">
+                            <label class="form-label">Preço (Kz) <span class="required">*</span></label>
+                            <input type="number" name="preco" class="form-control" step="0.01" min="0" placeholder="0,00" required>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Salvar
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formAdicionarCentroAjax" class="btn pi-btn-primary">
+                    <i class="fas fa-save me-1"></i> Salvar
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
 
 {{-- ============================================= --}}
 {{-- MODAL: Editar Centro                          --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalEditarCentro" tabindex="-1" aria-labelledby="modalEditarCentroLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalEditarCentroLabel">
-                    <i class="fas fa-edit me-2"></i>Editar Centro: <span id="editCentroNome"></span>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+<div class="modal fade pi-modal" id="modalEditarCentro" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon blue">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h5 class="modal-title">Editar Centro: <span id="editCentroNome"></span></h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form id="formEditarCentroAjax">
-                @csrf
-                <input type="hidden" name="centro_id" id="editCentroId">
-                <div class="modal-body p-4">
+            <div class="modal-body">
+                <form id="formEditarCentroAjax" class="pi-form">
+                    @csrf
+                    <input type="hidden" name="centro_id" id="editCentroId">
                     <div class="row g-3">
                         <div class="col-12">
-                            <label class="form-label fw-semibold">Preço (Kz) <span class="text-danger">*</span></label>
-                            <input type="number" step="0.01" class="form-control" name="preco" id="editCentroPreco" required>
+                            <label class="form-label">Preço (Kz) <span class="required">*</span></label>
+                            <input type="number" name="preco" id="editCentroPreco" class="form-control" step="0.01" min="0" required>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Atualizar
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formEditarCentroAjax" class="btn pi-btn-primary">
+                    <i class="fas fa-save me-1"></i> Atualizar
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
+
 {{-- ============================================= --}}
-{{-- MODAL: Adicionar turma                   --}}
+{{-- MODAL: Adicionar Turma                        --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalAdicionarturma" tabindex="-1" aria-labelledby="modalAdicionarturmaLabel" aria-hidden="true">
+<div class="modal fade pi-modal" id="modalAdicionarturma" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="modalAdicionarturmaLabel">
-                    <i class="fas fa-calendar-plus me-2"></i>Adicionar turma
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon green">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h5 class="modal-title">Adicionar Turma</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form id="formAdicionarturmaAjax">
-                @csrf
-                <div class="modal-body p-4">
+            <div class="modal-body">
+                <form id="formAdicionarturmaAjax" class="pi-form">
+                    @csrf
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Dias da Semana <span class="text-danger">*</span></label>
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach (["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"] as $dia)
-                                <div>
-                                    <input type="checkbox" class="btn-check" name="dia_semana[]" value="{{ $dia }}" id="dia_{{ $loop->index }}" autocomplete="off">
-                                    <label class="btn btn-outline-info btn-sm" for="dia_{{ $loop->index }}">{{ substr($dia, 0, 3) }}</label>
-                                </div>
+                        <label class="form-label">Dias da Semana <span class="required">*</span></label>
+                        <div class="pi-days-grid">
+                            @foreach (['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'] as $dia)
+                                <label class="pi-day-check">
+                                    <input type="checkbox" name="dia_semana[]" value="{{ $dia }}">
+                                    {{ substr($dia, 0, 3) }}
+                                </label>
                             @endforeach
                         </div>
                     </div>
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Data de Arranque <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="data_arranque" required>
+                        <div class="col-md-4">
+                            <label class="form-label">Data de Arranque <span class="required">*</span></label>
+                            <input type="date" name="data_arranque" class="form-control" required>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Duração (semanas)</label>
-                            <input type="number" class="form-control" name="duracao_semanas" min="1" placeholder="Ex: 4">
+                        <div class="col-md-4">
+                            <label class="form-label">Duração (semanas)</label>
+                            <input type="number" name="duracao_semanas" class="form-control" min="1" placeholder="Ex: 12">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Formador</label>
-                            <select class="form-select" name="formador_id">
+                        <div class="col-md-4">
+                            <label class="form-label">Formador</label>
+                            <select name="formador_id" class="form-select">
                                 <option value="">Sem formador atribuído</option>
                                 @foreach ($formadores ?? [] as $formador)
                                     <option value="{{ $formador->id }}">{{ $formador->nome }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Centro <span class="text-danger">*</span></label>
-                            <select class="form-select" name="centro_id" id="adicionarturmaCentro" required>
+                        <div class="col-md-4">
+                            <label class="form-label">Centro <span class="required">*</span></label>
+                            <select name="centro_id" id="adicionarturmaCentro" class="form-select" required>
                                 <option value="" disabled selected>Selecione um centro</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
-                            <select class="form-select" name="periodo" required>
+                        <div class="col-md-4">
+                            <label class="form-label">Período <span class="required">*</span></label>
+                            <select name="periodo" class="form-select" required>
                                 <option value="" disabled selected>Selecione</option>
                                 <option value="manha">Manha</option>
                                 <option value="tarde">Tarde</option>
@@ -649,120 +928,120 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold">Hora Início</label>
-                            <input type="time" class="form-control" name="hora_inicio">
+                            <label class="form-label">Hora Início</label>
+                            <input type="time" name="hora_inicio" class="form-control">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold">Hora Fim</label>
-                            <input type="time" class="form-control" name="hora_fim">
+                            <label class="form-label">Hora Fim</label>
+                            <input type="time" name="hora_fim" class="form-control">
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold">Status</label>
-                            <select class="form-select" name="status">
-                                <option value="planeada">Planeada</option>
+                            <label class="form-label">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="planeada" selected>Planeada</option>
                                 <option value="inscricoes_abertas">Inscrições Abertas</option>
                                 <option value="em_andamento">Em Andamento</option>
                                 <option value="concluida">Concluída</option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold">Vagas Totais</label>
-                            <input type="number" class="form-control" name="vagas_totais" min="1" placeholder="Ex: 20">
+                            <label class="form-label">Vagas Totais</label>
+                            <input type="number" name="vagas_totais" class="form-control" min="1" placeholder="Ex: 30">
                         </div>
-                        <div class="col-md-4 d-flex align-items-center">
+                        <div class="col-md-12">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="publicado" id="publicadoAddTurma" value="1">
-                                <label class="form-check-label" for="publicadoAddTurma">
-                                    Publicar Turma
-                                </label>
+                                <input type="checkbox" name="publicado" class="form-check-input" id="addTurmaPublicado">
+                                <label class="form-check-label" for="addTurmaPublicado">Publicar Turma</label>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-info text-white">
-                        <i class="fas fa-save me-1"></i>Salvar
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formAdicionarturmaAjax" class="btn pi-btn-primary">
+                    <i class="fas fa-save me-1"></i> Salvar
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
+
 {{-- ============================================= --}}
-{{-- MODAL: Editar turma                      --}}
+{{-- MODAL: Editar Turma                           --}}
 {{-- ============================================= --}}
-<div class="modal fade" id="modalEditarturma" tabindex="-1" aria-labelledby="modalEditarturmaLabel" aria-hidden="true">
+<div class="modal fade pi-modal" id="modalEditarturma" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title" id="modalEditarturmaLabel">
-                    <i class="fas fa-edit me-2"></i>Editar turma
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="header-flex">
+                    <div class="header-icon blue">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h5 class="modal-title">Editar Turma</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <form id="formEditarturmaAjax">
-                @csrf
-                <input type="hidden" name="turma_id" id="editturmaId">
-                <div class="modal-body p-4">
+            <div class="modal-body">
+                <form id="formEditarturmaAjax" class="pi-form">
+                    @csrf
+                    <input type="hidden" name="turma_id" id="editturmaId">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">Dias da Semana <span class="text-danger">*</span></label>
-                        <div class="d-flex flex-wrap gap-2">
-                            @foreach (["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"] as $dia)
-                                <div>
-                                    <input type="checkbox" class="btn-check" name="edit_dia_semana[]" value="{{ $dia }}" id="edit_dia_{{ $loop->index }}" autocomplete="off">
-                                    <label class="btn btn-outline-info btn-sm" for="edit_dia_{{ $loop->index }}">{{ substr($dia, 0, 3) }}</label>
-                                </div>
+                        <label class="form-label">Dias da Semana <span class="required">*</span></label>
+                        <div class="pi-days-grid">
+                            @foreach (['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'] as $dia)
+                                <label class="pi-day-check">
+                                    <input type="checkbox" name="edit_dia_semana[]" value="{{ $dia }}">
+                                    {{ substr($dia, 0, 3) }}
+                                </label>
                             @endforeach
                         </div>
                     </div>
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Data de Arranque <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control" name="edit_data_arranque" id="editturmaDataArranque" required>
+                        <div class="col-md-4">
+                            <label class="form-label">Data de Arranque <span class="required">*</span></label>
+                            <input type="date" name="edit_data_arranque" id="editturmaDataArranque" class="form-control" required>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Duração (semanas)</label>
-                            <input type="number" class="form-control" name="edit_duracao_semanas" id="editturmaDuracao" min="1" placeholder="Ex: 4">
+                        <div class="col-md-4">
+                            <label class="form-label">Duração (semanas)</label>
+                            <input type="number" name="edit_duracao_semanas" id="editturmaDuracao" class="form-control" min="1">
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Formador</label>
-                            <select class="form-select" name="edit_formador_id" id="editturmaFormador">
+                        <div class="col-md-4">
+                            <label class="form-label">Formador</label>
+                            <select name="edit_formador_id" id="editturmaFormador" class="form-select">
                                 <option value="">Sem formador atribuído</option>
                                 @foreach ($formadores ?? [] as $formador)
                                     <option value="{{ $formador->id }}">{{ $formador->nome }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Centro <span class="text-danger">*</span></label>
-                            <select class="form-select" name="edit_centro_id" id="edittturmaCentro" required>
+                        <div class="col-md-4">
+                            <label class="form-label">Centro <span class="required">*</span></label>
+                            <select name="edit_centro_id" id="edittturmaCentro" class="form-select" required>
                                 <option value="" disabled selected>Selecione um centro</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Período <span class="text-danger">*</span></label>
-                            <select class="form-select" name="edit_periodo" id="editturmaPeriodo" required>
-                                <option value="">Selecione</option>
+                        <div class="col-md-4">
+                            <label class="form-label">Período <span class="required">*</span></label>
+                            <select name="edit_periodo" id="edittumaPeriodo" class="form-select" required>
+                                <option value="" disabled>Selecione</option>
                                 <option value="manha">Manha</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold">Hora Início</label>
-                            <input type="time" class="form-control" name="edit_hora_inicio" id="editturmaHoraInicio">
+                        <div class="col-md-4">
+                            <label class="form-label">Hora Início</label>
+                            <input type="time" name="edit_hora_inicio" id="editturmaHoraInicio" class="form-control">
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold">Hora Fim</label>
-                            <input type="time" class="form-control" name="edit_hora_fim" id="editturmaHoraFim">
+                        <div class="col-md-4">
+                            <label class="form-label">Hora Fim</label>
+                            <input type="time" name="edit_hora_fim" id="editturmaHoraFim" class="form-control">
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold">Status</label>
-                            <select class="form-select" name="edit_status" id="editturmaStatus">
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="edit_status" id="editturmaStatus" class="form-select">
                                 <option value="planeada">Planeada</option>
                                 <option value="inscricoes_abertas">Inscrições Abertas</option>
                                 <option value="em_andamento">Em Andamento</option>
@@ -770,29 +1049,39 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i>Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-info text-white">
-                        <i class="fas fa-save me-1"></i>Atualizar
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formEditarturmaAjax" class="btn pi-btn-primary">
+                    <i class="fas fa-save me-1"></i> Atualizar
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 @endsection
 
-@section("scripts")
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 const cursoId = {{ $curso->id }};
 
-/**
- * Adicionar Centro - AJAX
- */
+// ============================================
+// TABS
+// ============================================
+$(document).on('click', '.pi-tab', function() {
+    const tab = $(this).data('tab');
+    $('.pi-tab').removeClass('active');
+    $(this).addClass('active');
+    $('.pi-tab-content').removeClass('active');
+    $('#tab-' + tab).addClass('active');
+});
+
+// ============================================
+// Adicionar Centro - AJAX
+// ============================================
 $("#formAdicionarCentroAjax").on("submit", function(e) {
     e.preventDefault();
     
@@ -837,9 +1126,9 @@ $("#formAdicionarCentroAjax").on("submit", function(e) {
     });
 });
 
-/**
- * Editar Centro - Abre Modal
- */
+// ============================================
+// Editar Centro - Abre Modal
+// ============================================
 $(document).on("click", ".btn-editar-centro", function() {
     const id = $(this).data("centro-id");
     const nome = $(this).data("centro-nome");
@@ -851,9 +1140,9 @@ $(document).on("click", ".btn-editar-centro", function() {
     $("#modalEditarCentro").modal("show");
 });
 
-/**
- * Atualizar Centro - AJAX
- */
+// ============================================
+// Atualizar Centro - AJAX
+// ============================================
 $("#formEditarCentroAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
@@ -892,8 +1181,6 @@ $("#formEditarCentroAjax").on("submit", function(e) {
         },
         error: function(xhr) {
             console.error("Erro completo:", xhr);
-            console.error("Status:", xhr.status);
-            console.error("Response:", xhr.responseJSON);
             const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || xhr.statusText || "Erro desconhecido"] };
             const message = Object.values(errors).flat().join("\n");
             Swal.fire({
@@ -905,9 +1192,9 @@ $("#formEditarCentroAjax").on("submit", function(e) {
     });
 });
 
-/**
- * Remover Centro - AJAX
- */
+// ============================================
+// Remover Centro - AJAX
+// ============================================
 $(document).on("click", ".btn-remover-centro", function() {
     const $btn = $(this);
     const centroId = $btn.data("centro-id");
@@ -948,26 +1235,21 @@ $(document).on("click", ".btn-remover-centro", function() {
     });
 });
 
-/**
- * Adicionar turma - Popula centros quando modal abre
- */
+// ============================================
+// Adicionar Turma - Popula centros
+// ============================================
 $("#modalAdicionarturma").on("show.bs.modal", function() {
-    console.log("DEBUG: Modal adicionar turma aberto, cursoId =", cursoId);
-    // Limpar e popular o select de centros
     $.ajax({
         url: `/api/cursos/${cursoId}`,
         method: "GET",
         success: function(response) {
-            console.log("DEBUG: Resposta da API para curso:", response);
             const curso = response.dados || response;
             let options = '<option value="" disabled selected>Selecione um centro</option>';
             if (curso.centros && curso.centros.length > 0) {
-                console.log("DEBUG: Centros encontrados:", curso.centros);
                 curso.centros.forEach(function(centro) {
                     options += `<option value="${centro.id}">${centro.nome}</option>`;
                 });
             } else {
-                console.log("DEBUG: Nenhum centro associado ao curso");
                 options = '<option value="" disabled>Nenhum centro associado</option>';
             }
             $("#adicionarturmaCentro").html(options);
@@ -979,9 +1261,9 @@ $("#modalAdicionarturma").on("show.bs.modal", function() {
     });
 });
 
-/**
- * Adicionar turma - AJAX
- */
+// ============================================
+// Adicionar Turma - AJAX
+// ============================================
 $("#formAdicionarturmaAjax").on("submit", function(e) {
     e.preventDefault();
     
@@ -991,11 +1273,7 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
     }).get();
     
     if (dias.length === 0) {
-        Swal.fire({
-            icon: "warning",
-            title: "Atenção!",
-            text: "Selecione pelo menos um dia da semana."
-        });
+        Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia da semana." });
         return;
     }
     
@@ -1014,7 +1292,6 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         publicado: $form.find("input[name=\"publicado\"]").is(":checked") ? 1 : 0
     };
     
-    // Garantir que apenas os campos esperados sejam enviados
     const allowedFields = ['curso_id', 'centro_id', 'dia_semana', 'data_arranque', 'duracao_semanas', 'periodo', 'formador_id', 'hora_inicio', 'hora_fim', 'status', 'vagas_totais', 'publicado'];
     const cleanFormData = {};
     allowedFields.forEach(field => {
@@ -1022,8 +1299,6 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
             cleanFormData[field] = formData[field];
         }
     });
-    
-    console.log("DEBUG: Dados limpos a enviar para API:", cleanFormData);
     
     $.ajax({
         url: `/api/turmas`,
@@ -1035,29 +1310,20 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         },
         success: function(response) {
             $("#modalAdicionarturma").modal("hide");
-            Swal.fire({
-                icon: "success",
-                title: "Sucesso!",
-                text: "turma adicionado com sucesso!",
-                timer: 2000
-            }).then(() => location.reload());
+            Swal.fire({ icon: "success", title: "Sucesso!", text: "Turma adicionada com sucesso!", timer: 2000 }).then(() => location.reload());
         },
         error: function(xhr) {
             console.error("Erro:", xhr);
             const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
             const message = Object.values(errors).flat().join("\n");
-            Swal.fire({
-                icon: "error",
-                title: "Erro!",
-                text: message || "Erro ao adicionar turma."
-            });
+            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao adicionar turma." });
         }
     });
 });
 
-/**
- * Editar turma - Abre Modal e Popula centros
- */
+// ============================================
+// Editar Turma - Abre Modal
+// ============================================
 $(document).on("click", ".btn-editar-turma", function() {
     const id = $(this).data("turma-id");
     let dias = $(this).data("dias");
@@ -1074,14 +1340,11 @@ $(document).on("click", ".btn-editar-turma", function() {
         dias = JSON.parse(dias);
     }
     
-    // Período já vem no formato correto da BD
-    // Não precisa normalizar
-    
     $("#editturmaId").val(id);
     $("#editturmaDataArranque").val(dataArranque);
     $("#editturmaDuracao").val(duracaoSemanas || "");
     $("#editturmaFormador").val(formadorId || "");
-    $("#editturmaPeriodo").val(periodo);
+    $("#edittumaPeriodo").val(periodo);
     $("#editturmaHoraInicio").val(horaInicio || "");
     $("#editturmaHoraFim").val(horaFim || "");
     $("#editturmaStatus").val(status);
@@ -1098,8 +1361,6 @@ $(document).on("click", ".btn-editar-turma", function() {
                 });
             }
             $("#edittturmaCentro").html(options);
-            
-            // Preencher o centro_id existente
             if (centroId) {
                 $("#edittturmaCentro").val(centroId);
             }
@@ -1119,9 +1380,9 @@ $(document).on("click", ".btn-editar-turma", function() {
     $("#modalEditarturma").modal("show");
 });
 
-/**
- * Atualizar turma - AJAX
- */
+// ============================================
+// Atualizar Turma - AJAX
+// ============================================
 $("#formEditarturmaAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
@@ -1132,11 +1393,7 @@ $("#formEditarturmaAjax").on("submit", function(e) {
     }).get();
     
     if (dias.length === 0) {
-        Swal.fire({
-            icon: "warning",
-            title: "Atenção!",
-            text: "Selecione pelo menos um dia da semana."
-        });
+        Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia da semana." });
         return;
     }
     
@@ -1162,39 +1419,28 @@ $("#formEditarturmaAjax").on("submit", function(e) {
         },
         success: function() {
             $("#modalEditarturma").modal("hide");
-            Swal.fire({
-                icon: "success",
-                title: "Sucesso!",
-                text: "turma atualizado com sucesso!",
-                timer: 2000
-            }).then(() => location.reload());
+            Swal.fire({ icon: "success", title: "Sucesso!", text: "Turma atualizada com sucesso!", timer: 2000 }).then(() => location.reload());
         },
         error: function(xhr) {
             console.error("Erro:", xhr);
             const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] };
             const message = Object.values(errors).flat().join("\n");
-            Swal.fire({
-                icon: "error",
-                title: "Erro!",
-                text: message || "Erro ao atualizar turma."
-            });
+            Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar turma." });
         }
     });
 });
 
-/**
- * Modal Editar Curso - Lógica
- */
+// ============================================
+// Modal Editar Curso - Lógica
+// ============================================
 let centrosEditCount = 0;
 let centrosDisponiveisEditList = [];
 
-// Dados do curso para edição
 const cursoDataEdit = {!! json_encode([
     'id' => $curso->id,
     'centros' => $curso->centros
 ]) !!};
 
-// Carregar centros disponíveis para edição
 function carregarCentrosEdit() {
     $.ajax({
         url: '/api/centros',
@@ -1208,69 +1454,44 @@ function carregarCentrosEdit() {
     });
 }
 
-// Abrir modal de edição
 $('#modalEditarCurso').on('show.bs.modal', function() {
-    // Guardar o curso_id antes de resetar
     const cursoIdValue = $('#formEditarCursoAjax').find("[name=\"curso_id\"]").val();
-    
     $('#formEditarCursoAjax')[0].reset();
-    
-    // Restaurar o curso_id após reset
     $('#formEditarCursoAjax').find("[name=\"curso_id\"]").val(cursoIdValue);
-    
     $('#centrosContainerEdit').empty();
     centrosEditCount = 0;
-    
-    // Carregar centros disponíveis
     carregarCentrosEdit();
-    
-    // Carregar dados existentes
     carregarCentrosExistentesEdit();
-    
-    // Se não há centros, adicionar um vazio
     if ($('#centrosContainerEdit').find('.col-12').length === 0) {
         adicionarCentroEdit();
     }
 });
 
-// Carregar centros existentes para edição
 function carregarCentrosExistentesEdit() {
-    if (!cursoDataEdit || !cursoDataEdit.centros || cursoDataEdit.centros.length === 0) {
-        return;
-    }
+    if (!cursoDataEdit || !cursoDataEdit.centros || cursoDataEdit.centros.length === 0) return;
     
     cursoDataEdit.centros.forEach((centro, index) => {
         try {
             const template = document.getElementById('centroCursoEditTemplate');
             if (!template) return;
-            
             const clone = template.content.cloneNode(true);
             const wrapper = document.createElement('div');
             wrapper.appendChild(clone);
-            
-            let html = wrapper.innerHTML
-                .replace(/numero-centro-edit">Centro 1</, `numero-centro-edit">Centro ${index + 1}<`);
-            
+            let html = wrapper.innerHTML.replace(/numero-centro-edit">Centro 1</, `numero-centro-edit">Centro ${index + 1}<`);
             const colDiv = document.createElement('div');
             colDiv.innerHTML = html;
             $('#centrosContainerEdit').append(colDiv.firstElementChild);
             
-            // Preencher com dados existentes
             const selects = $('#centrosContainerEdit').find('.centro-id-edit');
             const lastSelect = selects.last();
-            
             centrosDisponiveisEditList.forEach(c => {
                 lastSelect.append(`<option value="${c.id}">${c.nome}</option>`);
             });
-            
             lastSelect.val(centro.id);
             const preco = centro.pivot && centro.pivot.preco ? centro.pivot.preco : '';
             $('#centrosContainerEdit').find('.preco-edit').last().val(preco);
-            
-            // Desabilitar campos para centros já associados
             lastSelect.prop('disabled', true);
             $('#centrosContainerEdit').find('.preco-edit').last().prop('disabled', true);
-            
             centrosEditCount++;
         } catch(e) {
             console.error('Erro ao carregar centro:', e, centro);
@@ -1278,30 +1499,23 @@ function carregarCentrosExistentesEdit() {
     });
 }
 
-// Adicionar centro no modal de edição
 function adicionarCentroEdit() {
     try {
         const template = document.getElementById('centroCursoEditTemplate');
         if (!template) return;
-        
         const clone = template.content.cloneNode(true);
         const wrapper = document.createElement('div');
         wrapper.appendChild(clone);
-        
-        let html = wrapper.innerHTML
-            .replace(/numero-centro-edit">Centro 1</g, `numero-centro-edit">Centro ${centrosEditCount + 1}<`);
-        
+        let html = wrapper.innerHTML.replace(/numero-centro-edit">Centro 1</g, `numero-centro-edit">Centro ${centrosEditCount + 1}<`);
         const colDiv = document.createElement('div');
         colDiv.innerHTML = html;
         $('#centrosContainerEdit').append(colDiv.firstElementChild);
         
         const selects = $('#centrosContainerEdit').find('.centro-id-edit');
         const lastSelect = selects.last();
-        
         centrosDisponiveisEditList.forEach(centro => {
             lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
         });
-        
         centrosEditCount++;
         atualizarNumeroCentrosEdit();
     } catch(e) {
@@ -1309,18 +1523,15 @@ function adicionarCentroEdit() {
     }
 }
 
-// Atualizar numeração dos centros
 function atualizarNumeroCentrosEdit() {
     const badges = $('#centrosContainerEdit').find('.numero-centro-edit');
     badges.each((index, badge) => {
         $(badge).text('Centro ' + (index + 1));
     });
-
     const btnsRemover = $('#centrosContainerEdit').find('.remover-centro-edit');
     btnsRemover.prop('disabled', btnsRemover.length <= 1);
 }
 
-// Eventos do modal de edição
 $(document).on('click', '#adicionarCentroEditBtn', function(e) {
     e.preventDefault();
     adicionarCentroEdit();
@@ -1332,15 +1543,14 @@ $(document).on('click', '.remover-centro-edit', function(e) {
     atualizarNumeroCentrosEdit();
 });
 
-// Handler do formulário de edição
+// ============================================
+// Formulário Editar Curso - Submit
+// ============================================
 $("#formEditarCursoAjax").on("submit", function(e) {
     e.preventDefault();
     
     const $form = $(this);
     const cursoId = $form.find("[name=\"curso_id\"]").val();
-    
-    console.log("DEBUG: cursoId =", cursoId);
-    console.log("DEBUG: form data =", $form.serializeArray());
     
     if (!cursoId) {
         Swal.fire("Erro!", "ID do curso não encontrado no formulário", "error");
@@ -1366,7 +1576,6 @@ $("#formEditarCursoAjax").on("submit", function(e) {
     $('#centrosContainerEdit').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-edit').val();
         const preco = $(this).find('.preco-edit').val();
-        
         if (!centroId || !preco) {
             centroValido = false;
             return false;
@@ -1381,11 +1590,10 @@ $("#formEditarCursoAjax").on("submit", function(e) {
     const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
     
     if (imagemFile) {
-        // Com arquivo de imagem
         const formData = new FormData();
         formData.append('nome', nome);
-        formData.append('descricao', $form.find("[name=\"descricao\"]").val() || ""); // Garantir string
-        formData.append('programa', $form.find("[name=\"programa\"]").val() || ""); // Garantir string
+        formData.append('descricao', $form.find("[name=\"descricao\"]").val() || "");
+        formData.append('programa', $form.find("[name=\"programa\"]").val() || "");
         formData.append('area', area);
         formData.append('modalidade', modalidade);
         formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
@@ -1395,7 +1603,6 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         $('#centrosContainerEdit').find('.centro-card').each(function() {
             const centroId = $(this).find('.centro-id-edit').val();
             const preco = $(this).find('.preco-edit').val();
-            
             formData.append(`centro_curso[${index}][centro_id]`, centroId);
             formData.append(`centro_curso[${index}][preco]`, preco);
             index++;
@@ -1413,50 +1620,24 @@ $("#formEditarCursoAjax").on("submit", function(e) {
                 "X-HTTP-Method-Override": "PUT"
             },
             success: function(response) {
-                console.log("Sucesso:", response);
                 $("#modalEditarCurso").modal("hide");
-                Swal.fire({
-                    icon: "success",
-                    title: "Sucesso!",
-                    text: "Curso atualizado com sucesso!",
-                    timer: 2000
-                }).then(() => location.reload());
+                Swal.fire({ icon: "success", title: "Sucesso!", text: "Curso atualizado com sucesso!", timer: 2000 }).then(() => location.reload());
             },
-            error: function(xhr, status, error) {
+            error: function(xhr) {
                 console.error("Status:", xhr.status);
-                console.error("StatusText:", xhr.statusText);
-                console.error("Response Text:", xhr.responseText);
-                console.error("Response JSON:", xhr.responseJSON);
-                console.error("Error:", error);
-                
+                console.error("Response:", xhr.responseText);
                 let message = "Erro desconhecido";
-                
-                // Tentar diferentes estruturas de resposta
-                if (xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                } else if (xhr.responseJSON?.error) {
-                    message = xhr.responseJSON.error;
-                } else if (xhr.responseJSON?.data?.message) {
-                    message = xhr.responseJSON.data.message;
-                } else if (xhr.responseText) {
-                    message = "Resposta: " + xhr.responseText.substring(0, 200);
-                }
-                
-                Swal.fire({
-                    icon: "error",
-                    title: "Erro!",
-                    text: message || "Erro ao atualizar curso."
-                });
+                if (xhr.responseJSON?.errors) message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                else if (xhr.responseJSON?.message) message = xhr.responseJSON.message;
+                else if (xhr.responseJSON?.error) message = xhr.responseJSON.error;
+                Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar curso." });
             }
         });
     } else {
-        // Sem arquivo - usar JSON
         const formData = {
             nome: nome,
-            descricao: $form.find("[name=\"descricao\"]").val() || "", // Garantir string
-            programa: $form.find("[name=\"programa\"]").val() || "", // Garantir string
+            descricao: $form.find("[name=\"descricao\"]").val() || "",
+            programa: $form.find("[name=\"programa\"]").val() || "",
             area: area,
             modalidade: modalidade,
             ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0,
@@ -1466,11 +1647,7 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         $('#centrosContainerEdit').find('.centro-card').each(function() {
             const centroId = $(this).find('.centro-id-edit').val();
             const preco = $(this).find('.preco-edit').val();
-            
-            formData.centro_curso.push({
-                centro_id: centroId,
-                preco: preco
-            });
+            formData.centro_curso.push({ centro_id: centroId, preco: preco });
         });
         
         $.ajax({
@@ -1484,55 +1661,32 @@ $("#formEditarCursoAjax").on("submit", function(e) {
                 "Accept": "application/json"
             },
             success: function(response) {
-                console.log("Sucesso:", response);
                 $("#modalEditarCurso").modal("hide");
-                Swal.fire({
-                    icon: "success",
-                    title: "Sucesso!",
-                    text: "Curso atualizado com sucesso!",
-                    timer: 2000
-                }).then(() => location.reload());
+                Swal.fire({ icon: "success", title: "Sucesso!", text: "Curso atualizado com sucesso!", timer: 2000 }).then(() => location.reload());
             },
-            error: function(xhr, status, error) {
+            error: function(xhr) {
                 console.error("Status:", xhr.status);
-                console.error("StatusText:", xhr.statusText);
-                console.error("Response Text:", xhr.responseText);
-                console.error("Response JSON:", xhr.responseJSON);
-                console.error("Error:", error);
-                
+                console.error("Response:", xhr.responseText);
                 let message = "Erro desconhecido";
-                
-                // Tentar diferentes estruturas de resposta
-                if (xhr.responseJSON?.errors) {
-                    message = Object.values(xhr.responseJSON.errors).flat().join("\n");
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
-                } else if (xhr.responseJSON?.error) {
-                    message = xhr.responseJSON.error;
-                } else if (xhr.responseJSON?.data?.message) {
-                    message = xhr.responseJSON.data.message;
-                } else if (xhr.responseText) {
-                    message = "Resposta: " + xhr.responseText.substring(0, 200);
-                }
-                
-                Swal.fire({
-                    icon: "error",
-                    title: "Erro!",
-                    text: message || "Erro ao atualizar curso."
-                });
+                if (xhr.responseJSON?.errors) message = Object.values(xhr.responseJSON.errors).flat().join("\n");
+                else if (xhr.responseJSON?.message) message = xhr.responseJSON.message;
+                else if (xhr.responseJSON?.error) message = xhr.responseJSON.error;
+                Swal.fire({ icon: "error", title: "Erro!", text: message || "Erro ao atualizar curso." });
             }
         });
     }
 });
 
+// ============================================
 // Inicializar
+// ============================================
 $(document).ready(function() {
     carregarCentrosEdit();
 });
 
-/**
- * Eliminar Curso
- */
+// ============================================
+// Eliminar Curso
+// ============================================
 $(document).on("click", ".btn-eliminar-curso", function() {
     const $btn = $(this);
     const id = $btn.data("curso-id");
