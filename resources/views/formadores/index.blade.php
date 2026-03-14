@@ -89,15 +89,30 @@
                                 <td class="d-none d-lg-table-cell"><small>{{ $formador->especialidade ?? '—' }}</small></td>
                                 <td class="text-center">
                                     @php
-                                        $cursoCount = ($formador->cursos && is_countable($formador->cursos)) ? count($formador->cursos) : 0;
+                                        // Contar cursos únicos através das turmas
+                                        $cursosCount = $formador->turmas->pluck('curso_id')->unique()->count();
                                     @endphp
-                                    <span class="badge bg-info-subtle text-info">{{ $cursoCount }}</span>
+                                    <span class="badge bg-info-subtle text-info">{{ $cursosCount }}</span>
                                 </td>
                                 <td class="text-center">
                                     @if($formador->contactos && is_array($formador->contactos))
-                                        <small class="text-muted">{{ count($formador->contactos) }}</small>
+                                        @php
+                                            $totalContactos = count($formador->contactos);
+                                        @endphp
+                                        
+                                        @if($totalContactos > 0)
+                                            <span class="badge bg-success-subtle text-success">{{ $totalContactos }}</span>
+                                            
+                                            {{-- Tooltip com os números --}}
+                                            <i class="fas fa-info-circle text-muted ms-1" 
+                                               data-bs-toggle="tooltip" 
+                                               title="{{ implode(', ', $formador->contactos) }}" 
+                                               style="cursor: help;"></i>
+                                        @else
+                                            <span class="badge bg-secondary">0</span>
+                                        @endif
                                     @else
-                                        <small class="text-muted">0</small>
+                                        <span class="badge bg-secondary">0</span>
                                     @endif
                                 </td>
                                 <td class="text-end pe-3">
@@ -489,6 +504,12 @@ function configurarEventosModal() {
             eliminarFormador(id);
         }
     });
+
+    // Ativar tooltips do Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
 }
 
 /**
@@ -780,13 +801,13 @@ $('#formNovoFormadorAjax').on('submit', function(e) {
     const form = $(this)[0];
     const formData = new FormData(form);
 
-    const contatos = [];
+    // Processar contactos como array simples de strings
     const telefone = $('input[name="contacto_telefone"]').val();
     if (telefone && telefone.trim() !== '') {
-        contatos.push(telefone.trim());
+        formData.append('contactos[0]', telefone.trim());
     }
-    formData.set('contactos', JSON.stringify(contatos));
 
+    // Processar centros
     const centrosArray = [];
     $('#centrosContainerNovoFormador').find('.centro-card').each(function() {
         const centroId = $(this).find('.centro-id-modal').val();
@@ -794,7 +815,25 @@ $('#formNovoFormadorAjax').on('submit', function(e) {
             centrosArray.push(parseInt(centroId));
         }
     });
-    formData.set('centros', JSON.stringify(centrosArray));
+    
+    // Remover centros que possam ter sido adicionados pelo formulário
+    const keys = Array.from(formData.keys());
+    keys.forEach(key => {
+        if (key.startsWith('centros')) {
+            formData.delete(key);
+        }
+    });
+    
+    // Adicionar centros com indices
+    centrosArray.forEach((centroId, index) => {
+        formData.append(`centros[${index}]`, centroId);
+    });
+
+    // Debug
+    console.log('Enviando FormData - Novo Formador:');
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
 
     $.ajax({
         url: "{{ route('formadores.store') }}",
@@ -810,10 +849,14 @@ $('#formNovoFormadorAjax').on('submit', function(e) {
             location.reload();
         },
         error: function(xhr) {
-            const errors = xhr.responseJSON?.errors || {};
+            console.error('Erro completo:', xhr);
+            console.error('Response:', xhr.responseText);
+            
             let mensagem = 'Erro ao criar formador';
-            if (Object.keys(errors).length > 0) {
-                mensagem = Object.values(errors).flat().join(', ');
+            if (xhr.responseJSON?.errors) {
+                mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
+            } else if (xhr.responseJSON?.message) {
+                mensagem = xhr.responseJSON.message;
             }
             Swal.fire('Erro', mensagem, 'error');
         }
@@ -828,19 +871,18 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
     
     const formadorId = $('#editFormadorId').val();
     
-    // Construir objeto com dados do formulário
-    const dados = {
-        nome: $('#editNome').val(),
-        email: $('#editEmail').val(),
-        especialidade: $('#editEspecialidade').val(),
-        bio: $('#editBio').val(),
-        contactos: []
-    };
+    // Construir FormData com os dados
+    const formData = new FormData();
+    formData.append('_method', 'PUT');
+    formData.append('nome', $('#editNome').val());
+    formData.append('email', $('#editEmail').val());
+    formData.append('especialidade', $('#editEspecialidade').val());
+    formData.append('bio', $('#editBio').val());
     
-    // Adicionar contacto se existir
+    // Adicionar contacto como string simples
     const telefone = $('#editContactoTelefone').val();
-    if (telefone) {
-        dados.contactos.push(telefone);
+    if (telefone && telefone.trim() !== '') {
+        formData.append('contactos[0]', telefone.trim());
     }
     
     // Coletar centros selecionados
@@ -851,14 +893,24 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
             centrosArray.push(parseInt(centroId));
         }
     });
-    dados.centros = centrosArray;
     
-    console.log('Enviando dados:', dados);
+    // Adicionar centros com indices
+    centrosArray.forEach((centroId, index) => {
+        formData.append(`centros[${index}]`, centroId);
+    });
+    
+    // Debug
+    console.log('Enviando FormData - Editar Formador:');
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
     
     $.ajax({
         url: `/formadores/${formadorId}`,
         method: 'POST',
-        data: dados,
+        data: formData,
+        processData: false,
+        contentType: false,
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         success: function(response) {
             console.log('Sucesso:', response);
@@ -867,11 +919,14 @@ $('#formEditarFormadorAjax').on('submit', function(e) {
             location.reload();
         },
         error: function(xhr) {
-            console.error('Erro:', xhr);
-            const errors = xhr.responseJSON?.errors || {};
+            console.error('Erro completo:', xhr);
+            console.error('Response:', xhr.responseText);
+            
             let mensagem = 'Erro ao atualizar formador';
-            if (Object.keys(errors).length > 0) {
-                mensagem = Object.values(errors).flat().join(', ');
+            if (xhr.responseJSON?.errors) {
+                mensagem = Object.values(xhr.responseJSON.errors).flat().join(', ');
+            } else if (xhr.responseJSON?.message) {
+                mensagem = xhr.responseJSON.message;
             }
             Swal.fire('Erro', mensagem, 'error');
         }
@@ -914,17 +969,18 @@ window.eliminarFormador = function(id) {
  * Aplicar filtros na tabela de formadores
  */
 function aplicarFiltros() {
-    let filtroNome = $('#filtroNome').val();
-    let filtroEspecialidade = $('#filtroEspecialidade').val();
+    let nome = $('#filtroNome').val();
+    let especialidade = $('#filtroEspecialidade').val();
     
     let url = '/formadores?';
     
-    if (filtroNome) url += 'filtroNome=' + encodeURIComponent(filtroNome) + '&';
-    if (filtroEspecialidade) url += 'filtroEspecialidade=' + encodeURIComponent(filtroEspecialidade) + '&';
+    if (nome) url += 'nome=' + encodeURIComponent(nome) + '&';
+    if (especialidade) url += 'especialidade=' + encodeURIComponent(especialidade) + '&';
     
     // Remove o último '&' se existir
     url = url.replace(/&$/, '');
     
+    console.log('Redirecionando para:', url);
     window.location.href = url;
 }
 

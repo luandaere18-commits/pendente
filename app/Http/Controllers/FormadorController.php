@@ -10,22 +10,43 @@ class FormadorController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Formador::with(['cursos', 'centros']);
+        // Carregar formadores com relacionamentos necessários
+        $query = Formador::with(['centros', 'turmas.curso']);
         
-        if ($request->has('nome') && $request->nome) {
+        // Filtro por nome
+        if ($request->filled('nome')) {
             $query->where('nome', 'like', '%' . $request->nome . '%');
         }
         
-        if ($request->has('especialidade') && $request->especialidade) {
+        // Filtro por especialidade
+        if ($request->filled('especialidade')) {
             $query->where('especialidade', 'like', '%' . $request->especialidade . '%');
         }
         
         $formadores = $query->get();
+        
+        // DEBUG: Verificar se os dados estão sendo carregados
+        \Log::info('Formadores carregados: ' . $formadores->count());
+        foreach($formadores as $f) {
+            \Log::info('Formador: ' . $f->nome, [
+                'cursos_count' => $f->cursos_count,
+                'centros_count' => $f->centros->count(),
+                'turmas_count' => $f->turmas->count(),
+                'contactos' => $f->contactos,
+                'contactos_count' => $f->contactos_count
+            ]);
+        }
+        
         $centros = Centro::all();
         
+        // Se for requisição AJAX, retornar JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json($formadores);
+        }
+        
         return view('formadores.index', compact('formadores', 'centros'))->with([
-            'filtroNome' => $request->nome,
-            'filtroEspecialidade' => $request->especialidade
+            'filtroNome' => $request->nome ?? '',
+            'filtroEspecialidade' => $request->especialidade ?? ''
         ]);
     }
 
@@ -40,11 +61,12 @@ class FormadorController extends Controller
             'nome' => 'required|string|max:100',
             'email' => 'nullable|email|max:100',
             'contactos' => 'nullable|array',
-            'contactos.*.tipo' => 'nullable|string',
-            'contactos.*.valor' => 'nullable|string',
+            'contactos.*' => 'nullable|string|max:50',
             'especialidade' => 'nullable|string|max:150',
             'bio' => 'nullable|string',
-            'foto_url' => 'nullable|url|max:255'
+            'foto_url' => 'nullable|url|max:255',
+            'centros' => 'nullable|array',
+            'centros.*' => 'nullable|integer|exists:centros,id'
         ]);
         
         // Normalizar email para lowercase se fornecido
@@ -52,16 +74,12 @@ class FormadorController extends Controller
             $validated['email'] = strtolower($validated['email']);
         }
         
-        // Processar contactos: garantir formato consistente
+        // Processar contactos: garantir apenas strings válidas
         if (isset($validated['contactos']) && is_array($validated['contactos'])) {
             $contactosProcessados = [];
             foreach ($validated['contactos'] as $contacto) {
-                if (is_array($contacto) && !empty($contacto['tipo']) && !empty($contacto['valor'])) {
-                    // Formato novo: array de objetos - só adiciona se ambos tipo e valor estiverem preenchidos
-                    $contactosProcessados[] = [
-                        'tipo' => $contacto['tipo'],
-                        'valor' => $contacto['valor']
-                    ];
+                if (is_string($contacto) && !empty(trim($contacto))) {
+                    $contactosProcessados[] = trim($contacto);
                 }
             }
             $validated['contactos'] = $contactosProcessados;
@@ -70,18 +88,56 @@ class FormadorController extends Controller
             $validated['contactos'] = [];
         }
         
+        // Coletar centros para associação
+        $centros = $validated['centros'] ?? [];
+        unset($validated['centros']);
+        
         $formador = Formador::create($validated);
+        
+        // Associar centros se fornecidos
+        if (!empty($centros)) {
+            $formador->centros()->sync($centros);
+        }
+        
+        // Se for requisição AJAX ou JSON, retornar JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => 'sucesso',
+                'message' => 'Formador criado com sucesso',
+                'data' => $formador->load(['centros'])
+            ], 201);
+        }
+        
         return redirect()->route('formadores.index')->with('success', 'Formador criado com sucesso!');
     }
 
     public function show(Formador $formador)
     {
-        $formador->load(['centros']);
+        $formador->load(['centros', 'turmas.curso', 'cursos']);
+        
+        // Se for requisição AJAX ou JSON, retornar JSON
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'status' => 'sucesso',
+                'data' => $formador
+            ]);
+        }
+        
         return view('formadores.show', compact('formador'));
     }
 
     public function edit(Formador $formador)
     {
+        $formador->load(['centros', 'turmas.curso', 'cursos']);
+        
+        // Se for requisição AJAX ou JSON, retornar JSON
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'status' => 'sucesso',
+                'data' => $formador
+            ]);
+        }
+        
         return view('formadores.edit', compact('formador'));
     }
 
@@ -91,11 +147,12 @@ class FormadorController extends Controller
             'nome' => 'required|string|max:100',
             'email' => 'nullable|email|max:100',
             'contactos' => 'nullable|array',
-            'contactos.*.tipo' => 'nullable|string',
-            'contactos.*.valor' => 'nullable|string',
+            'contactos.*' => 'nullable|string|max:50',
             'especialidade' => 'nullable|string|max:150',
             'bio' => 'nullable|string',
-            'foto_url' => 'nullable|url|max:255'
+            'foto_url' => 'nullable|url|max:255',
+            'centros' => 'nullable|array',
+            'centros.*' => 'nullable|integer|exists:centros,id'
         ]);
         
         // Normalizar email para lowercase se fornecido
@@ -103,16 +160,12 @@ class FormadorController extends Controller
             $validated['email'] = strtolower($validated['email']);
         }
         
-        // Processar contactos: garantir formato consistente
+        // Processar contactos: garantir apenas strings válidas
         if (isset($validated['contactos']) && is_array($validated['contactos'])) {
             $contactosProcessados = [];
             foreach ($validated['contactos'] as $contacto) {
-                if (is_array($contacto) && !empty($contacto['tipo']) && !empty($contacto['valor'])) {
-                    // Formato novo: array de objetos - só adiciona se ambos tipo e valor estiverem preenchidos
-                    $contactosProcessados[] = [
-                        'tipo' => $contacto['tipo'],
-                        'valor' => $contacto['valor']
-                    ];
+                if (is_string($contacto) && !empty(trim($contacto))) {
+                    $contactosProcessados[] = trim($contacto);
                 }
             }
             $validated['contactos'] = $contactosProcessados;
@@ -121,13 +174,44 @@ class FormadorController extends Controller
             $validated['contactos'] = [];
         }
         
+        // Coletar centros para associação
+        $centros = $validated['centros'] ?? [];
+        unset($validated['centros']);
+        
         $formador->update($validated);
+        
+        // Associar centros se fornecidos
+        if (!empty($centros)) {
+            $formador->centros()->sync($centros);
+        } else {
+            // Se não há centros, limpar associações
+            $formador->centros()->sync([]);
+        }
+        
+        // Se for requisição AJAX ou JSON, retornar JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => 'sucesso',
+                'message' => 'Formador atualizado com sucesso',
+                'data' => $formador->load(['centros'])
+            ]);
+        }
+        
         return redirect()->route('formadores.index')->with('success', 'Formador atualizado com sucesso!');
     }
 
     public function destroy(Formador $formador)
     {
         $formador->delete();
-        return redirect()->route('formadores.index')->with('success', 'Formador deletado com sucesso!');
+        
+        // Se for requisição AJAX ou JSON, retornar JSON
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'status' => 'sucesso',
+                'message' => 'Formador eliminado com sucesso'
+            ]);
+        }
+        
+        return redirect()->route('formadores.index')->with('success', 'Formador eliminado com sucesso!');
     }
 }
