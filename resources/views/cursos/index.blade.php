@@ -338,8 +338,8 @@
         <div class="pi-stat">
             <div class="pi-stat-icon cyan"><i class="fas fa-layer-group"></i></div>
             <div>
-                <div class="pi-stat-label">Modalidades</div>
-                <div class="pi-stat-value" style="color:var(--pi-info)">{{ $cursos->pluck('modalidade')->unique()->count() }}</div>
+                <div class="pi-stat-label">Turmas</div>
+                <div class="pi-stat-value" style="color:var(--pi-info)">{{ $cursos->sum(function($c) { return $c->turmas->count(); }) }}</div>
             </div>
         </div>
     </div>
@@ -352,12 +352,6 @@
             <i class="fas fa-search"></i>
             <input type="text" id="filtroNome" placeholder="Buscar por nome do curso..." value="{{ request('nome') }}">
         </div>
-        <select class="form-select" id="filtroModalidade" style="border-color:var(--pi-border)">
-            <option value="">Todas modalidades</option>
-            <option value="presencial" {{ request('modalidade') == 'presencial' ? 'selected' : '' }}>Presencial</option>
-            <option value="online" {{ request('modalidade') == 'online' ? 'selected' : '' }}>Online</option>
-            <option value="hibrido" {{ request('modalidade') == 'hibrido' ? 'selected' : '' }}>Híbrido</option>
-        </select>
         <select class="form-select" id="filtroStatus" style="border-color:var(--pi-border)">
             <option value="">Todos status</option>
             <option value="1" {{ request('ativo') === '1' ? 'selected' : '' }}>Ativo</option>
@@ -379,7 +373,6 @@
                     <tr>
                         <th style="width:50px">ID</th>
                         <th>Nome do Curso</th>
-                        <th>Modalidade</th>
                         <th>Centro(s)</th>
                         <th>Preço Médio</th>
                         <th>Status</th>
@@ -399,24 +392,6 @@
                                     @endif
                                     <strong style="font-size:0.8125rem">{{ $curso->nome }}</strong>
                                 </div>
-                            </td>
-                            <td>
-                                @php
-                                    $modClass = [
-                                        'presencial' => 'pi-badge-presencial',
-                                        'online' => 'pi-badge-online',
-                                        'hibrido' => 'pi-badge-hibrido',
-                                    ];
-                                    $modIcons = [
-                                        'presencial' => 'fas fa-building',
-                                        'online' => 'fas fa-globe',
-                                        'hibrido' => 'fas fa-laptop-house',
-                                    ];
-                                @endphp
-                                <span class="pi-badge {{ $modClass[$curso->modalidade] ?? 'pi-badge-presencial' }}">
-                                    <i class="{{ $modIcons[$curso->modalidade] ?? 'fas fa-question' }}"></i>
-                                    {{ ucfirst($curso->modalidade) }}
-                                </span>
                             </td>
                             <td style="font-size:0.75rem">
                                 @if($curso->centros->count() > 0)
@@ -481,7 +456,7 @@
                             @endif
                             <div>
                                 <div class="card-name">{{ $curso->nome }}</div>
-                                <div class="card-meta">{{ ucfirst($curso->modalidade) }} · {{ $curso->centros->count() }} centro(s)</div>
+                                <div class="card-meta">{{ $curso->centros->count() }} centro(s)</div>
                             </div>
                         </div>
                         @if($curso->ativo)
@@ -578,18 +553,8 @@
                                 <label class="form-label">Área <span class="required">*</span></label>
                                 <input type="text" class="form-control" name="area" required placeholder="Área do curso">
                             </div>
-                            <div class="row mb-2">
-                                <div class="col-7">
-                                    <label class="form-label">Modalidade <span class="required">*</span></label>
-                                    <select class="form-select" name="modalidade" required>
-                                        <option value="">Selecione</option>
-                                        <option value="presencial">Presencial</option>
-                                        <option value="online">Online</option>
-                                        <option value="hibrido">Híbrido</option>
-                                    </select>
-                                </div>
-                                <div class="col-5 d-flex align-items-end">
-                                    <div class="form-check">
+                            <div class="d-flex align-items-end">
+                                <div class="form-check">
                                         <input type="checkbox" class="form-check-input" name="ativo" id="novoCursoAtivo" checked>
                                         <label class="form-check-label" for="novoCursoAtivo" style="font-size:0.8125rem">Ativo</label>
                                     </div>
@@ -671,7 +636,7 @@ $(document).ready(function() {
         clearTimeout(filtroTimeout);
         filtroTimeout = setTimeout(aplicarFiltros, 300);
     });
-    $('#filtroModalidade, #filtroStatus').on('change', aplicarFiltros);
+    $('#filtroStatus').on('change', aplicarFiltros);
 });
 
 /**
@@ -721,10 +686,6 @@ function carregarDetalhesCurso(cursoId) {
             const statusBadge = curso.ativo 
                 ? '<span class="pi-badge pi-badge-ativo"><i class="fas fa-check-circle"></i> Ativo</span>'
                 : '<span class="pi-badge pi-badge-inativo"><i class="fas fa-times-circle"></i> Inativo</span>';
-            
-            const modClasses = { 'online': 'pi-badge-online', 'presencial': 'pi-badge-presencial', 'hibrido': 'pi-badge-hibrido' };
-            const modIcons = { 'online': 'fas fa-globe', 'presencial': 'fas fa-building', 'hibrido': 'fas fa-laptop-house' };
-            const modalidadeBadge = `<span class="pi-badge ${modClasses[curso.modalidade] || 'pi-badge-presencial'}"><i class="${modIcons[curso.modalidade] || 'fas fa-question'}"></i> ${curso.modalidade ? curso.modalidade.charAt(0).toUpperCase() + curso.modalidade.slice(1) : 'N/A'}</span>`;
             
             const imagemHtml = curso.imagem_url 
                 ? `<img src="${curso.imagem_url}" alt="${curso.nome}" class="pi-curso-detail-img">`
@@ -799,7 +760,6 @@ function carregarDetalhesCurso(cursoId) {
                         <h5 style="font-weight:700;margin-bottom:0.375rem;font-size:1rem;color:var(--pi-text)">${curso.nome}</h5>
                         <div class="d-flex gap-2 flex-wrap mb-2">
                             ${statusBadge}
-                            ${modalidadeBadge}
                         </div>
                         <div class="pi-detail-row">
                             <div class="pi-detail-icon"><i class="fas fa-tag"></i></div>
@@ -909,10 +869,9 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     const $form = $(this);
     const nome = $form.find("[name=\"nome\"]").val().trim();
     const area = $form.find("[name=\"area\"]").val().trim();
-    const modalidade = $form.find("[name=\"modalidade\"]").val().trim();
 
-    if (!nome || !area || !modalidade) {
-        Swal.fire({ icon: "error", title: "Campos obrigatórios!", text: "Preencha Nome, Área e Modalidade", confirmButtonColor: '#1d4ed8' });
+    if (!nome || !area) {
+        Swal.fire({ icon: "error", title: "Campos obrigatórios!", text: "Preencha Nome e Área", confirmButtonColor: '#1d4ed8' });
         return;
     }
 
@@ -939,7 +898,6 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     formData.append('descricao', $form.find("[name=\"descricao\"]").val().trim());
     formData.append('programa', $form.find("[name=\"programa\"]").val().trim());
     formData.append('area', area);
-    formData.append('modalidade', modalidade);
     formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
 
     const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
@@ -985,21 +943,18 @@ $("#formNovoCursoAjax").on("submit", function(e) {
 
 function aplicarFiltros() {
     const nome = $('#filtroNome').val() || '';
-    const modalidade = $('#filtroModalidade').val() || '';
     const ativo = $('#filtroStatus').val() || '';
     let url = '/cursos?';
     if (nome) url += `nome=${encodeURIComponent(nome)}&`;
-    if (modalidade) url += `modalidade=${encodeURIComponent(modalidade)}&`;
     if (ativo !== '') url += `ativo=${ativo}`;
     window.location.href = url;
 }
 
 function limparFiltros() {
     $('#filtroNome').val('');
-    $('#filtroModalidade').val('');
     $('#filtroStatus').val('');
     window.location.href = '/cursos';
-}
+}}
 
 function carregarCursos() { location.reload(); }
 

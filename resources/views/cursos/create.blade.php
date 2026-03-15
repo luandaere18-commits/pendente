@@ -161,16 +161,6 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-6">
-                        <label for="modalidade" class="form-label">Modalidade <span class="text-danger">*</span></label>
-                        <select class="form-select @error('modalidade') is-invalid @enderror" id="modalidade" name="modalidade" required>
-                            <option value="">Selecione a modalidade</option>
-                            <option value="presencial" {{ old('modalidade') == 'presencial' ? 'selected' : '' }}>Presencial</option>
-                            <option value="online" {{ old('modalidade') == 'online' ? 'selected' : '' }}>Online</option>
-                            <option value="hibrido" {{ old('modalidade') == 'hibrido' ? 'selected' : '' }}>Híbrido</option>
-                        </select>
-                        @error('modalidade')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                    </div>
                     <div class="col-lg-3">
                         <label for="ativo" class="form-label">Status</label>
                         <select class="form-select" id="ativo" name="ativo">

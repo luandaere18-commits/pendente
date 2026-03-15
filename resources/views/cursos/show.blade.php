@@ -271,16 +271,6 @@
 
 @section('content')
 @php
-    $modalidadeClasses = [
-        'online' => 'pi-badge-info',
-        'presencial' => 'pi-badge-warning',
-        'hibrido' => 'pi-badge-primary',
-    ];
-    $modalidadeIcones = [
-        'online' => 'fas fa-globe',
-        'presencial' => 'fas fa-building',
-        'hibrido' => 'fas fa-laptop-house',
-    ];
     $statusColors = [
         'planeada' => 'secondary',
         'inscricoes_abertas' => 'success',
@@ -317,10 +307,6 @@
                         @else
                             <span class="pi-badge" style="background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.7)"><i class="fas fa-times-circle"></i> Inativo</span>
                         @endif
-                        <span class="pi-badge" style="background:rgba(255,255,255,0.15);color:#fff">
-                            <i class="{{ $modalidadeIcones[$curso->modalidade] ?? 'fas fa-laptop-house' }}"></i>
-                            {{ ucfirst($curso->modalidade) }}
-                        </span>
                     </div>
                 </div>
             </div>
@@ -406,15 +392,6 @@
                         <div class="pi-info-item">
                             <span class="pi-info-label"><i class="fas fa-tag me-1"></i>Área</span>
                             <span class="pi-info-value">{{ $curso->area }}</span>
-                        </div>
-                        <div class="pi-info-item">
-                            <span class="pi-info-label"><i class="fas fa-signal me-1"></i>Modalidade</span>
-                            <span class="pi-info-value">
-                                <span class="pi-badge {{ $modalidadeClasses[$curso->modalidade] ?? 'pi-badge-primary' }}">
-                                    <i class="{{ $modalidadeIcones[$curso->modalidade] ?? 'fas fa-laptop-house' }}"></i>
-                                    {{ ucfirst($curso->modalidade) }}
-                                </span>
-                            </span>
                         </div>
                         <div class="pi-info-item">
                             <span class="pi-info-label"><i class="fas fa-toggle-on me-1"></i>Status</span>
@@ -756,16 +733,7 @@
                                 <label class="form-label">Área <span class="required">*</span></label>
                                 <input type="text" name="area" class="form-control" value="{{ $curso->area }}" required>
                             </div>
-                            <div class="row g-2 mb-2">
-                                <div class="col-md-7">
-                                    <label class="form-label">Modalidade <span class="required">*</span></label>
-                                    <select name="modalidade" class="form-select" required>
-                                        <option value="presencial" {{ $curso->modalidade === 'presencial' ? 'selected' : '' }}>Presencial</option>
-                                        <option value="online" {{ $curso->modalidade === 'online' ? 'selected' : '' }}>Online</option>
-                                        <option value="hibrido" {{ $curso->modalidade === 'hibrido' ? 'selected' : '' }}>Híbrido</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-5 d-flex align-items-end">
+                            <div class="d-flex align-items-end">
                                     <div class="form-check form-switch mb-1">
                                         <input class="form-check-input" type="checkbox" name="ativo" id="editCursoAtivo" {{ $curso->ativo ? 'checked' : '' }}>
                                         <label class="form-check-label" for="editCursoAtivo" style="font-size:0.8125rem">Ativo</label>
@@ -1417,7 +1385,6 @@ let centrosDisponiveisEditList = [];
 const cursoDataEdit = {!! json_encode([
     'id' => $curso->id,
     'nome' => $curso->nome,
-    'modalidade' => $curso->modalidade,
     'ativo' => $curso->ativo,
     'centros' => $curso->centros->map(function($centro) {
         return [
@@ -1556,8 +1523,8 @@ $("#formEditarCursoAjax").on("submit", function(e) {
     if (!cursoId) { Swal.fire({ icon: "error", title: "Erro!", text: "ID do curso não encontrado", confirmButtonColor: '#1d4ed8' }); return; }
     const nome = $form.find("[name=\"nome\"]").val().trim();
     const area = $form.find("[name=\"area\"]").val().trim();
-    const modalidade = $form.find("[name=\"modalidade\"]").val().trim();
-    if (!nome || !area || !modalidade) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha Nome, Área e Modalidade", confirmButtonColor: '#1d4ed8' }); return; }
+
+    if (!nome || !area) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha Nome e Área", confirmButtonColor: '#1d4ed8' }); return; }
     const centrosCount = $('#centrosContainerEdit').find('.centro-id-edit').length;
     if (centrosCount === 0) { Swal.fire({ icon: "error", title: "Erro!", text: "Adicione pelo menos um centro", confirmButtonColor: '#1d4ed8' }); return; }
     let centroValido = true;
@@ -1575,7 +1542,6 @@ $("#formEditarCursoAjax").on("submit", function(e) {
         formData.append('descricao', $form.find("[name=\"descricao\"]").val() || "");
         formData.append('programa', $form.find("[name=\"programa\"]").val() || "");
         formData.append('area', area);
-        formData.append('modalidade', modalidade);
         formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
         formData.append('imagem', imagemFile);
         let index = 0;
@@ -1601,7 +1567,7 @@ $("#formEditarCursoAjax").on("submit", function(e) {
     } else {
         const formData = {
             nome, descricao: $form.find("[name=\"descricao\"]").val() || "", programa: $form.find("[name=\"programa\"]").val() || "",
-            area, modalidade, ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0, centro_curso: []
+            area, ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0, centro_curso: []
         };
         $('#centrosContainerEdit').find('.centro-card').each(function() {
             formData.centro_curso.push({ centro_id: $(this).find('.centro-id-edit').val(), preco: $(this).find('.preco-edit').val() });

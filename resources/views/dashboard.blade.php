@@ -243,16 +243,6 @@ function carregarEstatisticas() {
         success: function(data) {
             let cursos = Array.isArray(data) ? data : (data.data || []);
             $('#total-cursos').text(cursos.length);
-            
-            const online = cursos.filter(curso => curso.modalidade === 'online').length;
-            const presencial = cursos.filter(curso => curso.modalidade === 'presencial').length;
-            const total = cursos.length;
-            
-            $('#cursos-online').text(online);
-            $('#cursos-presencial').text(presencial);
-            
-            if (total > 0) {
-                $('#progress-online').css('width', (online / total * 100) + '%');
                 $('#progress-presencial').css('width', (presencial / total * 100) + '%');
             }
         },

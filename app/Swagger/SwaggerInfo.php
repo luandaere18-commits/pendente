@@ -87,13 +87,13 @@ namespace App\Swagger;
  * @OA\Schema(
  *     schema="Curso",
  *     type="object",
- *     required={"nome", "descricao", "modalidade", "ativo", "centros"},
+ *     required={"nome", "descricao", "ativo", "centros"},
  *     @OA\Property(property="id", type="integer", readOnly=true),
  *     @OA\Property(property="nome", type="string", maxLength=100),
  *     @OA\Property(property="descricao", type="string"),
  *     @OA\Property(property="programa", type="string", nullable=true),
  *     @OA\Property(property="area", type="string", maxLength=100, nullable=true),
- *     @OA\Property(property="modalidade", type="string", enum={"presencial", "online"}),
+
  *     @OA\Property(property="imagem_url", type="string", format="uri", nullable=true),
  *     @OA\Property(property="ativo", type="boolean"),
  *     @OA\Property(
@@ -114,7 +114,7 @@ namespace App\Swagger;
  *         "descricao": "Curso completo de informática básica e avançada.",
  *         "programa": "Módulo 1: Windows\nMódulo 2: Office\nMódulo 3: Internet",
  *         "area": "Tecnologia",
- *         "modalidade": "presencial",
+
  *         "imagem_url": "https://exemplo.com/imagem.jpg",
  *         "ativo": true,
  *         "centros": {
@@ -132,12 +132,12 @@ namespace App\Swagger;
  * @OA\Schema(
  *     schema="CursoInput",
  *     type="object",
- *     required={"nome", "descricao", "modalidade", "ativo", "centros"},
+ *     required={"nome", "descricao", "ativo", "centros"},
  *     @OA\Property(property="nome", type="string", maxLength=100),
  *     @OA\Property(property="descricao", type="string"),
  *     @OA\Property(property="programa", type="string", nullable=true),
  *     @OA\Property(property="area", type="string", maxLength=100, nullable=true),
- *     @OA\Property(property="modalidade", type="string", enum={"presencial", "online"}),
+
  *     @OA\Property(property="imagem_url", type="string", format="uri", nullable=true),
  *     @OA\Property(property="ativo", type="boolean"),
  *     @OA\Property(
@@ -157,7 +157,7 @@ namespace App\Swagger;
  *         "descricao": "Curso completo de informática básica e avançada.",
  *         "programa": "Módulo 1: Windows\nMódulo 2: Office\nMódulo 3: Internet",
  *         "area": "Tecnologia",
- *         "modalidade": "presencial",
+
  *         "imagem_url": "https://exemplo.com/imagem.jpg",
  *         "ativo": true,
  *         "centros": {

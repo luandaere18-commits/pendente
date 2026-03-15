@@ -115,10 +115,6 @@
     @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-accent/10 text-accent;
   }
 
-  .badge-modalidade {
-    @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary;
-  }
-
   .badge-vagas {
     @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold;
   }

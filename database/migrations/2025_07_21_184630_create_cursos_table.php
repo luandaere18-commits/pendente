@@ -17,7 +17,6 @@ return new class extends Migration
             $table->text('descricao')->nullable();  // Descrição detalhada
             $table->text('programa')->nullable();  // Programa/Módulos
             $table->string('area', 100);  // Área de conhecimento
-            $table->enum('modalidade', ['presencial', 'online', 'hibrido']);  // Tipo de entrega (presencial, online ou híbrido)
             $table->string('imagem_url')->nullable();  // URL da imagem do curso
             $table->boolean('ativo')->default(true);  // Status ativo/inativo
             $table->timestamps();

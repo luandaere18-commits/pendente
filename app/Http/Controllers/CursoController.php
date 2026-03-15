@@ -37,11 +37,6 @@ class CursoController extends Controller
             $query->where('area', 'like', '%' . $request->area . '%');
         }
 
-        // Filtro por modalidade
-        if ($request->filled('modalidade')) {
-            $query->where('modalidade', $request->modalidade);
-        }
-
         // Filtro por status (ativo/inativo)
         if ($request->filled('ativo')) {
             $query->where('ativo', $request->ativo);
@@ -105,7 +100,6 @@ class CursoController extends Controller
             'descricao' => 'nullable|string|max:1000',
             'programa' => 'nullable|string|max:5000',
             'area' => 'required|string|max:100',
-            'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ativo' => 'nullable',
             'centro_curso' => 'required|array|min:1',
@@ -119,7 +113,6 @@ class CursoController extends Controller
                 'descricao' => $validated['descricao'] ?? null,
                 'programa' => $validated['programa'] ?? null,
                 'area' => $validated['area'],
-                'modalidade' => $validated['modalidade'],
                 'ativo' => $request->input('ativo', '1') == '1' ? true : false,
             ];
 
@@ -237,7 +230,6 @@ class CursoController extends Controller
                 'descricao' => 'nullable|string|max:1000',
                 'programa' => 'nullable|string|max:10000',
                 'area' => 'required|string|max:100',
-                'modalidade' => 'required|in:presencial,online,hibrido',
                 'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'ativo' => 'nullable|boolean',
                 'centro_curso' => 'nullable|array',
@@ -256,7 +248,6 @@ class CursoController extends Controller
                 'descricao' => $validated['descricao'],
                 'programa' => $validated['programa'],
                 'area' => $validated['area'],
-                'modalidade' => $validated['modalidade'],
                 'ativo' => $request->input('ativo', '1') == '1' ? true : false,
             ];
 

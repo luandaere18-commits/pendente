@@ -266,8 +266,6 @@
                     $cursoNome = $turma->curso->nome ?? 'Curso';
                     $imagemUrl = $turma->curso->imagem_url ?? 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80';
                     $area = $turma->curso->area ?? 'Geral';
-                    $modalidade = $turma->curso->modalidade ?? 'Presencial';
-                    $isAlmostFull = $vagasDisp < 5;
                 @endphp
                 <div class="feature-card overflow-hidden reveal group">
                     <div class="relative mb-4 -mx-6 -mt-6 h-44 overflow-hidden">
@@ -277,7 +275,6 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-3 left-4 flex gap-2">
                             <span class="badge-area">{{ $area }}</span>
-                            <span class="badge-modalidade">{{ $modalidade }}</span>
                         </div>
                         @if($isAlmostFull && $vagasDisp > 0)
                             <span class="absolute top-3 right-3 text-[10px] font-bold bg-destructive text-white px-2 py-1 rounded-full animate-pulse">

@@ -102,19 +102,6 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="modalidade" class="form-label small">Modalidade <span class="text-danger">*</span></label>
-                                <select class="form-select form-select-sm @error('modalidade') is-invalid @enderror" id="modalidade" name="modalidade" required>
-                                    <option value="">Selecione a modalidade</option>
-                                    <option value="presencial" {{ old('modalidade', $curso->modalidade) == 'presencial' ? 'selected' : '' }}>Presencial</option>
-                                    <option value="online" {{ old('modalidade', $curso->modalidade) == 'online' ? 'selected' : '' }}>Online</option>
-                                    <option value="hibrido" {{ old('modalidade', $curso->modalidade) == 'hibrido' ? 'selected' : '' }}>Híbrido</option>
-                                </select>
-                                @error('modalidade')
-                                    <div class="invalid-feedback small">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            
-                            <div class="col-md-6">
                                 <label for="ativo" class="form-label small">Status</label>
                                 <select class="form-select form-select-sm" id="ativo" name="ativo">
                                     <option value="1" {{ old('ativo', $curso->ativo ? 1 : 0) == 1 ? 'selected' : '' }}>Ativo</option>

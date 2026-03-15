@@ -16,7 +16,6 @@ class Curso extends Model
         'descricao',
         'programa',
         'area',
-        'modalidade',
         'imagem_url',
         'ativo'
     ];

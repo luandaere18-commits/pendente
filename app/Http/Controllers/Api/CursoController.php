@@ -59,11 +59,6 @@ class CursoController extends Controller
             $query->where('area', 'like', '%' . $request->area . '%');
         }
 
-        // Filtro por modalidade
-        if ($request->filled('modalidade')) {
-            $query->where('modalidade', $request->modalidade);
-        }
-
         // Filtro por status (ativo/inativo)
         if ($request->filled('ativo')) {
             $query->where('ativo', $request->ativo);
@@ -153,7 +148,6 @@ class CursoController extends Controller
             'descricao' => 'nullable|string',
             'programa' => 'nullable|string',
             'area' => 'required|string|max:100',
-            'modalidade' => 'required|in:presencial,online,hibrido',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'ativo' => 'nullable|boolean',
             $centroKey => 'required|array|min:1',
@@ -168,7 +162,6 @@ class CursoController extends Controller
             'descricao' => $validated['descricao'] ?? null,
             'programa' => $validated['programa'] ?? null,
             'area' => $validated['area'],
-            'modalidade' => $validated['modalidade'],
             'ativo' => $validated['ativo'] ?? 1,
         ];
 
@@ -300,7 +293,6 @@ class CursoController extends Controller
             'descricao' => 'sometimes|string',
             'programa' => 'nullable|string',
             'area' => 'sometimes|string|max:100',
-            'modalidade' => 'sometimes|in:presencial,online,hibrido',
             'imagem_url' => 'nullable|url|max:255',
             'ativo' => 'nullable|boolean',
             $centroKey => 'nullable|array',
@@ -317,7 +309,6 @@ class CursoController extends Controller
             'descricao',
             'programa',
             'area',
-            'modalidade',
             'imagem_url',
             'ativo'
         ])->filter(function($value) {
