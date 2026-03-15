@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 224 58% 33%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 215 20% 27%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 14% 40%;
+
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 71% 35%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 93% 40%;
+    --warning-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 224 58% 33%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(224, 76%, 48%));
+    --gradient-hero: linear-gradient(135deg, hsl(224, 58%, 33%), hsl(215, 20%, 27%));
+    --gradient-accent: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(199, 89%, 48%));
+    --shadow-card: 0 4px 20px hsla(215, 25%, 15%, 0.08);
+    --shadow-card-hover: 0 12px 40px hsla(215, 25%, 15%, 0.15);
+    --shadow-button: 0 4px 14px hsla(217, 91%, 60%, 0.35);
+    --topbar-bg: 215 25% 15%;
+    --topbar-foreground: 210 20% 90%;
+    --footer-bg: 215 25% 12%;
+    --footer-foreground: 210 20% 80%;
+    --newsletter-bg: 224 58% 33%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-foreground mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-muted-foreground text-lg mb-10;
+  }
+
+  .feature-card {
+    @apply bg-card rounded-xl p-6 transition-all duration-300 cursor-pointer;
+    box-shadow: var(--shadow-card);
+  }
+
+  .feature-card:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-6px);
+  }
+
+  .badge-area {
+    @apply inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-accent/10 text-accent;
+  }
+
+  .badge-modalidade {
+    @apply inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-primary/10 text-primary;
+  }
+
+  .badge-vagas {
+    @apply inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold;
+  }
+
+  .gradient-text {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .whatsapp-float {
+    @apply fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 cursor-pointer;
+    background-color: #25D366;
+    color: white;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+  }
+
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Alpine.js x-cloak */
+[x-cloak] { display: none !important; }
+
+/* Fade in animation for toasts */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 0.3s ease-out; }
