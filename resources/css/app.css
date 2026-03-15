@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -38,72 +38,92 @@
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 224 58% 33%;
+    --ring: 217 91% 60%;
 
     --radius: 0.75rem;
 
-    /* Custom tokens */
     --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(224, 76%, 48%));
     --gradient-hero: linear-gradient(135deg, hsl(224, 58%, 33%), hsl(215, 20%, 27%));
     --gradient-accent: linear-gradient(135deg, hsl(217, 91%, 60%), hsl(199, 89%, 48%));
-    --shadow-card: 0 4px 20px hsla(215, 25%, 15%, 0.08);
-    --shadow-card-hover: 0 12px 40px hsla(215, 25%, 15%, 0.15);
+
+    --shadow-card: 0 2px 12px hsla(215, 25%, 15%, 0.07), 0 1px 3px hsla(215, 25%, 15%, 0.04);
+    --shadow-card-hover: 0 16px 48px hsla(215, 25%, 15%, 0.14), 0 4px 12px hsla(215, 25%, 15%, 0.06);
     --shadow-button: 0 4px 14px hsla(217, 91%, 60%, 0.35);
+
     --topbar-bg: 215 25% 15%;
     --topbar-foreground: 210 20% 90%;
     --footer-bg: 215 25% 12%;
     --footer-foreground: 210 20% 80%;
-    --newsletter-bg: 224 58% 33%;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-foreground;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background-color: hsl(var(--accent) / 0.2);
+    color: hsl(var(--foreground));
   }
 }
 
 @layer components {
+  /* ── Typography ─────────────────────────── */
   .section-title {
-    @apply text-3xl md:text-4xl font-bold text-foreground mb-2;
+    @apply text-3xl md:text-4xl font-extrabold text-foreground mb-3;
+    letter-spacing: -0.025em;
   }
 
   .section-subtitle {
-    @apply text-muted-foreground text-lg mb-10;
+    @apply text-muted-foreground text-base md:text-lg mb-10 max-w-2xl mx-auto;
   }
 
+  /* ── Cards ──────────────────────────────── */
   .feature-card {
-    @apply bg-card rounded-xl p-6 transition-all duration-300 cursor-pointer;
+    @apply bg-card rounded-2xl p-6 transition-all duration-300;
     box-shadow: var(--shadow-card);
+    border: 1px solid hsl(var(--border));
   }
 
   .feature-card:hover {
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-6px);
+    transform: translateY(-4px);
+    border-color: hsl(var(--accent) / 0.25);
   }
 
+  /* ── Badges ─────────────────────────────── */
   .badge-area {
-    @apply inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-accent/10 text-accent;
+    @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-accent/10 text-accent;
   }
 
   .badge-modalidade {
-    @apply inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold bg-primary/10 text-primary;
+    @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary;
   }
 
   .badge-vagas {
-    @apply inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold;
+    @apply inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold;
   }
 
+  /* ── Gradient text ──────────────────────── */
   .gradient-text {
     background: var(--gradient-accent);
     -webkit-background-clip: text;
@@ -111,19 +131,28 @@
     background-clip: text;
   }
 
-  .whatsapp-float {
-    @apply fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-300 cursor-pointer;
-    background-color: #25D366;
-    color: white;
-    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4);
-    animation: float 3s ease-in-out infinite;
+  /* WhatsApp float — posicionamento gerido via inline styles no partial */
+
+  /* ── Scroll reveal ──────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
   }
 
-  .whatsapp-float:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+  .reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
   }
 
+  /* Stagger children */
+  .reveal:nth-child(2) { transition-delay: 0.1s; }
+  .reveal:nth-child(3) { transition-delay: 0.2s; }
+  .reveal:nth-child(4) { transition-delay: 0.3s; }
+  .reveal:nth-child(5) { transition-delay: 0.4s; }
+  .reveal:nth-child(6) { transition-delay: 0.5s; }
+
+  /* ── Line clamps ────────────────────────── */
   .line-clamp-1 {
     overflow: hidden;
     display: -webkit-box;
@@ -137,19 +166,108 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
 }
+
+/* ── Animations ─────────────────────────────── */
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
 
-/* Alpine.js x-cloak */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+.animate-fade-in { animation: fade-in 0.35s ease-out forwards; }
+.animate-slide-in { animation: slide-in 0.3s ease-out forwards; }
+.animate-fade-out { animation: fade-out 0.3s ease-in forwards; }
+
+/* ── Alpine x-cloak ─────────────────────────── */
 [x-cloak] { display: none !important; }
 
-/* Fade in animation for toasts */
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── Focus ring override ─────────────────────── */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
 }
-.animate-fade-in { animation: fade-in 0.3s ease-out; }
+
+/* ── Custom scrollbar ────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.4); }
+
+/* ── Skeleton loading ────────────────────────── */
+.skeleton {
+  @apply bg-muted rounded-lg animate-pulse;
+}
+
+/* ── Hero image skeleton shimmer ─────────────────── */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary) / 0.85) 0%,
+    hsl(var(--secondary) / 0.6) 40%,
+    hsl(var(--accent) / 0.4) 50%,
+    hsl(var(--secondary) / 0.6) 60%,
+    hsl(var(--primary) / 0.85) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.4s ease-in-out infinite;
+  transition: opacity 0.6s ease-out;
+}
+
+/* ── Card face fix — prevent layout distortion on hover ─── */
+.turma-card .card-front {
+  position: relative;
+  z-index: 1;
+}
+
+.turma-card .card-back {
+  z-index: 2;
+}
+
+/* ── Member card hover line ──────────────────────── */
+.member-card .h-1 {
+  transition: transform 0.4s ease-out;
+}
+
+/* ── Smooth page navigation transitions ─────────── */
+a[href]:not([href^="#"]):not([href^="mailto"]):not([href^="tel"]):not([target]) {
+  transition: opacity 0.15s ease-out;
+}
+
+/* ── Button active feedback ──────────────────────── */
+button:active, a:active {
+  transition: transform 0.1s ease-out;
+}
