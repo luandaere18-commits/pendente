@@ -18,6 +18,7 @@
                     ['label' => 'Home', 'route' => 'site.home'],
                     ['label' => 'Centros', 'route' => 'site.centros'],
                     ['label' => 'Cursos', 'route' => 'site.cursos'],
+                    ['label' => 'Serviços', 'route' => 'site.servicos'],
                     ['label' => 'Loja', 'route' => 'site.loja'],
                     ['label' => 'Sobre Nós', 'route' => 'site.sobre'],
                     ['label' => 'Contactos', 'route' => 'site.contactos'],

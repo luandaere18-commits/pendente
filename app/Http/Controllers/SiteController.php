@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Centro;
 use App\Models\Curso;
+use App\Models\Formador;
+use App\Models\Grupo;
 use App\Models\Turma;
 use Illuminate\Http\Request;
 
@@ -14,7 +16,14 @@ class SiteController extends Controller
      */
     public function home()
     {
-        return view('site.home-novo');
+        $cursos = Curso::where('ativo', true)->get();
+        $centros = Centro::orderBy('nome')->get();
+        $turmas = Turma::with(['curso', 'centro', 'formador'])
+                       ->where('publicado', true)
+                       ->orderBy('data_arranque', 'asc')
+                       ->get();
+        
+        return view('pages.home', compact('cursos', 'centros', 'turmas'));
     }
 
     /**
@@ -22,7 +31,11 @@ class SiteController extends Controller
      */
     public function centros()
     {
-        return view('site.centros-novo');
+        $centros = Centro::orderBy('nome')->get();
+        $turmas = Turma::with(['curso', 'centro'])->where('publicado', true)->get();
+        $cursos = Curso::all();
+        
+        return view('pages.centros', compact('centros', 'turmas', 'cursos'));
     }
 
     /**
@@ -35,7 +48,13 @@ class SiteController extends Controller
             ->orderBy('data_arranque', 'asc')
             ->get();
         
-        return view('site.cursos-novo', compact('turmas'));
+        // Obter áreas únicas dos cursos das turmas publicadas
+        $areas = $turmas->pluck('curso.area')
+                       ->unique()
+                       ->sort()
+                       ->values();
+        
+        return view('pages.cursos', compact('turmas', 'areas'));
     }
 
     /**
@@ -43,7 +62,7 @@ class SiteController extends Controller
      */
     public function centro($id = null)
     {
-        return view('site.centro-detalhe-novo', ['centroId' => $id]);
+        return view('pages.centro-detalhe', ['centroId' => $id]);
     }
 
     /**
@@ -51,7 +70,17 @@ class SiteController extends Controller
      */
     public function sobre()
     {
-        return view('site.sobre-novo');
+        $formadores = Formador::orderBy('nome')->get();
+        
+        return view('pages.sobre', compact('formadores'));
+    }
+
+    /**
+     * Página de serviços
+     */
+    public function servicos()
+    {
+        return view('pages.servicos');
     }
 
     /**
@@ -59,6 +88,18 @@ class SiteController extends Controller
      */
     public function contactos()
     {
-        return view('site.contactos-novo');
+        return view('pages.contactos');
+    }
+
+    /**
+     * Página da loja
+     */
+    public function loja()
+    {
+        $grupos = Grupo::with(['categorias.itens'])
+                      ->orderBy('nome')
+                      ->get();
+        
+        return view('pages.loja', compact('grupos'));
     }
 }

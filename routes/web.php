@@ -26,6 +26,8 @@ Route::get('/site', [SiteController::class, 'home'])->name('site.home.alt2');
 Route::get('/site/centros', [SiteController::class, 'centros'])->name('site.centros');
 Route::get('/site/centro/{centro}', [SiteController::class, 'centro'])->name('site.centro');
 Route::get('/site/cursos', [SiteController::class, 'cursos'])->name('site.cursos');
+Route::get('/site/servicos', [SiteController::class, 'servicos'])->name('site.servicos');
+Route::get('/site/loja', [SiteController::class, 'loja'])->name('site.loja');
 Route::get('/site/sobre', [SiteController::class, 'sobre'])->name('site.sobre');
 Route::get('/site/contactos', [SiteController::class, 'contactos'])->name('site.contactos');
 
