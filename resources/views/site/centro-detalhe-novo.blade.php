@@ -255,7 +255,9 @@
             html += '</div>';
             
             document.getElementById('centro-cursos').innerHTML = html;
-            AOS.refresh();
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
         } catch (error) {
             console.error('Erro ao carregar cursos:', error);
         }

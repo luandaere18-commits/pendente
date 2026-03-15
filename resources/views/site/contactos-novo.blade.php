@@ -344,7 +344,9 @@
             });
             
             container.innerHTML = html;
-            AOS.refresh();
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
         } catch (error) {
             console.error('Erro ao carregar centros:', error);
         }

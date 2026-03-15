@@ -317,7 +317,9 @@
         
         html += '</div>';
         container.innerHTML = html;
-        AOS.refresh();
+        if (typeof AOS !== 'undefined') {
+            AOS.refresh();
+        }
     }
     
     function mostrarTurmas(cursoId, cursoNome) {

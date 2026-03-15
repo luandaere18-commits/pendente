@@ -350,8 +350,8 @@
     // Carregar estatísticas
     async function carregarEstatisticas() {
         try {
-            const cursos = await apiRequest('/cursos');
-            const centros = await apiRequest('/centros');
+            const cursos = await apiRequest('/api/cursos');
+            const centros = await apiRequest('/api/centros');
             
             const totalCursos = Array.isArray(cursos) ? cursos.length : cursos.data?.length || 0;
             const totalCentros = Array.isArray(centros) ? centros.length : centros.data?.length || 0;
@@ -368,7 +368,7 @@
     // Carregar centros
     async function carregarCentros() {
         try {
-            const centros = await apiRequest('/centros');
+            const centros = await apiRequest('/api/centros');
             const centrosArray = Array.isArray(centros) ? centros : centros.data || [];
             
             const container = document.getElementById('centros-home');
@@ -407,7 +407,11 @@
             });
             
             container.innerHTML = html;
-            AOS.refresh();
+            
+            // Refresh AOS com verificação
+            if (typeof AOS !== 'undefined') {
+                setTimeout(() => AOS.refresh(), 100);
+            }
         } catch (error) {
             console.error('Erro ao carregar centros:', error);
             document.getElementById('centros-home').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar centros. Tente novamente mais tarde.</p></div>';
@@ -417,7 +421,7 @@
     // Carregar turmas
     async function carregarTurmas() {
         try {
-            const data = await apiRequest('/turmas?per_page=6&publicado=true');
+            const data = await apiRequest('/api/turmas?per_page=6&publicado=true');
             const turmas = Array.isArray(data) ? data : data.data || [];
             
             const container = document.getElementById('turmas-home');
@@ -459,7 +463,11 @@
             html += '</div>';
             
             container.innerHTML = html;
-            AOS.refresh();
+            
+            // Refresh AOS com verificação
+            if (typeof AOS !== 'undefined') {
+                setTimeout(() => AOS.refresh(), 100);
+            }
         } catch (error) {
             console.error('Erro ao carregar turmas:', error);
             document.getElementById('turmas-home').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar turmas. Tente novamente mais tarde.</p></div>';

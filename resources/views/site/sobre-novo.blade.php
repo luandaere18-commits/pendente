@@ -326,7 +326,9 @@
             });
             
             container.innerHTML = html;
-            AOS.refresh();
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
         } catch (error) {
             console.error('Erro ao carregar formadores:', error);
             document.getElementById('formadores-grid').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar formadores</p></div>';

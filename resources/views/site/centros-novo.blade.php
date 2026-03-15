@@ -119,7 +119,9 @@
             });
             
             container.innerHTML = html;
-            AOS.refresh();
+            if (typeof AOS !== 'undefined') {
+                AOS.refresh();
+            }
         } catch (error) {
             console.error('Erro ao carregar centros:', error);
             document.getElementById('centros-grid').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar centros</p></div>';
