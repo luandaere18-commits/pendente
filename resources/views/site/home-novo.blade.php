@@ -318,43 +318,68 @@
 
 @section('scripts')
 <script>
+    // Função utilitária para requisições API
+    async function apiRequest(url, options = {}) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        const defaultHeaders = {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+        
+        if (csrfToken) {
+            defaultHeaders['X-CSRF-TOKEN'] = csrfToken;
+        }
+        
+        try {
+            const response = await fetch(url, {
+                ...options,
+                headers: { ...defaultHeaders, ...options.headers }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('API Request failed:', error);
+            throw error;
+        }
+    }
+    
     // Carregar estatísticas
     async function carregarEstatisticas() {
         try {
-            const headers = {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            };
-            const cursos = await fetch('/cursos', { headers }).then(r => r.json());
-            const centros = await fetch('/centros', { headers }).then(r => r.json());
+            const cursos = await apiRequest('/cursos');
+            const centros = await apiRequest('/centros');
             
-            document.getElementById('total-cursos-home').textContent = cursos.length || 0;
-            document.getElementById('total-centros-home').textContent = centros.length || 0;
+            const totalCursos = Array.isArray(cursos) ? cursos.length : cursos.data?.length || 0;
+            const totalCentros = Array.isArray(centros) ? centros.length : centros.data?.length || 0;
+            
+            document.getElementById('total-cursos-home').textContent = totalCursos;
+            document.getElementById('total-centros-home').textContent = totalCentros;
         } catch (error) {
             console.error('Erro ao carregar estatísticas:', error);
+            document.getElementById('total-cursos-home').textContent = '0';
+            document.getElementById('total-centros-home').textContent = '0';
         }
     }
     
     // Carregar centros
     async function carregarCentros() {
         try {
-            const response = await fetch('/centros', {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            const centros = await response.json();
+            const centros = await apiRequest('/centros');
+            const centrosArray = Array.isArray(centros) ? centros : centros.data || [];
             
             const container = document.getElementById('centros-home');
             
-            if (centros.length === 0) {
+            if (centrosArray.length === 0) {
                 container.innerHTML = '<div class="col-12 text-center text-muted"><p>Nenhum centro disponível</p></div>';
                 return;
             }
             
             let html = '';
-            centros.forEach((centro, index) => {
+            centrosArray.forEach((centro, index) => {
                 html += `
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="${index * 100}">
                         <div class="card h-100">
@@ -362,13 +387,13 @@
                                 <div class="feature-icon mb-3">
                                     <i class="fas fa-building"></i>
                                 </div>
-                                <h5 class="card-title">${centro.nome}</h5>
+                                <h5 class="card-title">${centro.nome || 'Centro'}</h5>
                                 <p class="text-muted small mb-2">
                                     <i class="fas fa-map-marker-alt me-1"></i>${centro.localizacao || 'Localização disponível'}
                                 </p>
                                 <p class="text-muted small mb-3">
                                     <i class="fas fa-phone me-1"></i>
-                                    <a href="tel:${centro.contactos?.[0]}" class="text-decoration-none">
+                                    <a href="tel:${centro.contactos?.[0] || '#'}" class="text-decoration-none">
                                         ${centro.contactos?.[0] || 'Contacto disponível'}
                                     </a>
                                 </p>
@@ -385,38 +410,35 @@
             AOS.refresh();
         } catch (error) {
             console.error('Erro ao carregar centros:', error);
-            document.getElementById('centros-home').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar centros</p></div>';
+            document.getElementById('centros-home').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar centros. Tente novamente mais tarde.</p></div>';
         }
     }
     
     // Carregar turmas
     async function carregarTurmas() {
         try {
-            const response = await fetch('/turmas?per_page=6&publicado=true', {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            const data = await response.json();
-            const turmas = data.data || data;
+            const data = await apiRequest('/turmas?per_page=6&publicado=true');
+            const turmas = Array.isArray(data) ? data : data.data || [];
             
             const container = document.getElementById('turmas-home');
             
             if (turmas.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center text-muted"><p>Nenhuma turma disponível</p></div>';
+                container.innerHTML = '<div class="col-12 text-center text-muted"><p>Nenhuma turma disponível no momento</p></div>';
                 return;
             }
             
             let html = '<div class="row g-4">';
             turmas.forEach((turma, index) => {
                 const vagas = turma.vagas_totais ? (turma.vagas_totais - (turma.vagas_preenchidas || 0)) : '—';
+                const cursoNome = turma.curso?.nome || 'Curso';
+                const imagemUrl = turma.curso?.imagem_url || '/images/banner-11.jpg';
+                
                 html += `
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="${index * 100}">
                         <div class="card h-100">
-                            <img src="${turma.curso?.imagem_url || '/images/banner-11.jpg'}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            <img src="${imagemUrl}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="${cursoNome}">
                             <div class="card-body">
-                                <h5 class="card-title">${turma.curso?.nome || 'Curso'}</h5>
+                                <h5 class="card-title">${cursoNome}</h5>
                                 <p class="text-muted small mb-2">
                                     <i class="fas fa-sun me-1"></i>${turma.periodo?.charAt(0).toUpperCase() + turma.periodo?.slice(1) || 'Período'}
                                 </p>
@@ -440,8 +462,17 @@
             AOS.refresh();
         } catch (error) {
             console.error('Erro ao carregar turmas:', error);
-            document.getElementById('turmas-home').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar turmas</p></div>';
+            document.getElementById('turmas-home').innerHTML = '<div class="col-12 text-center text-danger"><p>Erro ao carregar turmas. Tente novamente mais tarde.</p></div>';
         }
+    }
+    
+    // Validações de formulário
+    function validarEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    
+    function validarTelefone(telefone) {
+        return !telefone || /^\+?[0-9]{9,13}$/.test(telefone);
     }
     
     // Modal pré-inscrição
@@ -452,7 +483,7 @@
                 <form id="formPreInscricao" class="text-start">
                     <div class="mb-3">
                         <label class="form-label">Nome Completo *</label>
-                        <input type="text" class="form-control" id="nomeCompleto" required>
+                        <input type="text" class="form-control" id="nomeCompleto" required maxlength="255">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email *</label>
@@ -475,13 +506,28 @@
             confirmButtonText: 'Inscrever-se',
             cancelButtonText: 'Cancelar',
             preConfirm: () => {
-                const nome = document.getElementById('nomeCompleto').value;
-                const email = document.getElementById('emailPreIns').value;
-                const telefone = document.getElementById('telefonePadrão').value;
+                const nome = document.getElementById('nomeCompleto').value.trim();
+                const email = document.getElementById('emailPreIns').value.trim();
+                const telefone = document.getElementById('telefonePadrão').value.trim();
                 const concordo = document.getElementById('concordo').checked;
                 
-                if (!nome || !email || !concordo) {
-                    Swal.showValidationMessage('Preencha todos os campos obrigatórios');
+                if (!nome) {
+                    Swal.showValidationMessage('Nome é obrigatório');
+                    return false;
+                }
+                
+                if (!validarEmail(email)) {
+                    Swal.showValidationMessage('Email inválido');
+                    return false;
+                }
+                
+                if (telefone && !validarTelefone(telefone)) {
+                    Swal.showValidationMessage('Telefone inválido');
+                    return false;
+                }
+                
+                if (!concordo) {
+                    Swal.showValidationMessage('Deve concordar com os termos e condições');
                     return false;
                 }
                 
@@ -497,17 +543,10 @@
     // Enviar pré-inscrição
     async function enviarPreInscricao(turmaId, dados) {
         try {
-            const response = await fetch('/api/pre-inscricoes', {
+            const response = await apiRequest('/api/pre-inscricoes', {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     turma_id: turmaId,
@@ -518,14 +557,12 @@
                 })
             });
             
-            if (response.ok) {
-                showToast('Pré-inscrição realizada com sucesso!');
-            } else {
-                showError('Erro ao realizar pré-inscrição');
+            if (response) {
+                showToast('Pré-inscrição realizada com sucesso! Verifique o seu email.');
             }
         } catch (error) {
             console.error('Erro:', error);
-            showError('Erro ao processar pré-inscrição');
+            showError(error.message || 'Erro ao processar pré-inscrição. Tente novamente.');
         }
     }
     

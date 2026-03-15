@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Centro;
 use App\Models\Curso;
+use App\Models\Turma;
 use Illuminate\Http\Request;
 
 class SiteController extends Controller
@@ -29,7 +30,12 @@ class SiteController extends Controller
      */
     public function cursos()
     {
-        return view('site.cursos-novo');
+        $turmas = Turma::with(['curso', 'centro', 'formador'])
+            ->where('publicado', true)
+            ->orderBy('data_arranque', 'asc')
+            ->get();
+        
+        return view('site.cursos-novo', compact('turmas'));
     }
 
     /**

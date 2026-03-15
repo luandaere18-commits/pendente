@@ -94,13 +94,74 @@
                 </div>
             </div>
             
-            <!-- Cursos Grid -->
+<!-- Cursos Grid -->
             <div class="col-lg-9" data-aos="fade-left">
                 <div id="cursos-grid">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>Carregando cursos...</p>
-                    </div>
+                    @if($turmas && $turmas->count() > 0)
+                        <div class="row g-4">
+                            @php
+                                $cursoAgrupado = $turmas->groupBy('curso_id');
+                            @endphp
+                            
+                            @foreach($cursoAgrupado as $cursoId => $turmassDoCurso)
+                                @php
+                                    $curso = $turmassDoCurso->first()->curso;
+                                    $totalVagas = $turmassDoCurso->sum('vagas_totais');
+                                    $totalPreenchidas = $turmassDoCurso->sum('vagas_preenchidas');
+                                @endphp
+                                
+                                <div class="col-lg-6" data-aos="fade-up">
+                                    <div class="card h-100 course-card">
+                                        <div class="position-relative overflow-hidden" style="height: 220px;">
+                                            <img src="{{ $curso->imagem_url ?? '/images/banner-11.jpg' }}" class="card-img-top w-100 h-100" 
+                                                 style="object-fit: cover;" alt="{{ $curso->nome ?? 'Curso' }}">
+                                            <div class="position-absolute top-0 end-0 m-3">
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-star me-1"></i>{{ $turmassDoCurso->count() }} Turma{{ $turmassDoCurso->count() !== 1 ? 's' : '' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ $curso->nome ?? 'Curso' }}</h5>
+                                            <p class="card-text text-muted small mb-3">{{ Str::limit($curso->descricao ?? 'Descrição do curso', 100) }}</p>
+                                            
+                                            <div class="course-info mb-3">
+                                                <span class="badge bg-light text-dark me-2 mb-2">
+                                                    <i class="fas fa-book me-1"></i>{{ $curso->area ?? 'Área' }}
+                                                </span>
+                                                <span class="badge bg-light text-dark mb-2">
+                                                    <i class="fas fa-desktop me-1"></i>{{ $curso->modalidade ?? 'Modalidade' }}
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="course-stats mb-3">
+                                                <small class="text-muted d-block">
+                                                    <i class="fas fa-users me-1"></i>
+                                                    Vagas: <strong>{{ max(0, $totalVagas - $totalPreenchidas) }}</strong> de <strong>{{ $totalVagas }}</strong>
+                                                </small>
+                                                <div class="progress mt-2" style="height: 6px;">
+                                                    <div class="progress-bar" role="progressbar" 
+                                                         style="width: {{ $totalVagas ? ($totalPreenchidas / $totalVagas * 100) : 0 }}%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="card-footer bg-white border-top">
+                                            <a href="#" class="btn btn-primary btn-sm w-100" 
+                                               onclick="mostrarTurmas({{ $cursoId }}, '{{ $curso->nome }}'); return false;">
+                                                <i class="fas fa-calendar-alt me-2"></i>Ver Turmas Disponíveis
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="col-12 text-center text-muted">
+                            <p>Nenhuma turma publicada no momento.</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -409,7 +470,7 @@
     // Event listeners
     document.addEventListener('DOMContentLoaded', () => {
         carregarFiltros();
-        aplicarFiltros();
+        // Não recarregar com aplicarFiltros() - os dados já vêm do servidor renderizados
         
         document.getElementById('filtro-busca').addEventListener('input', aplicarFiltros);
         document.querySelectorAll('.filtro-modalidade').forEach(el => {
