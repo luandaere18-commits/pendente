@@ -129,7 +129,18 @@ git commit -m "Style: Ajustar cores Tailwind na navbar"
 ## 🎯 Link Final para Compartilhar
 
 ```
-https://github.com/SEU-USUARIO/Pendentes
+https://github.com/luandaere18-commits/pendente
 ```
 
 **Este é o link que passa ao Lovable!** ✨
+
+---
+
+## ✅ PROJETO ENVIADO COM SUCESSO!
+
+```
+Data: 15 de Março de 2026
+Status: ✅ Todos os ficheiros no GitHub
+Branch: main
+Remote: origin (https://github.com/luandaere18-commits/pendente.git)
+```
