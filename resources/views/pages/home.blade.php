@@ -5,60 +5,74 @@
 @section('content')
 
 {{-- Hero Carousel --}}
-<section class="relative overflow-hidden" x-data="heroCarousel()">
-    <div class="relative">
-        @php
-            $slides = [
-                ['image' => asset('images/hero-banner.jpg'), 'title' => 'Invista no seu', 'highlight' => 'Futuro Profissional', 'desc' => 'Formação de qualidade com mais de 10 anos de experiência na preparação de profissionais qualificados para o mercado de trabalho.'],
-                ['image' => asset('images/carousel-2.jpg'), 'title' => 'Aprenda com os', 'highlight' => 'Melhores Formadores', 'desc' => 'Salas equipadas com tecnologia de ponta e formadores experientes para garantir a melhor experiência de aprendizagem.'],
-                ['image' => asset('images/carousel-3.jpg'), 'title' => 'Conquiste o seu', 'highlight' => 'Certificado Profissional', 'desc' => 'Certificações reconhecidas pelo mercado que abrem portas para novas oportunidades de carreira.'],
-                ['image' => asset('images/carousel-4.jpg'), 'title' => 'Workshops e', 'highlight' => 'Formações Práticas', 'desc' => 'Sessões práticas e intensivas que preparam você para os desafios reais do mercado de trabalho.'],
-            ];
-        @endphp
+<section x-data="{ 
+    active: 0, 
+    total: 4,
+    autoplay: null,
+    init() {
+        this.autoplay = setInterval(() => this.next(), 5000);
+    },
+    next() { this.active = (this.active + 1) % this.total; },
+    prev() { this.active = (this.active - 1 + this.total) % this.total; },
+    goTo(i) { this.active = i; clearInterval(this.autoplay); this.autoplay = setInterval(() => this.next(), 5000); }
+}" class="relative overflow-hidden h-[75vh] md:h-[85vh]">
 
-        @foreach($slides as $index => $slide)
-            <div x-show="current === {{ $index }}" x-transition:enter="transition ease-out duration-500"
-                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                 class="relative" :class="{ 'absolute inset-0': {{ $index }} !== 0 }">
-                <div class="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/70 to-primary/40 z-10"></div>
-                <img src="{{ $slide['image'] }}" alt="{{ $slide['desc'] }}" class="w-full h-[500px] lg:h-[600px] object-cover" @if($index === 0) loading="eager" @else loading="lazy" @endif>
-                <div class="absolute inset-0 z-20 flex items-center">
-                    <div class="container mx-auto px-4">
-                        <div class="max-w-2xl">
-                            <h1 class="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-primary-foreground leading-tight mb-6">
-                                {{ $slide['title'] }} <span class="gradient-text">{{ $slide['highlight'] }}</span>
-                            </h1>
-                            <p class="text-lg text-primary-foreground/80 mb-8 leading-relaxed">{{ $slide['desc'] }}</p>
-                            <div class="flex flex-wrap gap-4">
-                                <a href="{{ route('site.cursos') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-accent text-accent-foreground h-11 px-6 shadow-lg hover:bg-accent/90 transition-colors">
-                                    <i data-lucide="book-open" class="w-5 h-5 mr-2"></i>Explorar Cursos
-                                </a>
-                                <a href="#sobre" class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-primary-foreground/30 text-primary-foreground h-11 px-6 hover:bg-primary-foreground/10 transition-colors">
-                                    Saber Mais
-                                </a>
-                            </div>
-                        </div>
+    @php
+        $slides = [
+            ['image' => asset('images/hero-banner.jpg'), 'title' => 'Invista no seu', 'highlight' => 'Futuro Profissional', 'desc' => 'Formação de qualidade com mais de 10 anos de experiência na preparação de profissionais qualificados para o mercado de trabalho.'],
+            ['image' => asset('images/carousel-2.jpg'), 'title' => 'Aprenda com os', 'highlight' => 'Melhores Formadores', 'desc' => 'Salas equipadas com tecnologia de ponta e formadores experientes para garantir a melhor experiência de aprendizagem.'],
+            ['image' => asset('images/carousel-3.jpg'), 'title' => 'Conquiste o seu', 'highlight' => 'Certificado Profissional', 'desc' => 'Certificações reconhecidas pelo mercado que abrem portas para novas oportunidades de carreira.'],
+            ['image' => asset('images/carousel-4.jpg'), 'title' => 'Workshops e', 'highlight' => 'Formações Práticas', 'desc' => 'Sessões práticas e intensivas que preparam você para os desafios reais do mercado de trabalho.'],
+        ];
+    @endphp
+
+    @foreach($slides as $index => $slide)
+    <div x-show="active === {{ $index }}"
+         x-transition:enter="transition ease-out duration-700"
+         x-transition:enter-start="opacity-0 scale-105"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-500"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="absolute inset-0">
+        <img src="{{ $slide['image'] }}" alt="{{ $slide['desc'] }}" loading="{{ $index === 0 ? 'eager' : 'lazy' }}" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/40 to-transparent flex items-center">
+            <div class="container mx-auto px-4">
+                <div class="max-w-2xl">
+                    <h1 class="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white leading-tight mb-6">
+                        {{ $slide['title'] }} <span class="gradient-text">{{ $slide['highlight'] }}</span>
+                    </h1>
+                    <p class="text-lg text-white/80 mb-8 leading-relaxed">{{ $slide['desc'] }}</p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="{{ route('site.cursos') }}" class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-accent text-accent-foreground h-11 px-6 shadow-lg hover:bg-accent/90 transition-colors">
+                            <i data-lucide="book-open" class="w-5 h-5 mr-2"></i>Explorar Cursos
+                        </a>
+                        <a href="#sobre" class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-white/30 text-white h-11 px-6 hover:bg-white/10 transition-colors">
+                            Saber Mais
+                        </a>
                     </div>
                 </div>
             </div>
-        @endforeach
+        </div>
     </div>
+    @endforeach
 
     {{-- Nav Arrows --}}
-    <button @click="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center text-primary-foreground hover:bg-background/40 transition-colors">
-        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+    <button @click="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/30 transition-all z-10" aria-label="Slide anterior">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i>
     </button>
-    <button @click="next()" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center text-primary-foreground hover:bg-background/40 transition-colors">
-        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+    <button @click="next()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center hover:bg-white/30 transition-all z-10" aria-label="Próximo slide">
+        <i data-lucide="chevron-right" class="w-5 h-5"></i>
     </button>
 
     {{-- Dots --}}
-    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         @for($i = 0; $i < count($slides); $i++)
-            <button @click="current = {{ $i }}"
-                    class="h-3 rounded-full transition-all"
-                    :class="current === {{ $i }} ? 'bg-accent w-8' : 'bg-primary-foreground/40 w-3'">
-            </button>
+        <button @click="goTo({{ $i }})"
+            :class="active === {{ $i }} ? 'w-8 bg-white' : 'w-2 bg-white/40'"
+            class="h-3 rounded-full transition-all"
+            aria-label="Ir para slide {{ $i + 1 }}">
+        </button>
         @endfor
     </div>
 </section>
@@ -266,18 +280,10 @@
 
 @push('scripts')
 <script>
-function heroCarousel() {
-    return {
-        current: 0,
-        total: 4,
-        interval: null,
-        init() {
-            this.interval = setInterval(() => this.next(), 5000);
-        },
-        next() { this.current = (this.current + 1) % this.total; },
-        prev() { this.current = (this.current - 1 + this.total) % this.total; },
-        destroy() { clearInterval(this.interval); }
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
     }
-}
+});
 </script>
 @endpush

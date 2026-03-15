@@ -1,58 +1,98 @@
 {{-- Modal de Pré-Inscrição --}}
-<div x-data="preInscricaoModal()" x-show="open" x-cloak
-     class="fixed inset-0 z-50 flex items-center justify-center"
-     @pre-inscricao.window="openModal($event.detail)">
+<div x-data="{ 
+    open: false,
+    turmaId: null,
+    turmaNome: '',
+    nome: '', email: '', telefone: '', termos: false,
+    loading: false,
+    validEmail() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email); },
+    canSubmit() { return this.nome && this.validEmail() && this.termos; },
+    openModal(detail) {
+        this.turmaId = detail.turmaId;
+        this.turmaNome = detail.turmaNome;
+        this.nome = '';
+        this.email = '';
+        this.telefone = '';
+        this.termos = false;
+        this.open = true;
+    }
+}" x-show="open" x-cloak
+     @pre-inscricao.window="openModal($event.detail)"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4">
 
     {{-- Overlay --}}
-    <div class="fixed inset-0 bg-black/80" @click="open = false"></div>
+    <div @click="open = false" class="absolute inset-0 bg-foreground/50 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"></div>
 
     {{-- Content --}}
-    <div class="relative z-10 w-full max-w-md bg-background border rounded-lg p-6 shadow-lg mx-4"
-         x-show="open" x-transition>
+    <div class="relative bg-card rounded-2xl p-6 md:p-8 max-w-md w-full"
+         style="box-shadow: var(--shadow-card-hover);"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100">
 
         {{-- Close --}}
-        <button @click="open = false" class="absolute right-4 top-4 opacity-70 hover:opacity-100">
-            <i data-lucide="x" class="w-4 h-4"></i>
+        <button @click="open = false" class="absolute right-4 top-4 text-muted-foreground hover:text-foreground">
+            <i data-lucide="x" class="w-5 h-5"></i>
         </button>
 
-        <h2 class="text-lg font-semibold mb-1">Pré-Inscrição</h2>
-        <p class="text-sm text-muted-foreground mb-4" x-text="turmaNome"></p>
+        <h2 class="text-xl font-bold text-foreground mb-2">Pré-Inscrição</h2>
+        <p class="text-sm text-muted-foreground mb-6" x-text="turmaNome"></p>
 
-        <form @submit.prevent="submitForm" class="space-y-4">
+        <form @submit.prevent="
+            if (!canSubmit()) return;
+            loading = true;
+            fetch('/api/pre-inscricoes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]')?.content },
+                body: JSON.stringify({ turma_id: turmaId, nome, email, telefone, termos })
+            }).then(r => {
+                if (r.ok) {
+                    open = false;
+                    alert('Pré-inscrição realizada com sucesso!');
+                } else {
+                    alert('Erro ao enviar. Tente novamente.');
+                }
+            }).catch(() => alert('Erro de conexão.')).finally(() => loading = false);
+        " class="space-y-4">
             @csrf
-            <input type="hidden" x-model="turmaId">
 
             <div>
                 <label for="modal-nome" class="text-sm font-medium text-foreground mb-1 block">Nome Completo *</label>
-                <input id="modal-nome" type="text" x-model="form.nome" placeholder="Seu nome completo"
-                       class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <input id="modal-nome" type="text" x-model="nome" placeholder="Seu nome completo"
+                       required
+                       class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring">
             </div>
 
             <div>
                 <label for="modal-email" class="text-sm font-medium text-foreground mb-1 block">Email *</label>
-                <input id="modal-email" type="email" x-model="form.email" placeholder="seuemail@exemplo.com"
-                       class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <input id="modal-email" type="email" x-model="email" placeholder="seuemail@exemplo.com"
+                       required
+                       class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring">
+                <p class="text-xs text-destructive mt-1" x-show="email && !validEmail()">Email inválido</p>
             </div>
 
             <div>
-                <label for="modal-telefone" class="text-sm font-medium text-foreground mb-1 block">Telefone</label>
-                <input id="modal-telefone" type="text" x-model="form.telefone" placeholder="+244 9XX-XXX-XXX"
-                       class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                <label for="modal-telefone" class="text-sm font-medium text-foreground mb-1 block">Telefone (opcional)</label>
+                <input id="modal-telefone" type="text" x-model="telefone" placeholder="+244 9XX-XXX-XXX"
+                       class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring">
             </div>
 
-            <div class="flex items-center gap-2">
-                <input id="modal-termos" type="checkbox" x-model="form.termos"
-                       class="h-4 w-4 rounded border-primary text-primary focus:ring-primary">
-                <label for="modal-termos" class="text-sm">Concordo com os termos e condições *</label>
+            <div class="flex items-start gap-2">
+                <input id="modal-termos" type="checkbox" x-model="termos"
+                       class="h-4 w-4 rounded border border-input text-primary focus:ring-2 focus:ring-ring mt-1">
+                <label for="modal-termos" class="text-sm text-foreground">Concordo em receber informações sobre cursos e promoções *</label>
             </div>
 
-            <div class="flex gap-2 justify-end">
+            <div class="flex gap-2 justify-end pt-4">
                 <button type="button" @click="open = false"
-                        class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background h-10 px-4 hover:bg-accent hover:text-accent-foreground">
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background h-10 px-4 hover:bg-muted transition-colors">
                     Cancelar
                 </button>
-                <button type="submit" :disabled="loading"
-                        class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground h-10 px-4 hover:bg-primary/90 disabled:opacity-50">
+                <button type="submit" :disabled="!canSubmit() || loading"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground h-10 px-4 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                     <span x-show="!loading">Inscrever-se</span>
                     <span x-show="loading">Enviando...</span>
                 </button>
@@ -60,48 +100,3 @@
         </form>
     </div>
 </div>
-
-@push('scripts')
-<script>
-function preInscricaoModal() {
-    return {
-        open: false,
-        turmaId: null,
-        turmaNome: '',
-        loading: false,
-        form: { nome: '', email: '', telefone: '', termos: false },
-
-        openModal(detail) {
-            this.turmaId = detail.turmaId;
-            this.turmaNome = detail.turmaNome;
-            this.form = { nome: '', email: '', telefone: '', termos: false };
-            this.open = true;
-        },
-
-        async submitForm() {
-            if (!this.form.nome.trim()) return showToast('Nome é obrigatório', 'error');
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) return showToast('Email inválido', 'error');
-            if (!this.form.termos) return showToast('Deve aceitar os termos', 'error');
-
-            this.loading = true;
-            try {
-                const response = await fetch('/api/pre-inscricoes', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content },
-                    body: JSON.stringify({ turma_id: this.turmaId, ...this.form })
-                });
-                if (response.ok) {
-                    showToast('Pré-inscrição realizada com sucesso!');
-                    this.open = false;
-                } else {
-                    showToast('Erro ao enviar. Tente novamente.', 'error');
-                }
-            } catch (e) {
-                showToast('Erro de conexão.', 'error');
-            }
-            this.loading = false;
-        }
-    }
-}
-</script>
-@endpush

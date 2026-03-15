@@ -47,14 +47,20 @@ class SiteController extends Controller
             ->where('publicado', true)
             ->orderBy('data_arranque', 'asc')
             ->get();
-        
-        // Obter áreas únicas dos cursos das turmas publicadas
-        $areas = $turmas->pluck('curso.area')
+
+        // Obter cursos únicos das turmas publicadas
+        $cursos = $turmas->pluck('curso')->unique('id')->values();
+
+        // Obter centros para filtro
+        $centros = Centro::orderBy('nome')->get();
+
+        // Obter áreas únicas dos cursos
+        $areas = $cursos->pluck('area')
                        ->unique()
                        ->sort()
                        ->values();
         
-        return view('pages.cursos', compact('turmas', 'areas'));
+        return view('pages.cursos', compact('turmas', 'cursos', 'centros', 'areas'));
     }
 
     /**

@@ -92,7 +92,7 @@ A página `loja.blade.php` mistura 2 conceitos:
 
 ### Cores Palette
 ```
-Primary (Azul Escuro):     #3A4BA5
+Primary (Azul Escuro):     #2740bd
 Accent (Azul Claro):       #3BA9FF  
 Secondary (Branco):        #FFFFFF
 Background:                #F8FAFB

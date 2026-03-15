@@ -12,9 +12,14 @@
 
         <div class="grid lg:grid-cols-2 gap-12">
             {{-- Formulário --}}
-            <div class="feature-card" x-data="contactForm()">
+            <div class="feature-card" x-data="{ 
+                nome: '', email: '', telefone: '', assunto: '', mensagem: '',
+                loading: false, submitted: false,
+                validEmail() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email); },
+                canSubmit() { return this.nome && this.validEmail() && this.assunto && this.mensagem.length >= 10; }
+            }">
                 <h3 class="text-xl font-bold text-foreground mb-6">Envie-nos uma mensagem</h3>
-                <form @submit.prevent="submitForm">
+                <form @submit="submitted = true">
                     @csrf
                     <div class="space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
@@ -52,8 +57,8 @@
                             <textarea id="mensagem" rows="5" x-model="form.mensagem" placeholder="Escreva a sua mensagem..."
                                       class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"></textarea>
                         </div>
-                        <button type="submit" :disabled="loading"
-                                class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground h-10 hover:bg-primary/90 transition-colors disabled:opacity-50">
+                        <button type="submit" :disabled="!canSubmit() || loading"
+                                class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium bg-primary text-primary-foreground h-10 hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                             <i data-lucide="send" class="w-4 h-4 mr-2"></i>
                             <span x-show="!loading">Enviar Mensagem</span>
                             <span x-show="loading">Enviando...</span>
@@ -124,38 +129,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-function contactForm() {
-    return {
-        form: { nome: '', email: '', telefone: '', assunto: '', mensagem: '' },
-        loading: false,
-        async submitForm() {
-            if (!this.form.nome.trim()) return showToast('Nome é obrigatório', 'error');
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email)) return showToast('Email inválido', 'error');
-            if (!this.form.assunto) return showToast('Selecione um assunto', 'error');
-            if (!this.form.mensagem.trim()) return showToast('Mensagem é obrigatória', 'error');
-
-            this.loading = true;
-            try {
-                const response = await fetch('/api/contactos', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    body: JSON.stringify(this.form)
-                });
-                if (response.ok) {
-                    showToast('Mensagem enviada com sucesso! Entraremos em contacto brevemente.');
-                    this.form = { nome: '', email: '', telefone: '', assunto: '', mensagem: '' };
-                } else {
-                    showToast('Erro ao enviar. Tente novamente.', 'error');
-                }
-            } catch (e) {
-                showToast('Erro de conexão.', 'error');
-            }
-            this.loading = false;
-        }
-    }
-}
-</script>
-@endpush
