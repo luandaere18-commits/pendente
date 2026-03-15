@@ -82,13 +82,22 @@ A página `loja.blade.php` mistura 2 conceitos:
 
 ## 🎨 DESIGN TOKENS
 
-### Cores
+### Logo e Branding
+- **Logo Oficial**: `public/images/logo.png`
+- **Local no Site**: NavBar, Footer, Home hero
+- **Cores Primárias (do Logo)**:
+  - Azul escuro: `#3A4BA5`
+  - Branco: `#FFFFFF`
+  - Usar em botões primários e destaques
+
+### Cores Palette
 ```
-Primary:     #3A4BA5 (azul escuro)
-Accent:      #3BA9FF (azul claro)
-Background:  #F8FAFB (cinzento muito claro)
-Foreground:  #1F2937 (cinzento escuro)
-Muted:       #F3F4F6 (cinzento claro)
+Primary (Azul Escuro):     #3A4BA5
+Accent (Azul Claro):       #3BA9FF  
+Secondary (Branco):        #FFFFFF
+Background:                #F8FAFB
+Foreground:                #1F2937
+Muted:                     #F3F4F6
 ```
 
 ### Tipografia
@@ -102,9 +111,55 @@ Muted:       #F3F4F6 (cinzento claro)
 - `badge-area` / `badge-modalidade` - Tags
 - `gradient-text` - Texto com gradient (accent)
 
+### Logo no Site
+- **NavBar**: Logo.png à esquerda + nome "MC-COMERCIAL"
+- **Home Hero**: Logo maior no fundo ou como ícone
+- **Footer**: Logo + contactos
+- **Tamanho**: 40-60px NavBar, 200px+ em seções principais
+
 ---
 
-## 📊 DADOS DISPONÍVEIS
+## � IMAGENS E GESTÃO DE ASSETS
+
+### Imagens Atual
+- ✅ Logo: `public/images/logo.png` (usar em navbar/footer)
+- ✅ Banners: `public/images/banner-*.jpg` (hero sections)
+- ❌ Imagens de cursos/turmas (produtos da loja)
+- ❌ Fotos dos formadores
+- ❌ Certificações/Parcerias
+
+### Configuração de Armazenamento
+**SOLICITAR AO LOVABLE:**
+1. Avaliar `public/images/logo.png` e extrair cores exatas
+2. Sugerir configuração para upload de imagens na loja (S3, Supabase, etc)
+3. Implementar lazy loading em todas as imagens
+4. Otimizar para WebP com fallback JPG
+5. Garantir image responsiveness com srcset
+
+### Estrutura Recomendada
+```
+public/images/
+├── logo.png (MARCA PRINCIPAL)
+├── banners/
+│   ├── banner-1.jpg (home)
+│   ├── banner-2.jpg (cursos)
+│   └── ...
+├── categorias/
+│   ├── snacks.jpg
+│   └── materiais.jpg
+└── formadores/
+    ├── foto-1.jpg
+    └── ...
+
+storage/app/uploads/ (para user-generated)
+├── logo-uploaded/
+├── produtos/
+└── certificados/
+```
+
+---
+
+## �📊 DADOS DISPONÍVEIS
 
 ### Backend (SiteController.php)
 Todas as páginas recebem dados do `SiteController`:

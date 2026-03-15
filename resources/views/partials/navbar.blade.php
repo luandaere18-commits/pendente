@@ -4,10 +4,8 @@
      :class="{ 'shadow-lg': scrolled, 'shadow-sm': !scrolled }">
     <div class="container mx-auto flex items-center justify-between px-4 py-3">
         {{-- Logo --}}
-        <a href="{{ route('site.home') }}" class="flex items-center gap-2">
-            <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-                <i data-lucide="graduation-cap" class="w-6 h-6 text-primary-foreground"></i>
-            </div>
+        <a href="{{ route('site.home') }}" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL Logo" class="h-10 w-10 object-contain" loading="eager">
             <span class="text-xl font-bold text-foreground">MC-COMERCIAL</span>
         </a>
 

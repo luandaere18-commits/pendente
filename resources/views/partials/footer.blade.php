@@ -5,9 +5,7 @@
             {{-- Col 1 - Sobre --}}
             <div>
                 <div class="flex items-center gap-2 mb-4">
-                    <div class="w-9 h-9 rounded-lg bg-accent flex items-center justify-center">
-                        <i data-lucide="graduation-cap" class="w-5 h-5 text-accent-foreground"></i>
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL Logo" class="h-9 w-9 object-contain" loading="lazy">
                     <span class="text-lg font-bold text-primary-foreground">MC-COMERCIAL</span>
                 </div>
                 <p class="text-sm opacity-70 mb-4 leading-relaxed">
