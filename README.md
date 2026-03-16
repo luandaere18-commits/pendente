@@ -203,8 +203,8 @@ php artisan serve --env=production
 ### **Admin Padrão (após `php artisan migrate:fresh --seed`)**
 
 ```
-Email: admin@mc-comercial.ao
-Senha: password
+Email: admin@site.com
+Senha: senha123
 ```
 
 **Acessar em:** http://localhost:8000/login
