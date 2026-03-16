@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'MC-COMERCIAL - Centro de Formação')</title>
 
-    {{-- Google Fonts --}}
+    {{-- Preconnect & Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,8 +17,6 @@
 
     {{-- Alpine.js --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    {{-- Alpine Intersect plugin (para x-intersect) --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
 
     {{-- Lucide Icons --}}
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -36,6 +34,23 @@
                 this.scrolled = window.scrollY > 50;
                 this.showScrollTop = window.scrollY > 400;
             }, { passive: true });
+
+            {{-- Scroll reveal observer --}}
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            {{-- Re-observe after Alpine renders --}}
+            this.$nextTick(() => {
+                document.querySelectorAll('.reveal:not(.revealed)').forEach(el => observer.observe(el));
+            });
         }
     }"
 >
@@ -61,47 +76,42 @@
         x-transition:enter-start="opacity-0 translate-y-4 scale-90"
         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
         x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-        x-transition:leave-end="opacity-0 translate-y-4 scale-90"
-        class="fixed bottom-24 right-6 z-50 w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 hover:scale-110 hover:shadow-xl transition-all duration-300 group"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 translate-y-4"
+        class="fixed bottom-24 right-6 z-50 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300"
+        style="background: var(--gradient-accent); color: white; box-shadow: var(--shadow-accent);"
         aria-label="Voltar ao topo"
     >
-        <i data-lucide="chevron-up" class="w-5 h-5 group-hover:-translate-y-0.5 transition-transform"></i>
+        <i data-lucide="chevron-up" class="w-5 h-5"></i>
     </button>
 
+    {{-- Toast helper --}}
     <script>
-        lucide.createIcons();
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        const colors = {
+            success: 'bg-success text-white',
+            error: 'bg-destructive text-white',
+            info: 'bg-accent text-white'
+        };
+        const icons = { success: 'check-circle-2', error: 'alert-circle', info: 'info' };
+        toast.className = `pointer-events-auto flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-semibold shadow-lg ${colors[type] || colors.info} animate-fade-in`;
+        toast.innerHTML = `<i data-lucide="${icons[type] || icons.info}" class="w-5 h-5 shrink-0"></i><span>${message}</span>`;
+        container.appendChild(toast);
+        lucide.createIcons({ nodes: [toast] });
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(20px)';
+            toast.style.transition = 'all 0.3s ease-in';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+    </script>
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600', warning: 'bg-amber-500' };
-            toast.className = `${colors[type] || colors.success} text-white px-5 py-3 rounded-xl shadow-xl text-sm flex items-center gap-2 pointer-events-auto animate-slide-in`;
-            const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
-            toast.innerHTML = `<span class="font-bold text-base">${icons[type] || '✓'}</span> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.classList.add('animate-fade-out'); setTimeout(() => toast.remove(), 300); }, 4000);
-        }
-
-        /* Scroll Reveal Observer — observa .reveal, .reveal-left, .reveal-right, .reveal-scale */
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => revealObserver.observe(el));
-            lucide.createIcons();
-        });
-
-        /* Re-init Lucide icons after Alpine updates DOM */
-        document.addEventListener('alpine:initialized', () => {
-            setTimeout(() => lucide.createIcons(), 100);
-        });
+    {{-- Re-init Lucide --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
     </script>
 
     @stack('scripts')

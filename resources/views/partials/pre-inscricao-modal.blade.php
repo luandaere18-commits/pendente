@@ -31,7 +31,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']')?.content
                 },
-                body: JSON.stringify({ turma_id: this.turmaId, nome_completo: this.nome, email: this.email, contactos: [this.telefone].filter(Boolean) })
+                body: JSON.stringify({ turma_id: this.turmaId, nome: this.nome, email: this.email, telefone: this.telefone, termos: this.termos })
             });
             if (r.ok) {
                 this.success = true;
@@ -41,7 +41,7 @@
                 const data = await r.json().catch(() => ({}));
                 showToast(data.message || 'Erro ao enviar. Tente novamente.', 'error');
             }
-        } catch (e) {
+        } catch {
             showToast('Erro de conexão. Verifique sua ligação.', 'error');
         } finally {
             this.loading = false;
@@ -54,7 +54,7 @@
 
     {{-- Overlay --}}
     <div @click="closeModal()"
-         class="absolute inset-0 bg-foreground/60 backdrop-blur-sm"
+         class="absolute inset-0 bg-foreground/50 backdrop-blur-sm"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -64,61 +64,57 @@
     </div>
 
     {{-- Dialog --}}
-    <div class="relative z-10 w-full max-w-md bg-card rounded-2xl shadow-2xl overflow-hidden"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-90 translate-y-4"
+    <div class="relative z-10 w-full max-w-md bg-card rounded-2xl overflow-hidden"
+         style="box-shadow: var(--shadow-xl);"
+         x-transition:enter="transition ease-out duration-400"
+         x-transition:enter-start="opacity-0 scale-90 translate-y-6"
          x-transition:enter-end="opacity-100 scale-100 translate-y-0"
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-         x-transition:leave-end="opacity-0 scale-90 translate-y-4">
+         x-transition:leave-end="opacity-0 scale-90 translate-y-6">
 
         {{-- Header --}}
-        <div class="relative px-6 py-5 text-primary-foreground overflow-hidden"
-             style="background: linear-gradient(135deg, hsl(231, 47%, 40%) 0%, hsl(205, 100%, 50%) 100%);">
-            <div class="absolute inset-0 opacity-10 pointer-events-none">
-                <div class="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white blur-2xl"></div>
-            </div>
-            <div class="flex items-start justify-between relative">
+        <div class="relative px-6 py-6 text-white overflow-hidden" style="background: var(--gradient-hero);">
+            <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style="background: hsl(var(--accent)); filter: blur(40px);"></div>
+            <div class="relative flex items-start justify-between">
                 <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <i data-lucide="pen-line" class="w-5 h-5 opacity-80"></i>
-                        <h2 class="text-lg font-bold">Pré-Inscrição</h2>
+                    <div class="flex items-center gap-2.5 mb-1.5">
+                        <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                            <i data-lucide="pen-line" class="w-4 h-4"></i>
+                        </div>
+                        <h2 class="text-lg font-extrabold">Pré-Inscrição</h2>
                     </div>
-                    <p class="text-sm opacity-75" x-text="turmaNome"></p>
+                    <p class="text-sm opacity-65 pl-10" x-text="turmaNome"></p>
                 </div>
-                <button @click="closeModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-200 hover:rotate-90">
+                <button @click="closeModal()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
 
         {{-- Success state --}}
-        <div x-show="success"
-             x-transition:enter="transition ease-out duration-400"
-             x-transition:enter-start="opacity-0 scale-90"
-             x-transition:enter-end="opacity-100 scale-100"
-             class="px-6 py-12 text-center">
-            <div class="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4 animate-float">
-                <i data-lucide="check-circle-2" class="w-8 h-8 text-success"></i>
+        <div x-show="success" class="px-6 py-14 text-center">
+            <div class="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-5 animate-scale-in">
+                <i data-lucide="check-circle-2" class="w-10 h-10 text-success"></i>
             </div>
-            <h3 class="text-lg font-bold text-foreground mb-2">Inscrição Recebida!</h3>
+            <h3 class="text-xl font-extrabold text-foreground mb-2">Inscrição Recebida!</h3>
             <p class="text-sm text-muted-foreground">Entraremos em contacto em breve para confirmar a sua inscrição.</p>
         </div>
 
         {{-- Form --}}
-        <div x-show="!success" class="px-6 py-5">
+        <div x-show="!success" class="px-6 py-6">
             <form @submit.prevent="submitForm()" class="space-y-4">
                 <div>
                     <label class="text-sm font-semibold text-foreground mb-1.5 block">
                         Nome Completo <span class="text-destructive">*</span>
                     </label>
                     <div class="relative">
-                        <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></i>
+                        <i data-lucide="user" class="input-icon left-4"></i>
                         <input type="text" x-model="nome" placeholder="Seu nome completo" required
-                               class="flex h-11 w-full rounded-xl border pl-10 pr-3 py-2 text-sm bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-                               :class="nome && nome.length < 2 ? 'border-destructive focus:ring-destructive/30' : 'border-input'">
+                               class="input-field pl-11"
+                               :class="nome && nome.length < 2 ? 'border-destructive focus:ring-destructive/30' : ''">
                     </div>
-                    <p class="text-xs text-destructive mt-1" x-show="nome && nome.length < 2" x-transition>Nome muito curto</p>
+                    <p class="text-xs text-destructive mt-1" x-show="nome && nome.length < 2">Nome muito curto</p>
                 </div>
 
                 <div>
@@ -126,24 +122,24 @@
                         Email <span class="text-destructive">*</span>
                     </label>
                     <div class="relative">
-                        <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></i>
+                        <i data-lucide="mail" class="input-icon left-4"></i>
                         <input type="email" x-model="email" placeholder="seuemail@exemplo.com" required
-                               class="flex h-11 w-full rounded-xl border pl-10 pr-3 py-2 text-sm bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-                               :class="email && !validEmail() ? 'border-destructive focus:ring-destructive/30' : 'border-input'">
+                               class="input-field pl-11"
+                               :class="email && !validEmail() ? 'border-destructive focus:ring-destructive/30' : ''">
                     </div>
-                    <p class="text-xs text-destructive mt-1" x-show="email && !validEmail()" x-transition>Endereço de email inválido</p>
+                    <p class="text-xs text-destructive mt-1" x-show="email && !validEmail()">Endereço de email inválido</p>
                 </div>
 
                 <div>
                     <label class="text-sm font-semibold text-foreground mb-1.5 block">Telefone <span class="text-muted-foreground font-normal">(opcional)</span></label>
                     <div class="relative">
-                        <i data-lucide="phone" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"></i>
+                        <i data-lucide="phone" class="input-icon left-4"></i>
                         <input type="text" x-model="telefone" placeholder="+244 9XX-XXX-XXX"
-                               class="flex h-11 w-full rounded-xl border border-input pl-10 pr-3 py-2 text-sm bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all">
+                               class="input-field pl-11">
                     </div>
                 </div>
 
-                <label class="flex items-start gap-3 cursor-pointer group p-3 rounded-xl hover:bg-muted/50 transition-colors">
+                <label class="flex items-start gap-3 cursor-pointer group p-3 rounded-xl hover:bg-muted/50 transition-colors border border-transparent hover:border-border">
                     <input type="checkbox" x-model="termos" required
                            class="h-4 w-4 rounded border border-input text-primary focus:ring-2 focus:ring-ring mt-0.5 shrink-0 cursor-pointer">
                     <span class="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
@@ -151,15 +147,15 @@
                     </span>
                 </label>
 
-                <div class="flex gap-2 pt-2">
+                <div class="flex gap-3 pt-2">
                     <button type="button" @click="closeModal()"
-                            class="flex-1 h-11 rounded-xl text-sm font-semibold border border-input bg-background hover:bg-muted transition-all duration-200">
+                            class="btn-ghost flex-1 h-12 rounded-xl text-sm">
                         Cancelar
                     </button>
                     <button type="submit" :disabled="!canSubmit()"
-                            class="flex-[2] h-11 rounded-xl text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 active:scale-95 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-2">
-                        <span x-show="!loading">
-                            <i data-lucide="send" class="w-4 h-4 inline mr-1"></i>Confirmar Inscrição
+                            class="btn-primary flex-[2] h-12 rounded-xl text-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none">
+                        <span x-show="!loading" class="flex items-center gap-2">
+                            <i data-lucide="send" class="w-4 h-4"></i>Confirmar
                         </span>
                         <span x-show="loading" class="flex items-center gap-2">
                             <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">

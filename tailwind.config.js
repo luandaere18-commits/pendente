@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -59,11 +59,11 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         topbar: {
-          DEFAULT: "hsl(var(--topbar))",
+          DEFAULT: "hsl(var(--topbar-bg))",
           foreground: "hsl(var(--topbar-foreground))",
         },
         footer: {
-          DEFAULT: "hsl(var(--footer))",
+          DEFAULT: "hsl(var(--footer-bg))",
           foreground: "hsl(var(--footer-foreground))",
         },
       },
@@ -71,6 +71,20 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'scale-in': {
+          '0%': { opacity: '0', transform: 'scale(0.9)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+        'scale-in': 'scale-in 0.3s ease-out forwards',
       },
     },
   },
