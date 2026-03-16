@@ -53,7 +53,7 @@
     .pi-btn-sm { padding: 0.3125rem 0.625rem; font-size: 0.75rem; }
     .pi-btn-danger { background: var(--pi-danger); color: #fff; }
     .pi-btn-danger:hover { background: #b91c1c; color: #fff; }
-    .pi-btn-outline { background: transparent; color: var(--pi-text-muted); border: 1px solid var(--pi-border); }
+    .pi-btn-outline { background: transparent; color: var(--pi-text-muted); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); }
     .pi-btn-outline:hover { background: var(--pi-bg); color: var(--pi-text); }
     .pi-btn-success { background: var(--pi-success); color: #fff; }
     .pi-btn-warning { background: var(--pi-warning); color: #fff; }
@@ -96,8 +96,9 @@
     .pi-badge-periodo { background: var(--pi-primary-light); color: var(--pi-primary); }
 
     /* ── COURSE IMAGE ── */
-    .pi-curso-img-container { width: 100%; max-height: 140px; border-radius: var(--pi-radius); overflow: hidden; background: var(--pi-primary-light); }
-    .pi-curso-img { width: 100%; height: 100%; max-height: 140px; object-fit: cover; display: block; }
+    .pi-curso-img-container { width: 100%; max-height: 140px; border-radius: var(--pi-radius); overflow: hidden; background: var(--pi-primary-light); cursor: pointer; }
+    .pi-curso-img { width: 100%; height: 100%; max-height: 140px; object-fit: cover; display: block; transition: opacity 0.15s; }
+    .pi-curso-img:hover { opacity: 0.85; }
     .pi-curso-img-placeholder { width: 100%; height: 100px; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--pi-primary); gap: 0.25rem; }
 
     /* ── TABLE ── */
@@ -146,13 +147,14 @@
 
     /* ── MODAL ── */
     .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
-    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 0.875rem 1.25rem; background: var(--pi-primary-light); }
+    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1rem 1.25rem; background: var(--pi-primary-light); }
     .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
     .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
     .pi-modal .modal-header .header-icon.green { background: var(--pi-success); color: #fff; }
     .pi-modal .modal-header .header-icon.orange { background: var(--pi-warning); color: #fff; }
     .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
+    .pi-modal .modal-subtitle { font-size: 0.75rem; color: var(--pi-text-muted); margin: 0; }
     .pi-modal .modal-body { padding: 1rem 1.25rem; }
     .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; background: var(--pi-bg); }
     .pi-modal .modal-footer .btn { border-radius: var(--pi-radius); font-size: 0.8125rem; font-weight: 500; padding: 0.4375rem 0.875rem; }
@@ -178,7 +180,19 @@
 
     /* ── IMAGE PREVIEW ── */
     .pi-img-preview { margin-top: 0.375rem; }
-    .pi-img-preview img { max-width: 100px; max-height: 64px; object-fit: cover; border-radius: 0.25rem; border: 2px solid var(--pi-border); }
+    .pi-img-preview img { max-width: 100px; max-height: 64px; object-fit: cover; border-radius: 0.25rem; border: 2px solid var(--pi-border); cursor: pointer; transition: opacity 0.15s; }
+    .pi-img-preview img:hover { opacity: 0.85; }
+
+    /* ── IMAGE LIGHTBOX ── */
+    .pi-lightbox-overlay {
+        display: none; position: fixed; inset: 0; z-index: 9999;
+        background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
+        cursor: zoom-out;
+    }
+    .pi-lightbox-overlay.active { display: flex; }
+    .pi-lightbox-overlay img { max-width: 90vw; max-height: 88vh; border-radius: var(--pi-radius); box-shadow: 0 25px 60px rgba(0,0,0,0.5); object-fit: contain; }
+    .pi-lightbox-close { position: absolute; top: 1rem; right: 1.25rem; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 2.25rem; height: 2.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: background 0.15s; }
+    .pi-lightbox-close:hover { background: rgba(255,255,255,0.3); }
 
     /* ── PAGINATION ── */
     .pi-pagination-bar { background: var(--pi-primary); color: #fff; padding: 0.375rem 1rem; display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 500; opacity: 0.9; flex-wrap: wrap; gap: 0.5rem; }
@@ -299,16 +313,16 @@
         <div class="pi-card-body">
             <div class="row g-3">
                 <div class="col-md-2 col-sm-3 col-4">
-                    <div class="pi-curso-img-container">
-                        @if($curso->imagem_url)
+                    @if($curso->imagem_url)
+                        <div class="pi-curso-img-container" onclick="abrirLightbox('{{ $curso->imagem_url }}')" title="Clique para ampliar">
                             <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" class="pi-curso-img">
-                        @else
-                            <div class="pi-curso-img-placeholder">
-                                <i class="fas fa-image fa-lg"></i>
-                                <span style="font-size:0.6875rem">Sem imagem</span>
-                            </div>
-                        @endif
-                    </div>
+                        </div>
+                    @else
+                        <div class="pi-curso-img-placeholder">
+                            <i class="fas fa-image fa-lg"></i>
+                            <span style="font-size:0.6875rem">Sem imagem</span>
+                        </div>
+                    @endif
                 </div>
                 <div class="col-md-10 col-sm-9 col-8">
                     <div class="pi-info-grid">
@@ -502,16 +516,22 @@
 
 </div>
 
-{{-- MODAL: Editar Curso --}}
+{{-- LIGHTBOX --}}
+<div class="pi-lightbox-overlay" id="lightboxOverlay" onclick="fecharLightbox()">
+    <button class="pi-lightbox-close" onclick="fecharLightbox()"><i class="fas fa-times"></i></button>
+    <img id="lightboxImg" src="" alt="Imagem ampliada" onclick="event.stopPropagation()">
+</div>
+
+{{-- MODAL: Editar Curso — tamanho compacto (modal-lg), alinhado com modal de criar --}}
 <div class="modal fade pi-modal" id="modalEditarCurso" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="header-flex">
                     <div class="header-icon blue"><i class="fas fa-edit"></i></div>
                     <div>
                         <h5 class="modal-title">Editar Curso</h5>
-                        <p class="mb-0" style="font-size:0.75rem;color:var(--pi-text-muted)">{{ $curso->nome }}</p>
+                        <p class="modal-subtitle">{{ $curso->nome }}</p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -521,9 +541,9 @@
                     @csrf
                     <input type="hidden" name="_method" value="PUT">
                     <input type="hidden" name="curso_id" value="{{ $curso->id }}">
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <div class="col-md-6">
-                            <div class="section-title"><i class="fas fa-info-circle"></i> Informações do Curso</div>
+                            <div class="section-title"><i class="fas fa-info-circle"></i> Informações</div>
                             <div class="mb-2">
                                 <label class="form-label">Nome <span class="required">*</span></label>
                                 <input type="text" name="nome" class="form-control" value="{{ $curso->nome }}" required>
@@ -545,7 +565,7 @@
                                 @if($curso->imagem_url)
                                     <div class="pi-img-preview">
                                         <span style="font-size:0.6875rem;color:var(--pi-text-muted)">Atual:</span>
-                                        <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}">
+                                        <img src="{{ $curso->imagem_url }}" alt="{{ $curso->nome }}" onclick="abrirLightbox('{{ $curso->imagem_url }}')" title="Clique para ampliar">
                                     </div>
                                 @endif
                             </div>
@@ -558,7 +578,7 @@
                             </div>
                             <div class="mb-2">
                                 <label class="form-label">Programa do Curso</label>
-                                <textarea name="programa" class="form-control" rows="5">{{ $curso->programa }}</textarea>
+                                <textarea name="programa" class="form-control" rows="4">{{ $curso->programa }}</textarea>
                                 <div class="form-text">Use quebras de linha para tópicos</div>
                             </div>
                         </div>
@@ -570,11 +590,11 @@
                         </div>
                         <div class="row g-2" id="centrosContainerEdit"></div>
                     </div>
-                    <div class="d-flex justify-content-end gap-2 mt-3 pt-2 flex-wrap" style="border-top:1px solid var(--pi-border)">
-                        <button type="button" class="pi-btn pi-btn-outline" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="pi-btn pi-btn-primary"><i class="fas fa-save me-1"></i> Atualizar</button>
-                    </div>
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" form="formEditarCursoAjax" class="btn pi-btn-primary"><i class="fas fa-save me-1"></i> Atualizar</button>
             </div>
         </div>
     </div>
@@ -758,6 +778,18 @@
 <script>
 const cursoId = {{ $curso->id }};
 
+// LIGHTBOX
+function abrirLightbox(src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+function fecharLightbox() {
+    document.getElementById('lightboxOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') fecharLightbox(); });
+
 // TABS
 $(document).on('click', '.pi-tab', function() {
     const tab = $(this).data('tab');
@@ -771,11 +803,11 @@ $(document).on('click', '.pi-tab', function() {
 $("#formAdicionarCentroAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
-    const formData = { centro_id: parseInt($form.find("[name=\"centro_id\"]").val()), preco: parseFloat($form.find("[name=\"preco\"]").val().toString().replace(",", ".")) };
+    const formData = { centro_id: parseInt($form.find("[name='centro_id']").val()), preco: parseFloat($form.find("[name='preco']").val().toString().replace(",", ".")) };
     if (!formData.centro_id) { Swal.fire({ icon: "error", title: "Erro!", text: "Selecione um centro", confirmButtonColor: '#1d4ed8' }); return; }
     $.ajax({
         url: `/cursos/${cursoId}/centros`, type: "POST", data: JSON.stringify(formData), contentType: "application/json",
-        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
+        headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content") },
         success: function() { $("#modalAdicionarCentro").modal("hide"); Swal.fire({ icon: "success", title: "Sucesso!", text: "Centro associado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload()); },
         error: function(xhr) { const errors = xhr.responseJSON?.errors || { error: [xhr.responseJSON?.message || "Erro desconhecido"] }; Swal.fire({ icon: "error", title: "Erro!", text: Object.values(errors).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
     });
@@ -791,12 +823,12 @@ $(document).on("click", ".btn-editar-centro", function() {
 
 $("#formEditarCentroAjax").on("submit", function(e) {
     e.preventDefault();
-    const centroId = $(this).find("[name=\"centro_id\"]").val();
-    const formData = { preco: parseFloat($(this).find("[name=\"preco\"]").val().toString().replace(",", ".")) };
+    const centroId = $(this).find("[name='centro_id']").val();
+    const formData = { preco: parseFloat($(this).find("[name='preco']").val().toString().replace(",", ".")) };
     if (!formData.preco) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha o preço", confirmButtonColor: '#1d4ed8' }); return; }
     $.ajax({
         url: `/cursos/${cursoId}/centros/${centroId}`, type: "PUT", data: JSON.stringify(formData), contentType: "application/json",
-        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
+        headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content") },
         success: function() { $("#modalEditarCentro").modal("hide"); Swal.fire({ icon: "success", title: "Atualizado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload()); },
         error: function(xhr) { Swal.fire({ icon: "error", title: "Erro!", text: Object.values(xhr.responseJSON?.errors || { e: [xhr.responseJSON?.message || "Erro"] }).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
     });
@@ -807,9 +839,22 @@ $(document).on("click", ".btn-remover-centro", function() {
     const centroId = $(this).data("centro-id");
     Swal.fire({ title: "Desassociar centro?", text: "O centro será desassociado.", icon: "warning", showCancelButton: true, confirmButtonColor: "#dc2626", cancelButtonColor: "#64748b", confirmButtonText: "<i class='fas fa-unlink me-1'></i> Sim!", cancelButtonText: "Cancelar" }).then((result) => {
         if (result.isConfirmed) {
-            $.ajax({ url: `/cursos/${cursoId}/centros/${centroId}`, type: "DELETE", headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
+            $.ajax({ url: `/cursos/${cursoId}/centros/${centroId}`, type: "DELETE", headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content") },
                 success: function() { Swal.fire({ icon: "success", title: "Desassociado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload()); },
                 error: function(xhr) { Swal.fire({ icon: "error", title: "Erro!", text: Object.values(xhr.responseJSON?.errors || { e: [xhr.responseJSON?.message || "Erro"] }).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
+            });
+        }
+    });
+});
+
+// Eliminar Curso
+$(document).on("click", ".btn-eliminar-curso", function() {
+    const id = $(this).data("curso-id");
+    Swal.fire({ title: 'Eliminar curso?', text: 'Esta ação é irreversível!', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b', confirmButtonText: '<i class="fas fa-trash me-1"></i> Sim, eliminar!', cancelButtonText: 'Cancelar' }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({ url: `/cursos/${id}`, method: 'DELETE', headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"), "Accept": "application/json" },
+                success: function() { window.location.href = "{{ route('cursos.index') }}"; },
+                error: function(xhr) { Swal.fire({ icon: 'error', title: 'Erro!', text: xhr.responseJSON?.message || 'Erro ao eliminar.', confirmButtonColor: '#1d4ed8' }); }
             });
         }
     });
@@ -833,10 +878,10 @@ $("#modalAdicionarturma").on("show.bs.modal", function() {
 $("#formAdicionarturmaAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
-    const dias = $form.find("input[name=\"dia_semana[]\"]:checked").map(function() { return $(this).val(); }).get();
+    const dias = $form.find("input[name='dia_semana[]']:checked").map(function() { return $(this).val(); }).get();
     if (dias.length === 0) { Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia.", confirmButtonColor: '#1d4ed8' }); return; }
-    const formData = { curso_id: cursoId, centro_id: $form.find("select[name=\"centro_id\"]").val(), dia_semana: dias, data_arranque: $form.find("input[name=\"data_arranque\"]").val(), duracao_semanas: $form.find("input[name=\"duracao_semanas\"]").val() || null, periodo: $form.find("select[name=\"periodo\"]").val(), modalidade: $form.find("select[name=\"modalidade\"]").val(), formador_id: $form.find("select[name=\"formador_id\"]").val() || null, hora_inicio: $form.find("input[name=\"hora_inicio\"]").val() || "", hora_fim: $form.find("input[name=\"hora_fim\"]").val() || "", status: $form.find("select[name=\"status\"]").val(), vagas_totais: $form.find("input[name=\"vagas_totais\"]").val() || null, publicado: $form.find("input[name=\"publicado\"]").is(":checked") ? 1 : 0 };
-    $.ajax({ url: `/turmas`, type: "POST", data: JSON.stringify(formData), contentType: "application/json", headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
+    const formData = { curso_id: cursoId, centro_id: $form.find("select[name='centro_id']").val(), dia_semana: dias, data_arranque: $form.find("input[name='data_arranque']").val(), duracao_semanas: $form.find("input[name='duracao_semanas']").val() || null, periodo: $form.find("select[name='periodo']").val(), modalidade: $form.find("select[name='modalidade']").val(), formador_id: $form.find("select[name='formador_id']").val() || null, hora_inicio: $form.find("input[name='hora_inicio']").val() || "", hora_fim: $form.find("input[name='hora_fim']").val() || "", status: $form.find("select[name='status']").val(), vagas_totais: $form.find("input[name='vagas_totais']").val() || null, publicado: $form.find("input[name='publicado']").is(":checked") ? 1 : 0 };
+    $.ajax({ url: `/turmas`, type: "POST", data: JSON.stringify(formData), contentType: "application/json", headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content") },
         success: function() { $("#modalAdicionarturma").modal("hide"); Swal.fire({ icon: "success", title: "Sucesso!", text: "Turma adicionada!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload()); },
         error: function(xhr) { Swal.fire({ icon: "error", title: "Erro!", text: Object.values(xhr.responseJSON?.errors || { e: [xhr.responseJSON?.message || "Erro"] }).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
     });
@@ -874,7 +919,7 @@ $(document).on("click", ".btn-editar-turma", function() {
         },
         error: function() { $("#editturmaCentro").html('<option value="" disabled>Erro</option>'); }
     });
-    $("input[name=\"edit_dia_semana[]\"]").prop("checked", false).each(function() { if (dias && dias.includes($(this).val())) $(this).prop("checked", true); });
+    $("input[name='edit_dia_semana[]']").prop("checked", false).each(function() { if (dias && dias.includes($(this).val())) $(this).prop("checked", true); });
     $("#modalEditarturma").modal("show");
 });
 
@@ -882,25 +927,25 @@ $(document).on("click", ".btn-editar-turma", function() {
 $("#formEditarturmaAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
-    const turmaId = $form.find("[name=\"turma_id\"]").val();
-    const dias = $form.find("input[name=\"edit_dia_semana[]\"]:checked").map(function() { return $(this).val(); }).get();
+    const turmaId = $form.find("[name='turma_id']").val();
+    const dias = $form.find("input[name='edit_dia_semana[]']:checked").map(function() { return $(this).val(); }).get();
     if (dias.length === 0) { Swal.fire({ icon: "warning", title: "Atenção!", text: "Selecione pelo menos um dia.", confirmButtonColor: '#1d4ed8' }); return; }
     const formData = new FormData();
     formData.append('_method', 'PUT');
-    formData.append('curso_id', $form.find("input[name=\"curso_id\"]").val());
-    formData.append('centro_id', $form.find("select[name=\"edit_centro_id\"]").val());
-    formData.append('data_arranque', $form.find("input[name=\"edit_data_arranque\"]").val());
-    formData.append('periodo', $form.find("select[name=\"edit_periodo\"]").val());
-    formData.append('modalidade', $form.find("select[name=\"edit_modalidade\"]").val());
-    formData.append('vagas_totais', $form.find("input[name=\"edit_vagas_totais\"]").val() || 0);
-    const ds = $form.find("input[name=\"edit_duracao_semanas\"]").val(); if (ds) formData.append('duracao_semanas', ds);
-    const fi = $form.find("select[name=\"edit_formador_id\"]").val(); if (fi) formData.append('formador_id', fi);
-    const hi = $form.find("input[name=\"edit_hora_inicio\"]").val(); if (hi) formData.append('hora_inicio', hi);
-    const hf = $form.find("input[name=\"edit_hora_fim\"]").val(); if (hf) formData.append('hora_fim', hf);
-    const st = $form.find("select[name=\"edit_status\"]").val(); if (st) formData.append('status', st);
-    formData.append('publicado', $form.find("input[name=\"edit_publicado\"]").is(":checked") ? 1 : 0);
+    formData.append('curso_id', $form.find("input[name='curso_id']").val());
+    formData.append('centro_id', $form.find("select[name='edit_centro_id']").val());
+    formData.append('data_arranque', $form.find("input[name='edit_data_arranque']").val());
+    formData.append('periodo', $form.find("select[name='edit_periodo']").val());
+    formData.append('modalidade', $form.find("select[name='edit_modalidade']").val());
+    formData.append('vagas_totais', $form.find("input[name='edit_vagas_totais']").val() || 0);
+    const ds = $form.find("input[name='edit_duracao_semanas']").val(); if (ds) formData.append('duracao_semanas', ds);
+    const fi = $form.find("select[name='edit_formador_id']").val(); if (fi) formData.append('formador_id', fi);
+    const hi = $form.find("input[name='edit_hora_inicio']").val(); if (hi) formData.append('hora_inicio', hi);
+    const hf = $form.find("input[name='edit_hora_fim']").val(); if (hf) formData.append('hora_fim', hf);
+    const st = $form.find("select[name='edit_status']").val(); if (st) formData.append('status', st);
+    formData.append('publicado', $form.find("input[name='edit_publicado']").is(":checked") ? 1 : 0);
     dias.forEach(function(dia, idx) { formData.append(`dia_semana[${idx}]`, dia); });
-    $.ajax({ url: `/turmas/${turmaId}`, type: "POST", data: formData, contentType: false, processData: false, headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
+    $.ajax({ url: `/turmas/${turmaId}`, type: "POST", data: formData, contentType: false, processData: false, headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content") },
         success: function() { $("#modalEditarturma").modal("hide"); Swal.fire({ icon: "success", title: "Atualizado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload()); },
         error: function(xhr) { Swal.fire({ icon: "error", title: "Erro!", text: Object.values(xhr.responseJSON?.errors || { e: [xhr.responseJSON?.message || "Erro"] }).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
     });
@@ -909,21 +954,24 @@ $("#formEditarturmaAjax").on("submit", function(e) {
 // Editar Curso - Centros
 let centrosEditCount = 0;
 let centrosDisponiveisEditList = [];
-const cursoDataEdit = {!! json_encode(['id' => $curso->id, 'nome' => $curso->nome, 'ativo' => $curso->ativo, 'centros' => $curso->centros->map(function($centro) { return ['id' => $centro->id, 'nome' => $centro->nome, 'localizacao' => $centro->localizacao, 'contactos' => $centro->contactos, 'email' => $centro->email, 'pivot' => ['preco' => $centro->pivot ? $centro->pivot->preco : null]]; })->toArray()]) !!};
+const cursoDataEdit = {!! json_encode(['id' => $curso->id, 'nome' => $curso->nome, 'ativo' => $curso->ativo, 'centros' => $curso->centros->map(function($centro) { return ['id' => $centro->id, 'nome' => $centro->nome, 'pivot' => ['preco' => $centro->pivot ? $centro->pivot->preco : null]]; })->toArray()]) !!};
 
 function carregarCentrosEdit() {
     $.ajax({ url: '/centros', method: 'GET', success: function(data) { centrosDisponiveisEditList = data || []; }, error: function() { centrosDisponiveisEditList = []; } });
 }
 
 $('#modalEditarCurso').on('show.bs.modal', function() {
-    const cursoIdValue = $('#formEditarCursoAjax').find("[name=\"curso_id\"]").val();
+    const cursoIdValue = $('#formEditarCursoAjax').find("[name='curso_id']").val();
     $('#formEditarCursoAjax')[0].reset();
-    $('#formEditarCursoAjax').find("[name=\"curso_id\"]").val(cursoIdValue);
+    $('#formEditarCursoAjax').find("[name='curso_id']").val(cursoIdValue);
+    // Restaura valores dos campos após reset
+    $('#formEditarCursoAjax').find("[name='nome']").val(cursoDataEdit.nome);
+    $('#formEditarCursoAjax').find("[name='area']").val("{{ $curso->area }}");
+    if (cursoDataEdit.ativo) $('#editCursoAtivo').prop('checked', true);
     $('#centrosContainerEdit').empty();
     centrosEditCount = 0;
     carregarCentrosEdit();
-    carregarCentrosExistentesEdit();
-    if ($('#centrosContainerEdit').find('.col-12').length === 0) adicionarCentroEdit();
+    setTimeout(function() { carregarCentrosExistentesEdit(); }, 300);
     $(document).on('change', '.centro-id-edit', function() { atualizarOpcoesDisponiveisEdit(); });
     $(document).on('click', '.remover-centro-edit', function(e) { e.preventDefault(); $(this).closest('.col-12').remove(); atualizarNumeroCentrosEdit(); atualizarOpcoesDisponiveisEdit(); });
 });
@@ -931,7 +979,7 @@ $('#modalEditarCurso').on('show.bs.modal', function() {
 function carregarCentrosExistentesEdit() {
     if (!cursoDataEdit) return;
     const centros = cursoDataEdit.centros || [];
-    if (!Array.isArray(centros) || centros.length === 0) return;
+    if (!Array.isArray(centros) || centros.length === 0) { adicionarCentroEdit(); return; }
     centros.forEach((centro, index) => {
         try {
             if (!centro || typeof centro !== 'object') return;
@@ -992,54 +1040,38 @@ function atualizarNumeroCentrosEdit() {
 }
 
 $(document).on('click', '#adicionarCentroEditBtn', function(e) { e.preventDefault(); adicionarCentroEdit(); });
-$(document).on('click', '.remover-centro-edit', function(e) { e.preventDefault(); $(this).closest('.col-12').remove(); atualizarNumeroCentrosEdit(); });
 
 // Formulário Editar Curso
 $("#formEditarCursoAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
-    const cursoId = $form.find("[name=\"curso_id\"]").val();
-    const nome = $form.find("[name=\"nome\"]").val().trim();
-    const area = $form.find("[name=\"area\"]").val().trim();
+    const cursoId = $form.find("[name='curso_id']").val();
+    const nome = $form.find("[name='nome']").val().trim();
+    const area = $form.find("[name='area']").val().trim();
     if (!nome || !area) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha Nome e Área", confirmButtonColor: '#1d4ed8' }); return; }
     const centrosCount = $('#centrosContainerEdit').find('.centro-id-edit').length;
     if (centrosCount === 0) { Swal.fire({ icon: "error", title: "Erro!", text: "Adicione pelo menos um centro", confirmButtonColor: '#1d4ed8' }); return; }
     let valido = true;
     $('#centrosContainerEdit').find('.centro-card').each(function() { if (!$(this).find('.centro-id-edit').val() || !$(this).find('.preco-edit').val()) { valido = false; return false; } });
     if (!valido) { Swal.fire({ icon: "error", title: "Erro!", text: "Preencha todos os dados dos centros", confirmButtonColor: '#1d4ed8' }); return; }
-    const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
+    const imagemFile = $form.find("[name='imagem']")[0].files[0];
     if (imagemFile) {
         const formData = new FormData();
-        formData.append('nome', nome); formData.append('descricao', $form.find("[name=\"descricao\"]").val() || ""); formData.append('programa', $form.find("[name=\"programa\"]").val() || "");
-        formData.append('area', area); formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0); formData.append('imagem', imagemFile);
+        formData.append('nome', nome); formData.append('descricao', $form.find("[name='descricao']").val() || ""); formData.append('programa', $form.find("[name='programa']").val() || "");
+        formData.append('area', area); formData.append('ativo', $form.find("[name='ativo']").is(":checked") ? 1 : 0); formData.append('imagem', imagemFile);
         let idx = 0; $('#centrosContainerEdit').find('.centro-card').each(function() { formData.append(`centro_curso[${idx}][centro_id]`, $(this).find('.centro-id-edit').val()); formData.append(`centro_curso[${idx}][preco]`, $(this).find('.preco-edit').val()); idx++; });
-        $.ajax({ url: `/cursos/${cursoId}`, type: "POST", data: formData, contentType: false, processData: false, headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json", "X-HTTP-Method-Override": "PUT" },
+        $.ajax({ url: `/cursos/${cursoId}`, type: "POST", data: formData, contentType: false, processData: false, headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"), "Accept": "application/json", "X-HTTP-Method-Override": "PUT" },
             success: function() { $("#modalEditarCurso").modal("hide"); Swal.fire({ icon: "success", title: "Atualizado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload()); },
             error: function(xhr) { Swal.fire({ icon: "error", title: "Erro!", text: Object.values(xhr.responseJSON?.errors || { e: [xhr.responseJSON?.message || "Erro"] }).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
         });
     } else {
-        const fd = { nome, descricao: $form.find("[name=\"descricao\"]").val() || "", programa: $form.find("[name=\"programa\"]").val() || "", area, ativo: $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0, centro_curso: [] };
+        const fd = { nome, descricao: $form.find("[name='descricao']").val() || "", programa: $form.find("[name='programa']").val() || "", area, ativo: $form.find("[name='ativo']").is(":checked") ? 1 : 0, centro_curso: [] };
         $('#centrosContainerEdit').find('.centro-card').each(function() { fd.centro_curso.push({ centro_id: $(this).find('.centro-id-edit').val(), preco: $(this).find('.preco-edit').val() }); });
-        $.ajax({ url: `/cursos/${cursoId}`, type: "PUT", data: JSON.stringify(fd), contentType: "application/json", headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json" },
+        $.ajax({ url: `/cursos/${cursoId}`, type: "PUT", data: JSON.stringify(fd), contentType: "application/json", headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"), "Accept": "application/json" },
             success: function() { $("#modalEditarCurso").modal("hide"); Swal.fire({ icon: "success", title: "Atualizado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload()); },
             error: function(xhr) { Swal.fire({ icon: "error", title: "Erro!", text: Object.values(xhr.responseJSON?.errors || { e: [xhr.responseJSON?.message || "Erro"] }).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
         });
     }
-});
-
-$(document).ready(function() { carregarCentrosEdit(); });
-
-// Eliminar Curso
-$(document).on("click", ".btn-eliminar-curso", function() {
-    const id = $(this).data("curso-id");
-    Swal.fire({ title: "Eliminar curso?", text: "Esta ação é irreversível!", icon: "warning", showCancelButton: true, confirmButtonColor: "#dc2626", cancelButtonColor: "#64748b", confirmButtonText: "<i class='fas fa-trash me-1'></i> Sim!", cancelButtonText: "Cancelar" }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({ url: `/cursos/${id}`, type: "DELETE", headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content") },
-                success: function() { Swal.fire({ icon: "success", title: "Eliminado!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => { window.location.href = "{{ route('cursos.index') }}"; }); },
-                error: function(xhr) { Swal.fire({ icon: "error", title: "Erro!", text: Object.values(xhr.responseJSON?.errors || { e: [xhr.responseJSON?.message || "Erro"] }).flat().join("\n"), confirmButtonColor: '#1d4ed8' }); }
-            });
-        }
-    });
 });
 </script>
 @endsection

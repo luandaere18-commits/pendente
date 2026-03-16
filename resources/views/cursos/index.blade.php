@@ -32,7 +32,6 @@
 
     body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
 
-    /* ── PAGE LAYOUT ── */
     .pi-page { width: 100%; padding: 0; overflow-x: hidden; }
 
     /* ── BLUE HEADER ── */
@@ -81,14 +80,15 @@
     .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pi-stat-value { font-size: 1.375rem; font-weight: 700; line-height: 1; }
 
-    /* ── TOOLBAR ── */
+    /* ── TOOLBAR — filters always side by side ── */
     .pi-toolbar {
         background: #fff; border-bottom: 1px solid var(--pi-border);
         padding: 0.625rem 1.25rem;
-        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+        display: flex; flex-wrap: nowrap; align-items: center; gap: 0.5rem;
+        overflow-x: auto;
     }
     .pi-toolbar .search-wrap {
-        position: relative; flex: 1 1 200px; min-width: 0;
+        position: relative; flex: 1 1 180px; min-width: 140px;
     }
     .pi-toolbar .search-wrap i {
         position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
@@ -176,7 +176,6 @@
 
     /* ── ACTION BUTTONS ── */
     .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; transition: opacity 0.15s; }
-    /* Desktop: show on hover. Mobile/touch: always visible */
     @media (hover: hover) and (pointer: fine) {
         .pi-actions { opacity: 0; }
         .pi-table tbody tr:hover .pi-actions { opacity: 1; }
@@ -213,7 +212,8 @@
     .pi-mobile-card .card-actions .btn { font-size: 0.6875rem; padding: 0.2rem 0.5rem; }
 
     /* ── COURSE IMAGE ── */
-    .pi-curso-img { width: 32px; height: 32px; border-radius: 0.375rem; object-fit: cover; border: 1px solid var(--pi-border); flex-shrink: 0; }
+    .pi-curso-img { width: 32px; height: 32px; border-radius: 0.375rem; object-fit: cover; border: 1px solid var(--pi-border); flex-shrink: 0; cursor: pointer; transition: opacity 0.15s; }
+    .pi-curso-img:hover { opacity: 0.8; }
     .pi-curso-img-placeholder { width: 32px; height: 32px; border-radius: 0.375rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
 
     /* ── MODAL ── */
@@ -236,6 +236,11 @@
     .pi-detail-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
     .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; word-break: break-word; }
 
+    /* ── COURSE DETAIL IMAGE IN MODAL ── */
+    .pi-curso-detail-img { max-width: 120px; max-height: 120px; object-fit: cover; border-radius: var(--pi-radius); border: 2px solid var(--pi-border); cursor: pointer; transition: opacity 0.15s; }
+    .pi-curso-detail-img:hover { opacity: 0.85; }
+    .pi-curso-detail-img-placeholder { width: 120px; height: 120px; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 1.75rem; }
+
     /* ── FORM ── */
     .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
     .pi-form .form-label .required { color: var(--pi-danger); }
@@ -250,10 +255,6 @@
         display: flex; align-items: center; gap: 0.375rem;
         text-transform: uppercase; letter-spacing: 0.03em;
     }
-
-    /* ── COURSE DETAIL IMAGE IN MODAL ── */
-    .pi-curso-detail-img { max-width: 120px; max-height: 120px; object-fit: cover; border-radius: var(--pi-radius); border: 2px solid var(--pi-border); }
-    .pi-curso-detail-img-placeholder { width: 120px; height: 120px; border-radius: var(--pi-radius); background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 1.75rem; }
 
     /* ── UPLOAD AREA ── */
     .pi-upload-area { border: 2px dashed var(--pi-border); border-radius: var(--pi-radius); padding: 1.25rem; text-align: center; cursor: pointer; transition: all 0.15s; }
@@ -271,10 +272,23 @@
     /* ── BUTTON PRIMARY ── */
     .pi-btn-primary { background: var(--pi-primary); border: none; color: #fff; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; }
     .pi-btn-primary:hover { background: var(--pi-primary-dark); color: #fff; }
+    .pi-btn-outline { background: transparent; color: var(--pi-text-muted); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; cursor: pointer; }
+    .pi-btn-outline:hover { background: var(--pi-bg); color: var(--pi-text); }
 
     /* ── SELECT2 ── */
     .select2-container--bootstrap-5 .select2-selection { border-radius: var(--pi-radius) !important; border-color: var(--pi-border) !important; height: 2.25rem !important; font-size: 0.8125rem !important; }
     .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered { line-height: 2.25rem !important; }
+
+    /* ── IMAGE LIGHTBOX ── */
+    .pi-lightbox-overlay {
+        display: none; position: fixed; inset: 0; z-index: 9999;
+        background: rgba(0,0,0,0.88); align-items: center; justify-content: center;
+        cursor: zoom-out;
+    }
+    .pi-lightbox-overlay.active { display: flex; }
+    .pi-lightbox-overlay img { max-width: 90vw; max-height: 88vh; border-radius: var(--pi-radius); box-shadow: 0 25px 60px rgba(0,0,0,0.5); object-fit: contain; }
+    .pi-lightbox-close { position: absolute; top: 1rem; right: 1.25rem; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 2.25rem; height: 2.25rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: background 0.15s; }
+    .pi-lightbox-close:hover { background: rgba(255,255,255,0.3); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
@@ -284,9 +298,6 @@
     @media (max-width: 767.98px) {
         .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
         .pi-stat { border-bottom: 1px solid var(--pi-border); }
-        .pi-toolbar { flex-direction: column; align-items: stretch; }
-        .pi-toolbar .search-wrap { flex: 1 1 100%; }
-        .pi-toolbar select { width: 100%; }
         .pi-page-header { flex-direction: column; align-items: stretch; }
         .pi-page-header .pi-btn-create { justify-content: center; }
         .pi-pagination-bar { flex-direction: column; gap: 0.5rem; text-align: center; }
@@ -357,13 +368,13 @@
         </div>
     </div>
 
-    {{-- TOOLBAR --}}
+    {{-- TOOLBAR — filters side by side --}}
     <div class="pi-toolbar">
         <div class="search-wrap">
             <i class="fas fa-search"></i>
             <input type="text" id="filtroNome" placeholder="Buscar por nome do curso..." value="{{ request('nome') }}">
         </div>
-        <select class="form-select" id="filtroStatus" style="border-color:var(--pi-border)">
+        <select id="filtroStatus" style="height:2.125rem;border:1px solid var(--pi-border);border-radius:var(--pi-radius);font-size:0.8125rem;padding:0 2rem 0 0.625rem;background:var(--pi-bg);min-width:130px;cursor:pointer;flex-shrink:0">
             <option value="">Todos status</option>
             <option value="1" {{ request('ativo') === '1' ? 'selected' : '' }}>Ativo</option>
             <option value="0" {{ request('ativo') === '0' ? 'selected' : '' }}>Inativo</option>
@@ -377,7 +388,7 @@
     <div class="pi-table-wrap">
         {{-- Desktop Table --}}
         <div class="pi-desktop-table">
-            <table class="pi-table">
+            <table class="pi-table" id="tabelaCursos">
                 <thead>
                     <tr>
                         <th style="width:50px">ID</th>
@@ -388,14 +399,14 @@
                         <th style="text-align:right;width:100px">Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tabelaCursosBody">
                     @forelse($cursos as $curso)
-                        <tr>
+                        <tr data-nome="{{ strtolower($curso->nome) }}" data-ativo="{{ $curso->ativo ? '1' : '0' }}">
                             <td class="mono">#{{ $curso->id }}</td>
                             <td>
                                 <div style="display:flex;align-items:center;gap:0.5rem">
                                     @if($curso->imagem)
-                                        <img src="{{ asset('storage/' . $curso->imagem) }}" alt="{{ $curso->nome }}" class="pi-curso-img">
+                                        <img src="{{ asset('storage/' . $curso->imagem) }}" alt="{{ $curso->nome }}" class="pi-curso-img" onclick="abrirLightbox(this.src)" title="Clique para ampliar">
                                     @else
                                         <div class="pi-curso-img-placeholder"><i class="fas fa-graduation-cap"></i></div>
                                     @endif
@@ -455,11 +466,11 @@
         {{-- Mobile Cards --}}
         <div class="pi-mobile-cards">
             @forelse($cursos as $curso)
-                <div class="pi-mobile-card">
+                <div class="pi-mobile-card" data-nome="{{ strtolower($curso->nome) }}" data-ativo="{{ $curso->ativo ? '1' : '0' }}">
                     <div class="card-top">
                         <div style="display:flex;align-items:center;gap:0.5rem;min-width:0">
                             @if($curso->imagem)
-                                <img src="{{ asset('storage/' . $curso->imagem) }}" alt="{{ $curso->nome }}" class="pi-curso-img">
+                                <img src="{{ asset('storage/' . $curso->imagem) }}" alt="{{ $curso->nome }}" class="pi-curso-img" onclick="abrirLightbox(this.src)" title="Clique para ampliar">
                             @else
                                 <div class="pi-curso-img-placeholder"><i class="fas fa-graduation-cap"></i></div>
                             @endif
@@ -496,14 +507,16 @@
     </div>
 
     {{-- PAGINATION BAR --}}
-    <div class="pi-pagination-bar">
-        <span class="info">Mostrando {{ $cursos->count() }} curso(s)</span>
-        <div class="pages">
-            {{-- If using Laravel pagination ($cursos = Curso::paginate(10)) --}}
-            {{-- {{ $cursos->links() }} --}}
-            <button class="page-btn active">1</button>
-        </div>
+    <div class="pi-pagination-bar" id="paginacaoBar">
+        <span class="info" id="paginacaoInfo">Mostrando todos</span>
+        <div class="pages" id="paginacaoBotoes"></div>
     </div>
+</div>
+
+{{-- LIGHTBOX --}}
+<div class="pi-lightbox-overlay" id="lightboxOverlay" onclick="fecharLightbox()">
+    <button class="pi-lightbox-close" onclick="fecharLightbox()"><i class="fas fa-times"></i></button>
+    <img id="lightboxImg" src="" alt="Imagem ampliada">
 </div>
 
 {{-- MODAL: Visualizar Detalhes do Curso --}}
@@ -625,6 +638,10 @@
 
 @section('scripts')
 <script>
+const PER_PAGE = 15;
+let currentPage = 1;
+let allRows = [];
+let filteredRows = [];
 let centrosContainerModalCount = 0;
 let centrosDisponiveisList = [];
 
@@ -632,39 +649,109 @@ $(document).ready(function() {
     carregarCentros();
     configurarEventosModal();
 
+    // Coleta todas as linhas da tabela para paginação/filtro client-side
+    allRows = Array.from(document.querySelectorAll('#tabelaCursosBody tr[data-nome]'));
+
+    // Aplica filtros iniciais (URL params já estão nos inputs via Blade)
+    aplicarFiltrosClientSide();
+
     let filtroTimeout;
     $('#filtroNome').on('input', function() {
         clearTimeout(filtroTimeout);
-        filtroTimeout = setTimeout(aplicarFiltros, 300);
+        filtroTimeout = setTimeout(function() {
+            currentPage = 1;
+            aplicarFiltrosClientSide();
+        }, 250);
     });
-    $('#filtroStatus').on('change', aplicarFiltros);
+    $('#filtroStatus').on('change', function() {
+        currentPage = 1;
+        aplicarFiltrosClientSide();
+    });
 });
+
+function aplicarFiltrosClientSide() {
+    const nome = ($('#filtroNome').val() || '').toLowerCase().trim();
+    const ativo = $('#filtroStatus').val();
+
+    filteredRows = allRows.filter(function(row) {
+        const rowNome = (row.getAttribute('data-nome') || '');
+        const rowAtivo = row.getAttribute('data-ativo');
+        const nomeOk = !nome || rowNome.includes(nome);
+        const ativoOk = ativo === '' || rowAtivo === ativo;
+        return nomeOk && ativoOk;
+    });
+
+    renderizarPagina();
+}
+
+function renderizarPagina() {
+    const total = filteredRows.length;
+    const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * PER_PAGE;
+    const end = start + PER_PAGE;
+
+    // Esconde todas as linhas
+    allRows.forEach(function(row) { row.style.display = 'none'; });
+
+    // Mostra só as da página actual
+    filteredRows.slice(start, end).forEach(function(row) { row.style.display = ''; });
+
+    // Actualiza info
+    const showing = Math.min(end, total) - start;
+    if (total === 0) {
+        $('#paginacaoInfo').text('Nenhum curso encontrado');
+    } else {
+        $('#paginacaoInfo').text('Mostrando ' + (start + 1) + '–' + Math.min(end, total) + ' de ' + total + ' curso(s)');
+    }
+
+    // Botões de paginação
+    const $botoes = $('#paginacaoBotoes');
+    $botoes.empty();
+    if (totalPages <= 1) return;
+
+    // Prev
+    const $prev = $('<button class="page-btn">&laquo;</button>').prop('disabled', currentPage === 1);
+    $prev.on('click', function() { if (currentPage > 1) { currentPage--; renderizarPagina(); } });
+    $botoes.append($prev);
+
+    // Números
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + 4);
+    if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
+
+    for (let p = startPage; p <= endPage; p++) {
+        const $btn = $('<button class="page-btn">' + p + '</button>');
+        if (p === currentPage) $btn.addClass('active');
+        (function(pg) {
+            $btn.on('click', function() { currentPage = pg; renderizarPagina(); });
+        })(p);
+        $botoes.append($btn);
+    }
+
+    // Next
+    const $next = $('<button class="page-btn">&raquo;</button>').prop('disabled', currentPage === totalPages);
+    $next.on('click', function() { if (currentPage < totalPages) { currentPage++; renderizarPagina(); } });
+    $botoes.append($next);
+}
 
 function carregarCentros() {
     $.ajax({
-        url: '/centros',
-        method: 'GET',
-        success: function(data) {
-            centrosDisponiveisList = data || [];
-        },
+        url: '/centros', method: 'GET',
+        success: function(data) { centrosDisponiveisList = data || []; },
         error: function(err) {
             console.error('Erro ao carregar centros:', err);
             centrosDisponiveisList = [];
-            Swal.fire({
-                icon: 'warning', title: 'Atenção!',
-                text: 'Não foi possível carregar a lista de centros.',
-                timer: 4000, showConfirmButton: false,
-                toast: true, position: 'top-end',
-                background: '#1d4ed8', color: '#fff'
-            });
+            Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Não foi possível carregar a lista de centros.', timer: 4000, showConfirmButton: false, toast: true, position: 'top-end', background: '#1d4ed8', color: '#fff' });
         }
     });
 }
 
 function carregarDetalhesCurso(cursoId) {
+    $('#conteudoVisualizarCurso').html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="text-muted mt-2" style="font-size:0.8125rem">Carregando...</p></div>');
+    $('#modalVisualizarCurso').modal('show');
     $.ajax({
-        url: `/cursos/${cursoId}`,
-        method: 'GET',
+        url: `/cursos/${cursoId}`, method: 'GET',
         headers: { 'Accept': 'application/json' },
         success: function(response) {
             const curso = response.dados || response;
@@ -674,20 +761,12 @@ function carregarDetalhesCurso(cursoId) {
                 : '<span class="pi-badge pi-badge-inativo"><i class="fas fa-times-circle"></i> Inativo</span>';
 
             const imagemHtml = curso.imagem_url
-                ? `<img src="${curso.imagem_url}" alt="${curso.nome}" class="pi-curso-detail-img">`
+                ? `<img src="${curso.imagem_url}" alt="${curso.nome}" class="pi-curso-detail-img" onclick="abrirLightbox('${curso.imagem_url}')" title="Clique para ampliar">`
                 : '<div class="pi-curso-detail-img-placeholder"><i class="fas fa-image"></i></div>';
 
             let centrosHtml = '';
             if (curso.centros && curso.centros.length > 0) {
-                centrosHtml = `
-                    <div class="mt-3">
-                        <div class="section-title" style="font-size:0.75rem;font-weight:600;color:var(--pi-primary);padding-bottom:0.375rem;border-bottom:2px solid var(--pi-primary);display:flex;align-items:center;gap:0.375rem;text-transform:uppercase;letter-spacing:0.03em">
-                            <i class="fas fa-building"></i> Centros Associados
-                        </div>
-                        <div style="overflow-x:auto">
-                        <table class="pi-table" style="font-size:0.75rem">
-                            <thead><tr><th>Centro</th><th>Preço (Kz)</th></tr></thead>
-                            <tbody>`;
+                centrosHtml = `<div class="mt-3"><div class="section-title" style="font-size:0.75rem;font-weight:600;color:var(--pi-primary);padding-bottom:0.375rem;border-bottom:2px solid var(--pi-primary);display:flex;align-items:center;gap:0.375rem;text-transform:uppercase;letter-spacing:0.03em"><i class="fas fa-building"></i> Centros Associados</div><div style="overflow-x:auto"><table class="pi-table" style="font-size:0.75rem"><thead><tr><th>Centro</th><th>Preço (Kz)</th></tr></thead><tbody>`;
                 curso.centros.forEach(centro => {
                     const preco = centro.pivot?.preco ? parseFloat(centro.pivot.preco).toLocaleString('pt-PT') : 'N/A';
                     centrosHtml += `<tr><td><strong>${centro.nome}</strong></td><td style="color:var(--pi-success);font-weight:600">${preco}</td></tr>`;
@@ -697,31 +776,13 @@ function carregarDetalhesCurso(cursoId) {
 
             let turmasHtml = '';
             if (curso.turmas && curso.turmas.length > 0) {
-                turmasHtml = `
-                    <div class="mt-3">
-                        <div class="section-title" style="font-size:0.75rem;font-weight:600;color:var(--pi-info);padding-bottom:0.375rem;border-bottom:2px solid var(--pi-info);display:flex;align-items:center;gap:0.375rem;text-transform:uppercase;letter-spacing:0.03em">
-                            <i class="fas fa-calendar"></i> Turmas
-                        </div>
-                        <div style="overflow-x:auto">
-                        <table class="pi-table" style="font-size:0.75rem">
-                            <thead><tr><th>Dias</th><th>Período</th><th>Data Arranque</th><th>Semanas</th></tr></thead>
-                            <tbody>`;
+                turmasHtml = `<div class="mt-3"><div class="section-title" style="font-size:0.75rem;font-weight:600;color:var(--pi-info);padding-bottom:0.375rem;border-bottom:2px solid var(--pi-info);display:flex;align-items:center;gap:0.375rem;text-transform:uppercase;letter-spacing:0.03em"><i class="fas fa-calendar"></i> Turmas</div><div style="overflow-x:auto"><table class="pi-table" style="font-size:0.75rem"><thead><tr><th>Dias</th><th>Período</th><th>Data Arranque</th><th>Semanas</th></tr></thead><tbody>`;
                 curso.turmas.forEach(turma => {
-                    const dias = Array.isArray(turma.dia_semana)
-                        ? turma.dia_semana.map(d => {
-                            const diasNomes = { 0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sab' };
-                            return diasNomes[d] || d;
-                        }).join(', ')
-                        : (turma.dia_semana || 'N/A');
-                    const periodo = turma.periodo === 'manha' ? 'Manhã' :
-                                   turma.periodo === 'tarde' ? 'Tarde' :
-                                   turma.periodo === 'noite' ? 'Noite' : (turma.periodo || 'N/A');
-                    let dataArranque = 'N/A';
-                    if (turma.data_arranque) {
-                        const data = new Date(turma.data_arranque);
-                        if (!isNaN(data.getTime())) dataArranque = data.toLocaleDateString('pt-PT');
-                    }
-                    turmasHtml += `<tr><td><strong>${dias}</strong></td><td><span class="pi-badge pi-badge-presencial">${periodo}</span></td><td><strong>${dataArranque}</strong></td><td>${turma.duracao_semanas || 'N/A'}</td></tr>`;
+                    const dias = Array.isArray(turma.dia_semana) ? turma.dia_semana.map(d => { const n = { 0:'Dom',1:'Seg',2:'Ter',3:'Qua',4:'Qui',5:'Sex',6:'Sab' }; return n[d]||d; }).join(', ') : (turma.dia_semana||'N/A');
+                    const periodo = turma.periodo==='manha'?'Manhã':turma.periodo==='tarde'?'Tarde':turma.periodo==='noite'?'Noite':(turma.periodo||'N/A');
+                    let dataArranque='N/A';
+                    if(turma.data_arranque){const d=new Date(turma.data_arranque);if(!isNaN(d.getTime()))dataArranque=d.toLocaleDateString('pt-PT');}
+                    turmasHtml += `<tr><td><strong>${dias}</strong></td><td><span class="pi-badge pi-badge-presencial">${periodo}</span></td><td><strong>${dataArranque}</strong></td><td>${turma.duracao_semanas||'N/A'}</td></tr>`;
                 });
                 turmasHtml += '</tbody></table></div></div>';
             }
@@ -729,15 +790,15 @@ function carregarDetalhesCurso(cursoId) {
             const conteudo = `
                 <div class="row g-3 mb-2">
                     <div class="col-md-3 text-center">${imagemHtml}</div>
-                    <div class="col-md-9 ps-md-3" style="min-width:0;">
+                    <div class="col-md-9 ps-md-3" style="min-width:0">
                         <h5 style="font-weight:700;margin-bottom:0.375rem;font-size:1rem;color:var(--pi-text)">${curso.nome}</h5>
                         <div class="d-flex gap-2 flex-wrap mb-2">${statusBadge}</div>
                         <div class="pi-detail-row">
                             <div class="pi-detail-icon"><i class="fas fa-tag"></i></div>
-                            <div><div class="pi-detail-label">Área</div><div class="pi-detail-value">${curso.area || 'N/A'}</div></div>
+                            <div><div class="pi-detail-label">Área</div><div class="pi-detail-value">${curso.area||'N/A'}</div></div>
                         </div>
-                        ${curso.descricao ? `<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-align-left"></i></div><div><div class="pi-detail-label">Descrição</div><div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.descricao}</div></div></div>` : ''}
-                        ${curso.programa ? `<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-book"></i></div><div><div class="pi-detail-label">Programa</div><div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.programa}</div></div></div>` : ''}
+                        ${curso.descricao?`<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-align-left"></i></div><div><div class="pi-detail-label">Descrição</div><div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.descricao}</div></div></div>`:''}
+                        ${curso.programa?`<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-book"></i></div><div><div class="pi-detail-label">Programa</div><div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.programa}</div></div></div>`:''}
                     </div>
                 </div>
                 ${centrosHtml}
@@ -745,7 +806,6 @@ function carregarDetalhesCurso(cursoId) {
             `;
 
             $('#conteudoVisualizarCurso').html(conteudo);
-            $('#modalVisualizarCurso').modal('show');
         },
         error: function(err) {
             console.error('Erro ao carregar detalhes do curso:', err);
@@ -776,26 +836,22 @@ function adicionarCentroModal() {
     const wrapper = document.createElement('div');
     wrapper.appendChild(clone);
     $('#centrosContainerModal').append(wrapper.innerHTML);
-    const selects = $('#centrosContainerModal').find('.centro-id-modal');
-    const lastSelect = selects.last();
-    centrosDisponiveisList.forEach(centro => {
-        lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`);
-    });
+    const lastSelect = $('#centrosContainerModal').find('.centro-id-modal').last();
+    centrosDisponiveisList.forEach(centro => { lastSelect.append(`<option value="${centro.id}">${centro.nome}</option>`); });
     atualizarNumeroCentrosModal();
 }
 
 function atualizarNumeroCentrosModal() {
-    const badges = $('#centrosContainerModal').find('.numero-centro-modal');
-    badges.each((index, badge) => { $(badge).text('Centro ' + (index + 1)); });
-    const btnsRemover = $('#centrosContainerModal').find('.remover-centro-modal');
-    btnsRemover.prop('disabled', btnsRemover.length <= 1);
+    $('#centrosContainerModal').find('.numero-centro-modal').each((i, b) => { $(b).text('Centro ' + (i + 1)); });
+    const btns = $('#centrosContainerModal').find('.remover-centro-modal');
+    btns.prop('disabled', btns.length <= 1);
 }
 
 $("#formNovoCursoAjax").on("submit", function(e) {
     e.preventDefault();
     const $form = $(this);
-    const nome = $form.find("[name=\"nome\"]").val().trim();
-    const area = $form.find("[name=\"area\"]").val().trim();
+    const nome = $form.find("[name='nome']").val().trim();
+    const area = $form.find("[name='area']").val().trim();
 
     if (!nome || !area) {
         Swal.fire({ icon: "error", title: "Campos obrigatórios!", text: "Preencha Nome e Área", confirmButtonColor: '#1d4ed8' });
@@ -822,34 +878,28 @@ $("#formNovoCursoAjax").on("submit", function(e) {
 
     const formData = new FormData();
     formData.append('nome', nome);
-    formData.append('descricao', $form.find("[name=\"descricao\"]").val().trim());
-    formData.append('programa', $form.find("[name=\"programa\"]").val().trim());
+    formData.append('descricao', $form.find("[name='descricao']").val().trim());
+    formData.append('programa', $form.find("[name='programa']").val().trim());
     formData.append('area', area);
-    formData.append('ativo', $form.find("[name=\"ativo\"]").is(":checked") ? 1 : 0);
+    formData.append('ativo', $form.find("[name='ativo']").is(":checked") ? 1 : 0);
 
-    const imagemFile = $form.find("[name=\"imagem\"]")[0].files[0];
+    const imagemFile = $form.find("[name='imagem']")[0].files[0];
     if (imagemFile) formData.append('imagem', imagemFile);
 
     let index = 0;
     $('#centrosContainerModal').find('.centro-card').each(function() {
-        const centroId = $(this).find('.centro-id-modal').val();
-        const preco = parseFloat($(this).find('.preco-modal').val());
-        formData.append(`centro_curso[${index}][centro_id]`, centroId);
-        formData.append(`centro_curso[${index}][preco]`, preco);
+        formData.append(`centro_curso[${index}][centro_id]`, $(this).find('.centro-id-modal').val());
+        formData.append(`centro_curso[${index}][preco]`, parseFloat($(this).find('.preco-modal').val()));
         index++;
     });
 
     $.ajax({
-        url: `/cursos`,
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json" },
-        success: function(response) {
+        url: `/cursos`, type: "POST", data: formData, contentType: false, processData: false,
+        headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"), "Accept": "application/json" },
+        success: function() {
             $("#modalNovoCurso").modal("hide");
             $form[0].reset();
-            Swal.fire({ icon: "success", title: "Sucesso!", text: "Curso criado com sucesso!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => carregarCursos());
+            Swal.fire({ icon: "success", title: "Sucesso!", text: "Curso criado com sucesso!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => location.reload());
         },
         error: function(xhr) {
             let message = "Erro desconhecido";
@@ -860,22 +910,12 @@ $("#formNovoCursoAjax").on("submit", function(e) {
     });
 });
 
-function aplicarFiltros() {
-    const nome = $('#filtroNome').val() || '';
-    const ativo = $('#filtroStatus').val() || '';
-    let url = '/cursos?';
-    if (nome) url += `nome=${encodeURIComponent(nome)}&`;
-    if (ativo !== '') url += `ativo=${ativo}`;
-    window.location.href = url;
-}
-
 function limparFiltros() {
     $('#filtroNome').val('');
     $('#filtroStatus').val('');
-    window.location.href = '/cursos';
+    currentPage = 1;
+    aplicarFiltrosClientSide();
 }
-
-function carregarCursos() { location.reload(); }
 
 function eliminarCurso(id) {
     Swal.fire({
@@ -886,10 +926,10 @@ function eliminarCurso(id) {
         if (result.isConfirmed) {
             $.ajax({
                 url: `/cursos/${id}`, method: 'DELETE',
-                headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json" },
+                headers: { "X-CSRF-TOKEN": $("meta[name='csrf-token']").attr("content"), "Accept": "application/json" },
                 success: function() {
                     Swal.fire({ icon: 'success', title: 'Eliminado!', text: 'Curso eliminado com sucesso.', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
-                    carregarCursos();
+                    location.reload();
                 },
                 error: function(xhr) {
                     let message = 'Ocorreu um erro ao eliminar o curso.';
@@ -900,5 +940,20 @@ function eliminarCurso(id) {
         }
     });
 }
+
+function abrirLightbox(src) {
+    $('#lightboxImg').attr('src', src);
+    $('#lightboxOverlay').addClass('active');
+    $('body').css('overflow', 'hidden');
+}
+
+function fecharLightbox() {
+    $('#lightboxOverlay').removeClass('active');
+    $('body').css('overflow', '');
+}
+
+$(document).on('keydown', function(e) { if (e.key === 'Escape') fecharLightbox(); });
+$('#lightboxOverlay').on('click', function(e) { if (e.target === this || $(e.target).hasClass('pi-lightbox-close') || $(e.target).closest('.pi-lightbox-close').length) fecharLightbox(); });
+$('#lightboxImg').on('click', function(e) { e.stopPropagation(); });
 </script>
 @endsection
