@@ -16,6 +16,7 @@ class Turma extends Model
         'duracao_semanas',
         'dia_semana',
         'periodo',
+        'modalidade',
         'hora_inicio', 
         'hora_fim',
         'data_arranque',

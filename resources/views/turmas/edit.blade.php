@@ -105,6 +105,17 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <label for="modalidade" class="form-label">Modalidade <span class="text-danger">*</span></label>
+                                <select class="form-select" id="modalidade" name="modalidade" required>
+                                    <option value="">Selecione a modalidade</option>
+                                    <option value="presencial" {{ $turma->modalidade == 'presencial' ? 'selected' : '' }}>Presencial</option>
+                                    <option value="online" {{ $turma->modalidade == 'online' ? 'selected' : '' }}>Online</option>
+                                    <option value="hibrido" {{ $turma->modalidade == 'hibrido' ? 'selected' : '' }}>Híbrido</option>
+                                </select>
+                                <div class="form-text">Escolha o tipo de aula</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
                                 <label for="hora_inicio" class="form-label">Hora de Início <span class="text-danger">*</span></label>
                                 <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" value="{{ $turma->hora_inicio }}" required>
                                 <div class="form-text">Hora específica de início</div>

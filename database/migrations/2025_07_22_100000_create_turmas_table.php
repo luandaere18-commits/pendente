@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('periodo', ['manha', 'tarde', 'noite']);
             $table->time('hora_inicio')->nullable();   // Hora de início da aula
             $table->time('hora_fim')->nullable();      // Hora de fim da aula
+            $table->enum('modalidade', ['presencial', 'online', 'hibrido'])->default('presencial');
             $table->unsignedInteger('vagas_totais');  
             $table->unsignedInteger('vagas_preenchidas')->default(0);  // Vagas confirmadas
             $table->boolean('publicado')->default(false);  // Visível no site público

@@ -91,6 +91,17 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <label for="modalidade" class="form-label">Modalidade <span class="text-danger">*</span></label>
+                                <select class="form-select" id="modalidade" name="modalidade" required>
+                                    <option value="">Selecione a modalidade</option>
+                                    <option value="presencial">Presencial</option>
+                                    <option value="online">Online</option>
+                                    <option value="hibrido">Híbrido</option>
+                                </select>
+                                <div class="form-text">Escolha o tipo de aula</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
                                 <label for="hora_inicio" class="form-label">Hora de Início <span class="text-danger">*</span></label>
                                 <input type="time" class="form-control" id="hora_inicio" name="hora_inicio" required>
                                 <div class="form-text">Hora específica de início</div>
