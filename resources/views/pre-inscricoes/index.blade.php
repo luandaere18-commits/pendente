@@ -65,10 +65,10 @@
         display: flex; align-items: center; justify-content: center;
         font-size: 0.875rem; flex-shrink: 0;
     }
-    .pi-stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
+    .pi-stat-icon.blue   { background: var(--pi-primary-light); color: var(--pi-primary); }
     .pi-stat-icon.yellow { background: var(--pi-warning-light); color: var(--pi-warning); }
-    .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
-    .pi-stat-icon.red { background: var(--pi-danger-light); color: var(--pi-danger); }
+    .pi-stat-icon.green  { background: var(--pi-success-light); color: var(--pi-success); }
+    .pi-stat-icon.red    { background: var(--pi-danger-light);  color: var(--pi-danger); }
     .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pi-stat-value { font-size: 1.375rem; font-weight: 700; line-height: 1; }
 
@@ -150,10 +150,10 @@
         padding: 0.15rem 0.5rem; border-radius: 9999px;
         font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap;
     }
-    .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; margin-right: 0.125rem; }
-    .pi-badge-pendente { background: var(--pi-warning-light); color: #92610a; }
-    .pi-badge-confirmado { background: var(--pi-success-light); color: #1e6e49; }
-    .pi-badge-cancelado { background: var(--pi-danger-light); color: #a71d2a; }
+    .pi-badge-dia       { background: var(--pi-info-light);    color: #0369a1; margin-right: 0.125rem; }
+    .pi-badge-pendente  { background: var(--pi-warning-light);  color: #92610a; }
+    .pi-badge-confirmado{ background: var(--pi-success-light);  color: #1e6e49; }
+    .pi-badge-cancelado { background: var(--pi-danger-light);   color: #a71d2a; }
 
     /* ── ACTION BUTTONS ── */
     .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; transition: opacity 0.15s; }
@@ -166,12 +166,12 @@
         display: inline-flex; align-items: center; justify-content: center;
         cursor: pointer; transition: all 0.15s; font-size: 0.75rem;
     }
-    .pi-action-btn.view { background: transparent; color: var(--pi-primary); }
-    .pi-action-btn.view:hover { background: var(--pi-primary-light); }
+    .pi-action-btn.view    { background: transparent; color: var(--pi-primary); }
+    .pi-action-btn.view:hover    { background: var(--pi-primary-light); }
     .pi-action-btn.confirm { background: transparent; color: var(--pi-success); border: 1px solid var(--pi-success); }
     .pi-action-btn.confirm:hover { background: var(--pi-success); color: #fff; }
-    .pi-action-btn.cancel { background: transparent; color: var(--pi-danger); border: 1px solid var(--pi-danger); }
-    .pi-action-btn.cancel:hover { background: var(--pi-danger); color: #fff; }
+    .pi-action-btn.cancel  { background: transparent; color: var(--pi-danger);  border: 1px solid var(--pi-danger); }
+    .pi-action-btn.cancel:hover  { background: var(--pi-danger);  color: #fff; }
 
     /* ── TURMA CELL ── */
     .turma-info { display: flex; align-items: center; gap: 0.5rem; }
@@ -192,7 +192,7 @@
         padding: 0.75rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
     }
     .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.375rem; gap: 0.5rem; }
-    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); word-break: break-word; }
+    .pi-mobile-card .card-name  { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); word-break: break-word; }
     .pi-mobile-card .card-email { font-size: 0.6875rem; color: var(--pi-text-muted); }
     .pi-mobile-card .card-turma { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); margin-bottom: 0.5rem; flex-wrap: wrap; }
     .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; flex-wrap: wrap; }
@@ -203,20 +203,21 @@
     .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1rem 1.25rem; background: var(--pi-primary-light); }
     .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
     .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
+    .pi-modal .modal-header .header-icon.blue  { background: var(--pi-primary); color: #fff; }
     .pi-modal .modal-header .header-icon.green { background: var(--pi-success); color: #fff; }
-    .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
+    .pi-modal .modal-title    { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
     .pi-modal .modal-subtitle { font-size: 0.75rem; color: var(--pi-text-muted); margin: 0; }
-    .pi-modal .modal-body { padding: 1rem 1.25rem; }
+    .pi-modal .modal-body   { padding: 1rem 1.25rem; }
     .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; background: var(--pi-bg); }
     .pi-modal .modal-footer .btn { border-radius: var(--pi-radius); font-size: 0.8125rem; font-weight: 500; padding: 0.4375rem 0.875rem; }
 
     .pi-detail-row { display: flex; align-items: flex-start; gap: 0.625rem; padding: 0.5rem 0; border-bottom: 1px solid #f0f4ff; }
     .pi-detail-row:last-child { border-bottom: none; }
-    .pi-detail-icon { width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
+    .pi-detail-icon  { width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
     .pi-detail-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
     .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; word-break: break-word; }
 
+    /* ── FORM ── */
     .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
     .pi-form .form-label .required { color: var(--pi-danger); }
     .pi-form .form-control, .pi-form .form-select { border-radius: var(--pi-radius); border-color: var(--pi-border); font-size: 0.8125rem; height: 2.25rem; }
@@ -227,16 +228,16 @@
     .pi-form .invalid-feedback { font-size: 0.6875rem; }
     .pi-form .form-text { font-size: 0.6875rem; color: var(--pi-text-muted); }
 
+    /* ── BUTTON PRIMARY / SPINNER ── */
     .pi-btn-primary { background: var(--pi-primary); border: none; color: #fff; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; }
     .pi-btn-primary:hover { background: var(--pi-primary-dark); color: #fff; }
-
     .pi-spinner { display: inline-block; width: 0.875rem; height: 0.875rem; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.25rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
         .pi-desktop-table { display: none !important; }
-        .pi-mobile-cards { display: block !important; }
+        .pi-mobile-cards  { display: block !important; }
     }
     @media (max-width: 767.98px) {
         .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
@@ -337,7 +338,7 @@
     <div class="pi-table-wrap">
         {{-- Desktop Table --}}
         <div class="pi-desktop-table">
-            <table class="pi-table" id="tabelaPreInscricoes">
+            <table class="pi-table">
                 <thead>
                     <tr>
                         <th class="sortable" data-sort="id" style="width:50px">ID <i class="fas fa-sort sort-icon"></i></th>
@@ -348,7 +349,7 @@
                         <th>Dias</th>
                         <th>Arranque</th>
                         <th class="sortable" data-sort="status">Status <i class="fas fa-sort sort-icon"></i></th>
-                        <th style="text-align:right;width:100px">Ações</th>
+                        <th style="text-align:right;width:110px">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaBody"></tbody>
@@ -366,7 +367,7 @@
         </div>
     </div>
 
-    {{-- PAGINATION BAR — always visible --}}
+    {{-- PAGINATION BAR --}}
     <div class="pi-pagination-bar" id="paginationContainer">
         <span class="info" id="paginationInfo"></span>
         <div class="pages" id="paginationPages"></div>
@@ -521,7 +522,7 @@
         });
         $.get('/centros', function(data) {
             let opts = '<option value="">Todos os centros</option>';
-            (data || []).forEach(function(c) { if (c.ativo) opts += '<option value="' + c.id + '">' + esc(c.nome) + '</option>'; });
+            (data || []).forEach(function(c) { if (c.ativo !== false) opts += '<option value="' + c.id + '">' + esc(c.nome) + '</option>'; });
             $('#filtroCentro').html(opts);
         });
     }
@@ -533,26 +534,25 @@
             method: 'GET',
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             success: function(data) {
-                let opts = '<option value="">Selecione uma turma...</option>';
                 let items = [];
                 if (Array.isArray(data)) items = data;
                 else if (data.data && Array.isArray(data.data)) items = data.data;
                 else if (data.dados && Array.isArray(data.dados)) items = data.dados;
                 else { for (let key in data) { if (Array.isArray(data[key])) { items = data[key]; break; } } }
-                if (items && items.length > 0) {
+                let opts = '<option value="">Selecione uma turma...</option>';
+                if (items.length > 0) {
                     items.forEach(function(t) {
-                        const cursoNome = t.curso ? t.curso.nome : (t.curso_nome || 'Curso');
+                        const cursoNome  = t.curso  ? t.curso.nome  : (t.curso_nome  || 'Curso');
                         const centroNome = t.centro ? t.centro.nome : (t.centro_nome || '');
-                        let periodo = t.periodo || '';
-                        if (periodo === 'manha') periodo = 'Manhã';
-                        else if (periodo === 'tarde') periodo = 'Tarde';
-                        else if (periodo === 'noite') periodo = 'Noite';
+                        let periodo = { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' }[t.periodo] || t.periodo || '';
                         let nome = cursoNome;
-                        if (periodo) nome += ' — ' + periodo;
+                        if (periodo)    nome += ' — ' + periodo;
                         if (centroNome) nome += ' (' + centroNome + ')';
                         opts += '<option value="' + t.id + '">' + esc(nome) + '</option>';
                     });
-                } else { opts = '<option value="">Nenhuma turma disponível</option>'; }
+                } else {
+                    opts = '<option value="">Nenhuma turma disponível</option>';
+                }
                 $('#criarTurmaId').html(opts);
             },
             error: function(xhr) {
@@ -568,18 +568,18 @@
     function aplicarFiltrosLocais() {
         const search = ($('#filtroSearch').val() || '').toLowerCase().trim();
         const status = $('#filtroStatus').val();
-        const curso = $('#filtroCurso').val();
+        const curso  = $('#filtroCurso').val();
         const centro = $('#filtroCentro').val();
 
         filteredData = allData.filter(function(item) {
             if (search) {
-                const nome = (item.nome_completo || '').toLowerCase();
+                const nome  = (item.nome_completo || '').toLowerCase();
                 const email = (item.email || '').toLowerCase();
                 if (!nome.includes(search) && !email.includes(search)) return false;
             }
             if (status && item.status !== status) return false;
-            if (curso && (!item.turma || !item.turma.curso || item.turma.curso.id != curso)) return false;
-            if (centro && (!item.turma || !item.turma.centro || item.turma.centro.id != centro)) return false;
+            if (curso  && (!item.turma || !item.turma.curso   || item.turma.curso.id   != curso))  return false;
+            if (centro && (!item.turma || !item.turma.centro  || item.turma.centro.id  != centro)) return false;
             return true;
         });
 
@@ -600,19 +600,64 @@
 
     function updateStats() {
         $('#statTotal').text(allData.length);
-        $('#statPendente').text(allData.filter(function(d) { return d.status === 'pendente'; }).length);
+        $('#statPendente').text(allData.filter(function(d) { return d.status === 'pendente';   }).length);
         $('#statConfirmado').text(allData.filter(function(d) { return d.status === 'confirmado'; }).length);
-        $('#statCancelado').text(allData.filter(function(d) { return d.status === 'cancelado'; }).length);
+        $('#statCancelado').text(allData.filter(function(d) { return d.status === 'cancelado';  }).length);
     }
 
+    /* ── HELPERS ── */
+    function esc(str) {
+        if (!str) return '';
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+    function periodoIcon(p) {
+        return p === 'manha' ? '<i class="fas fa-sun"></i>' : p === 'tarde' ? '<i class="fas fa-cloud-sun"></i>' : p === 'noite' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-clock"></i>';
+    }
+    function periodoLabel(p) {
+        return { manha: 'Manhã', tarde: 'Tarde', noite: 'Noite' }[p] || p || '—';
+    }
+    function renderDiaBadges(dias) {
+        if (!dias || !Array.isArray(dias) || dias.length === 0) return '—';
+        return dias.map(function(d) { return '<span class="pi-badge pi-badge-dia">' + esc(d.substring(0, 3)) + '</span>'; }).join('');
+    }
+    function renderTurmaCell(item) {
+        if (!item.turma) return '<span style="color:var(--pi-text-muted);font-size:0.75rem">Sem turma</span>';
+        return '<div class="turma-info"><span class="periodo-icon">' + periodoIcon(item.turma.periodo) + '</span>'
+            + '<div><div class="turma-name">' + esc(item.turma.curso ? item.turma.curso.nome : '') + '</div>'
+            + '<div class="turma-periodo">' + periodoLabel(item.turma.periodo) + '</div></div></div>';
+    }
+    function statusBadge(status) {
+        switch (status) {
+            case 'pendente':   return '<span class="pi-badge pi-badge-pendente">Pendente</span>';
+            case 'confirmado': return '<span class="pi-badge pi-badge-confirmado">Confirmado</span>';
+            case 'cancelado':  return '<span class="pi-badge pi-badge-cancelado">Cancelado</span>';
+            default: return '<span class="pi-badge" style="background:#eee;color:#666">' + esc(status) + '</span>';
+        }
+    }
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        try { return new Date(dateStr).toLocaleDateString('pt-PT'); } catch(e) { return '—'; }
+    }
+    function renderActions(item) {
+        let html = '<div class="pi-actions">';
+        html += '<button class="pi-action-btn view" onclick="visualizarPreInscricao(' + item.id + ')" title="Ver detalhes"><i class="fas fa-eye"></i></button>';
+        if (item.status !== 'confirmado') html += '<button class="pi-action-btn confirm" onclick="confirmarPreInscricao(' + item.id + ')" title="Confirmar"><i class="fas fa-check"></i></button>';
+        if (item.status !== 'cancelado')  html += '<button class="pi-action-btn cancel"  onclick="cancelarPreInscricao(' + item.id + ')"  title="Cancelar"><i class="fas fa-times"></i></button>';
+        html += '</div>';
+        return html;
+    }
+
+    /* ── RENDER TABLE ── */
     function renderTable() {
         const sorted = filteredData.slice().sort(function(a, b) {
             let cmp = 0;
             switch (sortField) {
-                case 'id': cmp = (a.id || 0) - (b.id || 0); break;
-                case 'nome_completo': cmp = (a.nome_completo || '').localeCompare(b.nome_completo || ''); break;
-                case 'email': cmp = (a.email || '').localeCompare(b.email || ''); break;
-                case 'status': cmp = (a.status || '').localeCompare(b.status || ''); break;
+                case 'id':           cmp = (a.id || 0) - (b.id || 0); break;
+                case 'nome_completo':cmp = (a.nome_completo || '').localeCompare(b.nome_completo || ''); break;
+                case 'email':        cmp = (a.email || '').localeCompare(b.email || ''); break;
+                case 'status':       cmp = (a.status || '').localeCompare(b.status || ''); break;
             }
             return sortDir === 'asc' ? cmp : -cmp;
         });
@@ -656,19 +701,20 @@
         let mobileHtml = '';
         paged.forEach(function(item) {
             mobileHtml += '<div class="pi-mobile-card">';
-            mobileHtml += '<div class="card-top"><div><div class="card-name">' + esc(item.nome_completo) + '</div>';
-            mobileHtml += '<div class="card-email">' + esc(item.email || 'Sem email') + '</div></div>';
-            mobileHtml += statusBadge(item.status) + '</div>';
+            mobileHtml += '<div class="card-top"><div>'
+                + '<div class="card-name">' + esc(item.nome_completo) + '</div>'
+                + '<div class="card-email">' + esc(item.email || 'Sem email') + '</div>'
+                + '</div>' + statusBadge(item.status) + '</div>';
             if (item.turma) {
-                mobileHtml += '<div class="card-turma">' + periodoIcon(item.turma.periodo) + ' ';
-                mobileHtml += esc(item.turma.curso ? item.turma.curso.nome : '') + ' &bull; ';
-                mobileHtml += esc(item.turma.centro ? item.turma.centro.nome : '') + '</div>';
+                mobileHtml += '<div class="card-turma">' + periodoIcon(item.turma.periodo) + ' '
+                    + esc(item.turma.curso ? item.turma.curso.nome : '') + ' &bull; '
+                    + esc(item.turma.centro ? item.turma.centro.nome : '') + '</div>';
                 mobileHtml += '<div class="card-turma">' + renderDiaBadges(item.turma.dia_semana) + '</div>';
             }
             mobileHtml += '<div class="card-actions">';
             mobileHtml += '<button class="btn btn-sm btn-outline-primary" onclick="visualizarPreInscricao(' + item.id + ')"><i class="fas fa-eye me-1"></i>Ver</button>';
             if (item.status !== 'confirmado') mobileHtml += '<button class="btn btn-sm btn-outline-success" onclick="confirmarPreInscricao(' + item.id + ')"><i class="fas fa-check me-1"></i>Confirmar</button>';
-            if (item.status !== 'cancelado') mobileHtml += '<button class="btn btn-sm btn-outline-danger" onclick="cancelarPreInscricao(' + item.id + ')"><i class="fas fa-times me-1"></i>Cancelar</button>';
+            if (item.status !== 'cancelado')  mobileHtml += '<button class="btn btn-sm btn-outline-danger"  onclick="cancelarPreInscricao(' + item.id + ')"><i class="fas fa-times me-1"></i>Cancelar</button>';
             mobileHtml += '</div></div>';
         });
         $('#mobileCards').html(mobileHtml);
@@ -681,7 +727,7 @@
             let pagesHtml = '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')"' + (currentPage <= 1 ? ' disabled' : '') + '><i class="fas fa-chevron-left" style="font-size:0.6rem"></i></button>';
             const maxBtn = 7;
             let startBtn = Math.max(1, currentPage - Math.floor(maxBtn / 2));
-            let endBtn = Math.min(totalPages, startBtn + maxBtn - 1);
+            let endBtn   = Math.min(totalPages, startBtn + maxBtn - 1);
             if (endBtn - startBtn < maxBtn - 1) startBtn = Math.max(1, endBtn - maxBtn + 1);
             for (let p = startBtn; p <= endBtn; p++) {
                 pagesHtml += '<button class="page-btn' + (p === currentPage ? ' active' : '') + '" onclick="goToPage(' + p + ')">' + p + '</button>';
@@ -701,57 +747,7 @@
         $('.pi-table-wrap')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    function esc(str) {
-        if (!str) return '';
-        const d = document.createElement('div');
-        d.textContent = str;
-        return d.innerHTML;
-    }
-    function periodoIcon(periodo) {
-        switch (periodo) {
-            case 'manha': return '<i class="fas fa-sun"></i>';
-            case 'tarde': return '<i class="fas fa-cloud-sun"></i>';
-            case 'noite': return '<i class="fas fa-moon"></i>';
-            default: return '<i class="fas fa-clock"></i>';
-        }
-    }
-    function periodoLabel(periodo) {
-        switch (periodo) {
-            case 'manha': return 'Manhã';
-            case 'tarde': return 'Tarde';
-            case 'noite': return 'Noite';
-            default: return periodo || '—';
-        }
-    }
-    function renderDiaBadges(dias) {
-        if (!dias || !Array.isArray(dias) || dias.length === 0) return '—';
-        return dias.map(function(d) { return '<span class="pi-badge pi-badge-dia">' + esc(d.substring(0, 3)) + '</span>'; }).join('');
-    }
-    function renderTurmaCell(item) {
-        if (!item.turma) return '<span style="color:var(--pi-text-muted);font-size:0.75rem">Sem turma</span>';
-        return '<div class="turma-info"><span class="periodo-icon">' + periodoIcon(item.turma.periodo) + '</span><div><div class="turma-name">' + esc(item.turma.curso ? item.turma.curso.nome : '') + '</div><div class="turma-periodo">' + periodoLabel(item.turma.periodo) + '</div></div></div>';
-    }
-    function statusBadge(status) {
-        switch (status) {
-            case 'pendente': return '<span class="pi-badge pi-badge-pendente">Pendente</span>';
-            case 'confirmado': return '<span class="pi-badge pi-badge-confirmado">Confirmado</span>';
-            case 'cancelado': return '<span class="pi-badge pi-badge-cancelado">Cancelado</span>';
-            default: return '<span class="pi-badge" style="background:#eee;color:#666">' + esc(status) + '</span>';
-        }
-    }
-    function renderActions(item) {
-        let html = '<div class="pi-actions">';
-        html += '<button class="pi-action-btn view" onclick="visualizarPreInscricao(' + item.id + ')" title="Ver detalhes"><i class="fas fa-eye"></i></button>';
-        if (item.status !== 'confirmado') html += '<button class="pi-action-btn confirm" onclick="confirmarPreInscricao(' + item.id + ')" title="Confirmar"><i class="fas fa-check"></i></button>';
-        if (item.status !== 'cancelado') html += '<button class="pi-action-btn cancel" onclick="cancelarPreInscricao(' + item.id + ')" title="Cancelar"><i class="fas fa-times"></i></button>';
-        html += '</div>';
-        return html;
-    }
-    function formatDate(dateStr) {
-        if (!dateStr) return '—';
-        try { return new Date(dateStr).toLocaleDateString('pt-PT'); } catch(e) { return '—'; }
-    }
-
+    /* ── VISUALIZAR ── */
     window.visualizarPreInscricao = function(id) {
         $('#viewModalId').text('#' + id);
         $('#viewModalContent').html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="text-muted mt-2" style="font-size:0.8125rem">Carregando...</p></div>');
@@ -760,17 +756,17 @@
             url: '/pre-inscricoes/' + id,
             method: 'GET',
             success: function(r) {
-                const dados = r.dados || r;
+                const d = r.dados || r;
                 let html = '';
-                html += detailRow('fa-user', 'Nome Completo', esc(dados.nome_completo));
-                html += detailRow('fa-envelope', 'Email', esc(dados.email || '—'));
-                html += detailRow('fa-phone', 'Contactos', dados.contactos && dados.contactos.length ? esc(dados.contactos.join(', ')) : '—');
-                html += detailRow('fa-book', 'Curso', esc(dados.turma && dados.turma.curso ? dados.turma.curso.nome : 'Sem turma'));
-                html += detailRow('fa-map-marker-alt', 'Centro', esc(dados.turma && dados.turma.centro ? dados.turma.centro.nome : '—'));
-                html += detailRow('fa-clock', 'Período', dados.turma ? periodoIcon(dados.turma.periodo) + ' ' + periodoLabel(dados.turma.periodo) : '—');
-                html += detailRow('fa-calendar', 'Data de Arranque', formatDate(dados.turma ? dados.turma.data_arranque : null));
-                html += detailRow('fa-comment', 'Observações', esc(dados.observacoes || 'Sem observações'));
-                html += '<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-info-circle"></i></div><div><div class="pi-detail-label">Status</div><div class="mt-1">' + statusBadge(dados.status) + '</div></div></div>';
+                html += detailRow('fa-user',          'Nome Completo', esc(d.nome_completo));
+                html += detailRow('fa-envelope',      'Email',         esc(d.email || '—'));
+                html += detailRow('fa-phone',         'Contactos',     d.contactos && d.contactos.length ? esc(d.contactos.join(', ')) : '—');
+                html += detailRow('fa-book',          'Curso',         esc(d.turma && d.turma.curso ? d.turma.curso.nome : 'Sem turma'));
+                html += detailRow('fa-map-marker-alt','Centro',        esc(d.turma && d.turma.centro ? d.turma.centro.nome : '—'));
+                html += detailRow('fa-clock',         'Período',       d.turma ? periodoIcon(d.turma.periodo) + ' ' + periodoLabel(d.turma.periodo) : '—');
+                html += detailRow('fa-calendar',      'Data de Arranque', formatDate(d.turma ? d.turma.data_arranque : null));
+                html += detailRow('fa-comment',       'Observações',   esc(d.observacoes || 'Sem observações'));
+                html += '<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-info-circle"></i></div><div><div class="pi-detail-label">Status</div><div class="mt-1">' + statusBadge(d.status) + '</div></div></div>';
                 $('#viewModalContent').html(html);
             },
             error: function() {
@@ -783,6 +779,7 @@
         return '<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas ' + icon + '"></i></div><div style="min-width:0;flex:1"><div class="pi-detail-label">' + label + '</div><div class="pi-detail-value">' + value + '</div></div></div>';
     }
 
+    /* ── CONFIRMAR / CANCELAR — actualiza a linha imediatamente ── */
     window.confirmarPreInscricao = function(id) {
         Swal.fire({
             title: 'Confirmar Pré-Inscrição',
@@ -793,7 +790,9 @@
             cancelButtonColor: '#64748b',
             confirmButtonText: 'Sim, confirmar',
             cancelButtonText: 'Cancelar'
-        }).then(function(result) { if (result.isConfirmed) atualizarStatus(id, 'confirmado'); });
+        }).then(function(result) {
+            if (result.isConfirmed) atualizarStatus(id, 'confirmado');
+        });
     };
 
     window.cancelarPreInscricao = function(id) {
@@ -806,7 +805,9 @@
             cancelButtonColor: '#64748b',
             confirmButtonText: 'Sim, cancelar',
             cancelButtonText: 'Não, voltar'
-        }).then(function(result) { if (result.isConfirmed) atualizarStatus(id, 'cancelado'); });
+        }).then(function(result) {
+            if (result.isConfirmed) atualizarStatus(id, 'cancelado');
+        });
     };
 
     function atualizarStatus(id, status) {
@@ -817,10 +818,12 @@
             data: JSON.stringify({ status: status }),
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function() {
-                allData = allData.map(function(item) { if (item.id === id) item.status = status; return item; });
+                /* Actualiza o objecto em memória imediatamente */
+                const item = allData.find(function(d) { return d.id === id; });
+                if (item) item.status = status;
+                aplicarFiltrosLocais();   /* re-renderiza a tabela/cards sem recarregar */
                 const txt = status === 'confirmado' ? 'confirmada' : 'cancelada';
                 Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Pré-inscrição ' + txt + ' com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
-                aplicarFiltrosLocais();
             },
             error: function(xhr) {
                 const msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Erro ao atualizar o status.';
@@ -829,29 +832,30 @@
         });
     }
 
+    /* ── CRIAR ── */
     window.salvarPreInscricao = function() {
-        const form = $('#formCriarPreInscricao');
-        const turmaId = $('#criarTurmaId').val();
-        const nome = $('#criarNome').val().trim();
-        const email = $('#criarEmail').val().trim();
-        const contactos = $('#criarContactos').val().trim();
-        const status = $('#criarStatus').val();
-        const observacoes = $('#criarObservacoes').val().trim();
+        const $form = $('#formCriarPreInscricao');
+        const turmaId    = $('#criarTurmaId').val();
+        const nome       = $('#criarNome').val().trim();
+        const email      = $('#criarEmail').val().trim();
+        const contactos  = $('#criarContactos').val().trim();
+        const status     = $('#criarStatus').val();
+        const observacoes= $('#criarObservacoes').val().trim();
 
-        form.find('.form-control, .form-select').removeClass('is-invalid');
+        $form.find('.form-control, .form-select').removeClass('is-invalid');
         let valid = true;
         if (!turmaId) { $('#criarTurmaId').addClass('is-invalid'); valid = false; }
-        if (!nome) { $('#criarNome').addClass('is-invalid'); valid = false; }
+        if (!nome)    { $('#criarNome').addClass('is-invalid');    valid = false; }
         if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $('#criarEmail').addClass('is-invalid'); valid = false; }
         if (!valid) return;
 
         const data = {
-            turma_id: turmaId,
+            turma_id:      turmaId,
             nome_completo: nome,
-            email: email || null,
-            status: status,
-            observacoes: observacoes || null,
-            contactos: contactos ? [contactos] : []
+            email:         email || null,
+            status:        status,
+            observacoes:   observacoes || null,
+            contactos:     contactos ? [contactos] : []
         };
 
         const $btn = $('#btnSalvar');
@@ -870,7 +874,7 @@
                 aplicarFiltrosLocais();
                 bootstrap.Modal.getInstance(document.getElementById('modalNovaPreInscricao')).hide();
                 Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Pré-inscrição criada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
-                form[0].reset();
+                $form[0].reset();
             },
             error: function(xhr) {
                 const msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Erro ao criar a pré-inscrição.';
