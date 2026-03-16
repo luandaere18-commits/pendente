@@ -373,6 +373,14 @@
 (function() {
     'use strict';
 
+    /* Helpers para gerir instâncias de modal de forma segura */
+    function modalShow(id) {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById(id)).show();
+    }
+    function modalHide(id) {
+        bootstrap.Modal.getOrCreateInstance(document.getElementById(id)).hide();
+    }
+
     let allData = @json($categorias->load('grupo', 'itens')->values());
     let gruposMap = @json($grupos->keyBy('id')->map(fn($g) => ['id' => $g->id, 'display_name' => $g->display_name]));
     let filteredData = [];
@@ -516,8 +524,12 @@
         const local = allData.find(function(c) { return c.id == id; });
         if (local) { renderVisualizarModal(local); return; }
         $('#conteudoVisualizarCategoria').html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></div>');
-        new bootstrap.Modal(document.getElementById('modalVisualizarCategoria')).show();
-        $.ajax({ url: '/categorias/' + id, method: 'GET', success: function(r) { renderVisualizarModal(r.data || r); }, error: function() { $('#conteudoVisualizarCategoria').html('<div class="text-center py-3 text-danger">Erro ao carregar</div>'); } });
+        modalShow('modalVisualizarCategoria');
+        $.ajax({
+            url: '/categorias/' + id, method: 'GET',
+            success: function(r) { renderVisualizarModal(r.data || r); },
+            error: function() { $('#conteudoVisualizarCategoria').html('<div class="text-center py-3 text-danger">Erro ao carregar</div>'); }
+        });
     };
 
     function renderVisualizarModal(c) {
@@ -531,7 +543,7 @@
             + dr('fa-circle',    'Status',    statusBadge(c.ativo))
             + dr('fa-align-left','Descrição', descricaoHtml);
         $('#conteudoVisualizarCategoria').html(conteudo);
-        new bootstrap.Modal(document.getElementById('modalVisualizarCategoria')).show();
+        modalShow('modalVisualizarCategoria');
     }
 
     function dr(icon, label, value) {
@@ -542,7 +554,11 @@
     window.abrirEdicaoCategoria = function(id) {
         const local = allData.find(function(c) { return c.id == id; });
         if (local) { preencherFormEditar(local); return; }
-        $.ajax({ url: '/categorias/' + id, method: 'GET', success: function(r) { preencherFormEditar(r.data || r); }, error: function() { Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao carregar dados', confirmButtonColor: '#1d4ed8' }); } });
+        $.ajax({
+            url: '/categorias/' + id, method: 'GET',
+            success: function(r) { preencherFormEditar(r.data || r); },
+            error: function() { Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao carregar dados', confirmButtonColor: '#1d4ed8' }); }
+        });
     };
 
     function preencherFormEditar(c) {
@@ -552,7 +568,7 @@
         $('#editDescricao').val(c.descricao || '');
         $('#editOrdem').val(c.ordem ?? 0);
         $('#editAtivo').prop('checked', !!c.ativo);
-        new bootstrap.Modal(document.getElementById('modalEditarCategoria')).show();
+        modalShow('modalEditarCategoria');
     }
 
     /* ── CRIAR ── */
@@ -570,9 +586,13 @@
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function(r) {
                 const nova = r.data || r;
-                if (nova && nova.id) { nova.itens = []; allData.unshift(nova); }
+                if (nova && nova.id) {
+                    nova.itens = [];
+                    nova.grupo = gruposMap[nova.grupo_id] || null;
+                    allData.unshift(nova);
+                }
                 aplicarFiltrosLocais();
-                bootstrap.Modal.getInstance(document.getElementById('modalNovaCategoria')).hide();
+                modalHide('modalNovaCategoria');
                 Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Categoria criada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
             },
             error: function(xhr) {
@@ -602,9 +622,13 @@
             success: function(r) {
                 const upd = r.data || r;
                 const idx = allData.findIndex(function(c) { return c.id == id; });
-                if (idx !== -1 && upd && upd.id) { upd.itens = allData[idx].itens; allData[idx] = upd; }
+                if (idx !== -1 && upd && upd.id) {
+                    upd.itens = allData[idx].itens;
+                    upd.grupo = gruposMap[upd.grupo_id] || allData[idx].grupo;
+                    allData[idx] = upd;
+                }
                 aplicarFiltrosLocais();
-                bootstrap.Modal.getInstance(document.getElementById('modalEditarCategoria')).hide();
+                modalHide('modalEditarCategoria');
                 Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Categoria atualizada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
             },
             error: function(xhr) {
