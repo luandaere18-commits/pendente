@@ -97,6 +97,7 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     
     // Turmas
     Route::resource('turmas', TurmaController::class);
+    Route::get('/turmas/{turma}/show', [TurmaController::class, 'show'])->name('turmas.show.legacy');
     
     // Pré-inscrições
     Route::resource('pre-inscricoes', PreInscricaoController::class)->parameters([

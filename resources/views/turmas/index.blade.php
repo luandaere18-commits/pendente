@@ -375,6 +375,7 @@
                         <th>Dias</th>
                         <th>Status</th>
                         <th>Período</th>
+                        <th>Modalidade</th>
                         <th>Horário</th>
                         <th>Vagas</th>
                         <th>Público</th>
@@ -483,6 +484,16 @@
                                     <option value="noite">Noite</option>
                                 </select>
                                 <div class="form-text">Detecta automaticamente baseado na hora de início</div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">Modalidade <span class="required">*</span></label>
+                                <select class="form-select" name="modalidade" required>
+                                    <option value="">Selecione a modalidade</option>
+                                    <option value="presencial">Presencial</option>
+                                    <option value="online">Online</option>
+                                    <option value="hibrido">Híbrido</option>
+                                </select>
                             </div>
 
                             <div class="mb-2">
@@ -613,6 +624,16 @@
                             </div>
 
                             <div class="mb-2">
+                                <label class="form-label">Modalidade <span class="required">*</span></label>
+                                <select class="form-select" id="editModalidade" name="modalidade" required>
+                                    <option value="">Selecione</option>
+                                    <option value="presencial">Presencial</option>
+                                    <option value="online">Online</option>
+                                    <option value="hibrido">Híbrido</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
                                 <label class="form-label">Status</label>
                                 <select class="form-select" id="editStatus" name="status">
                                     <option value="planeada">Planeada</option>
@@ -722,18 +743,22 @@ function carregarDadosFiltros() {
 // Carregar dados das turmas
 function carregarDadosTurmas() {
     $.ajax({
-        url: '/turmas?per_page=1000',
+        url: '/turmas',
         method: 'GET',
         headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         success: function(response) {
-            allData = response.data || response;
+            // A rota web retorna a view, precisa dos dados JSON
+            allData = Array.isArray(response) ? response : (response.data || []);
             if (!Array.isArray(allData)) {
                 allData = [];
             }
+            console.log('Turmas carregadas:', allData.length);
             aplicarFiltrosLocais();
         },
-        error: function() {
-            console.error('Erro ao carregar turmas');
+        error: function(xhr) {
+            console.error('Erro ao carregar turmas:', xhr);
+            allData = [];
+            aplicarFiltrosLocais();
         }
     });
 }
@@ -825,6 +850,14 @@ function renderTabela() {
         
         const icone = icones[turma.periodo] || 'fas fa-clock';
         
+        const modalidades = {
+            'presencial': { label: 'Presencial', badge: 'presencial' },
+            'online': { label: 'Online', badge: 'online' },
+            'hibrido': { label: 'Híbrido', badge: 'hibrido' }
+        };
+        const modalidadeInfo = modalidades[turma.modalidade] || { label: 'N/A', badge: 'N/A' };
+        let modalidadeHtml = '<span class="pi-badge pi-badge-' + modalidadeInfo.badge + '" style="background:var(--pi-info-light);color:#0369a1">' + modalidadeInfo.label + '</span>';
+        
         let vagasHtml = '-/-';
         if (turma.vagas_totais) {
             vagasHtml = (turma.vagas_preenchidas || 0) + '/' + turma.vagas_totais;
@@ -840,10 +873,11 @@ function renderTabela() {
         row += '<td>' + diasHtml + '</td>';
         row += '<td><span class="pi-badge ' + (statusClass[turma.status] || 'pi-badge-planeada') + '">' + (statusLabels[turma.status] || turma.status) + '</span></td>';
         row += '<td><span class="pi-badge pi-badge-periodo"><i class="fas ' + icone + '"></i> ' + (turma.periodo ? turma.periodo.charAt(0).toUpperCase() + turma.periodo.slice(1) : 'N/A') + '</span></td>';
+        row += '<td>' + modalidadeHtml + '</td>';
         row += '<td style="font-size:0.75rem;white-space:nowrap">' + (turma.hora_inicio && turma.hora_fim ? turma.hora_inicio + ' - ' + turma.hora_fim : '—') + '</td>';
         row += '<td style="font-size:0.75rem;text-align:center">' + vagasHtml + '</td>';
         row += '<td>' + publicado + '</td>';
-        row += '<td><div class="pi-actions"><button class="pi-action-btn view" onclick="visualizarTurma(' + turma.id + ')" title="Ver detalhes"><i class="fas fa-eye"></i></button><button class="pi-action-btn edit" onclick="window.location.href=\'/turmas/' + turma.id + '/show\'" title="Gerir"><i class="fas fa-cogs"></i></button><button class="pi-action-btn delete" onclick="eliminarTurma(' + turma.id + ')" title="Eliminar"><i class="fas fa-trash"></i></button></div></td>';
+        row += '<td><div class="pi-actions"><button class="pi-action-btn view" onclick="visualizarTurma(' + turma.id + ')" title="Ver detalhes"><i class="fas fa-eye"></i></button><button class="pi-action-btn edit" onclick="window.location.href=\'/turmas/' + turma.id + '\'" title="Gerir"><i class="fas fa-cogs"></i></button><button class="pi-action-btn delete" onclick="eliminarTurma(' + turma.id + ')" title="Eliminar"><i class="fas fa-trash"></i></button></div></td>';
         row += '</tr>';
         
         tbody.append(row);
@@ -1103,6 +1137,7 @@ window.visualizarTurma = function(id) {
             conteudo += detailRow('fa-user-tie', 'Formador', formadorNome);
             conteudo += detailRow('fa-calendar-week', 'Dias', diaSemana);
             conteudo += detailRow('fa-sun', 'Período', getPeriodoBadge(turma.periodo));
+            conteudo += detailRow('fa-chalkboard', 'Modalidade', getModalidadeBadge(turma.modalidade));
             conteudo += detailRow('fa-info-circle', 'Status', getStatusBadge(turma.status));
             conteudo += detailRow('fa-clock', 'Horário', horaInicio + ' - ' + horaFim);
             conteudo += detailRow('fa-hourglass-half', 'Duração', duracao + ' semana(s)');
@@ -1171,6 +1206,7 @@ window.abrirEdicaoTurma = function(id) {
             $('#editCursoId').val(turma.curso_id);
             $('#editFormadorId').val(turma.formador_id || '');
             $('#editPeriodo').val(turma.periodo);
+            $('#editModalidade').val(turma.modalidade || 'presencial');
             $('#editStatus').val(turma.status || 'planeada');
             $('#editHoraInicio').val(turma.hora_inicio || '');
             $('#editHoraFim').val(turma.hora_fim || '');
@@ -1226,6 +1262,7 @@ function criarTurma() {
         centro_id: $('#modalNovasTurma select[name="centro_id"]').val(),
         formador_id: formador_id || null,
         periodo: $('select[name="periodo"]').val(),
+        modalidade: $('select[name="modalidade"]').val(),
         status: status || 'planeada',
         hora_inicio: $('input[name="hora_inicio"]').val(),
         hora_fim: $('input[name="hora_fim"]').val(),
@@ -1240,6 +1277,7 @@ function criarTurma() {
     if (!dados.curso_id) { $('select[name="curso_id"]').addClass('is-invalid'); erros.push('Curso é obrigatório'); }
     if (!dados.centro_id) { $('#modalNovasTurma select[name="centro_id"]').addClass('is-invalid'); erros.push('Centro é obrigatório'); }
     if (!dados.periodo) { $('select[name="periodo"]').addClass('is-invalid'); erros.push('Período é obrigatório'); }
+    if (!dados.modalidade) { $('select[name="modalidade"]').addClass('is-invalid'); erros.push('Modalidade é obrigatória'); }
     if (!dados.hora_inicio) { $('input[name="hora_inicio"]').addClass('is-invalid'); erros.push('Hora de início é obrigatória'); }
     if (!dados.data_arranque) { $('input[name="data_arranque"]').addClass('is-invalid'); erros.push('Data de arranque é obrigatória'); }
 
@@ -1319,6 +1357,7 @@ function atualizarTurma() {
     formData.append('curso_id', $('#editCursoId').val());
     formData.append('formador_id', formador_id || null);
     formData.append('periodo', $('#editPeriodo').val());
+    formData.append('modalidade', $('#editModalidade').val());
     formData.append('status', status || 'planeada');
     formData.append('hora_inicio', $('#editHoraInicio').val());
     formData.append('hora_fim', $('#editHoraFim').val());
@@ -1413,6 +1452,17 @@ function getPeriodoBadge(periodo) {
     const icon = icones[periodo] || 'fa-clock';
     const label = labels[periodo] || 'N/A';
     return '<span class="pi-badge pi-badge-periodo"><i class="fas ' + icon + '"></i> ' + label + '</span>';
+}
+
+/**
+ * Auxiliar: Gerar badge de modalidade
+ */
+function getModalidadeBadge(modalidade) {
+    const icones = { 'presencial': 'fa-building', 'online': 'fa-laptop', 'hibrido': 'fa-handshake' };
+    const labels = { 'presencial': 'Presencial', 'online': 'Online', 'hibrido': 'Híbrido' };
+    const icon = icones[modalidade] || 'fa-chalkboard';
+    const label = labels[modalidade] || 'N/A';
+    return '<span class="pi-badge" style="background:var(--pi-info-light);color:#0369a1"><i class="fas ' + icon + '"></i> ' + label + '</span>';
 }
 
 /**

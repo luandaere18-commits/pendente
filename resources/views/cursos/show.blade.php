@@ -626,6 +626,7 @@
                                                     data-duracao-semanas="{{ $turma->duracao_semanas }}"
                                                     data-formador-id="{{ $turma->formador_id }}"
                                                     data-periodo="{{ $turma->periodo }}"
+                                                    data-modalidade="{{ $turma->modalidade }}"
                                                     data-hora-inicio="{{ $turma->hora_inicio }}"
                                                     data-hora-fim="{{ $turma->hora_fim }}"
                                                     data-centro-id="{{ $turma->centro_id }}"
@@ -676,6 +677,7 @@
                                         data-duracao-semanas="{{ $turma->duracao_semanas }}"
                                         data-formador-id="{{ $turma->formador_id }}"
                                         data-periodo="{{ $turma->periodo }}"
+                                        data-modalidade="{{ $turma->modalidade }}"
                                         data-hora-inicio="{{ $turma->hora_inicio }}"
                                         data-hora-fim="{{ $turma->hora_fim }}"
                                         data-centro-id="{{ $turma->centro_id }}"
@@ -935,6 +937,15 @@
                             </select>
                         </div>
                         <div class="col-md-4">
+                            <label class="form-label">Modalidade <span class="required">*</span></label>
+                            <select name="modalidade" class="form-select" required>
+                                <option value="" disabled selected>Selecione</option>
+                                <option value="presencial">Presencial</option>
+                                <option value="online">Online</option>
+                                <option value="hibrido">Híbrido</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label">Hora Início</label>
                             <input type="time" name="hora_inicio" class="form-control">
                         </div>
@@ -1032,6 +1043,15 @@
                                 <option value="manha">Manha</option>
                                 <option value="tarde">Tarde</option>
                                 <option value="noite">Noite</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Modalidade <span class="required">*</span></label>
+                            <select name="edit_modalidade" id="editturmaModalidade" class="form-select" required>
+                                <option value="" disabled>Selecione</option>
+                                <option value="presencial">Presencial</option>
+                                <option value="online">Online</option>
+                                <option value="hibrido">Híbrido</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -1235,6 +1255,7 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         data_arranque: $form.find("input[name=\"data_arranque\"]").val(),
         duracao_semanas: $form.find("input[name=\"duracao_semanas\"]").val() || null,
         periodo: $form.find("select[name=\"periodo\"]").val(),
+        modalidade: $form.find("select[name=\"modalidade\"]").val(),
         formador_id: $form.find("select[name=\"formador_id\"]").val() || null,
         hora_inicio: $form.find("input[name=\"hora_inicio\"]").val() || "",
         hora_fim: $form.find("input[name=\"hora_fim\"]").val() || "",
@@ -1242,7 +1263,7 @@ $("#formAdicionarturmaAjax").on("submit", function(e) {
         vagas_totais: $form.find("input[name=\"vagas_totais\"]").val() || null,
         publicado: $form.find("input[name=\"publicado\"]").is(":checked") ? 1 : 0
     };
-    const allowedFields = ['curso_id','centro_id','dia_semana','data_arranque','duracao_semanas','periodo','formador_id','hora_inicio','hora_fim','status','vagas_totais','publicado'];
+    const allowedFields = ['curso_id','centro_id','dia_semana','data_arranque','duracao_semanas','periodo','modalidade','formador_id','hora_inicio','hora_fim','status','vagas_totais','publicado'];
     const cleanFormData = {};
     allowedFields.forEach(field => { if (formData.hasOwnProperty(field)) cleanFormData[field] = formData[field]; });
     $.ajax({
@@ -1272,6 +1293,7 @@ $(document).on("click", ".btn-editar-turma", function() {
     const dataArranque = $(this).data("data-arranque");
     const duracaoSemanas = $(this).data("duracao-semanas");
     let periodo = $(this).data("periodo");
+    const modalidade = $(this).data("modalidade");
     const horaInicio = $(this).data("hora-inicio");
     const horaFim = $(this).data("hora-fim");
     const formadorId = $(this).data("formador-id");
@@ -1295,6 +1317,7 @@ $(document).on("click", ".btn-editar-turma", function() {
     $("#editturmaDuracao").val(duracaoSemanas || "");
     $("#editturmaFormador").val(formadorId || "");
     $("#edittumaPeriodo").val(periodo);
+    $("#editturmaModalidade").val(modalidade || "");
     $("#editturmaHoraInicio").val(horaInicio || "");
     $("#editturmaHoraFim").val(horaFim || "");
     $("#editturmaStatus").val(status);
@@ -1343,6 +1366,7 @@ $("#formEditarturmaAjax").on("submit", function(e) {
     formData.append('centro_id', $form.find("select[name=\"edit_centro_id\"]").val());
     formData.append('data_arranque', $form.find("input[name=\"edit_data_arranque\"]").val());
     formData.append('periodo', $form.find("select[name=\"edit_periodo\"]").val());
+    formData.append('modalidade', $form.find("select[name=\"edit_modalidade\"]").val());
     formData.append('vagas_totais', $form.find("input[name=\"edit_vagas_totais\"]").val() || 0);
 
     const duracaoSemanas = $form.find("input[name=\"edit_duracao_semanas\"]").val();

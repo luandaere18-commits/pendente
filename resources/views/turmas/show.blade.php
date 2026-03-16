@@ -589,6 +589,16 @@
                             </div>
 
                             <div class="mb-2">
+                                <label class="form-label">Modalidade <span class="required">*</span></label>
+                                <select id="modalidadeShow" name="modalidade" class="form-select" required>
+                                    <option value="">Selecione</option>
+                                    <option value="presencial" {{ $turma->modalidade === 'presencial' ? 'selected' : '' }}>Presencial</option>
+                                    <option value="online" {{ $turma->modalidade === 'online' ? 'selected' : '' }}>Online</option>
+                                    <option value="hibrido" {{ $turma->modalidade === 'hibrido' ? 'selected' : '' }}>Híbrido</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
                                 <label class="form-label">Status</label>
                                 <select id="statusShow" name="status" class="form-select">
                                     <option value="planeada" {{ $turma->status === 'planeada' ? 'selected' : '' }}>Planeada</option>
@@ -770,6 +780,7 @@ function configurarFormulario() {
         formData.append('curso_id', $('input[name="curso_id"]').val());
         formData.append('centro_id', $('#centroIdHidden').val());
         formData.append('periodo', $('#periodoShow').val());
+        formData.append('modalidade', $('#modalidadeShow').val());
         formData.append('status', $('#statusShow').val());
         formData.append('hora_inicio', horaInicio);
         formData.append('hora_fim', $('#horaFimShow').val() || '');
