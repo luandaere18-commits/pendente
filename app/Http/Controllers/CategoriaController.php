@@ -11,7 +11,8 @@ class CategoriaController extends Controller
     public function index()
     {
         $categorias = Categoria::with(['grupo', 'itens'])->ordenado()->get();
-        return view('categorias.index', compact('categorias'));
+        $grupos = Grupo::where('ativo', true)->ordenado()->get();
+        return view('categorias.index', compact('categorias', 'grupos'));
     }
 
     public function create()

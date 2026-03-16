@@ -12,7 +12,8 @@ class ItemController extends Controller
     public function index()
     {
         $itens = Item::with(['categoria.grupo'])->ordenado()->get();
-        return view('itens.index', compact('itens'));
+        $categorias = Categoria::where('ativo', true)->ordenado()->get();
+        return view('itens.index', compact('itens', 'categorias'));
     }
 
     public function create()
