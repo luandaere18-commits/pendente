@@ -33,9 +33,9 @@
     body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
 
     /* ── PAGE LAYOUT ── */
-    .pi-page { width: 100%; padding: 0; }
+    .pi-page { width: 100%; padding: 0; overflow-x: hidden; }
 
-    /* ── BLUE HEADER (35% blue rule) ── */
+    /* ── BLUE HEADER ── */
     .pi-page-header {
         background: var(--pi-primary-gradient);
         color: #fff;
@@ -53,11 +53,11 @@
         padding: 0.5rem 1rem; border-radius: var(--pi-radius);
         background: #fff; color: var(--pi-primary); font-weight: 600;
         font-size: 0.8125rem; border: none; cursor: pointer;
-        transition: all 0.15s;
+        transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
     }
     .pi-page-header .pi-btn-create:hover { background: #dbeafe; }
 
-    /* ── STATS (with blue accents) ── */
+    /* ── STATS ── */
     .pi-stats-bar {
         display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
         background: #fff; border-bottom: 1px solid var(--pi-border);
@@ -66,6 +66,7 @@
         padding: 0.75rem 1.25rem;
         border-right: 1px solid var(--pi-border);
         display: flex; align-items: center; gap: 0.75rem;
+        min-width: 0;
     }
     .pi-stat:last-child { border-right: none; }
     .pi-stat-icon {
@@ -77,17 +78,17 @@
     .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
     .pi-stat-icon.gray { background: rgba(100,116,139,0.08); color: var(--pi-muted); }
     .pi-stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
-    .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pi-stat-value { font-size: 1.375rem; font-weight: 700; line-height: 1; }
 
-    /* ── TOOLBAR (filters + search) ── */
+    /* ── TOOLBAR ── */
     .pi-toolbar {
         background: #fff; border-bottom: 1px solid var(--pi-border);
         padding: 0.625rem 1.25rem;
-        display: flex; flex-wrap: nowrap; align-items: center; gap: 0.5rem; overflow-x: auto;
+        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
     }
     .pi-toolbar .search-wrap {
-        position: relative; flex: 0 1 250px; min-width: 250px;
+        position: relative; flex: 1 1 200px; min-width: 0;
     }
     .pi-toolbar .search-wrap i {
         position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
@@ -106,7 +107,7 @@
         height: 2.125rem; border: 1px solid var(--pi-border);
         border-radius: var(--pi-radius); font-size: 0.8125rem;
         padding: 0 2rem 0 0.625rem; background: var(--pi-bg);
-        min-width: 140px; cursor: pointer;
+        min-width: 120px; cursor: pointer; flex-shrink: 0;
     }
     .pi-toolbar select:focus {
         outline: none; border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light);
@@ -115,13 +116,13 @@
         border: none; background: transparent; color: var(--pi-text-muted);
         font-size: 0.8125rem; padding: 0.375rem 0.5rem; border-radius: var(--pi-radius);
         display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer;
-        white-space: nowrap;
+        white-space: nowrap; flex-shrink: 0;
     }
     .pi-btn-clear:hover { background: var(--pi-danger-light); color: var(--pi-danger); }
 
     /* ── TABLE ── */
-    .pi-table-wrap { background: #fff; overflow: auto; }
-    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; }
+    .pi-table-wrap { background: #fff; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; table-layout: auto; }
     .pi-table thead th {
         background: var(--pi-primary);
         color: #fff;
@@ -133,22 +134,23 @@
     .pi-table tbody td {
         padding: 0.5rem 1rem; vertical-align: middle;
         border-bottom: 1px solid #f0f4ff;
+        white-space: nowrap;
     }
     .pi-table tbody tr { transition: background 0.1s; }
     .pi-table tbody tr:hover { background: var(--pi-primary-light); }
     .pi-table tbody tr:last-child td { border-bottom: none; }
     .pi-table .mono { font-family: 'SF Mono','Fira Code',monospace; font-size: 0.6875rem; color: var(--pi-muted); }
 
-    /* ── PAGINATION (blue bar) ── */
+    /* ── PAGINATION ── */
     .pi-pagination-bar {
         background: var(--pi-primary);
         color: #fff;
         padding: 0.5rem 1.25rem;
         display: flex; align-items: center; justify-content: space-between;
-        font-size: 0.75rem;
+        font-size: 0.75rem; flex-wrap: wrap; gap: 0.5rem;
     }
     .pi-pagination-bar .info { opacity: 0.85; }
-    .pi-pagination-bar .pages { display: flex; gap: 0.25rem; }
+    .pi-pagination-bar .pages { display: flex; gap: 0.25rem; flex-wrap: wrap; }
     .pi-pagination-bar .page-btn {
         padding: 0.25rem 0.625rem; border-radius: 0.25rem;
         border: 1px solid rgba(255,255,255,0.3);
@@ -157,12 +159,14 @@
     }
     .pi-pagination-bar .page-btn:hover { background: rgba(255,255,255,0.15); }
     .pi-pagination-bar .page-btn.active { background: #fff; color: var(--pi-primary); font-weight: 700; border-color: #fff; }
+    .pi-pagination-bar .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* ── BADGES ── */
     .pi-badge {
         display: inline-flex; align-items: center; gap: 0.25rem;
         padding: 0.15rem 0.5rem; border-radius: 9999px;
         font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em;
+        white-space: nowrap;
     }
     .pi-badge-ativo { background: var(--pi-success-light); color: #15803d; }
     .pi-badge-inativo { background: rgba(100,116,139,0.08); color: #475569; }
@@ -171,8 +175,12 @@
     .pi-badge-hibrido { background: var(--pi-warning-light); color: #92400e; }
 
     /* ── ACTION BUTTONS ── */
-    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; opacity: 0; transition: opacity 0.15s; }
-    .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; transition: opacity 0.15s; }
+    /* Desktop: show on hover. Mobile/touch: always visible */
+    @media (hover: hover) and (pointer: fine) {
+        .pi-actions { opacity: 0; }
+        .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    }
     .pi-action-btn {
         width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem;
         display: inline-flex; align-items: center; justify-content: center;
@@ -197,22 +205,22 @@
         background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
         padding: 0.75rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
     }
-    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.375rem; }
-    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.375rem; gap: 0.5rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); word-break: break-word; }
     .pi-mobile-card .card-meta { font-size: 0.6875rem; color: var(--pi-text-muted); margin-bottom: 0.375rem; }
     .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); }
-    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; flex-wrap: wrap; }
     .pi-mobile-card .card-actions .btn { font-size: 0.6875rem; padding: 0.2rem 0.5rem; }
 
-    /* ── COURSE IMAGE IN TABLE ── */
-    .pi-curso-img { width: 32px; height: 32px; border-radius: 0.375rem; object-fit: cover; border: 1px solid var(--pi-border); }
-    .pi-curso-img-placeholder { width: 32px; height: 32px; border-radius: 0.375rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; }
+    /* ── COURSE IMAGE ── */
+    .pi-curso-img { width: 32px; height: 32px; border-radius: 0.375rem; object-fit: cover; border: 1px solid var(--pi-border); flex-shrink: 0; }
+    .pi-curso-img-placeholder { width: 32px; height: 32px; border-radius: 0.375rem; background: var(--pi-primary-light); display: inline-flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
 
     /* ── MODAL ── */
     .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
     .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1rem 1.25rem; background: var(--pi-primary-light); }
     .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
-    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
     .pi-modal .modal-header .header-icon.green { background: var(--pi-success); color: #fff; }
     .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
@@ -226,7 +234,7 @@
     .pi-detail-row:last-child { border-bottom: none; }
     .pi-detail-icon { width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
     .pi-detail-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
-    .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; }
+    .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; word-break: break-word; }
 
     /* ── FORM ── */
     .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
@@ -276,15 +284,24 @@
     @media (max-width: 767.98px) {
         .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
         .pi-stat { border-bottom: 1px solid var(--pi-border); }
-        .pi-toolbar { flex-direction: column; }
+        .pi-toolbar { flex-direction: column; align-items: stretch; }
+        .pi-toolbar .search-wrap { flex: 1 1 100%; }
+        .pi-toolbar select { width: 100%; }
         .pi-page-header { flex-direction: column; align-items: stretch; }
         .pi-page-header .pi-btn-create { justify-content: center; }
         .pi-pagination-bar { flex-direction: column; gap: 0.5rem; text-align: center; }
     }
     @media (max-width: 575.98px) {
         .pi-page-header { padding: 0.75rem; }
+        .pi-page-header h1 { font-size: 1.1rem; }
         .pi-toolbar { padding: 0.5rem 0.75rem; }
         .pi-stat { padding: 0.5rem 0.75rem; }
+        .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
+        .pi-stat-value { font-size: 1.125rem; }
+    }
+    @media (max-width: 374.98px) {
+        .pi-stats-bar { grid-template-columns: 1fr; }
+        .pi-stat { border-right: none; }
     }
 </style>
 @endsection
@@ -292,9 +309,7 @@
 @section('content')
 <div class="pi-page">
 
-    {{-- ============================================= --}}
-    {{-- BLUE HEADER                                   --}}
-    {{-- ============================================= --}}
+    {{-- BLUE HEADER --}}
     <div class="pi-page-header">
         <div>
             <div style="display:flex;align-items:center;gap:0.625rem">
@@ -310,9 +325,7 @@
         </button>
     </div>
 
-    {{-- ============================================= --}}
-    {{-- STATS BAR                                     --}}
-    {{-- ============================================= --}}
+    {{-- STATS BAR --}}
     <div class="pi-stats-bar">
         <div class="pi-stat">
             <div class="pi-stat-icon blue"><i class="fas fa-book"></i></div>
@@ -344,9 +357,7 @@
         </div>
     </div>
 
-    {{-- ============================================= --}}
-    {{-- TOOLBAR (filters)                             --}}
-    {{-- ============================================= --}}
+    {{-- TOOLBAR --}}
     <div class="pi-toolbar">
         <div class="search-wrap">
             <i class="fas fa-search"></i>
@@ -362,9 +373,7 @@
         </button>
     </div>
 
-    {{-- ============================================= --}}
-    {{-- TABLE                                         --}}
-    {{-- ============================================= --}}
+    {{-- TABLE --}}
     <div class="pi-table-wrap">
         {{-- Desktop Table --}}
         <div class="pi-desktop-table">
@@ -430,7 +439,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7">
+                            <td colspan="6">
                                 <div class="pi-empty">
                                     <div class="pi-empty-icon"><i class="fas fa-inbox"></i></div>
                                     <h3>Nenhum curso cadastrado</h3>
@@ -448,13 +457,13 @@
             @forelse($cursos as $curso)
                 <div class="pi-mobile-card">
                     <div class="card-top">
-                        <div style="display:flex;align-items:center;gap:0.5rem">
+                        <div style="display:flex;align-items:center;gap:0.5rem;min-width:0">
                             @if($curso->imagem)
                                 <img src="{{ asset('storage/' . $curso->imagem) }}" alt="{{ $curso->nome }}" class="pi-curso-img">
                             @else
                                 <div class="pi-curso-img-placeholder"><i class="fas fa-graduation-cap"></i></div>
                             @endif
-                            <div>
+                            <div style="min-width:0">
                                 <div class="card-name">{{ $curso->nome }}</div>
                                 <div class="card-meta">{{ $curso->centros->count() }} centro(s)</div>
                             </div>
@@ -497,9 +506,7 @@
     </div>
 </div>
 
-{{-- ============================================= --}}
-{{-- MODAL: Visualizar Detalhes do Curso           --}}
-{{-- ============================================= --}}
+{{-- MODAL: Visualizar Detalhes do Curso --}}
 <div class="modal fade pi-modal" id="modalVisualizarCurso" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:580px">
         <div class="modal-content">
@@ -523,9 +530,7 @@
     </div>
 </div>
 
-{{-- ============================================= --}}
-{{-- MODAL: Criar Novo Curso                       --}}
-{{-- ============================================= --}}
+{{-- MODAL: Criar Novo Curso --}}
 <div class="modal fade pi-modal" id="modalNovoCurso" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -553,11 +558,10 @@
                                 <label class="form-label">Área <span class="required">*</span></label>
                                 <input type="text" class="form-control" name="area" required placeholder="Área do curso">
                             </div>
-                            <div class="d-flex align-items-end">
+                            <div class="mb-2">
                                 <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" name="ativo" id="novoCursoAtivo" checked>
-                                        <label class="form-check-label" for="novoCursoAtivo" style="font-size:0.8125rem">Ativo</label>
-                                    </div>
+                                    <input type="checkbox" class="form-check-input" name="ativo" id="novoCursoAtivo" checked>
+                                    <label class="form-check-label" for="novoCursoAtivo" style="font-size:0.8125rem">Ativo</label>
                                 </div>
                             </div>
                             <div class="mb-2">
@@ -595,9 +599,7 @@
     </div>
 </div>
 
-{{-- ============================================= --}}
-{{-- Template para Centro no Modal                 --}}
-{{-- ============================================= --}}
+{{-- Template para Centro no Modal --}}
 <template id="centroCursoTemplate">
     <div class="col-12">
         <div class="pi-centro-card centro-card">
@@ -630,7 +632,6 @@ $(document).ready(function() {
     carregarCentros();
     configurarEventosModal();
 
-    // Filtros automáticos (sem botão)
     let filtroTimeout;
     $('#filtroNome').on('input', function() {
         clearTimeout(filtroTimeout);
@@ -639,59 +640,43 @@ $(document).ready(function() {
     $('#filtroStatus').on('change', aplicarFiltros);
 });
 
-/**
- * Carregar lista de centros disponíveis
- */
 function carregarCentros() {
     $.ajax({
         url: '/centros',
         method: 'GET',
         success: function(data) {
             centrosDisponiveisList = data || [];
-            if (centrosDisponiveisList.length === 0) {
-                console.warn('Nenhum centro disponível para associação');
-            }
         },
         error: function(err) {
             console.error('Erro ao carregar centros:', err);
             centrosDisponiveisList = [];
             Swal.fire({
-                icon: 'warning',
-                title: 'Atenção!',
-                text: 'Não foi possível carregar a lista de centros. Verifique sua conexão de internet.',
-                timer: 4000,
-                showConfirmButton: false,
-                toast: true,
-                position: 'top-end',
-                background: '#1d4ed8',
-                color: '#fff'
+                icon: 'warning', title: 'Atenção!',
+                text: 'Não foi possível carregar a lista de centros.',
+                timer: 4000, showConfirmButton: false,
+                toast: true, position: 'top-end',
+                background: '#1d4ed8', color: '#fff'
             });
         }
     });
 }
 
-/**
- * Carregar detalhes do curso para visualização
- */
 function carregarDetalhesCurso(cursoId) {
     $.ajax({
         url: `/cursos/${cursoId}`,
         method: 'GET',
-        headers: {
-            'Accept': 'application/json'
-        },
+        headers: { 'Accept': 'application/json' },
         success: function(response) {
             const curso = response.dados || response;
-            
-            const statusBadge = curso.ativo 
+
+            const statusBadge = curso.ativo
                 ? '<span class="pi-badge pi-badge-ativo"><i class="fas fa-check-circle"></i> Ativo</span>'
                 : '<span class="pi-badge pi-badge-inativo"><i class="fas fa-times-circle"></i> Inativo</span>';
-            
-            const imagemHtml = curso.imagem_url 
+
+            const imagemHtml = curso.imagem_url
                 ? `<img src="${curso.imagem_url}" alt="${curso.nome}" class="pi-curso-detail-img">`
                 : '<div class="pi-curso-detail-img-placeholder"><i class="fas fa-image"></i></div>';
-            
-            // Seção de Centros
+
             let centrosHtml = '';
             if (curso.centros && curso.centros.length > 0) {
                 centrosHtml = `
@@ -699,6 +684,7 @@ function carregarDetalhesCurso(cursoId) {
                         <div class="section-title" style="font-size:0.75rem;font-weight:600;color:var(--pi-primary);padding-bottom:0.375rem;border-bottom:2px solid var(--pi-primary);display:flex;align-items:center;gap:0.375rem;text-transform:uppercase;letter-spacing:0.03em">
                             <i class="fas fa-building"></i> Centros Associados
                         </div>
+                        <div style="overflow-x:auto">
                         <table class="pi-table" style="font-size:0.75rem">
                             <thead><tr><th>Centro</th><th>Preço (Kz)</th></tr></thead>
                             <tbody>`;
@@ -706,10 +692,9 @@ function carregarDetalhesCurso(cursoId) {
                     const preco = centro.pivot?.preco ? parseFloat(centro.pivot.preco).toLocaleString('pt-PT') : 'N/A';
                     centrosHtml += `<tr><td><strong>${centro.nome}</strong></td><td style="color:var(--pi-success);font-weight:600">${preco}</td></tr>`;
                 });
-                centrosHtml += '</tbody></table></div>';
+                centrosHtml += '</tbody></table></div></div>';
             }
-            
-            // Seção de Turmas
+
             let turmasHtml = '';
             if (curso.turmas && curso.turmas.length > 0) {
                 turmasHtml = `
@@ -717,97 +702,58 @@ function carregarDetalhesCurso(cursoId) {
                         <div class="section-title" style="font-size:0.75rem;font-weight:600;color:var(--pi-info);padding-bottom:0.375rem;border-bottom:2px solid var(--pi-info);display:flex;align-items:center;gap:0.375rem;text-transform:uppercase;letter-spacing:0.03em">
                             <i class="fas fa-calendar"></i> Turmas
                         </div>
+                        <div style="overflow-x:auto">
                         <table class="pi-table" style="font-size:0.75rem">
                             <thead><tr><th>Dias</th><th>Período</th><th>Data Arranque</th><th>Semanas</th></tr></thead>
                             <tbody>`;
                 curso.turmas.forEach(turma => {
-                    const dias = Array.isArray(turma.dia_semana) 
+                    const dias = Array.isArray(turma.dia_semana)
                         ? turma.dia_semana.map(d => {
                             const diasNomes = { 0: 'Dom', 1: 'Seg', 2: 'Ter', 3: 'Qua', 4: 'Qui', 5: 'Sex', 6: 'Sab' };
                             return diasNomes[d] || d;
                         }).join(', ')
                         : (turma.dia_semana || 'N/A');
-                    
-                    const periodo = turma.periodo === 'manha' ? 'Manhã' : 
-                                   turma.periodo === 'tarde' ? 'Tarde' : 
+                    const periodo = turma.periodo === 'manha' ? 'Manhã' :
+                                   turma.periodo === 'tarde' ? 'Tarde' :
                                    turma.periodo === 'noite' ? 'Noite' : (turma.periodo || 'N/A');
-                    
                     let dataArranque = 'N/A';
                     if (turma.data_arranque) {
                         const data = new Date(turma.data_arranque);
-                        if (!isNaN(data.getTime())) {
-                            dataArranque = data.toLocaleDateString('pt-PT');
-                        }
+                        if (!isNaN(data.getTime())) dataArranque = data.toLocaleDateString('pt-PT');
                     }
-                    
-                    turmasHtml += `
-                        <tr>
-                            <td><strong>${dias}</strong></td>
-                            <td><span class="pi-badge pi-badge-presencial">${periodo}</span></td>
-                            <td><strong>${dataArranque}</strong></td>
-                            <td>${turma.duracao_semanas || 'N/A'}</td>
-                        </tr>`;
+                    turmasHtml += `<tr><td><strong>${dias}</strong></td><td><span class="pi-badge pi-badge-presencial">${periodo}</span></td><td><strong>${dataArranque}</strong></td><td>${turma.duracao_semanas || 'N/A'}</td></tr>`;
                 });
-                turmasHtml += '</tbody></table></div>';
+                turmasHtml += '</tbody></table></div></div>';
             }
-            
+
             const conteudo = `
                 <div class="row g-3 mb-2">
-                    <div class="col-md-3 text-center">
-                        ${imagemHtml}
-                    </div>
+                    <div class="col-md-3 text-center">${imagemHtml}</div>
                     <div class="col-md-9 ps-md-3" style="min-width:0;">
                         <h5 style="font-weight:700;margin-bottom:0.375rem;font-size:1rem;color:var(--pi-text)">${curso.nome}</h5>
-                        <div class="d-flex gap-2 flex-wrap mb-2">
-                            ${statusBadge}
-                        </div>
+                        <div class="d-flex gap-2 flex-wrap mb-2">${statusBadge}</div>
                         <div class="pi-detail-row">
                             <div class="pi-detail-icon"><i class="fas fa-tag"></i></div>
-                            <div>
-                                <div class="pi-detail-label">Área</div>
-                                <div class="pi-detail-value">${curso.area || 'N/A'}</div>
-                            </div>
+                            <div><div class="pi-detail-label">Área</div><div class="pi-detail-value">${curso.area || 'N/A'}</div></div>
                         </div>
-                        ${curso.descricao ? `
-                        <div class="pi-detail-row">
-                            <div class="pi-detail-icon"><i class="fas fa-align-left"></i></div>
-                            <div>
-                                <div class="pi-detail-label">Descrição</div>
-                                <div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.descricao}</div>
-                            </div>
-                        </div>` : ''}
-                        ${curso.programa ? `
-                        <div class="pi-detail-row">
-                            <div class="pi-detail-icon"><i class="fas fa-book"></i></div>
-                            <div>
-                                <div class="pi-detail-label">Programa</div>
-                                <div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.programa}</div>
-                            </div>
-                        </div>` : ''}
+                        ${curso.descricao ? `<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-align-left"></i></div><div><div class="pi-detail-label">Descrição</div><div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.descricao}</div></div></div>` : ''}
+                        ${curso.programa ? `<div class="pi-detail-row"><div class="pi-detail-icon"><i class="fas fa-book"></i></div><div><div class="pi-detail-label">Programa</div><div class="pi-detail-value" style="font-weight:400;font-size:0.75rem">${curso.programa}</div></div></div>` : ''}
                     </div>
                 </div>
                 ${centrosHtml}
                 ${turmasHtml}
             `;
-            
+
             $('#conteudoVisualizarCurso').html(conteudo);
             $('#modalVisualizarCurso').modal('show');
         },
         error: function(err) {
             console.error('Erro ao carregar detalhes do curso:', err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro!',
-                text: 'Não foi possível carregar os detalhes do curso.',
-                confirmButtonColor: '#1d4ed8'
-            });
+            Swal.fire({ icon: 'error', title: 'Erro!', text: 'Não foi possível carregar os detalhes do curso.', confirmButtonColor: '#1d4ed8' });
         }
     });
 }
 
-/**
- * Configurar eventos do modal
- */
 function configurarEventosModal() {
     $('#modalNovoCurso').on('show.bs.modal', function() {
         $('#formNovoCursoAjax')[0].reset();
@@ -817,28 +763,10 @@ function configurarEventosModal() {
         $('#novoCursoAtivo').prop('checked', true);
     });
 
-    $(document).on('click', '#adicionarCentroModalBtn', function(e) {
-        e.preventDefault();
-        adicionarCentroModal();
-    });
-
-    $(document).on('click', '.remover-centro-modal', function(e) {
-        e.preventDefault();
-        $(this).closest('.col-12').remove();
-        atualizarNumeroCentrosModal();
-    });
-
-    $(document).on('click', '.btn-visualizar-curso', function(e) {
-        e.preventDefault();
-        const cursoId = $(this).data('curso-id');
-        carregarDetalhesCurso(cursoId);
-    });
-
-    $(document).on('click', '.btn-eliminar-curso', function(e) {
-        e.preventDefault();
-        const cursoId = $(this).data('curso-id');
-        eliminarCurso(cursoId);
-    });
+    $(document).on('click', '#adicionarCentroModalBtn', function(e) { e.preventDefault(); adicionarCentroModal(); });
+    $(document).on('click', '.remover-centro-modal', function(e) { e.preventDefault(); $(this).closest('.col-12').remove(); atualizarNumeroCentrosModal(); });
+    $(document).on('click', '.btn-visualizar-curso', function(e) { e.preventDefault(); carregarDetalhesCurso($(this).data('curso-id')); });
+    $(document).on('click', '.btn-eliminar-curso', function(e) { e.preventDefault(); eliminarCurso($(this).data('curso-id')); });
 }
 
 function adicionarCentroModal() {
@@ -847,8 +775,7 @@ function adicionarCentroModal() {
     const clone = template.content.cloneNode(true);
     const wrapper = document.createElement('div');
     wrapper.appendChild(clone);
-    const html = wrapper.innerHTML;
-    $('#centrosContainerModal').append(html);
+    $('#centrosContainerModal').append(wrapper.innerHTML);
     const selects = $('#centrosContainerModal').find('.centro-id-modal');
     const lastSelect = selects.last();
     centrosDisponiveisList.forEach(centro => {
@@ -918,19 +845,11 @@ $("#formNovoCursoAjax").on("submit", function(e) {
         data: formData,
         contentType: false,
         processData: false,
-        headers: {
-            "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
-            "Accept": "application/json"
-        },
+        headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json" },
         success: function(response) {
             $("#modalNovoCurso").modal("hide");
             $form[0].reset();
-            Swal.fire({
-                icon: "success", title: "Sucesso!", text: "Curso criado com sucesso!",
-                timer: 2000, showConfirmButton: false,
-                toast: true, position: 'top-end',
-                background: '#16a34a', color: '#fff'
-            }).then(() => carregarCursos());
+            Swal.fire({ icon: "success", title: "Sucesso!", text: "Curso criado com sucesso!", timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => carregarCursos());
         },
         error: function(xhr) {
             let message = "Erro desconhecido";
@@ -954,36 +873,22 @@ function limparFiltros() {
     $('#filtroNome').val('');
     $('#filtroStatus').val('');
     window.location.href = '/cursos';
-}}
+}
 
 function carregarCursos() { location.reload(); }
 
 function eliminarCurso(id) {
     Swal.fire({
-        title: 'Eliminar curso?',
-        text: 'Esta ação é irreversível!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: '<i class="fas fa-trash me-1"></i> Sim, eliminar!',
-        cancelButtonText: 'Cancelar'
+        title: 'Eliminar curso?', text: 'Esta ação é irreversível!', icon: 'warning',
+        showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#64748b',
+        confirmButtonText: '<i class="fas fa-trash me-1"></i> Sim, eliminar!', cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/cursos/${id}`,
-                method: 'DELETE',
-                headers: {
-                    "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"),
-                    "Accept": "application/json"
-                },
+                url: `/cursos/${id}`, method: 'DELETE',
+                headers: { "X-CSRF-TOKEN": $("meta[name=\"csrf-token\"]").attr("content"), "Accept": "application/json" },
                 success: function() {
-                    Swal.fire({
-                        icon: 'success', title: 'Eliminado!', text: 'Curso eliminado com sucesso.',
-                        timer: 2000, showConfirmButton: false,
-                        toast: true, position: 'top-end',
-                        background: '#16a34a', color: '#fff'
-                    });
+                    Swal.fire({ icon: 'success', title: 'Eliminado!', text: 'Curso eliminado com sucesso.', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
                     carregarCursos();
                 },
                 error: function(xhr) {
