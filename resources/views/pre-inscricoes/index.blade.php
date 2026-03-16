@@ -4,8 +4,6 @@
 
 @section('styles')
 <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet">
 <style>
     :root {
         --pi-primary: #1d4ed8;
@@ -32,7 +30,7 @@
 
     body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
 
-    .pi-page { width: 100%; padding: 0; }
+    .pi-page { width: 100%; padding: 0; overflow-x: hidden; }
 
     /* ── BLUE HEADER ── */
     .pi-page-header {
@@ -47,7 +45,8 @@
         display: inline-flex; align-items: center; gap: 0.5rem;
         padding: 0.5rem 1rem; border-radius: var(--pi-radius);
         background: #fff; color: var(--pi-primary); font-weight: 600;
-        font-size: 0.8125rem; border: none; cursor: pointer; transition: all 0.15s;
+        font-size: 0.8125rem; border: none; cursor: pointer;
+        transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
     }
     .pi-page-header .pi-btn-create:hover { background: #dbeafe; }
 
@@ -58,7 +57,7 @@
     }
     .pi-stat {
         padding: 0.75rem 1.25rem; border-right: 1px solid var(--pi-border);
-        display: flex; align-items: center; gap: 0.75rem;
+        display: flex; align-items: center; gap: 0.75rem; min-width: 0;
     }
     .pi-stat:last-child { border-right: none; }
     .pi-stat-icon {
@@ -70,16 +69,19 @@
     .pi-stat-icon.yellow { background: var(--pi-warning-light); color: var(--pi-warning); }
     .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
     .pi-stat-icon.red { background: var(--pi-danger-light); color: var(--pi-danger); }
-    .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-stat-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pi-stat-value { font-size: 1.375rem; font-weight: 700; line-height: 1; }
 
-    /* ── TOOLBAR ── */
+    /* ── TOOLBAR — filters always side by side ── */
     .pi-toolbar {
         background: #fff; border-bottom: 1px solid var(--pi-border);
         padding: 0.625rem 1.25rem;
-        display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+        display: flex; flex-wrap: nowrap; align-items: center; gap: 0.5rem;
+        overflow-x: auto;
     }
-    .pi-toolbar .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .pi-toolbar .search-wrap {
+        position: relative; flex: 1 1 180px; min-width: 140px;
+    }
     .pi-toolbar .search-wrap i {
         position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
         color: var(--pi-primary); font-size: 0.8125rem; pointer-events: none;
@@ -94,19 +96,20 @@
         height: 2.125rem; border: 1px solid var(--pi-border);
         border-radius: var(--pi-radius); font-size: 0.8125rem;
         padding: 0 2rem 0 0.625rem; background: var(--pi-bg);
-        min-width: 140px; cursor: pointer;
+        min-width: 120px; cursor: pointer; flex-shrink: 0;
     }
     .pi-toolbar select:focus { outline: none; border-color: var(--pi-primary); box-shadow: 0 0 0 2px var(--pi-primary-light); }
     .pi-btn-clear {
         border: none; background: transparent; color: var(--pi-text-muted);
         font-size: 0.8125rem; padding: 0.375rem 0.5rem; border-radius: var(--pi-radius);
-        display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer; white-space: nowrap;
+        display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer;
+        white-space: nowrap; flex-shrink: 0;
     }
     .pi-btn-clear:hover { background: var(--pi-danger-light); color: var(--pi-danger); }
 
     /* ── TABLE ── */
-    .pi-table-wrap { background: #fff; overflow: auto; }
-    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; }
+    .pi-table-wrap { background: #fff; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; table-layout: auto; }
     .pi-table thead th {
         background: var(--pi-primary); color: #fff;
         font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
@@ -116,7 +119,7 @@
     }
     .pi-table thead th .sort-icon { opacity: 0.4; margin-left: 0.25rem; font-size: 0.6rem; }
     .pi-table thead th.sorted .sort-icon { opacity: 1; }
-    .pi-table tbody td { padding: 0.5rem 1rem; vertical-align: middle; border-bottom: 1px solid #f0f4ff; }
+    .pi-table tbody td { padding: 0.5rem 1rem; vertical-align: middle; border-bottom: 1px solid #f0f4ff; white-space: nowrap; }
     .pi-table tbody tr { transition: background 0.1s; }
     .pi-table tbody tr:hover { background: var(--pi-primary-light); }
     .pi-table tbody tr:last-child td { border-bottom: none; }
@@ -126,10 +129,11 @@
     .pi-pagination-bar {
         background: var(--pi-primary); color: #fff;
         padding: 0.5rem 1.25rem;
-        display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem;
+        display: flex; align-items: center; justify-content: space-between;
+        font-size: 0.75rem; flex-wrap: wrap; gap: 0.5rem;
     }
     .pi-pagination-bar .info { opacity: 0.85; }
-    .pi-pagination-bar .pages { display: flex; gap: 0.25rem; }
+    .pi-pagination-bar .pages { display: flex; gap: 0.25rem; flex-wrap: wrap; }
     .pi-pagination-bar .page-btn {
         padding: 0.25rem 0.625rem; border-radius: 0.25rem;
         border: 1px solid rgba(255,255,255,0.3);
@@ -144,7 +148,7 @@
     .pi-badge {
         display: inline-flex; align-items: center; gap: 0.25rem;
         padding: 0.15rem 0.5rem; border-radius: 9999px;
-        font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em;
+        font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap;
     }
     .pi-badge-dia { background: var(--pi-info-light); color: #0369a1; margin-right: 0.125rem; }
     .pi-badge-pendente { background: var(--pi-warning-light); color: #92610a; }
@@ -152,8 +156,11 @@
     .pi-badge-cancelado { background: var(--pi-danger-light); color: #a71d2a; }
 
     /* ── ACTION BUTTONS ── */
-    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; opacity: 0; transition: opacity 0.15s; }
-    .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; transition: opacity 0.15s; }
+    @media (hover: hover) and (pointer: fine) {
+        .pi-actions { opacity: 0; }
+        .pi-table tbody tr:hover .pi-actions { opacity: 1; }
+    }
     .pi-action-btn {
         width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem;
         display: inline-flex; align-items: center; justify-content: center;
@@ -184,18 +191,18 @@
         background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
         padding: 0.75rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
     }
-    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.375rem; }
-    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.375rem; gap: 0.5rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); word-break: break-word; }
     .pi-mobile-card .card-email { font-size: 0.6875rem; color: var(--pi-text-muted); }
-    .pi-mobile-card .card-turma { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); margin-bottom: 0.5rem; }
-    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; }
+    .pi-mobile-card .card-turma { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); margin-bottom: 0.5rem; flex-wrap: wrap; }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; flex-wrap: wrap; }
     .pi-mobile-card .card-actions .btn { font-size: 0.6875rem; padding: 0.2rem 0.5rem; }
 
     /* ── MODAL ── */
     .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
     .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1rem 1.25rem; background: var(--pi-primary-light); }
     .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
-    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
     .pi-modal .modal-header .header-icon.green { background: var(--pi-success); color: #fff; }
     .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
@@ -208,7 +215,7 @@
     .pi-detail-row:last-child { border-bottom: none; }
     .pi-detail-icon { width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; background: var(--pi-primary-light); display: flex; align-items: center; justify-content: center; color: var(--pi-primary); font-size: 0.75rem; flex-shrink: 0; }
     .pi-detail-label { font-size: 0.6875rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
-    .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; }
+    .pi-detail-value { font-size: 0.8125rem; font-weight: 500; margin-top: 0.0625rem; word-break: break-word; }
 
     .pi-form .form-label { font-size: 0.75rem; font-weight: 500; margin-bottom: 0.25rem; color: var(--pi-text); }
     .pi-form .form-label .required { color: var(--pi-danger); }
@@ -226,9 +233,7 @@
     .pi-spinner { display: inline-block; width: 0.875rem; height: 0.875rem; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.25rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .select2-container--bootstrap-5 .select2-selection { border-radius: var(--pi-radius) !important; border-color: var(--pi-border) !important; height: 2.25rem !important; font-size: 0.8125rem !important; }
-    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered { line-height: 2.25rem !important; }
-
+    /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
         .pi-desktop-table { display: none !important; }
         .pi-mobile-cards { display: block !important; }
@@ -236,15 +241,20 @@
     @media (max-width: 767.98px) {
         .pi-stats-bar { grid-template-columns: repeat(2, 1fr); }
         .pi-stat { border-bottom: 1px solid var(--pi-border); }
-        .pi-toolbar { flex-direction: column; }
         .pi-page-header { flex-direction: column; align-items: stretch; }
         .pi-page-header .pi-btn-create { justify-content: center; }
         .pi-pagination-bar { flex-direction: column; gap: 0.5rem; text-align: center; }
     }
     @media (max-width: 575.98px) {
         .pi-page-header { padding: 0.75rem; }
+        .pi-page-header h1 { font-size: 1.1rem; }
         .pi-toolbar { padding: 0.5rem 0.75rem; }
         .pi-stat { padding: 0.5rem 0.75rem; }
+        .pi-stat-value { font-size: 1.125rem; }
+    }
+    @media (max-width: 374.98px) {
+        .pi-stats-bar { grid-template-columns: 1fr; }
+        .pi-stat { border-right: none; }
     }
 </style>
 @endsection
@@ -300,25 +310,25 @@
         </div>
     </div>
 
-    {{-- TOOLBAR --}}
+    {{-- TOOLBAR — filters always side by side --}}
     <div class="pi-toolbar">
         <div class="search-wrap">
             <i class="fas fa-search"></i>
             <input type="text" id="filtroSearch" placeholder="Pesquisar por nome ou email...">
         </div>
-        <select id="filtroStatus" style="border-color:var(--pi-border)">
+        <select id="filtroStatus">
             <option value="">Todos os status</option>
             <option value="pendente">Pendente</option>
             <option value="confirmado">Confirmado</option>
             <option value="cancelado">Cancelado</option>
         </select>
-        <select id="filtroCurso" style="border-color:var(--pi-border)">
+        <select id="filtroCurso">
             <option value="">Todos os cursos</option>
         </select>
-        <select id="filtroCentro" style="border-color:var(--pi-border)">
+        <select id="filtroCentro">
             <option value="">Todos os centros</option>
         </select>
-        <button class="pi-btn-clear" id="btnLimparFiltros" onclick="limparFiltros()">
+        <button class="pi-btn-clear" id="btnLimparFiltros" onclick="limparFiltros()" disabled>
             <i class="fas fa-times-circle"></i> Limpar
         </button>
     </div>
@@ -356,8 +366,8 @@
         </div>
     </div>
 
-    {{-- PAGINATION BAR --}}
-    <div class="pi-pagination-bar d-none" id="paginationContainer">
+    {{-- PAGINATION BAR — always visible --}}
+    <div class="pi-pagination-bar" id="paginationContainer">
         <span class="info" id="paginationInfo"></span>
         <div class="pages" id="paginationPages"></div>
     </div>
@@ -444,7 +454,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn pi-btn-primary" id="btnSalvar" onclick="salvarPreInscricao()"><i class="fas fa-save"></i> Guardar</button>
+                <button type="button" class="btn pi-btn-primary" id="btnSalvar" onclick="salvarPreInscricao()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
             </div>
         </div>
     </div>
@@ -453,7 +465,6 @@
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
 (function() {
     'use strict';
@@ -463,7 +474,7 @@
     let sortField = 'id';
     let sortDir = 'asc';
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 8;
+    const ITEMS_PER_PAGE = 15;
 
     $(document).ready(function() {
         carregarDados();
@@ -505,12 +516,12 @@
     function carregarFiltros() {
         $.get('/cursos', function(data) {
             let opts = '<option value="">Todos os cursos</option>';
-            (data || []).forEach(function(c) { if (c.ativo) opts += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+            (data || []).forEach(function(c) { if (c.ativo) opts += '<option value="' + c.id + '">' + esc(c.nome) + '</option>'; });
             $('#filtroCurso').html(opts);
         });
         $.get('/centros', function(data) {
             let opts = '<option value="">Todos os centros</option>';
-            (data || []).forEach(function(c) { if (c.ativo) opts += '<option value="' + c.id + '">' + c.nome + '</option>'; });
+            (data || []).forEach(function(c) { if (c.ativo) opts += '<option value="' + c.id + '">' + esc(c.nome) + '</option>'; });
             $('#filtroCentro').html(opts);
         });
     }
@@ -539,7 +550,7 @@
                         let nome = cursoNome;
                         if (periodo) nome += ' — ' + periodo;
                         if (centroNome) nome += ' (' + centroNome + ')';
-                        opts += `<option value="${t.id}">${nome}</option>`;
+                        opts += '<option value="' + t.id + '">' + esc(nome) + '</option>';
                     });
                 } else { opts = '<option value="">Nenhuma turma disponível</option>'; }
                 $('#criarTurmaId').html(opts);
@@ -555,10 +566,11 @@
     }
 
     function aplicarFiltrosLocais() {
-        const search = ($('#filtroSearch').val() || '').toLowerCase();
+        const search = ($('#filtroSearch').val() || '').toLowerCase().trim();
         const status = $('#filtroStatus').val();
         const curso = $('#filtroCurso').val();
         const centro = $('#filtroCentro').val();
+
         filteredData = allData.filter(function(item) {
             if (search) {
                 const nome = (item.nome_completo || '').toLowerCase();
@@ -570,12 +582,9 @@
             if (centro && (!item.turma || !item.turma.centro || item.turma.centro.id != centro)) return false;
             return true;
         });
-        let count = 0;
-        if (search) count++;
-        if (status) count++;
-        if (curso) count++;
-        if (centro) count++;
-        $('#btnLimparFiltros').prop('disabled', count === 0);
+
+        const hasFilters = search || status || curso || centro;
+        $('#btnLimparFiltros').prop('disabled', !hasFilters);
         currentPage = 1;
         updateStats();
         renderTable();
@@ -597,8 +606,8 @@
     }
 
     function renderTable() {
-        var sorted = filteredData.slice().sort(function(a, b) {
-            var cmp = 0;
+        const sorted = filteredData.slice().sort(function(a, b) {
+            let cmp = 0;
             switch (sortField) {
                 case 'id': cmp = (a.id || 0) - (b.id || 0); break;
                 case 'nome_completo': cmp = (a.nome_completo || '').localeCompare(b.nome_completo || ''); break;
@@ -612,21 +621,23 @@
         $('.sortable[data-sort="' + sortField + '"]').addClass('sorted')
             .find('.sort-icon').removeClass('fa-sort').addClass(sortDir === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
 
-        var totalPages = Math.max(1, Math.ceil(sorted.length / ITEMS_PER_PAGE));
+        const total = sorted.length;
+        const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
         if (currentPage > totalPages) currentPage = totalPages;
-        var start = (currentPage - 1) * ITEMS_PER_PAGE;
-        var paged = sorted.slice(start, start + ITEMS_PER_PAGE);
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const paged = sorted.slice(start, start + ITEMS_PER_PAGE);
 
-        if (sorted.length === 0) {
+        if (total === 0) {
             $('#tabelaBody').empty();
             $('#mobileCards').empty();
             $('#emptyState').removeClass('d-none');
-            $('#paginationContainer').addClass('d-none');
+            $('#paginationInfo').text('Nenhuma pré-inscrição encontrada');
+            $('#paginationPages').empty();
             return;
         }
         $('#emptyState').addClass('d-none');
 
-        var html = '';
+        let html = '';
         paged.forEach(function(item) {
             html += '<tr>';
             html += '<td class="mono">#' + item.id + '</td>';
@@ -642,7 +653,7 @@
         });
         $('#tabelaBody').html(html);
 
-        var mobileHtml = '';
+        let mobileHtml = '';
         paged.forEach(function(item) {
             mobileHtml += '<div class="pi-mobile-card">';
             mobileHtml += '<div class="card-top"><div><div class="card-name">' + esc(item.nome_completo) + '</div>';
@@ -656,40 +667,61 @@
             }
             mobileHtml += '<div class="card-actions">';
             mobileHtml += '<button class="btn btn-sm btn-outline-primary" onclick="visualizarPreInscricao(' + item.id + ')"><i class="fas fa-eye me-1"></i>Ver</button>';
-            if (item.status !== 'confirmado') mobileHtml += ' <button class="btn btn-sm btn-outline-success" onclick="confirmarPreInscricao(' + item.id + ')"><i class="fas fa-check me-1"></i>Confirmar</button>';
-            if (item.status !== 'cancelado') mobileHtml += ' <button class="btn btn-sm btn-outline-danger" onclick="cancelarPreInscricao(' + item.id + ')"><i class="fas fa-times me-1"></i>Cancelar</button>';
+            if (item.status !== 'confirmado') mobileHtml += '<button class="btn btn-sm btn-outline-success" onclick="confirmarPreInscricao(' + item.id + ')"><i class="fas fa-check me-1"></i>Confirmar</button>';
+            if (item.status !== 'cancelado') mobileHtml += '<button class="btn btn-sm btn-outline-danger" onclick="cancelarPreInscricao(' + item.id + ')"><i class="fas fa-times me-1"></i>Cancelar</button>';
             mobileHtml += '</div></div>';
         });
         $('#mobileCards').html(mobileHtml);
 
+        const from = start + 1;
+        const to = Math.min(start + ITEMS_PER_PAGE, total);
+        $('#paginationInfo').text('Mostrando ' + from + '–' + to + ' de ' + total + ' pré-inscrição(ões)');
+
         if (totalPages > 1) {
-            $('#paginationContainer').removeClass('d-none');
-            $('#paginationInfo').text(sorted.length + ' resultado' + (sorted.length !== 1 ? 's' : '') + ' — Página ' + currentPage + ' de ' + totalPages);
-            var pagesHtml = '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')"' + (currentPage <= 1 ? ' disabled' : '') + '><i class="fas fa-chevron-left" style="font-size:0.6rem"></i></button>';
-            for (var p = 1; p <= totalPages; p++) {
+            let pagesHtml = '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')"' + (currentPage <= 1 ? ' disabled' : '') + '><i class="fas fa-chevron-left" style="font-size:0.6rem"></i></button>';
+            const maxBtn = 7;
+            let startBtn = Math.max(1, currentPage - Math.floor(maxBtn / 2));
+            let endBtn = Math.min(totalPages, startBtn + maxBtn - 1);
+            if (endBtn - startBtn < maxBtn - 1) startBtn = Math.max(1, endBtn - maxBtn + 1);
+            for (let p = startBtn; p <= endBtn; p++) {
                 pagesHtml += '<button class="page-btn' + (p === currentPage ? ' active' : '') + '" onclick="goToPage(' + p + ')">' + p + '</button>';
             }
             pagesHtml += '<button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')"' + (currentPage >= totalPages ? ' disabled' : '') + '><i class="fas fa-chevron-right" style="font-size:0.6rem"></i></button>';
             $('#paginationPages').html(pagesHtml);
         } else {
-            $('#paginationContainer').addClass('d-none');
+            $('#paginationPages').empty();
         }
     }
 
     window.goToPage = function(page) {
-        var totalPages = Math.max(1, Math.ceil(filteredData.length / ITEMS_PER_PAGE));
+        const totalPages = Math.max(1, Math.ceil(filteredData.length / ITEMS_PER_PAGE));
         if (page < 1 || page > totalPages) return;
         currentPage = page;
         renderTable();
         $('.pi-table-wrap')[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    function esc(str) { if (!str) return ''; var div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+    function esc(str) {
+        if (!str) return '';
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
     function periodoIcon(periodo) {
-        switch (periodo) { case 'manha': return '<i class="fas fa-sun"></i>'; case 'tarde': return '<i class="fas fa-cloud-sun"></i>'; case 'noite': return '<i class="fas fa-moon"></i>'; default: return '<i class="fas fa-clock"></i>'; }
+        switch (periodo) {
+            case 'manha': return '<i class="fas fa-sun"></i>';
+            case 'tarde': return '<i class="fas fa-cloud-sun"></i>';
+            case 'noite': return '<i class="fas fa-moon"></i>';
+            default: return '<i class="fas fa-clock"></i>';
+        }
     }
     function periodoLabel(periodo) {
-        switch (periodo) { case 'manha': return 'Manhã'; case 'tarde': return 'Tarde'; case 'noite': return 'Noite'; default: return periodo || '—'; }
+        switch (periodo) {
+            case 'manha': return 'Manhã';
+            case 'tarde': return 'Tarde';
+            case 'noite': return 'Noite';
+            default: return periodo || '—';
+        }
     }
     function renderDiaBadges(dias) {
         if (!dias || !Array.isArray(dias) || dias.length === 0) return '—';
@@ -700,29 +732,36 @@
         return '<div class="turma-info"><span class="periodo-icon">' + periodoIcon(item.turma.periodo) + '</span><div><div class="turma-name">' + esc(item.turma.curso ? item.turma.curso.nome : '') + '</div><div class="turma-periodo">' + periodoLabel(item.turma.periodo) + '</div></div></div>';
     }
     function statusBadge(status) {
-        switch (status) { case 'pendente': return '<span class="pi-badge pi-badge-pendente">Pendente</span>'; case 'confirmado': return '<span class="pi-badge pi-badge-confirmado">Confirmado</span>'; case 'cancelado': return '<span class="pi-badge pi-badge-cancelado">Cancelado</span>'; default: return '<span class="pi-badge" style="background:#eee;color:#666">' + esc(status) + '</span>'; }
+        switch (status) {
+            case 'pendente': return '<span class="pi-badge pi-badge-pendente">Pendente</span>';
+            case 'confirmado': return '<span class="pi-badge pi-badge-confirmado">Confirmado</span>';
+            case 'cancelado': return '<span class="pi-badge pi-badge-cancelado">Cancelado</span>';
+            default: return '<span class="pi-badge" style="background:#eee;color:#666">' + esc(status) + '</span>';
+        }
     }
     function renderActions(item) {
-        var html = '<div class="pi-actions">';
+        let html = '<div class="pi-actions">';
         html += '<button class="pi-action-btn view" onclick="visualizarPreInscricao(' + item.id + ')" title="Ver detalhes"><i class="fas fa-eye"></i></button>';
         if (item.status !== 'confirmado') html += '<button class="pi-action-btn confirm" onclick="confirmarPreInscricao(' + item.id + ')" title="Confirmar"><i class="fas fa-check"></i></button>';
         if (item.status !== 'cancelado') html += '<button class="pi-action-btn cancel" onclick="cancelarPreInscricao(' + item.id + ')" title="Cancelar"><i class="fas fa-times"></i></button>';
         html += '</div>';
         return html;
     }
-    function formatDate(dateStr) { if (!dateStr) return '—'; try { var d = new Date(dateStr); return d.toLocaleDateString('pt-PT'); } catch(e) { return '—'; } }
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        try { return new Date(dateStr).toLocaleDateString('pt-PT'); } catch(e) { return '—'; }
+    }
 
     window.visualizarPreInscricao = function(id) {
-        var modal = new bootstrap.Modal(document.getElementById('viewModal'));
         $('#viewModalId').text('#' + id);
-        $('#viewModalContent').html('<div class="text-center py-4"><div class="spinner-border text-primary"></div><p class="text-muted mt-2" style="font-size:0.8125rem">Carregando...</p></div>');
-        modal.show();
+        $('#viewModalContent').html('<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="text-muted mt-2" style="font-size:0.8125rem">Carregando...</p></div>');
+        new bootstrap.Modal(document.getElementById('viewModal')).show();
         $.ajax({
             url: '/pre-inscricoes/' + id,
             method: 'GET',
             success: function(r) {
                 const dados = r.dados || r;
-                var html = '';
+                let html = '';
                 html += detailRow('fa-user', 'Nome Completo', esc(dados.nome_completo));
                 html += detailRow('fa-envelope', 'Email', esc(dados.email || '—'));
                 html += detailRow('fa-phone', 'Contactos', dados.contactos && dados.contactos.length ? esc(dados.contactos.join(', ')) : '—');
@@ -776,57 +815,71 @@
             method: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify({ status: status }),
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function() {
                 allData = allData.map(function(item) { if (item.id === id) item.status = status; return item; });
-                var txt = status === 'confirmado' ? 'confirmada' : 'cancelada';
+                const txt = status === 'confirmado' ? 'confirmada' : 'cancelada';
                 Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Pré-inscrição ' + txt + ' com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
                 aplicarFiltrosLocais();
             },
             error: function(xhr) {
-                var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Erro ao atualizar o status.';
+                const msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Erro ao atualizar o status.';
                 Swal.fire({ icon: 'error', title: 'Erro!', text: msg, confirmButtonColor: '#1d4ed8' });
             }
         });
     }
 
     window.salvarPreInscricao = function() {
-        var form = $('#formCriarPreInscricao');
-        var turmaId = $('#criarTurmaId').val();
-        var nome = $('#criarNome').val().trim();
-        var email = $('#criarEmail').val().trim();
-        var contactos = $('#criarContactos').val().trim();
-        var status = $('#criarStatus').val();
-        var observacoes = $('#criarObservacoes').val().trim();
+        const form = $('#formCriarPreInscricao');
+        const turmaId = $('#criarTurmaId').val();
+        const nome = $('#criarNome').val().trim();
+        const email = $('#criarEmail').val().trim();
+        const contactos = $('#criarContactos').val().trim();
+        const status = $('#criarStatus').val();
+        const observacoes = $('#criarObservacoes').val().trim();
+
         form.find('.form-control, .form-select').removeClass('is-invalid');
-        var valid = true;
+        let valid = true;
         if (!turmaId) { $('#criarTurmaId').addClass('is-invalid'); valid = false; }
         if (!nome) { $('#criarNome').addClass('is-invalid'); valid = false; }
         if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $('#criarEmail').addClass('is-invalid'); valid = false; }
         if (!valid) return;
-        var data = { turma_id: turmaId, nome_completo: nome, email: email || null, status: status, observacoes: observacoes || null, contactos: contactos ? [contactos] : [] };
-        var btn = $('#btnSalvar');
-        btn.prop('disabled', true).html('<span class="pi-spinner"></span> Guardando...');
+
+        const data = {
+            turma_id: turmaId,
+            nome_completo: nome,
+            email: email || null,
+            status: status,
+            observacoes: observacoes || null,
+            contactos: contactos ? [contactos] : []
+        };
+
+        const $btn = $('#btnSalvar');
+        const textoOriginal = $btn.html();
+        $btn.prop('disabled', true).html('<span class="pi-spinner"></span> Guardando...');
+
         $.ajax({
             url: '/pre-inscricoes',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             success: function(response) {
                 const dados = response.dados || response;
-                if (dados.turma && !dados.turma.curso) dados.turma.curso = dados.turma.curso || null;
                 allData.unshift(dados);
                 aplicarFiltrosLocais();
+                bootstrap.Modal.getInstance(document.getElementById('modalNovaPreInscricao')).hide();
                 Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Pré-inscrição criada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
                 form[0].reset();
-                bootstrap.Modal.getInstance(document.getElementById('modalNovaPreInscricao')).hide();
             },
             error: function(xhr) {
-                var msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Erro ao criar a pré-inscrição.';
+                const msg = (xhr.responseJSON && xhr.responseJSON.message) || 'Erro ao criar a pré-inscrição.';
                 Swal.fire({ icon: 'error', title: 'Erro!', text: msg, confirmButtonColor: '#1d4ed8' });
             },
-            complete: function() { btn.prop('disabled', false).html('<i class="fas fa-save"></i> Guardar'); }
+            complete: function() { $btn.prop('disabled', false).html(textoOriginal); }
         });
     };
-})();
+
+}());
 </script>
 @endsection

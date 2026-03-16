@@ -30,28 +30,18 @@
 
     body { background-color: var(--pi-bg); font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif; color: var(--pi-text); }
 
-    .pi-page { width: 100%; padding: 0; }
+    .pi-page { width: 100%; padding: 0; overflow-x: hidden; }
 
     /* ── BLUE HEADER ── */
-    .pi-page-header {
-        background: var(--pi-primary-gradient);
-        color: #fff;
-        padding: 1rem 1.5rem;
-    }
-    .pi-breadcrumb-bar {
-        display: flex; align-items: center; gap: 0.375rem;
-        font-size: 0.6875rem; margin-bottom: 0.5rem; opacity: 0.8;
-    }
+    .pi-page-header { background: var(--pi-primary-gradient); color: #fff; padding: 1rem 1.5rem; }
+    .pi-breadcrumb-bar { display: flex; align-items: center; gap: 0.375rem; font-size: 0.6875rem; margin-bottom: 0.5rem; opacity: 0.8; flex-wrap: wrap; }
     .pi-breadcrumb-bar a { color: #fff; text-decoration: none; font-weight: 500; }
     .pi-breadcrumb-bar a:hover { text-decoration: underline; }
     .pi-breadcrumb-bar .sep { opacity: 0.5; }
-    .pi-header-row {
-        display: flex; align-items: center; justify-content: space-between;
-        flex-wrap: wrap; gap: 0.75rem;
-    }
-    .pi-header-row h1 { font-size: 1.25rem; font-weight: 700; margin: 0; color: #fff; }
+    .pi-header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+    .pi-header-row h1 { font-size: 1.25rem; font-weight: 700; margin: 0; color: #fff; word-break: break-word; }
     .pi-header-actions { display: flex; gap: 0.375rem; flex-wrap: wrap; }
-    .pi-btn { border: none; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; text-decoration: none; }
+    .pi-btn { border: none; border-radius: var(--pi-radius); padding: 0.4375rem 0.875rem; font-size: 0.8125rem; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; cursor: pointer; text-decoration: none; white-space: nowrap; }
     .pi-btn-white { background: #fff; color: var(--pi-primary); }
     .pi-btn-white:hover { background: #dbeafe; color: var(--pi-primary); }
     .pi-btn-danger-outline { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); }
@@ -64,52 +54,36 @@
     .pi-btn-danger { background: var(--pi-danger); color: #fff; }
     .pi-btn-danger:hover { background: #b91c1c; color: #fff; }
     .pi-btn-success { background: var(--pi-success); color: #fff; }
+    .pi-btn-outline { background: transparent; color: var(--pi-text-muted); border: 1px solid var(--pi-border); border-radius: var(--pi-radius); }
+    .pi-btn-outline:hover { background: var(--pi-bg); color: var(--pi-text); }
 
     /* ── STATS BAR ── */
-    .pi-stats-bar {
-        display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
-        background: #fff; border-bottom: 1px solid var(--pi-border);
-    }
-    .pi-stat {
-        padding: 0.625rem 1rem; border-right: 1px solid var(--pi-border);
-        display: flex; align-items: center; gap: 0.625rem;
-    }
+    .pi-stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; background: #fff; border-bottom: 1px solid var(--pi-border); }
+    .pi-stat { padding: 0.625rem 1rem; border-right: 1px solid var(--pi-border); display: flex; align-items: center; gap: 0.625rem; min-width: 0; }
     .pi-stat:last-child { border-right: none; }
-    .pi-stat-icon {
-        width: 2rem; height: 2rem; border-radius: 0.375rem;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 0.8125rem; flex-shrink: 0;
-    }
+    .pi-stat-icon { width: 2rem; height: 2rem; border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; font-size: 0.8125rem; flex-shrink: 0; }
     .pi-stat-icon.blue { background: var(--pi-primary-light); color: var(--pi-primary); }
     .pi-stat-icon.green { background: var(--pi-success-light); color: var(--pi-success); }
     .pi-stat-icon.orange { background: var(--pi-warning-light); color: var(--pi-warning); }
     .pi-stat-icon.cyan { background: var(--pi-info-light); color: var(--pi-info); }
-    .pi-stat-label { font-size: 0.625rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .pi-stat-label { font-size: 0.625rem; font-weight: 500; color: var(--pi-text-muted); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .pi-stat-value { font-size: 1.25rem; font-weight: 700; line-height: 1; }
 
     /* ── CARD ── */
     .pi-card { background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius); box-shadow: var(--pi-shadow); overflow: hidden; margin: 0.75rem; }
-    .pi-card-header {
-        border-bottom: 1px solid var(--pi-border); padding: 0.625rem 1rem;
-        display: flex; align-items: center; justify-content: space-between;
-        background: var(--pi-primary-light);
-    }
+    .pi-card-header { border-bottom: 1px solid var(--pi-border); padding: 0.625rem 1rem; display: flex; align-items: center; justify-content: space-between; background: var(--pi-primary-light); flex-wrap: wrap; gap: 0.5rem; }
     .pi-card-header h2 { font-size: 0.8125rem; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 0.375rem; color: var(--pi-text); }
     .pi-card-header .count-badge { background: var(--pi-primary); color: #fff; font-size: 0.625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; }
     .pi-card-body { padding: 1rem; }
 
     /* ── INFO GRID ── */
     .pi-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
-    .pi-info-item { display: flex; flex-direction: column; gap: 0.125rem; }
+    .pi-info-item { display: flex; flex-direction: column; gap: 0.125rem; min-width: 0; }
     .pi-info-label { font-size: 0.625rem; font-weight: 600; color: var(--pi-primary); text-transform: uppercase; letter-spacing: 0.04em; }
-    .pi-info-value { font-size: 0.875rem; font-weight: 500; }
+    .pi-info-value { font-size: 0.875rem; font-weight: 500; word-break: break-word; }
 
     /* ── BADGES ── */
-    .pi-badge {
-        display: inline-flex; align-items: center; gap: 0.25rem;
-        padding: 0.125rem 0.5rem; border-radius: 9999px;
-        font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em;
-    }
+    .pi-badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
     .pi-badge-planeada { background: rgba(100,116,139,0.08); color: #475569; }
     .pi-badge-inscricoes { background: var(--pi-success-light); color: #15803d; }
     .pi-badge-andamento { background: var(--pi-info-light); color: #0369a1; }
@@ -121,28 +95,25 @@
     .pi-badge-pendente { background: var(--pi-warning-light); color: #92400e; }
     .pi-badge-confirmado { background: var(--pi-success-light); color: #15803d; }
     .pi-badge-cancelado { background: var(--pi-danger-light); color: #b91c1c; }
+    .pi-badge-success { background: var(--pi-success-light); color: #15803d; }
+    .pi-badge-secondary { background: rgba(100,116,139,0.08); color: #475569; }
 
     /* ── TABLE ── */
+    .pi-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .pi-table { width: 100%; margin: 0; border-collapse: collapse; font-size: 0.8125rem; }
-    .pi-table thead th {
-        background: var(--pi-primary); color: #fff;
-        font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
-        letter-spacing: 0.05em; padding: 0.5rem 0.75rem; white-space: nowrap;
-        position: sticky; top: 0; z-index: 5;
-    }
-    .pi-table tbody td { padding: 0.5rem 0.75rem; vertical-align: middle; border-bottom: 1px solid #f0f4ff; }
+    .pi-table thead th { background: var(--pi-primary); color: #fff; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.5rem 0.75rem; white-space: nowrap; position: sticky; top: 0; z-index: 5; }
+    .pi-table tbody td { padding: 0.5rem 0.75rem; vertical-align: middle; border-bottom: 1px solid #f0f4ff; white-space: nowrap; }
     .pi-table tbody tr { transition: background 0.1s; }
     .pi-table tbody tr:hover { background: var(--pi-primary-light); }
     .pi-table tbody tr:last-child td { border-bottom: none; }
 
     /* ── ACTION BUTTONS ── */
-    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; opacity: 0; transition: opacity 0.15s; }
-    .pi-table tbody tr:hover .pi-actions { opacity: 1; }
-    .pi-action-btn {
-        width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem;
-        display: inline-flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: all 0.15s; font-size: 0.75rem;
+    .pi-actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.125rem; transition: opacity 0.15s; }
+    @media (hover: hover) and (pointer: fine) {
+        .pi-actions { opacity: 0; }
+        .pi-table tbody tr:hover .pi-actions { opacity: 1; }
     }
+    .pi-action-btn { width: 1.75rem; height: 1.75rem; border: none; border-radius: 0.25rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 0.75rem; }
     .pi-action-btn.accept { background: transparent; color: var(--pi-success); border: 1px solid var(--pi-success); }
     .pi-action-btn.accept:hover { background: var(--pi-success); color: #fff; }
     .pi-action-btn.reject { background: transparent; color: var(--pi-danger); border: 1px solid var(--pi-danger); }
@@ -156,22 +127,21 @@
 
     /* ── MOBILE CARDS ── */
     .pi-mobile-cards { display: none; padding: 0.75rem; }
-    .pi-mobile-card {
-        background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius);
-        padding: 0.625rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem;
-    }
-    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem; }
-    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); }
+    .pi-mobile-card { background: #fff; border: 1px solid var(--pi-border); border-radius: var(--pi-radius); padding: 0.625rem; box-shadow: var(--pi-shadow); margin-bottom: 0.5rem; }
+    .pi-mobile-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem; gap: 0.5rem; }
+    .pi-mobile-card .card-name { font-weight: 600; font-size: 0.875rem; color: var(--pi-text); word-break: break-word; }
     .pi-mobile-card .card-details { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--pi-text-muted); }
-    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; }
+    .pi-mobile-card .card-actions { display: flex; gap: 0.375rem; flex-wrap: wrap; }
 
     /* ── MODAL ── */
     .pi-modal .modal-content { border-radius: var(--pi-radius); border: 1px solid var(--pi-border); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
-    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 0.875rem 1.25rem; background: var(--pi-primary-light); }
+    .pi-modal .modal-header { border-bottom: 1px solid var(--pi-border); padding: 1rem 1.25rem; background: var(--pi-primary-light); }
     .pi-modal .modal-header .header-flex { display: flex; align-items: center; gap: 0.625rem; }
-    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; }
+    .pi-modal .modal-header .header-icon { width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .pi-modal .modal-header .header-icon.blue { background: var(--pi-primary); color: #fff; }
+    .pi-modal .modal-header .header-icon.orange { background: var(--pi-warning); color: #fff; }
     .pi-modal .modal-title { font-size: 0.9375rem; font-weight: 600; margin: 0; color: var(--pi-text); }
+    .pi-modal .modal-subtitle { font-size: 0.75rem; color: var(--pi-text-muted); margin: 0; }
     .pi-modal .modal-body { padding: 1rem 1.25rem; }
     .pi-modal .modal-footer { border-top: 1px solid var(--pi-border); padding: 0.75rem 1.25rem; background: var(--pi-bg); }
     .pi-modal .modal-footer .btn { border-radius: var(--pi-radius); font-size: 0.8125rem; font-weight: 500; padding: 0.4375rem 0.875rem; }
@@ -196,6 +166,10 @@
     .pi-day-check { display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 500; }
     .pi-day-check input[type="checkbox"] { width: 0.875rem; height: 0.875rem; accent-color: var(--pi-primary); }
 
+    /* ── LOADING SPINNER ── */
+    .pi-spinner { display: inline-block; width: 0.875rem; height: 0.875rem; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.25rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 991.98px) {
         .pi-desktop-table { display: none !important; }
@@ -213,8 +187,13 @@
     }
     @media (max-width: 575.98px) {
         .pi-page-header { padding: 0.75rem; }
+        .pi-page-header h1 { font-size: 1.1rem; }
         .pi-card { margin: 0.5rem; }
         .pi-stat { padding: 0.5rem 0.625rem; }
+    }
+    @media (max-width: 374.98px) {
+        .pi-stats-bar { grid-template-columns: 1fr; }
+        .pi-stat { border-right: none; }
     }
 </style>
 @endsection
@@ -246,9 +225,7 @@
 
 <div class="pi-page">
 
-    {{-- ============================================= --}}
-    {{-- BLUE HEADER                                   --}}
-    {{-- ============================================= --}}
+    {{-- BLUE HEADER --}}
     <div class="pi-page-header">
         <div class="pi-breadcrumb-bar">
             <a href="{{ route('turmas.index') }}"><i class="fas fa-chalkboard-teacher me-1"></i>Turmas</a>
@@ -256,11 +233,11 @@
             <span>{{ $turma->curso->nome }}</span>
         </div>
         <div class="pi-header-row">
-            <div style="display:flex;align-items:center;gap:0.625rem">
-                <i class="fas fa-chalkboard fa-lg" style="opacity:0.9"></i>
-                <div>
+            <div style="display:flex;align-items:center;gap:0.625rem;min-width:0">
+                <i class="fas fa-chalkboard fa-lg" style="opacity:0.9;flex-shrink:0"></i>
+                <div style="min-width:0">
                     <h1>{{ $turma->curso->nome }}</h1>
-                    <div style="display:flex;gap:0.375rem;margin-top:0.25rem">
+                    <div style="display:flex;gap:0.375rem;margin-top:0.25rem;flex-wrap:wrap">
                         <span class="pi-badge" style="background:rgba(255,255,255,0.2);color:#fff">
                             {{ $statusNomes[$turma->status] ?? 'N/A' }}
                         </span>
@@ -285,9 +262,7 @@
         </div>
     </div>
 
-    {{-- ============================================= --}}
-    {{-- STATS BAR                                     --}}
-    {{-- ============================================= --}}
+    {{-- STATS BAR --}}
     <div class="pi-stats-bar">
         <div class="pi-stat">
             <div class="pi-stat-icon blue"><i class="fas fa-users"></i></div>
@@ -319,16 +294,13 @@
         </div>
     </div>
 
-    {{-- ============================================= --}}
-    {{-- INFORMAÇÕES DA TURMA                          --}}
-    {{-- ============================================= --}}
+    {{-- INFORMAÇÕES DA TURMA --}}
     <div class="pi-card">
         <div class="pi-card-header">
             <h2><i class="fas fa-info-circle" style="color:var(--pi-primary)"></i> Informações da Turma</h2>
         </div>
         <div class="pi-card-body">
             <div class="pi-info-grid">
-                {{-- Linha 1 --}}
                 <div class="pi-info-item">
                     <span class="pi-info-label"><i class="fas fa-book me-1"></i>Curso</span>
                     <span class="pi-info-value">{{ $turma->curso->nome ?? 'N/A' }}</span>
@@ -348,7 +320,6 @@
                     </span>
                 </div>
 
-                {{-- Linha 2 --}}
                 <div class="pi-info-item">
                     <span class="pi-info-label"><i class="fas fa-calendar-day me-1"></i>Dias</span>
                     <span class="pi-info-value">
@@ -375,7 +346,6 @@
                     <span class="pi-info-value">{{ $turma->hora_inicio ?: '—' }} - {{ $turma->hora_fim ?: '—' }}</span>
                 </div>
 
-                {{-- Linha 3 --}}
                 <div class="pi-info-item">
                     <span class="pi-info-label"><i class="fas fa-hourglass me-1"></i>Duração</span>
                     <span class="pi-info-value">{{ $turma->duracao_semanas ?? 'N/A' }} semana(s)</span>
@@ -398,9 +368,7 @@
         </div>
     </div>
 
-    {{-- ============================================= --}}
-    {{-- PRÉ-INSCRIÇÕES                                --}}
-    {{-- ============================================= --}}
+    {{-- PRÉ-INSCRIÇÕES --}}
     <div class="pi-card">
         <div class="pi-card-header">
             <h2>
@@ -412,7 +380,7 @@
 
         @if($totalInscricoes > 0)
             {{-- Desktop table --}}
-            <div class="pi-desktop-table" style="overflow-x:auto">
+            <div class="pi-desktop-table pi-table-wrap">
                 <table class="pi-table">
                     <thead>
                         <tr>
@@ -444,12 +412,8 @@
                                         <span style="color:var(--pi-text-muted)">—</span>
                                     @endif
                                 </td>
-                                <td style="font-size:0.75rem;color:var(--pi-text-muted)">
-                                    {{ $inscricao->observacoes ?: '—' }}
-                                </td>
-                                <td style="font-size:0.75rem;color:var(--pi-text-muted)">
-                                    {{ \Carbon\Carbon::parse($inscricao->created_at)->format('d/m/Y H:i') }}
-                                </td>
+                                <td style="font-size:0.75rem;color:var(--pi-text-muted)">{{ $inscricao->observacoes ?: '—' }}</td>
+                                <td style="font-size:0.75rem;color:var(--pi-text-muted)">{{ \Carbon\Carbon::parse($inscricao->created_at)->format('d/m/Y H:i') }}</td>
                                 <td class="text-center">
                                     @if($inscricao->status === 'pendente')
                                         <span class="pi-badge pi-badge-pendente"><i class="fas fa-hourglass-half"></i> Pendente</span>
@@ -528,29 +492,20 @@
 
 </div>
 
-
-{{-- ============================================= --}}
-{{-- MODAL: Editar Turma                           --}}
-{{-- ============================================= --}}
+{{-- MODAL: Editar Turma --}}
 <div class="modal fade pi-modal" id="modalEditarTurmaShow" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-
-            {{-- Header --}}
             <div class="modal-header">
                 <div class="header-flex">
-                    <div class="header-icon blue">
-                        <i class="fas fa-edit"></i>
-                    </div>
+                    <div class="header-icon blue"><i class="fas fa-edit"></i></div>
                     <div>
                         <h5 class="modal-title">Editar Turma</h5>
-                        <p class="mb-0" style="font-size:0.75rem;color:var(--pi-text-muted)">{{ $turma->curso->nome }}</p>
+                        <p class="modal-subtitle">{{ $turma->curso->nome }}</p>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-
-            {{-- Body --}}
             <div class="modal-body">
                 <form id="formEditarTurmaShow" class="pi-form">
                     @csrf
@@ -560,7 +515,6 @@
                     <input type="hidden" id="centroIdHidden" name="centro_id" value="{{ $turma->centro_id }}">
 
                     <div class="row g-3">
-                        {{-- COLUNA ESQUERDA --}}
                         <div class="col-md-6">
                             <div class="section-title"><i class="fas fa-info-circle"></i> Informações da Turma</div>
 
@@ -575,14 +529,14 @@
                             <div class="mb-2">
                                 <label class="form-label">Formador</label>
                                 <select id="formadorIdShow" name="formador_id" class="form-select">
-                                    <option value="">Selecione (opcional)</option>
+                                    <option value="">Sem formador</option>
                                 </select>
                             </div>
 
                             <div class="mb-2">
                                 <label class="form-label">Período <span class="required">*</span></label>
                                 <select id="periodoShow" name="periodo" class="form-select" required>
-                                    <option value="manha" {{ $turma->periodo === 'manha' || $turma->periodo === 'manhã' ? 'selected' : '' }}>Manha</option>
+                                    <option value="manha" {{ $turma->periodo === 'manha' || $turma->periodo === 'manhã' ? 'selected' : '' }}>Manhã</option>
                                     <option value="tarde" {{ $turma->periodo === 'tarde' ? 'selected' : '' }}>Tarde</option>
                                     <option value="noite" {{ $turma->periodo === 'noite' ? 'selected' : '' }}>Noite</option>
                                 </select>
@@ -609,7 +563,6 @@
                             </div>
                         </div>
 
-                        {{-- COLUNA DIREITA --}}
                         <div class="col-md-6">
                             <div class="section-title"><i class="fas fa-clock"></i> Horário</div>
 
@@ -630,7 +583,7 @@
 
                             <div class="mb-2">
                                 <label class="form-label">Data Arranque <span class="required">*</span></label>
-                                <input type="date" id="dataArranqueShow" name="data_arranque" class="form-control" 
+                                <input type="date" id="dataArranqueShow" name="data_arranque" class="form-control"
                                        value="{{ \Carbon\Carbon::parse($turma->data_arranque)->format('Y-m-d') }}" required>
                             </div>
 
@@ -654,7 +607,6 @@
                         </div>
                     </div>
 
-                    {{-- DIAS DA SEMANA --}}
                     <div class="mt-2">
                         <div class="section-title"><i class="fas fa-calendar-week"></i> Dias da Semana</div>
                         <div class="pi-days-grid">
@@ -669,15 +621,12 @@
                     </div>
                 </form>
             </div>
-
-            {{-- Footer --}}
             <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="submit" form="formEditarTurmaShow" class="btn pi-btn-primary">
                     <i class="fas fa-save me-1"></i> Guardar Alterações
                 </button>
             </div>
-
         </div>
     </div>
 </div>
@@ -693,20 +642,19 @@ $(document).ready(function() {
     configurarFormulario();
 });
 
-// Carregar centros disponíveis
 function carregarCentros() {
     const cursoId = {{ $turma->curso_id }};
     $.ajax({
-        url: `/cursos/${cursoId}`,
+        url: '/cursos/' + cursoId,
         method: 'GET',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         success: function(response) {
-            const centros = response.dados?.centros || [];
+            const centros = (response.dados && response.dados.centros) || response.centros || [];
             const select = $('#centroIdShow');
             select.empty().append('<option value="">Selecione um centro</option>');
-
-            centros.forEach(c => {
+            centros.forEach(function(c) {
                 const selected = c.id === {{ $turma->centro_id }} ? 'selected' : '';
-                select.append(`<option value="${c.id}" ${selected}>${c.nome}</option>`);
+                select.append('<option value="' + c.id + '" ' + selected + '>' + c.nome + '</option>');
             });
         },
         error: function(err) {
@@ -716,21 +664,19 @@ function carregarCentros() {
     });
 }
 
-// Carregar formadores
 function carregarFormadores() {
     $.ajax({
         url: '/formadores',
         method: 'GET',
+        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         success: function(response) {
             const data = Array.isArray(response) ? response : (response.data || []);
             const select = $('#formadorIdShow');
             select.empty().append('<option value="">Sem formador</option>');
-
             const formadorAtual = {{ $turma->formador_id ?? 'null' }};
-
-            data.forEach(f => {
+            data.forEach(function(f) {
                 const selected = f.id === formadorAtual ? 'selected' : '';
-                select.append(`<option value="${f.id}" ${selected}>${f.nome}</option>`);
+                select.append('<option value="' + f.id + '" ' + selected + '>' + f.nome + '</option>');
             });
         },
         error: function(xhr) {
@@ -739,26 +685,18 @@ function carregarFormadores() {
     });
 }
 
-// Configurar envio do formulário - COM METHOD SPOOFING
 function configurarFormulario() {
     $('#formEditarTurmaShow').on('submit', function(e) {
         e.preventDefault();
 
-        // Extrair e validar ID da turma no início
         const turmaId = $('#editTurmaIdShow').val();
-        console.log('ID da turma:', turmaId);
-        
         if (!turmaId) {
             Swal.fire({ icon: 'error', title: 'Erro!', text: 'ID da turma não encontrado', confirmButtonColor: '#1d4ed8' });
-            console.error('Campo #editTurmaIdShow está vazio!');
             return;
         }
 
         const dias = [];
-        $('.dia-semana-show:checked').each(function() {
-            dias.push($(this).val());
-        });
-
+        $('.dia-semana-show:checked').each(function() { dias.push($(this).val()); });
         if (dias.length === 0) {
             Swal.fire({ icon: 'warning', title: 'Atenção!', text: 'Selecione pelo menos um dia', confirmButtonColor: '#1d4ed8' });
             return;
@@ -770,13 +708,8 @@ function configurarFormulario() {
             return;
         }
 
-        // Usar FormData para method spoofing
         const formData = new FormData();
-        
-        // Method spoofing - IMPORTANTE!
         formData.append('_method', 'PUT');
-        
-        // Adicionar todos os campos
         formData.append('curso_id', $('input[name="curso_id"]').val());
         formData.append('centro_id', $('#centroIdHidden').val());
         formData.append('periodo', $('#periodoShow').val());
@@ -789,58 +722,43 @@ function configurarFormulario() {
         formData.append('formador_id', $('#formadorIdShow').val() || '');
         formData.append('vagas_totais', $('#vagasTotaisShow').val() || '');
         formData.append('publicado', $('#publicadoShow').is(':checked') ? '1' : '0');
-        
-        // Adicionar dias da semana (array)
-        dias.forEach(function(dia, index) {
-            formData.append(`dia_semana[${index}]`, dia);
-        });
+        dias.forEach(function(dia, index) { formData.append('dia_semana[' + index + ']', dia); });
 
-        console.log('Enviando FormData:');
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
-        console.log('URL da requisição:', `/turmas/${turmaId}`);
+        const $btn = $('button[form="formEditarTurmaShow"]');
+        const textoOriginal = $btn.html();
+        $btn.prop('disabled', true).html('<span class="pi-spinner"></span> Guardando...');
 
         $.ajax({
-            url: `/turmas/${turmaId}`,
-            method: 'POST',  // ← POST com method spoofing
+            url: '/turmas/' + turmaId,
+            method: 'POST',
             data: formData,
-            contentType: false,  // ← Importante para FormData
-            processData: false,  // ← Importante para FormData
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                console.log('Sucesso:', response);
-                Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Turma atualizada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => {
-                    location.reload();
-                });
+            contentType: false,
+            processData: false,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            success: function() {
+                var modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarTurmaShow'));
+                if (modal) modal.hide();
+                Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Turma atualizada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
+                setTimeout(function() { location.reload(); }, 400);
             },
             error: function(xhr) {
-                console.error('Erro detalhado:', xhr);
-                console.error('Status:', xhr.status);
-                console.error('URL enviada:', xhr.responseURL);
-                
                 let mensagem = 'Erro ao atualizar turma';
-                
                 if (xhr.responseJSON?.errors) {
                     mensagem = Object.values(xhr.responseJSON.errors).flat().join('<br>');
                 } else if (xhr.responseJSON?.message) {
                     mensagem = xhr.responseJSON.message;
                 }
-                
                 Swal.fire({ icon: 'error', title: 'Erro!', html: mensagem, confirmButtonColor: '#1d4ed8' });
-            }
+            },
+            complete: function() { $btn.prop('disabled', false).html(textoOriginal); }
         });
     });
 
-    // Aceitar inscrição
     $(document).on('click', '.btn-aceitar-inscricao', function() {
         const id = $(this).data('inscricao-id');
         atualizarStatusInscricao(id, 'confirmado');
     });
 
-    // Rejeitar inscrição
     $(document).on('click', '.btn-rejeitar-inscricao', function() {
         const id = $(this).data('inscricao-id');
         atualizarStatusInscricao(id, 'cancelado');
@@ -849,15 +767,14 @@ function configurarFormulario() {
 
 function atualizarStatusInscricao(id, status) {
     $.ajax({
-        url: `/pre-inscricoes/${id}`,
+        url: '/pre-inscricoes/' + id,
         method: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify({ status: status }),
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         success: function() {
-            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Status atualizado', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => {
-                location.reload();
-            });
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: 'Status atualizado', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' });
+            setTimeout(function() { location.reload(); }, 400);
         },
         error: function() {
             Swal.fire({ icon: 'error', title: 'Erro!', text: 'Erro ao atualizar status', confirmButtonColor: '#1d4ed8' });
@@ -865,7 +782,6 @@ function atualizarStatusInscricao(id, status) {
     });
 }
 
-// Eliminar turma
 function eliminarTurmaShow(id) {
     Swal.fire({
         title: 'Eliminar turma?',
@@ -876,14 +792,19 @@ function eliminarTurmaShow(id) {
         cancelButtonColor: '#64748b',
         confirmButtonText: '<i class="fas fa-trash me-1"></i> Sim, eliminar!',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then(function(result) {
         if (result.isConfirmed) {
+            const formData = new FormData();
+            formData.append('_method', 'DELETE');
             $.ajax({
-                url: `/turmas/${id}`,
-                method: 'DELETE',
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: '/turmas/' + id,
+                method: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                 success: function() {
-                    Swal.fire({ icon: 'success', title: 'Eliminada!', text: 'Turma eliminada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(() => {
+                    Swal.fire({ icon: 'success', title: 'Eliminada!', text: 'Turma eliminada com sucesso', timer: 2000, showConfirmButton: false, toast: true, position: 'top-end', background: '#16a34a', color: '#fff' }).then(function() {
                         window.location.href = "{{ route('turmas.index') }}";
                     });
                 },
