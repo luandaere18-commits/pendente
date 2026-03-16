@@ -34,13 +34,13 @@ class PreInscricaoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'turma_id' => 'required|exists:turmas,id',
+            'turma_id'      => 'required|exists:turmas,id',
             'nome_completo' => 'required|string|max:100',
-            'contactos' => 'required|array|min:1',
-            'contactos.*' => 'required|string',
-            'email' => 'nullable|email|max:100',
-            'status' => 'nullable|in:pendente,confirmado,cancelado',
-            'observacoes' => 'nullable|string|max:500'
+            'contactos'     => 'nullable|array',
+            'contactos.*'   => 'nullable|string|max:100',
+            'email'         => 'nullable|email|max:100',
+            'status'        => 'nullable|in:pendente,confirmado,cancelado',
+            'observacoes'   => 'nullable|string|max:500',
         ]);
 
         // Verificar se a turma existe
@@ -48,12 +48,16 @@ class PreInscricaoController extends Controller
         
         if (!$turma) {
             return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Turma não encontrada.'
+                'status'   => 'erro',
+                'mensagem' => 'Turma não encontrada.',
             ], 404);
         }
 
-        $validated['status'] = $validated['status'] ?? 'pendente'; // Status padrão
+        // Garantir que contactos é sempre um array (nunca null na BD)
+        $validated['contactos'] = array_filter($validated['contactos'] ?? [], fn($c) => !empty(trim($c)));
+        $validated['contactos'] = array_values($validated['contactos']);
+
+        $validated['status'] = $validated['status'] ?? 'pendente';
         
         // Normalizar email para lowercase se fornecido
         if (!empty($validated['email'])) {
@@ -66,9 +70,9 @@ class PreInscricaoController extends Controller
         $preInscricao->load(['turma.curso', 'turma.centro']);
 
         return response()->json([
-            'status' => 'sucesso',
+            'status'   => 'sucesso',
             'mensagem' => 'Pré-inscrição realizada!',
-            'dados' => $preInscricao
+            'dados'    => $preInscricao,
         ], 201);
     }
 
@@ -131,19 +135,19 @@ class PreInscricaoController extends Controller
 
         if (!$preInscricao) {
             return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Pré-inscrição não encontrada!'
+                'status'   => 'erro',
+                'mensagem' => 'Pré-inscrição não encontrada!',
             ], 404);
         }
 
         // Só permite editar o status
         $validated = $request->validate([
-            'status' => 'required|in:pendente,confirmado,cancelado'
+            'status' => 'required|in:pendente,confirmado,cancelado',
         ]);
         
         // Controlar vagas_preenchidas nas turmas
         $statusAnterior = $preInscricao->status;
-        $novoStatus = $validated['status'];
+        $novoStatus     = $validated['status'];
         
         if ($statusAnterior !== $novoStatus) {
             $turma = $preInscricao->turma;
@@ -153,7 +157,7 @@ class PreInscricaoController extends Controller
                 $turma->decrement('vagas_preenchidas');
             }
             // Se não era confirmado e agora é confirmado
-            else if ($statusAnterior !== 'confirmado' && $novoStatus === 'confirmado') {
+            elseif ($statusAnterior !== 'confirmado' && $novoStatus === 'confirmado') {
                 $turma->increment('vagas_preenchidas');
             }
         }
@@ -161,9 +165,9 @@ class PreInscricaoController extends Controller
         $preInscricao->update($validated);
 
         return response()->json([
-            'status' => 'sucesso',
+            'status'   => 'sucesso',
             'mensagem' => 'Status atualizado!',
-            'dados' => $preInscricao
+            'dados'    => $preInscricao,
         ]);
     }
 
@@ -195,14 +199,14 @@ class PreInscricaoController extends Controller
         $preInscricao = PreInscricao::find($id);
         if (!$preInscricao) {
             return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Pré-inscrição não encontrada!'
+                'status'   => 'erro',
+                'mensagem' => 'Pré-inscrição não encontrada!',
             ], 404);
         }
         $preInscricao->delete();
         return response()->json([
-            'status' => 'sucesso',
-            'mensagem' => 'Pré-inscrição deletada com sucesso!'
+            'status'   => 'sucesso',
+            'mensagem' => 'Pré-inscrição deletada com sucesso!',
         ]);
     }
 
@@ -235,13 +239,13 @@ class PreInscricaoController extends Controller
         $preInscricao = PreInscricao::with(['turma.curso', 'turma.centro'])->find($id);
         if (!$preInscricao) {
             return response()->json([
-                'status' => 'erro',
-                'mensagem' => 'Pré-inscrição não encontrada!'
+                'status'   => 'erro',
+                'mensagem' => 'Pré-inscrição não encontrada!',
             ], 404);
         }
         return response()->json([
             'status' => 'sucesso',
-            'dados' => $preInscricao
+            'dados'  => $preInscricao,
         ]);
     }
 }

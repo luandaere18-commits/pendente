@@ -3,16 +3,16 @@
     open: false,
     turmaId: null,
     turmaNome: '',
-    nome: '', email: '', telefone: '', termos: false,
+    nome_completo: '', email: '', telefone: '', termos: false,
     loading: false,
     success: false,
     errors: {},
     validEmail() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email); },
-    canSubmit() { return this.nome.trim().length >= 2 && this.validEmail() && this.termos && !this.loading; },
+    canSubmit() { return this.nome_completo.trim().length >= 2 && this.validEmail() && this.termos && !this.loading; },
     openModal(detail) {
         this.turmaId = detail.turmaId;
         this.turmaNome = detail.turmaNome;
-        this.nome = ''; this.email = ''; this.telefone = '';
+        this.nome_completo = ''; this.email = ''; this.telefone = '';
         this.termos = false; this.loading = false; this.success = false; this.errors = {};
         this.open = true;
         document.body.style.overflow = 'hidden';
@@ -25,13 +25,19 @@
         if (!this.canSubmit()) return;
         this.loading = true;
         try {
+            const contactos = this.telefone.trim() ? [this.telefone.trim()] : [];
             const r = await fetch('/api/pre-inscricoes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']')?.content
                 },
-                body: JSON.stringify({ turma_id: this.turmaId, nome: this.nome, email: this.email, telefone: this.telefone, termos: this.termos })
+                body: JSON.stringify({
+                    turma_id: this.turmaId,
+                    nome_completo: this.nome_completo,
+                    email: this.email,
+                    contactos: contactos
+                })
             });
             if (r.ok) {
                 this.success = true;
@@ -110,11 +116,11 @@
                     </label>
                     <div class="relative">
                         <i data-lucide="user" class="input-icon left-4"></i>
-                        <input type="text" x-model="nome" placeholder="Seu nome completo" required
+                        <input type="text" x-model="nome_completo" placeholder="Seu nome completo" required
                                class="input-field pl-11"
-                               :class="nome && nome.length < 2 ? 'border-destructive focus:ring-destructive/30' : ''">
+                               :class="nome_completo && nome_completo.length < 2 ? 'border-destructive focus:ring-destructive/30' : ''">
                     </div>
-                    <p class="text-xs text-destructive mt-1" x-show="nome && nome.length < 2">Nome muito curto</p>
+                    <p class="text-xs text-destructive mt-1" x-show="nome_completo && nome_completo.length < 2">Nome muito curto</p>
                 </div>
 
                 <div>
