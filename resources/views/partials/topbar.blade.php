@@ -2,19 +2,19 @@
 <div class="bg-topbar text-topbar-foreground py-2.5 text-sm hidden md:block border-b border-white/5">
     <div class="container mx-auto flex items-center justify-between px-4">
         <div class="flex items-center gap-8">
-            <a href="mailto:mucuanha.chineva@gmail.com"
+            <a href="mailto:mc-comercial@gmail.com"
                class="flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-accent transition-all duration-300 group">
                 <div class="w-6 h-6 rounded-md bg-white/8 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                     <i data-lucide="mail" class="w-3 h-3"></i>
                 </div>
-                mucuanha.chineva@gmail.com
+                mc-comercial.@gmail.com
             </a>
-            <a href="tel:+244929643510"
+            <a href="tel:+244926861700"
                class="flex items-center gap-2 opacity-70 hover:opacity-100 hover:text-accent transition-all duration-300 group">
                 <div class="w-6 h-6 rounded-md bg-white/8 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                     <i data-lucide="phone" class="w-3 h-3"></i>
                 </div>
-                +244 929-643-510
+                +244 926-861-700
             </a>
         </div>
         <div class="flex items-center gap-5">

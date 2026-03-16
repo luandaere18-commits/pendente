@@ -82,16 +82,16 @@
                             <i data-lucide="phone" class="w-4 h-4 text-accent"></i>
                         </div>
                         <div>
-                            <a href="tel:+244929643510" class="block opacity-60 hover:opacity-100 hover:text-accent transition-all duration-200">+244 929-643-510</a>
-                            <a href="tel:+244928966002" class="block opacity-60 hover:opacity-100 hover:text-accent transition-all duration-200">+244 928-966-002</a>
+                            <a href="tel:+244926861700" class="block opacity-60 hover:opacity-100 hover:text-accent transition-all duration-200">+244 926-861-700</a>
+                            <a href="tel:+244926861700" class="block opacity-60 hover:opacity-100 hover:text-accent transition-all duration-200">+244 926-861-700</a>
                         </div>
                     </li>
                     <li class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl bg-accent/15 flex items-center justify-center shrink-0">
                             <i data-lucide="mail" class="w-4 h-4 text-accent"></i>
                         </div>
-                        <a href="mailto:mucuanha.chineva@gmail.com" class="opacity-60 hover:opacity-100 hover:text-accent transition-all duration-200 break-all">
-                            mucuanha.chineva@gmail.com
+                        <a href="mailto:mc-comercial@gmail.com" class="opacity-60 hover:opacity-100 hover:text-accent transition-all duration-200 break-all">
+                            mc-comercial@gmail.com
                         </a>
                     </li>
                     <li class="flex items-start gap-3">

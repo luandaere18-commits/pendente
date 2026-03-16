@@ -1,60 +1,98 @@
-# MC-COMERCIAL - Centro de Formação Profissional
+# MC-COMERCIAL - Plataforma de Formação Profissional 🎓
 
-Site público e painel de administração para gerenciamento de centros de formação, cursos, turmas, formadores e loja online em Angola.
+**Plataforma completa de gestão de centros de formação profissional em Angola**
+
+[![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?style=flat-square&logo=laravel)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat-square&logo=php)](https://php.net)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v3-38B2AC?style=flat-square&logo=tailwindcss)](https://tailwindcss.com)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?style=flat-square&logo=mysql)](https://mysql.com)
+
+---
+
+## 📋 Índice
+
+- [Visão Geral](#-visão-geral)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação Rápida](#-instalação-rápida)
+- [Como Executar](#-como-executar)
+- [Credenciais de Acesso](#-credenciais-de-acesso)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [API REST](#-api-rest)
+- [Troubleshooting](#-troubleshooting)
+
+---
 
 ## 🎯 Visão Geral
 
-Plataforma completa de formação profissional com:
-- **Site Público** - Blade + Tailwind CSS
-- **Admin Panel** - Painel administrativo Laravel
-- **Backend API** - REST API para futuras integrações
-- **Loja Online** - Produtos e serviços
+Plataforma completa para gerenciamento de **centros de formação profissional** com:
+
+| Módulo | Descrição |
+|--------|-----------|
+| 🌐 **Site Público** | Homepage, catálogo de turmas, pré-inscrições, loja online |
+| 🎛️ **Admin Panel** | Dashboard para gestão de centros, cursos, turmas, formadores, itens e pré-inscrições |
+| 🔌 **REST API** | Endpoints para integração com sistemas externos |
+| 🛒 **Loja Online** | Produtos e serviços com separação por categorias e grupos |
+| 📱 **Responsive** | Design mobile-first com Tailwind CSS |
 
 ---
 
-## 🔧 Requisitos do Sistema
+## 🔧 Pré-requisitos
 
-- **PHP** >= 8.2
-- **Composer** (gerenciador de dependências PHP)
-- **MySQL** >= 5.7 ou **MariaDB** >= 10.3
-- **Node.js** >= 16.x
-- **NPM** >= 8.x
-- **Git** (para versionamento)
+Certifique-se de ter instalado:
+
+| Software | Versão | Download |
+|----------|--------|----------|
+| **PHP** | >= 8.2 | [php.net](https://php.net/downloads) |
+| **Composer** | Última | [getcomposer.org](https://getcomposer.org) |
+| **MySQL** | >= 5.7 | [mysql.com](https://mysql.com/downloads) ou [MariaDB](https://mariadb.org) |
+| **Node.js** | >= 16.x | [nodejs.org](https://nodejs.org) |
+| **Git** | Última | [git-scm.com](https://git-scm.com) |
+| **FileZilla** (opcional) | - | Para upload FTP em produção |
+
+**Verificar instalação:**
+```bash
+php --version
+composer --version
+node --version
+npm --version
+git --version
+mysql --version
+```
 
 ---
 
-## ⚙️ Instalação
+## ⚡ Instalação Rápida
 
-### 1️⃣ Clone o repositório
+### 1️⃣ Clonar o Repositório
 
 ```bash
 git clone https://github.com/seu-usuario/Pendentes.git
 cd Pendentes-main
 ```
 
-### 2️⃣ Instale as dependências PHP
+### 2️⃣ Criar Base de Dados
 
 ```bash
-composer install
+# Abrir MySQL/MariaDB
+mysql -u root -p
+
+# Criar banco de dados
+CREATE DATABASE c_formacao_bd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
 ```
 
-### 3️⃣ Instale as dependências Node.js
-
-```bash
-npm install
-```
-
-### 4️⃣ Configure o ambiente
+### 3️⃣ Configurar Ambiente
 
 ```bash
 cp .env.example .env
 ```
 
-Edite o `.env` com seus dados:
+**Editar `.env` com seus dados:**
 
 ```env
 APP_NAME="MC-COMERCIAL"
 APP_ENV=local
+APP_DEBUG=true
 APP_URL=http://localhost:8000
 
 DB_CONNECTION=mysql
@@ -62,142 +100,366 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=c_formacao_bd
 DB_USERNAME=root
-DB_PASSWORD=sua_senha
+DB_PASSWORD=sua_senha_aqui
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=seu_usuario
+MAIL_PASSWORD=sua_senha
+MAIL_FROM_ADDRESS="no-reply@mc-comercial.ao"
 ```
 
-### 5️⃣ Gere a chave da aplicação
+### 4️⃣ Instalar Dependências
+
+```bash
+# Dependências PHP
+composer install
+
+# Dependências Node.js
+npm install
+```
+
+### 5️⃣ Gerar Chave da Aplicação
 
 ```bash
 php artisan key:generate
 ```
 
-### 6️⃣ Execute as migrações
+### 6️⃣ Criar Tabelas e Dados
 
 ```bash
+# Criar todas as tabelas e popular com dados de exemplo
 php artisan migrate:fresh --seed
+
+# Ou apenas migrações (sem dados de exemplo)
+php artisan migrate
 ```
 
-### 7️⃣ Gere a documentação Swagger (opcional)
+### 7️⃣ Gerar Documentação API (Swagger)
 
 ```bash
 php artisan l5-swagger:generate
 ```
 
+### 8️⃣ Compilar Assets
+
+```bash
+npm run build
+```
+
+✅ **Pronto! Instalação concluída.**
+
 ---
 
-## 🚀 Executando o Projeto
+## 🚀 Como Executar
 
-### Terminal 1: Laravel Server
+### **Opção 1: Em Desenvolvimento (Local)**
 
+Abra **3 terminais diferentes** na pasta do projeto:
+
+**Terminal 1 - Laravel Development Server:**
 ```bash
 php artisan serve
 ```
+✅ Acesse: **http://localhost:8000**
 
-Acesse: **http://localhost:8000**
-
-### Terminal 2: Vite Dev Server
-
+**Terminal 2 - Vite Assets Compiler (CSS/JS):**
 ```bash
 npm run dev
 ```
+✅ Compila Tailwind CSS e JavaScript em tempo real
 
-Compila Tailwind CSS e assets em tempo real.
+**Terminal 3 - Optional: Verificar Logs (se necessário):**
+```bash
+tail -f storage/logs/laravel.log
+```
+
+**Estrutura de URLs em Desenvolvimento:**
+
+| Página | URL |
+|--------|-----|
+| 🏠 Homepage | http://localhost:8000 |
+| 📚 Catálogo Turmas | http://localhost:8000/site/cursos |
+| 🏢 Centros | http://localhost:8000/site/centros |
+| 🛒 Loja | http://localhost:8000/site/loja |
+| 💼 Admin Panel | http://localhost:8000/dashboard |
+| 📖 API Docs (Swagger) | http://localhost:8000/api/documentation |
+
+### **Opção 2: Produção**
+
+```bash
+# Build otimizado
+npm run build
+
+# Iniciar servidor em produção
+php artisan serve --env=production
+```
 
 ---
 
-## 📱 Estrutura do Site Público
+## 🔐 Credenciais de Acesso
 
-### Páginas Blade (`resources/views/pages/`)
+### **Admin Padrão (após `php artisan migrate:fresh --seed`)**
+
+```
+Email: admin@mc-comercial.ao
+Senha: password
+```
+
+**Acessar em:** http://localhost:8000/login
+
+### **Criar Novo Usuário Admin (via CLI)**
+
+```bash
+php artisan tinker
+```
+
+```php
+User::create([
+    'name' => 'Seu Nome',
+    'email' => 'seu@email.ao',
+    'password' => bcrypt('senha123'),
+]);
+exit
+```
+
+### **Resetar Password Admin**
+
+```bash
+php artisan tinker
+User::find(1)->update(['password' => bcrypt('nova_senha')]);
+exit
+```
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+Pendentes-main/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Api/                    # Controladores REST API
+│   │   │   ├── PreInscricaoController.php
+│   │   │   ├── TurmaController.php
+│   │   │   └── ...
+│   │   └── Web/
+│   │       ├── SiteController.php  # Site Público
+│   │       ├── TurmaController.php # Admin
+│   │       └── ...
+│   └── Models/
+│       ├── Categoria.php
+│       ├── Centro.php
+│       ├── Curso.php
+│       ├── Formador.php
+│       ├── Grupo.php
+│       ├── Item.php
+│       ├── PreInscricao.php
+│       ├── Turma.php
+│       └── User.php
+├── resources/
+│   ├── css/
+│   │   └── app.css                # Tailwind customizado
+│   ├── js/
+│   │   ├── app.js
+│   │   └── bootstrap.js
+│   └── views/
+│       ├── pages/                 # Site Público (7 páginas)
+│       ├── partials/              # Componentes reutilizáveis
+│       ├── auth/                  # Páginas de login
+│       └── (admin CRUD views)     # Dashboard admin
+├── routes/
+│   ├── web.php                    # Routes web (site + admin)
+│   └── api.php                    # Routes API REST
+├── database/
+│   ├── migrations/                # Schema database
+│   ├── seeders/                   # Dados de exemplo
+│   └── factories/                 # Factory para testes
+├── config/
+│   ├── app.php
+│   ├── database.php
+│   ├── filesystems.php
+│   └── l5-swagger.php             # Swagger config
+└── storage/
+    ├── app/                       # Uploads de usuários
+    ├── logs/                      # Logs da aplicação
+    └── api-docs/                  # Documentação Swagger
+```
+
+---
+
+## 🌐 Site Público - Páginas
 
 | Página | Rota | Descrição |
 |--------|------|-----------|
-| **home.blade.php** | `/` | Hero + Stats + Centros + Turmas |
-| **centros.blade.php** | `/site/centros` | Lista de centros + mapa |
-| **cursos.blade.php** | `/site/cursos` | Catálogo com filtros (busca, modalidade, área, centro) |
-| **sobre.blade.php** | `/site/sobre` | História + Missão/Visão + Valores + Equipa |
-| **contactos.blade.php** | `/site/contactos` | Formulário de contacto |
-| **loja.blade.php** | `/site/loja` | Produtos e serviços |
-
-### Componentes Reutilizáveis (`resources/views/partials/`)
-
-| Componente | Descrição |
-|------------|-----------|
-| **navbar.blade.php** | Menu de navegação principal |
-| **footer.blade.php** | Rodapé com links e contactos |
-| **topbar.blade.php** | Barra superior com contactos rápidos |
-| **whatsapp.blade.php** | Botão WhatsApp flutuante |
-| **pre-inscricao-modal.blade.php** | Modal de pré-inscrição |
+| **Home** | `/` | Hero, estatísticas, centros, turmas em destaque |
+| **Centros** | `/site/centros` | Lista de centros com localização e contactos |
+| **Cursos/Turmas** | `/site/cursos` | Catálogo com filtros (busca, status, período, centro) + pré-inscrição |
+| **Loja** | `/site/loja` | Produtos e serviços por categorias, com snackbar |
+| **Serviços** | `/site/servicos` | Detalhes dos serviços oferecidos |
+| **Sobre** | `/site/sobre` | História, missão/visão, valores, equipa |
+| **Contactos** | `/site/contactos` | Formulário de contacto e informações |
 
 ---
 
-## 🎨 Design & Styling
+## 🎛️ Admin Panel - Módulos
 
-- **Framework CSS**: Tailwind CSS v3
-- **Icons**: Lucide Icons
-- **Font**: Plus Jakarta Sans
-- **Tema**: Customizado em `resources/css/app.css`
-
-### Cores Principais
-
-```css
---primary: hsl(224, 58%, 33%);      /* Azul escuro */
---accent: hsl(217, 91%, 60%);       /* Azul claro */
---background: hsl(210, 20%, 98%);   /* Cinzento muito claro */
---foreground: hsl(215, 25%, 15%);   /* Cinzento escuro */
-```
+| Módulo | URL | Funções |
+|--------|-----|---------|
+| **Dashboard** | `/dashboard` | Resumo geral da plataforma |
+| **Centros** | `/centros` | CRUD completo (Criar, Ler, Editar, Deletar) |
+| **Cursos** | `/cursos` | Gestão de cursos com associação a centros |
+| **Turmas** | `/turmas` | Criar turmas, controlar vagas, status, formadores |
+| **Formadores** | `/formadores` | Cadastro e gestão de formadores |
+| **Grupos** | `/grupos` | Categorização hierárquica |
+| **Categorias** | `/categorias` | Categorias de itens |
+| **Itens** | `/itens` | Produtos e serviços da loja |
+| **Pré-inscrições** | `/pre-inscricoes` | Gerir pré-inscrições de turmas |
 
 ---
 
-## 📊 Modelos de Dados
+## 🔌 API REST
 
-### Centro
-```php
-- id
-- nome
-- localizacao
-- contactos (JSON array)
-- email
+Endpoints disponíveis em `/api`:
+
+### **Pré-inscrições**
+```
+POST   /api/pre-inscricoes           # Criar pré-inscrição
+GET    /api/pre-inscricoes           # Listar
+GET    /api/pre-inscricoes/{id}      # Detalhe
+PUT    /api/pre-inscricoes/{id}      # Atualizar
+DELETE /api/pre-inscricoes/{id}      # Deletar
 ```
 
-### Curso
+### **Turmas**
+```
+GET    /api/turmas                   # Listar turmas
+GET    /api/turmas/{id}              # Detalhe turma
+GET    /api/turmas/curso/{cursoId}   # Turmas de um curso
+```
+
+### **Centros**
+```
+GET    /api/centros                  # Listar centros
+GET    /api/centros/{id}             # Detalhe centro
+```
+
+**Documentação Completa:** http://localhost:8000/api/documentation
+
+---
+
+## 💾 Modelos de Dados
+
+### **User (Autenticação)**
+```php
+- id (UUID)
+- name (string)
+- email (string unique)
+- password (hashed)
+- timestamps
+```
+
+### **Grupo**
 ```php
 - id
-- nome
-- descricao
-- programa
-- area
-- modalidade (presencial, online, hibrida)
-- imagem_url
+- nome (string) - ex: "Snackbar", "Produtos"
+- display_name (string) - ex: "Snack Bar", "Produtos"
+- ordem (integer)
 - ativo (boolean)
 ```
 
-### Turma
+### **Categoria**
 ```php
 - id
-- curso_id
-- centro_id
-- formador_id
-- duracao_semanas
-- dia_semana (JSON array)
-- periodo
-- hora_inicio
-- hora_fim
-- data_arranque
-- status
-- vagas_totais
-- vagas_preenchidas
+- grupo_id (foreign key)
+- nome (string)
+- descricao (text nullable)
+- ordem (integer)
+- ativo (boolean)
+```
+
+### **Item (Produtos/Serviços da Loja)**
+```php
+- id
+- categoria_id (foreign key)
+- nome (string)
+- descricao (text nullable)
+- preco (decimal nullable) - em centavos
+- imagem (string nullable)
+- tipo (enum: 'produto', 'servico')
+- destaque (boolean)
+- ordem (integer)
+- ativo (boolean)
+```
+
+### **Centro**
+```php
+- id
+- nome (string)
+- localizacao (text nullable)
+- contactos (json array) - ex: ["+244 923456789"]
+- email (string nullable)
+- ativo (boolean)
+```
+
+### **Curso**
+```php
+- id
+- nome (string)
+- descricao (text nullable)
+- programa (text nullable)
+- area (string nullable) - ex: "Tecnologia"
+- modalidade (enum) - 'presencial', 'online', 'hibrida'
+- imagem_url (string nullable)
+- ativo (boolean)
+```
+
+### **Turma**
+```php
+- id
+- curso_id (foreign key)
+- centro_id (foreign key)
+- formador_id (foreign key nullable)
+- duracao_semanas (integer nullable)
+- dia_semana (json array) - ex: ["Segunda", "Terça"]
+- periodo (enum) - 'manha', 'tarde', 'noite'
+- hora_inicio (time nullable)
+- hora_fim (time nullable)
+- data_arranque (date nullable)
+- status (enum) - 'planeada', 'inscricoes_abertas', 'em_andamento', 'concluida'
+- vagas_totais (integer)
+- vagas_preenchidas (integer)
 - publicado (boolean)
 ```
 
-### Formador
+### **Formador**
 ```php
 - id
-- nome
-- email
-- contactos (JSON array)
-- especialidade
-- bio
-- foto_url
+- nome (string)
+- email (string nullable)
+- contactos (json array)
+- especialidade (string nullable)
+- bio (text nullable)
+- foto_url (string nullable)
+- ativo (boolean)
+```
+
+### **PreInscricao**
+```php
+- id
+- turma_id (foreign key)
+- nome_completo (string)
+- contactos (json array) - ex: ["+244 923456789", "+244 924567890"]
+- email (string nullable)
+- status (enum) - 'pendente', 'confirmado', 'cancelado' (default: 'pendente')
+- observacoes (text nullable)
+- timestamps
+```
+
+---
+
+## 🎨 Customização
 ```
 
 ### Grupo (Loja)
@@ -235,9 +497,33 @@ Compila Tailwind CSS e assets em tempo real.
 
 Acesse: **http://localhost:8000/login**
 
-Credenciais padrão:
-- **Email**: admin@site.com
-- **Senha**: senha123
+**Credenciais padrão (após `php artisan migrate:fresh --seed`):**
+- **Email**: admin@mc-comercial.ao
+- **Senha**: password
+
+**⚠️ Altere a senha na primeira vez que entrar em produção!**
+
+### Criar Novo Admin via Terminal
+
+```bash
+php artisan tinker
+
+# Executar no Tinker:
+User::create([
+    'name' => 'Novo Admin',
+    'email' => 'novo@mc-comercial.ao',
+    'password' => bcrypt('senha_forte_aqui'),
+]);
+exit
+```
+
+### Resetar Password Admin
+
+```bash
+php artisan tinker
+User::find(1)->update(['password' => bcrypt('nova_senha')]);
+exit
+```
 
 ---
 
@@ -472,3 +758,173 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 **MC-COMERCIAL Development Team**
 - 📧 dev@mc-comercial.ao
 - 🔗 [GitHub](https://github.com/seu-usuario)
+
+---
+
+## 🐛 Troubleshooting
+
+### ❌ Erro: "SQLSTATE[HY000]: General error: 1030"
+
+**Solução:** Aumentar max_allowed_packet no MySQL
+
+```bash
+mysql -u root -p
+SET GLOBAL max_allowed_packet=268435456;
+EXIT;
+```
+
+### ❌ Erro: "No application encryption key has been specified"
+
+```bash
+php artisan key:generate
+```
+
+### ❌ "Class not found" ou "Composer autoload failed"
+
+```bash
+composer dumpautoload
+```
+
+### ❌ Assets CSS/JS não carregam em desenvolvimento
+
+```bash
+# Recompilar assets
+npm run dev
+
+# Ou build final
+npm run build
+```
+
+### ❌ Base de dados não existe
+
+```bash
+# Abrir MySQL e criar base de dados
+mysql -u root -p
+CREATE DATABASE c_formacao_bd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
+
+# Executar migrações
+php artisan migrate:fresh --seed
+```
+
+### ❌ Erro: "The database does not contain an 'users' table"
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### ✨ Limpar cache e otimizar
+
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+php artisan route:clear
+php artisan optimize:clear
+```
+
+### 📁 Verificar Permissões (Linux/Mac)
+
+```bash
+chmod -R 775 storage
+chmod -R 775 bootstrap/cache
+touch storage/logs/laravel.log
+```
+
+### ❌ Erro: "Call to undefined function"
+
+```bash
+composer dump-autoload
+php artisan optimize:clear
+```
+
+---
+
+## 📚 Documentação Adicional
+
+### Links Úteis
+- [Laravel 11 Documentation](https://laravel.com/docs/11.x)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Lucide Icons](https://lucide.dev)
+- [Alpine.js](https://alpinejs.dev/start-here)
+- [MySQL 8.0](https://dev.mysql.com/doc/refman/8.0/en/)
+
+### Variáveis de Ambiente Importantes
+
+```env
+# App
+APP_NAME=MC-COMERCIAL
+APP_ENV=local|production
+APP_DEBUG=true|false
+APP_URL=http://localhost:8000
+
+# Database
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=c_formacao_bd
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Mail (para notificações)
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=seu_usuario
+MAIL_PASSWORD=sua_senha
+
+# Storage (para uploads)
+FILESYSTEM_DISK=public
+```
+
+---
+
+## ✅ Checklist de Deploy
+
+- [ ] Clonar repositório
+- [ ] Instalar Composer e NPM
+- [ ] Copiar `.env.example` para `.env`
+- [ ] Gerar chave com `php artisan key:generate`
+- [ ] Configurar dados de BD no `.env`
+- [ ] Criar base de dados MySQL
+- [ ] Executar `php artisan migrate:fresh --seed`
+- [ ] Compilar assets com `npm run build`
+- [ ] Testar login em http://localhost:8000/login
+- [ ] Testar site público em http://localhost:8000
+- [ ] Testar API em http://localhost:8000/api/documentation
+- [ ] Fazer commit e push para GitHub
+
+---
+
+## 📊 Roadmap Futuro
+
+- [ ] Painel Analytics com gráficos
+- [ ] Sistema de notificações por email
+- [ ] Mobile App (React Native)
+- [ ] Integração com SMS (Twilio)
+- [ ] Certificados digitais
+- [ ] Sistema de pagamentos
+- [ ] Relatórios em PDF
+
+---
+
+## 📝 Últimas Alterações
+
+**Versão 1.0 - Março 2026**
+- ✅ Site público completo
+- ✅ Admin panel funcional
+- ✅ REST API implementada
+- ✅ Modal pré-inscrição com contactos dinâmicos
+- ✅ Loja online com snackbar
+- ✅ Sistema de autenticação
+
+**Nota:** Projeto em desenvolvimento ativo. Acompanhe as atualizações no GitHub.
+
+---
+
+## 🙏 Agradecimentos
+
+Obrigado por usar MC-COMERCIAL! Se encontrar bugs ou tiver sugestões, por favor abra uma issue no GitHub.
+
+**Desenvolvido com ❤️ em Angola**
