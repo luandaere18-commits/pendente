@@ -3,17 +3,20 @@
     open: false,
     turmaId: null,
     turmaNome: '',
-    nome_completo: '', email: '', telefone: '', termos: false,
+    nome_completo: '', email: '', contactos: [''], observacoes: '', termos: false,
     loading: false,
     success: false,
     errors: {},
-    validEmail() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email); },
-    canSubmit() { return this.nome_completo.trim().length >= 2 && this.validEmail() && this.termos && !this.loading; },
+    validEmail() { return !this.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email); },
+    canSubmit() { 
+        const temContacto = this.contactos.some(c => c.trim().length > 0);
+        return this.nome_completo.trim().length >= 2 && temContacto && this.termos && !this.loading;
+    },
     openModal(detail) {
         this.turmaId = detail.turmaId;
         this.turmaNome = detail.turmaNome;
-        this.nome_completo = ''; this.email = ''; this.telefone = '';
-        this.termos = false; this.loading = false; this.success = false; this.errors = {};
+        this.nome_completo = ''; this.email = ''; this.contactos = [''];
+        this.observacoes = ''; this.termos = false; this.loading = false; this.success = false; this.errors = {};
         this.open = true;
         document.body.style.overflow = 'hidden';
     },
@@ -21,23 +24,39 @@
         this.open = false;
         document.body.style.overflow = '';
     },
+    adicionarContacto() {
+        this.contactos.push('');
+    },
+    removerContacto(index) {
+        if (this.contactos.length > 1) {
+            this.contactos.splice(index, 1);
+        }
+    },
     async submitForm() {
         if (!this.canSubmit()) return;
         this.loading = true;
         try {
-            const contactos = this.telefone.trim() ? [this.telefone.trim()] : [];
+            const contactosFiltrados = this.contactos.filter(c => c.trim().length > 0);
+            const payload = {
+                turma_id: this.turmaId,
+                nome_completo: this.nome_completo.trim(),
+                contactos: contactosFiltrados
+            };
+            
+            if (this.email.trim()) {
+                payload.email = this.email.trim();
+            }
+            if (this.observacoes.trim()) {
+                payload.observacoes = this.observacoes.trim();
+            }
+            
             const r = await fetch('/api/pre-inscricoes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']')?.content
                 },
-                body: JSON.stringify({
-                    turma_id: this.turmaId,
-                    nome_completo: this.nome_completo,
-                    email: this.email,
-                    contactos: contactos
-                })
+                body: JSON.stringify(payload)
             });
             if (r.ok) {
                 this.success = true;
@@ -125,11 +144,11 @@
 
                 <div>
                     <label class="text-sm font-semibold text-foreground mb-1.5 block">
-                        Email <span class="text-destructive">*</span>
+                        Email <span class="text-muted-foreground font-normal">(opcional)</span>
                     </label>
                     <div class="relative">
                         <i data-lucide="mail" class="input-icon left-4"></i>
-                        <input type="email" x-model="email" placeholder="seuemail@exemplo.com" required
+                        <input type="email" x-model="email" placeholder="seuemail@exemplo.com"
                                class="input-field pl-11"
                                :class="email && !validEmail() ? 'border-destructive focus:ring-destructive/30' : ''">
                     </div>
@@ -137,12 +156,41 @@
                 </div>
 
                 <div>
-                    <label class="text-sm font-semibold text-foreground mb-1.5 block">Telefone <span class="text-muted-foreground font-normal">(opcional)</span></label>
-                    <div class="relative">
-                        <i data-lucide="phone" class="input-icon left-4"></i>
-                        <input type="text" x-model="telefone" placeholder="+244 9XX-XXX-XXX"
-                               class="input-field pl-11">
+                    <label class="text-sm font-semibold text-foreground mb-1.5 block">
+                        Contactos <span class="text-destructive">*</span>
+                    </label>
+                    <div id="contactos-container" class="space-y-2.5">
+                        <template x-for="(contacto, index) in contactos" :key="index">
+                            <div class="flex gap-2.5 contacto-item">
+                                <div class="relative flex-1">
+                                    <i data-lucide="phone" class="input-icon left-4"></i>
+                                    <input type="text" x-model="contactos[index]" placeholder="Ex: +244 923-456-789"
+                                           class="input-field pl-11" required>
+                                </div>
+                                <button type="button" 
+                                        @click="removerContacto(index)"
+                                        x-show="contactos.length > 1"
+                                        class="px-3 py-2 bg-destructive/10 text-destructive rounded-lg hover:bg-destructive/20 transition-all">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" 
+                                        @click="adicionarContacto()"
+                                        x-show="index === contactos.length - 1"
+                                        class="px-3 py-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-all">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </template>
                     </div>
+                    <p class="text-xs text-muted-foreground mt-1.5">Pode adicionar múltiplos contactos</p>
+                </div>
+
+                <div>
+                    <label class="text-sm font-semibold text-foreground mb-1.5 block">
+                        Observações <span class="text-muted-foreground font-normal">(opcional)</span>
+                    </label>
+                    <textarea x-model="observacoes" placeholder="Se tem alguma dúvida ou observação, deixe aqui..." 
+                              class="input-field" rows="3"></textarea>
                 </div>
 
                 <label class="flex items-start gap-3 cursor-pointer group p-3 rounded-xl hover:bg-muted/50 transition-colors border border-transparent hover:border-border">
