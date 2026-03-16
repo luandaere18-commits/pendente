@@ -4,12 +4,9 @@
 
 @section('content')
 
-{{-- Page Hero (azul centralizado) --}}
-<div class="bg-gradient-to-br from-primary via-primary/90 to-primary/80 py-20 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-accent blur-3xl"></div>
-    </div>
-    <div class="container mx-auto px-4 text-center text-primary-foreground relative">
+{{-- Page Hero — gradiente azul moderno --}}
+<div class="page-hero">
+    <div class="container mx-auto px-4 text-center text-primary-foreground">
         <h1 class="text-4xl lg:text-5xl font-extrabold mb-4">Nossos Serviços</h1>
         <p class="text-lg opacity-80 max-w-2xl mx-auto">Soluções completas para o seu desenvolvimento profissional</p>
     </div>
@@ -18,53 +15,115 @@
 <div class="py-14 bg-background min-h-screen">
     <div class="container mx-auto px-4">
 
-        {{-- Grid de Serviços --}}
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-            @php
-                $servicos = [
-                    ['icon' => 'graduation-cap', 'title' => 'Formação Profissional',  'desc' => 'Cursos especializados em diversas áreas do saber com certificação reconhecida pelo mercado angolano e internacional.', 'price' => 'Sob consulta',        'highlight' => true],
-                    ['icon' => 'briefcase',       'title' => 'Projectos Académicos',  'desc' => 'Apoio na elaboração de trabalhos, dissertações e projectos académicos com orientação especializada.',                  'price' => 'A partir de 50.000 Kz', 'highlight' => false],
-                    ['icon' => 'pen-tool',        'title' => 'Workshops',             'desc' => 'Sessões práticas intensivas com especialistas da indústria para desenvolvimento acelerado de competências.',            'price' => 'A partir de 30.000 Kz', 'highlight' => false],
-                    ['icon' => 'monitor',         'title' => 'Formação Online',       'desc' => 'Aprenda no seu próprio ritmo com aulas gravadas e sessões ao vivo com formadores certificados.',                       'price' => 'A partir de 15.000 Kz', 'highlight' => false],
-                    ['icon' => 'target',          'title' => 'Consultoria Empresarial','desc' => 'Consultoria especializada para empresas e organizações que pretendem desenvolver os seus colaboradores.',            'price' => 'Sob consulta',          'highlight' => false],
-                    ['icon' => 'award',           'title' => 'Certificações',         'desc' => 'Programas de certificação profissional reconhecidos internacionalmente que valorizam o seu currículo.',                'price' => 'Sob consulta',          'highlight' => false],
-                ];
-            @endphp
+        {{-- Grid de Serviços — carregados dinamicamente da BD --}}
+        @php
+            $grupoServicos = isset($grupos) ? $grupos->firstWhere('nome', 'servicos') : null;
+            $iconFallbacks = ['graduation-cap', 'briefcase', 'pen-tool', 'monitor', 'target', 'award', 'cog', 'wrench'];
+        @endphp
 
-            @foreach($servicos as $servico)
-                <div class="feature-card group reveal relative overflow-hidden {{ $servico['highlight'] ? 'ring-2 ring-accent/30' : '' }}">
-                    @if($servico['highlight'])
-                        <div class="absolute top-4 right-4">
-                            <span class="text-[10px] font-bold bg-accent text-white px-2 py-1 rounded-full">Popular</span>
+        @if($grupoServicos && $grupoServicos->categorias->count() > 0)
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+                @php $itemIndex = 0; @endphp
+                @foreach($grupoServicos->categorias as $categoria)
+                    @foreach($categoria->itens->where('tipo', 'servico') as $servico)
+                        <div class="feature-card group reveal relative overflow-hidden {{ $servico->destaque ? 'ring-2 ring-accent/30 animate-border-glow' : '' }}">
+                            @if($servico->destaque)
+                                <div class="absolute top-4 right-4">
+                                    <span class="text-[10px] font-bold bg-accent text-white px-2 py-1 rounded-full">Popular</span>
+                                </div>
+                            @endif
+
+                            {{-- Ícone --}}
+                            <div class="w-14 h-14 rounded-2xl bg-accent/10 group-hover:bg-accent flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                                <i data-lucide="{{ $iconFallbacks[$itemIndex % count($iconFallbacks)] }}" class="w-7 h-7 text-accent group-hover:text-white transition-colors duration-300"></i>
+                            </div>
+
+                            {{-- Título e descrição breve --}}
+                            <h3 class="text-lg font-extrabold text-foreground mb-2 group-hover:text-accent transition-colors">{{ $servico->nome }}</h3>
+                            <p class="text-sm text-muted-foreground leading-relaxed line-clamp-2">{{ $servico->descricao }}</p>
+
+                            {{-- Detalhes expandidos no hover --}}
+                            <div class="service-card-details border-t border-border mt-4">
+                                @if($servico->descricao && strlen($servico->descricao) > 80)
+                                    <p class="text-sm text-muted-foreground leading-relaxed mb-3">{{ $servico->descricao }}</p>
+                                @endif
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-[10px] text-muted-foreground uppercase font-semibold mb-0.5">Investimento</p>
+                                        <span class="text-sm font-bold gradient-text">
+                                            {{ $servico->preco ? number_format($servico->preco, 2, ',', '.') . ' Kz' : 'Sob consulta' }}
+                                        </span>
+                                    </div>
+                                    <a href="{{ route('site.contactos') }}"
+                                       class="w-10 h-10 rounded-xl bg-accent/10 text-accent hover:bg-accent hover:text-white flex items-center justify-center transition-all duration-200 group-hover:scale-110">
+                                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {{-- Preço sempre visível quando não hover --}}
+                            <div class="flex items-center justify-between pt-4 border-t border-border mt-4 group-hover:opacity-0 group-hover:h-0 group-hover:mt-0 group-hover:pt-0 group-hover:border-0 transition-all duration-300 overflow-hidden">
+                                <div>
+                                    <p class="text-[10px] text-muted-foreground uppercase font-semibold mb-0.5">Investimento</p>
+                                    <span class="text-sm font-bold gradient-text">
+                                        {{ $servico->preco ? number_format($servico->preco, 2, ',', '.') . ' Kz' : 'Sob consulta' }}
+                                    </span>
+                                </div>
+                                <a href="{{ route('site.contactos') }}"
+                                   class="w-10 h-10 rounded-xl bg-accent/10 text-accent hover:bg-accent hover:text-white flex items-center justify-center transition-all duration-200">
+                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </a>
+                            </div>
                         </div>
-                    @endif
-                    <div class="w-14 h-14 rounded-2xl bg-accent/10 group-hover:bg-accent flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110">
-                        <i data-lucide="{{ $servico['icon'] }}" class="w-7 h-7 text-accent group-hover:text-white transition-colors duration-300"></i>
-                    </div>
-                    <h3 class="text-lg font-extrabold text-foreground mb-3 group-hover:text-accent transition-colors">{{ $servico['title'] }}</h3>
-                    <p class="text-sm text-muted-foreground mb-6 leading-relaxed">{{ $servico['desc'] }}</p>
-                    <div class="flex items-center justify-between pt-4 border-t border-border">
-                        <div>
-                            <p class="text-[10px] text-muted-foreground uppercase font-semibold mb-0.5">Investimento</p>
-                            <span class="text-sm font-bold gradient-text">{{ $servico['price'] }}</span>
+                        @php $itemIndex++; @endphp
+                    @endforeach
+                @endforeach
+            </div>
+        @else
+            {{-- Fallback estático --}}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+                @php
+                    $servicosFallback = [
+                        ['icon' => 'graduation-cap', 'title' => 'Formação Profissional',  'desc' => 'Cursos especializados em diversas áreas do saber com certificação reconhecida.', 'price' => 'Sob consulta',        'highlight' => true],
+                        ['icon' => 'briefcase',       'title' => 'Projectos Académicos',  'desc' => 'Apoio na elaboração de trabalhos, dissertações e projectos académicos.',          'price' => 'A partir de 50.000 Kz', 'highlight' => false],
+                        ['icon' => 'pen-tool',        'title' => 'Workshops',             'desc' => 'Sessões práticas intensivas com especialistas da indústria.',                     'price' => 'A partir de 30.000 Kz', 'highlight' => false],
+                        ['icon' => 'monitor',         'title' => 'Formação Online',       'desc' => 'Aprenda no seu próprio ritmo com aulas gravadas e sessões ao vivo.',              'price' => 'A partir de 15.000 Kz', 'highlight' => false],
+                        ['icon' => 'target',          'title' => 'Consultoria Empresarial','desc' => 'Consultoria especializada para empresas e organizações.',                       'price' => 'Sob consulta',          'highlight' => false],
+                        ['icon' => 'award',           'title' => 'Certificações',         'desc' => 'Programas de certificação profissional reconhecidos internacionalmente.',          'price' => 'Sob consulta',          'highlight' => false],
+                    ];
+                @endphp
+                @foreach($servicosFallback as $servico)
+                    <div class="feature-card group reveal relative overflow-hidden {{ $servico['highlight'] ? 'ring-2 ring-accent/30' : '' }}">
+                        @if($servico['highlight'])
+                            <div class="absolute top-4 right-4">
+                                <span class="text-[10px] font-bold bg-accent text-white px-2 py-1 rounded-full">Popular</span>
+                            </div>
+                        @endif
+                        <div class="w-14 h-14 rounded-2xl bg-accent/10 group-hover:bg-accent flex items-center justify-center mb-5 transition-all duration-300 group-hover:scale-110">
+                            <i data-lucide="{{ $servico['icon'] }}" class="w-7 h-7 text-accent group-hover:text-white transition-colors duration-300"></i>
                         </div>
-                        <a href="{{ route('site.contactos') }}"
-                           class="w-10 h-10 rounded-xl bg-accent/10 text-accent hover:bg-accent hover:text-white flex items-center justify-center transition-all duration-200 group-hover:scale-110">
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </a>
+                        <h3 class="text-lg font-extrabold text-foreground mb-3 group-hover:text-accent transition-colors">{{ $servico['title'] }}</h3>
+                        <p class="text-sm text-muted-foreground mb-6 leading-relaxed">{{ $servico['desc'] }}</p>
+                        <div class="flex items-center justify-between pt-4 border-t border-border">
+                            <div>
+                                <p class="text-[10px] text-muted-foreground uppercase font-semibold mb-0.5">Investimento</p>
+                                <span class="text-sm font-bold gradient-text">{{ $servico['price'] }}</span>
+                            </div>
+                            <a href="{{ route('site.contactos') }}"
+                               class="w-10 h-10 rounded-xl bg-accent/10 text-accent hover:bg-accent hover:text-white flex items-center justify-center transition-all duration-200 group-hover:scale-110">
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </a>
+                        </div>
                     </div>
-                </div>
-            @endforeach
-        </div>
+                @endforeach
+            </div>
+        @endif
 
         {{-- CTA Banner --}}
         <div class="mb-20 reveal">
-            <div class="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-10 md:p-14 text-center text-primary-foreground relative overflow-hidden">
-                <div class="absolute inset-0 opacity-10 pointer-events-none">
-                    <div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-accent blur-3xl"></div>
-                </div>
-                <div class="relative">
-                    <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-5">
+            <div class="page-hero rounded-2xl overflow-hidden">
+                <div class="text-center text-primary-foreground py-14 px-6">
+                    <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-5 animate-float">
                         <i data-lucide="message-square" class="w-7 h-7"></i>
                     </div>
                     <h2 class="text-3xl font-extrabold mb-4">Interessado em Nossos Serviços?</h2>

@@ -4,12 +4,9 @@
 
 @section('content')
 
-{{-- Page Hero (azul centralizado) --}}
-<div class="bg-gradient-to-br from-primary via-primary/90 to-primary/80 py-20 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-accent blur-3xl"></div>
-    </div>
-    <div class="container mx-auto px-4 text-center text-primary-foreground relative">
+{{-- Page Hero — gradiente azul moderno --}}
+<div class="page-hero">
+    <div class="container mx-auto px-4 text-center text-primary-foreground">
         <h1 class="text-4xl lg:text-5xl font-extrabold mb-4">Contacte-nos</h1>
         <p class="text-lg opacity-80 max-w-2xl mx-auto">Estamos aqui para o ajudar. Fale connosco hoje mesmo.</p>
     </div>
@@ -27,7 +24,6 @@
                          loading: false,
                          submitted: false,
                          touched: {},
-                         errors: {},
                          validEmail() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email); },
                          touch(field) { this.touched[field] = true; },
                          validate() {
@@ -52,8 +48,12 @@
                      }">
 
                     {{-- Success --}}
-                    <div x-show="submitted" class="text-center py-10">
-                        <div class="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-5">
+                    <div x-show="submitted"
+                         x-transition:enter="transition ease-out duration-400"
+                         x-transition:enter-start="opacity-0 scale-90"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         class="text-center py-10">
+                        <div class="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-5 animate-float">
                             <i data-lucide="check-circle-2" class="w-10 h-10 text-success"></i>
                         </div>
                         <h3 class="text-xl font-bold text-foreground mb-2">Mensagem Enviada!</h3>
@@ -85,7 +85,7 @@
                                                class="flex h-11 w-full rounded-xl border pl-10 pr-3 py-2 text-sm bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all"
                                                :class="touched.nome && form.nome.length < 2 ? 'border-destructive focus:ring-destructive/30' : 'border-input'">
                                     </div>
-                                    <p class="text-xs text-destructive mt-1" x-show="touched.nome && form.nome.length < 2">Nome muito curto</p>
+                                    <p class="text-xs text-destructive mt-1" x-show="touched.nome && form.nome.length < 2" x-transition>Nome muito curto</p>
                                 </div>
                                 <div>
                                     <label class="text-sm font-semibold text-foreground mb-1.5 block">
@@ -97,7 +97,7 @@
                                                class="flex h-11 w-full rounded-xl border pl-10 pr-3 py-2 text-sm bg-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all"
                                                :class="touched.email && !validEmail() ? 'border-destructive focus:ring-destructive/30' : 'border-input'">
                                     </div>
-                                    <p class="text-xs text-destructive mt-1" x-show="touched.email && !validEmail()">Email inválido</p>
+                                    <p class="text-xs text-destructive mt-1" x-show="touched.email && !validEmail()" x-transition>Email inválido</p>
                                 </div>
                             </div>
 
@@ -124,7 +124,7 @@
                                         <option value="servicos">Serviços</option>
                                         <option value="parceria">Parcerias</option>
                                     </select>
-                                    <p class="text-xs text-destructive mt-1" x-show="touched.assunto && !form.assunto">Selecione um assunto</p>
+                                    <p class="text-xs text-destructive mt-1" x-show="touched.assunto && !form.assunto" x-transition>Selecione um assunto</p>
                                 </div>
                             </div>
 
@@ -137,10 +137,9 @@
                                           placeholder="Escreva a sua mensagem aqui... (mínimo 10 caracteres)"
                                           class="flex w-full rounded-xl border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none transition-all"
                                           :class="touched.mensagem && form.mensagem.length < 10 ? 'border-destructive focus:ring-destructive/30' : 'border-input'"></textarea>
-                                <p class="text-xs text-destructive mt-1" x-show="touched.mensagem && form.mensagem.length < 10">Mínimo de 10 caracteres</p>
+                                <p class="text-xs text-destructive mt-1" x-show="touched.mensagem && form.mensagem.length < 10" x-transition>Mínimo de 10 caracteres</p>
                             </div>
 
-                            {{-- Progress dots --}}
                             <div class="flex items-center gap-3 text-xs text-muted-foreground">
                                 <div class="flex gap-1.5">
                                     <span class="w-2 h-2 rounded-full transition-colors duration-300" :class="form.nome.length >= 2 ? 'bg-success' : 'bg-muted'"></span>
@@ -151,7 +150,6 @@
                                 <span x-text="`${filledCount()}/4 campos preenchidos`"></span>
                             </div>
 
-                            {{-- Botão sempre activo --}}
                             <button type="submit"
                                     class="w-full inline-flex items-center justify-center gap-2 rounded-xl text-sm font-bold bg-primary text-primary-foreground h-12 hover:bg-primary/90 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md"
                                     :class="loading ? 'opacity-80 cursor-wait' : ''">
@@ -173,14 +171,13 @@
 
             {{-- Info lateral --}}
             <div class="lg:col-span-2 space-y-5">
-
                 <div class="feature-card reveal">
                     <h3 class="font-bold text-foreground mb-3 flex items-center gap-2">
                         <i data-lucide="info" class="w-4 h-4 text-accent"></i>
                         Sobre a MC-COMERCIAL
                     </h3>
                     <p class="text-sm text-muted-foreground leading-relaxed">
-                        Com mais de 10 anos de experiência, a MC-COMERCIAL é um centro de formação de referência em Angola, dedicado à preparação de profissionais qualificados para o mercado de trabalho.
+                        Com mais de 10 anos de experiência, a MC-COMERCIAL é um centro de formação de referência em Angola.
                     </p>
                 </div>
 
@@ -251,7 +248,7 @@
                             <i data-lucide="mail" class="w-4 h-4"></i>Email
                         </a>
                         <a href="#"
-                           class="flex items-center justify-center gap-2 bg-blue-500/10 text-blue-600 rounded-xl p-3 text-sm font-semibold hover:bg-blue-500 hover:text-white hover:scale-105 transition-all duration-200">
+                           class="flex items-center justify-center gap-2 bg-accent/10 text-accent rounded-xl p-3 text-sm font-semibold hover:bg-accent hover:text-white hover:scale-105 transition-all duration-200">
                             <i data-lucide="facebook" class="w-4 h-4"></i>Facebook
                         </a>
                     </div>

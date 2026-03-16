@@ -17,6 +17,8 @@
 
     {{-- Alpine.js --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- Alpine Intersect plugin (para x-intersect) --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js"></script>
 
     {{-- Lucide Icons --}}
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -37,6 +39,7 @@
         }
     }"
 >
+    @include('partials.topbar')
     @include('partials.navbar')
 
     <main class="flex-1">
@@ -55,15 +58,15 @@
         @click="window.scrollTo({ top: 0, behavior: 'smooth' })"
         x-show="showScrollTop"
         x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 translate-y-4"
-        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:enter-start="opacity-0 translate-y-4 scale-90"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
         x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 translate-y-4"
-        class="fixed bottom-24 right-6 z-50 w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 hover:scale-110 transition-all duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 translate-y-4 scale-90"
+        class="fixed bottom-24 right-6 z-50 w-12 h-12 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 hover:scale-110 hover:shadow-xl transition-all duration-300 group"
         aria-label="Voltar ao topo"
     >
-        <i data-lucide="chevron-up" class="w-5 h-5"></i>
+        <i data-lucide="chevron-up" class="w-5 h-5 group-hover:-translate-y-0.5 transition-transform"></i>
     </button>
 
     <script>
@@ -75,20 +78,29 @@
             const colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-blue-600', warning: 'bg-amber-500' };
             toast.className = `${colors[type] || colors.success} text-white px-5 py-3 rounded-xl shadow-xl text-sm flex items-center gap-2 pointer-events-auto animate-slide-in`;
             const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
-            toast.innerHTML = `<span class="font-bold">${icons[type] || '✓'}</span> ${message}`;
+            toast.innerHTML = `<span class="font-bold text-base">${icons[type] || '✓'}</span> ${message}`;
             container.appendChild(toast);
             setTimeout(() => { toast.classList.add('animate-fade-out'); setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
+        /* Scroll Reveal Observer — observa .reveal, .reveal-left, .reveal-right, .reveal-scale */
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) { entry.target.classList.add('revealed'); revealObserver.unobserve(entry.target); }
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
             });
         }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => revealObserver.observe(el));
             lucide.createIcons();
+        });
+
+        /* Re-init Lucide icons after Alpine updates DOM */
+        document.addEventListener('alpine:initialized', () => {
+            setTimeout(() => lucide.createIcons(), 100);
         });
     </script>
 

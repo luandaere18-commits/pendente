@@ -32,7 +32,7 @@
                     ] as $social)
                         <a href="{{ $social['href'] }}"
                            class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center hover:bg-accent hover:scale-110 transition-all duration-200"
-                           aria-label="{{ $social['icon'] }}">
+                           aria-label="{{ ucfirst($social['icon']) }}">
                             <i data-lucide="{{ $social['icon'] }}" class="w-4 h-4"></i>
                         </a>
                     @endforeach
@@ -119,13 +119,13 @@
                     </li>
                     <li class="flex items-center justify-between py-2">
                         <span class="opacity-60">Domingo</span>
-                        <span class="text-red-400 font-semibold">Encerrado</span>
+                        <span class="text-destructive font-semibold">Encerrado</span>
                     </li>
                 </ul>
                 <a href="https://wa.me/244929643510?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20os%20cursos"
                    target="_blank" rel="noopener noreferrer"
-                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105"
-                   style="background-color: #25D366; color: white;">
+                   class="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200 hover:scale-105"
+                   style="background-color: #25D366;">
                     <i data-lucide="message-circle" class="w-4 h-4"></i>
                     Contactar via WhatsApp
                 </a>

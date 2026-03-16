@@ -5,7 +5,7 @@
 
         {{-- Logo --}}
         <a href="{{ route('site.home') }}" class="flex items-center gap-2.5 hover:opacity-90 transition-opacity group">
-            <div class="w-10 h-10 rounded-xl bg-white border border-border/60 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow duration-200">
+            <div class="w-10 h-10 rounded-xl bg-white border border-border/60 flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all duration-200">
                 <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL Logo" class="h-8 w-8 object-contain" loading="eager"
                      onerror="this.parentElement.innerHTML='<span class=\'text-primary font-black text-sm\'>MC</span>'">
             </div>
@@ -48,11 +48,9 @@
                 <i data-lucide="log-in" class="w-4 h-4 mr-1.5"></i>
                 Entrar
             </a>
-
-            {{-- Mobile Toggle --}}
             <button class="lg:hidden p-2 rounded-lg hover:bg-muted transition-colors" @click="mobileMenu = !mobileMenu" aria-label="Menu">
                 <i x-show="!mobileMenu" data-lucide="menu" class="w-5 h-5"></i>
-                <i x-show="mobileMenu" data-lucide="x" class="w-5 h-5" style="display:none"></i>
+                <i x-show="mobileMenu" x-cloak data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
     </div>
@@ -66,7 +64,7 @@
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 -translate-y-2"
          class="lg:hidden border-t border-border bg-card/98 backdrop-blur-md px-4 py-4"
-         style="display:none">
+         x-cloak>
         <div class="space-y-1">
             @foreach($navLinks as $link)
                 @php $isActive = request()->routeIs($link['route']); @endphp

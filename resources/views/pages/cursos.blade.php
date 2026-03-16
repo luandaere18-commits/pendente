@@ -4,12 +4,9 @@
 
 @section('content')
 
-{{-- Page Hero --}}
-<div class="bg-gradient-to-br from-primary via-primary/90 to-primary/80 py-20 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10 pointer-events-none">
-        <div class="absolute top-0 right-0 w-96 h-96 rounded-full bg-accent blur-3xl"></div>
-    </div>
-    <div class="container mx-auto px-4 text-center text-primary-foreground relative">
+{{-- Page Hero — gradiente azul moderno --}}
+<div class="page-hero">
+    <div class="container mx-auto px-4 text-center text-primary-foreground">
         <h1 class="text-4xl lg:text-5xl font-extrabold mb-4">Nossas Turmas</h1>
         <p class="text-lg opacity-80 max-w-2xl mx-auto">Encontre a turma ideal e comece a sua formação</p>
     </div>
@@ -29,18 +26,12 @@
                         </h3>
                         <button @click="resetFilters()"
                                 x-show="search || status !== 'todos' || periodo !== 'todos' || centro !== 'todos'"
-                                x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 scale-90"
-                                x-transition:enter-end="opacity-100 scale-100"
-                                x-transition:leave="transition ease-in duration-150"
-                                x-transition:leave-start="opacity-100 scale-100"
-                                x-transition:leave-end="opacity-0 scale-90"
+                                x-transition
                                 class="text-xs text-accent hover:underline flex items-center gap-1">
                             <i data-lucide="rotate-ccw" class="w-3 h-3"></i>Limpar
                         </button>
                     </div>
 
-                    {{-- Busca por curso --}}
                     <div>
                         <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Buscar Curso</label>
                         <div class="relative">
@@ -50,7 +41,6 @@
                         </div>
                     </div>
 
-                    {{-- Status --}}
                     <div>
                         <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Estado</label>
                         <div class="flex flex-col gap-1.5">
@@ -64,7 +54,6 @@
                         </div>
                     </div>
 
-                    {{-- Período com ícones Lucide --}}
                     <div>
                         <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Período</label>
                         <div class="flex flex-col gap-1.5">
@@ -87,7 +76,6 @@
                         </div>
                     </div>
 
-                    {{-- Centro --}}
                     <div>
                         <label class="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Centro</label>
                         <select x-model="centro"
@@ -99,7 +87,6 @@
                         </select>
                     </div>
 
-                    {{-- Contador --}}
                     <div class="pt-3 border-t border-border text-center">
                         <span class="text-sm text-muted-foreground">
                             <span class="font-bold text-accent" x-text="visibleCount"></span>
@@ -113,11 +100,7 @@
             <div class="lg:col-span-3">
 
                 {{-- Nenhum resultado --}}
-                <div x-show="visibleCount === 0"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 scale-95"
-                     x-transition:enter-end="opacity-100 scale-100"
-                     class="flex flex-col items-center justify-center py-20 text-center">
+                <div x-show="visibleCount === 0" x-transition class="flex flex-col items-center justify-center py-20 text-center">
                     <div class="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
                         <i data-lucide="calendar-x" class="w-8 h-8 text-muted-foreground"></i>
                     </div>
@@ -129,25 +112,27 @@
                     </button>
                 </div>
 
+                @php
+                    $popularityLabels = ['🔥 Alta procura', '⭐ Turma em destaque', '📈 Muito procurado', '🎯 Tendência de inscrição'];
+                @endphp
+
                 <div class="grid md:grid-cols-2 gap-5">
                     @foreach($turmas as $turma)
                         @php
-                            $vagasDisp  = $turma->vagas_totais - $turma->vagas_preenchidas;
-                            $progress   = $turma->vagas_totais > 0 ? ($turma->vagas_preenchidas / $turma->vagas_totais) * 100 : 0;
-                            $isLow      = $vagasDisp <= 5;
-                            $diasSemana = is_array($turma->dia_semana) ? $turma->dia_semana : json_decode($turma->dia_semana ?? '[]', true);
-                            $statusMap  = [
-                                'planeada'           => ['label' => 'Planeada',           'color' => 'bg-amber-100 text-amber-700'],
-                                'inscricoes_abertas' => ['label' => 'Inscrições Abertas', 'color' => 'bg-green-100 text-green-700'],
-                                'em_andamento'       => ['label' => 'Em Andamento',       'color' => 'bg-blue-100 text-blue-700'],
-                                'concluida'          => ['label' => 'Concluída',          'color' => 'bg-gray-100 text-gray-600'],
+                            $diasSemana  = is_array($turma->dia_semana) ? $turma->dia_semana : json_decode($turma->dia_semana ?? '[]', true);
+                            $statusMap   = [
+                                'planeada'           => ['label' => 'Planeada',           'color' => 'bg-warning/10 text-warning'],
+                                'inscricoes_abertas' => ['label' => 'Inscrições Abertas', 'color' => 'bg-success/10 text-success'],
+                                'em_andamento'       => ['label' => 'Em Andamento',       'color' => 'bg-accent/10 text-accent'],
+                                'concluida'          => ['label' => 'Concluída',          'color' => 'bg-muted text-muted-foreground'],
                             ];
-                            $periodoMap     = ['manha' => 'Manhã',   'tarde' => 'Tarde',  'noite' => 'Noite'];
-                            $periodoIconMap = ['manha' => 'sunrise', 'tarde' => 'sun',    'noite' => 'moon'];
+                            $periodoMap     = ['manha' => 'Manhã', 'tarde' => 'Tarde', 'noite' => 'Noite'];
+                            $periodoIconMap = ['manha' => 'sunrise', 'tarde' => 'sun', 'noite' => 'moon'];
                             $statusInfo     = $statusMap[$turma->status] ?? ['label' => $turma->status, 'color' => 'bg-muted text-muted-foreground'];
+                            $popLabel       = $popularityLabels[($turma->id ?? 0) % count($popularityLabels)];
+                            $fakeProgress   = min(92, max(58, 60 + (($turma->id ?? 0) * 7) % 32));
                         @endphp
 
-                        {{-- Card com overlay no hover --}}
                         <div class="turma-card group relative bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                              x-show="filterTurma(
                                  '{{ strtolower($turma->curso->nome ?? '') }}',
@@ -155,31 +140,20 @@
                                  '{{ $turma->periodo }}',
                                  '{{ $turma->centro_id }}'
                              )"
-                             x-transition:enter="transition ease-out duration-300"
-                             x-transition:enter-start="opacity-0 scale-95"
-                             x-transition:enter-end="opacity-100 scale-100"
-                             x-transition:leave="transition ease-in duration-200"
-                             x-transition:leave-start="opacity-100 scale-100"
-                             x-transition:leave-end="opacity-0 scale-95">
+                             x-transition>
 
-                            {{-- Conteúdo normal (frente do card) --}}
+                            {{-- Front --}}
                             <div class="card-front transition-all duration-300 group-hover:opacity-0 group-hover:pointer-events-none">
-                                {{-- Imagem do curso --}}
                                 <div class="relative h-44 overflow-hidden bg-muted">
                                     <img src="{{ $turma->curso->imagem_url ?? '' }}"
                                          alt="{{ $turma->curso->nome ?? 'Curso' }}"
                                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                          loading="lazy"
-                                         onerror="this.src='https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=60'">
+                                         onerror="this.src='{{ asset('assets/images-preview/courses/default.jpg') }}'">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-
-                                    {{-- Status badge --}}
                                     <div class="absolute top-3 left-3">
-                                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full {{ $statusInfo['color'] }}">
-                                            {{ $statusInfo['label'] }}
-                                        </span>
+                                        <span class="text-[11px] font-bold px-2.5 py-1 rounded-full {{ $statusInfo['color'] }}">{{ $statusInfo['label'] }}</span>
                                     </div>
-                                    {{-- Período com ícone Lucide --}}
                                     <div class="absolute top-3 right-3">
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold bg-white/90 text-foreground px-2.5 py-1 rounded-full">
                                             <i data-lucide="{{ $periodoIconMap[$turma->periodo] ?? 'clock' }}" class="w-3 h-3"></i>
@@ -188,11 +162,8 @@
                                     </div>
                                 </div>
 
-                                {{-- Info do card --}}
                                 <div class="p-4">
-                                    <h4 class="font-extrabold text-foreground mb-1 line-clamp-1">
-                                        {{ $turma->curso->nome ?? 'Curso' }}
-                                    </h4>
+                                    <h4 class="font-extrabold text-foreground mb-1 line-clamp-1">{{ $turma->curso->nome ?? 'Curso' }}</h4>
                                     <p class="text-xs text-muted-foreground mb-3">{{ $turma->centro->nome ?? '—' }}</p>
 
                                     <div class="flex flex-wrap gap-1.5 mb-3 text-xs">
@@ -216,17 +187,13 @@
                                         @endif
                                     </div>
 
-                                    {{-- Vagas progress --}}
+                                    {{-- Popularity indicator --}}
                                     <div class="mb-3">
                                         <div class="flex justify-between text-[11px] mb-1.5">
-                                            <span class="text-muted-foreground">Vagas preenchidas</span>
-                                            <span class="font-semibold {{ $isLow ? 'text-destructive' : 'text-foreground' }}">
-                                                {{ $vagasDisp }} disponíve{{ $vagasDisp !== 1 ? 'is' : 'l' }}
-                                            </span>
+                                            <span class="popularity-label">{{ $popLabel }}</span>
                                         </div>
-                                        <div class="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-700 {{ $progress > 80 ? 'bg-destructive' : 'bg-accent' }}"
-                                                 style="width: {{ $progress }}%"></div>
+                                        <div class="popularity-bar">
+                                            <div class="popularity-bar-fill" style="width: {{ $fakeProgress }}%"></div>
                                         </div>
                                     </div>
 
@@ -244,8 +211,8 @@
                                 </div>
                             </div>
 
-                            {{-- Hover overlay — aparece suavemente por cima (opacity, não translate) --}}
-                            <div class="card-back absolute inset-0 bg-primary text-primary-foreground p-5 flex flex-col justify-between
+                            {{-- Hover overlay — GLASS style --}}
+                            <div class="card-back absolute inset-0 glass-overlay text-primary-foreground p-5 flex flex-col justify-between rounded-2xl
                                         opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
                                 <div>
                                     <h4 class="font-extrabold text-base mb-3 leading-snug">{{ $turma->curso->nome ?? 'Curso' }}</h4>
@@ -282,13 +249,6 @@
                                             </div>
                                         </div>
                                         @endif
-                                        <div class="flex items-start gap-2">
-                                            <i data-lucide="users" class="w-3.5 h-3.5 shrink-0 opacity-60 mt-0.5"></i>
-                                            <div>
-                                                <p class="opacity-60 text-[10px] uppercase tracking-wide mb-0.5">Vagas</p>
-                                                <p class="font-semibold {{ $isLow ? 'text-red-300' : 'text-green-300' }}">{{ $vagasDisp }} / {{ $turma->vagas_totais }}</p>
-                                            </div>
-                                        </div>
                                         @if($turma->formador)
                                         <div class="flex items-start gap-2">
                                             <i data-lucide="user-check" class="w-3.5 h-3.5 shrink-0 opacity-60 mt-0.5"></i>
@@ -298,7 +258,7 @@
                                             </div>
                                         </div>
                                         @endif
-                                        @if(count($diasSemana))
+                                        @if(is_array($diasSemana) && count($diasSemana))
                                         <div class="flex items-start gap-2 col-span-2">
                                             <i data-lucide="calendar-days" class="w-3.5 h-3.5 shrink-0 opacity-60 mt-0.5"></i>
                                             <div>

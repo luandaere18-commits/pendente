@@ -59,11 +59,11 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         topbar: {
-          DEFAULT: "hsl(var(--topbar-bg))",
+          DEFAULT: "hsl(var(--topbar))",
           foreground: "hsl(var(--topbar-foreground))",
         },
         footer: {
-          DEFAULT: "hsl(var(--footer-bg))",
+          DEFAULT: "hsl(var(--footer))",
           foreground: "hsl(var(--footer-foreground))",
         },
       },
