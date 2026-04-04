@@ -46,10 +46,11 @@ class SiteController extends Controller
         $turmas = Turma::with(['curso', 'centro', 'formador'])
             ->where('publicado', true)
             ->orderBy('data_arranque', 'asc')
-            ->get();
+            ->paginate(12);
 
-        // Obter cursos únicos das turmas publicadas
-        $cursos = $turmas->pluck('curso')->unique('id')->values();
+        // Obter cursos únicos das turmas publicadas (todos, sem paginação)
+        $turmasAll = Turma::where('publicado', true)->get();
+        $cursos = $turmasAll->pluck('curso')->unique('id')->values();
 
         // Obter centros para filtro
         $centros = Centro::orderBy('nome')->get();
@@ -69,6 +70,21 @@ class SiteController extends Controller
     public function centro($id = null)
     {
         return view('pages.centro-detalhe', ['centroId' => $id]);
+    }
+
+    /**
+     * Página de detalhes de um curso específico
+     */
+    public function curso($id)
+    {
+        $curso = Curso::findOrFail($id);
+        $turmas = Turma::where('curso_id', $id)
+                       ->where('publicado', true)
+                       ->with(['centro', 'formador'])
+                       ->orderBy('data_arranque', 'asc')
+                       ->get();
+        
+        return view('pages.curso-detalhe', compact('curso', 'turmas'));
     }
 
     /**

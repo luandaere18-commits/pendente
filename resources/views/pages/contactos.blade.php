@@ -1,270 +1,141 @@
 @extends('layouts.public')
 
-@section('title', 'Contactos - MC-COMERCIAL')
+@section('title', 'Contactos — MC-COMERCIAL')
 
 @section('content')
 
-{{-- Page Hero --}}
-<div class="page-hero text-center">
-    <div class="container mx-auto px-4 relative z-10">
-        <span class="section-tag text-accent-foreground/80 justify-center before:bg-white/40">
-            <i data-lucide="mail" class="w-3.5 h-3.5"></i> Fale Connosco
-        </span>
-        <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-5" style="letter-spacing: -0.03em;">Contacte-nos</h1>
-        <p class="text-lg text-white/65 max-w-2xl mx-auto">Estamos aqui para o ajudar. Fale connosco hoje mesmo.</p>
+{{-- Header --}}
+<section class="relative pt-12 pb-16 bg-gradient-to-br from-brand-700 to-brand-900 text-white -mt-20 pt-32 overflow-hidden">
+    <div class="absolute inset-0 bg-grid opacity-5"></div>
+    <div class="container-wide relative">
+        <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4">
+            <a href="{{ route('site.home') }}" class="hover:text-white transition-colors">Início</a>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="text-white font-medium">Contactos</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Entre em Contacto</h1>
+        <p class="text-blue-100/70">Estamos prontos para ajudar. Envie-nos uma mensagem ou visite um dos nossos centros.</p>
     </div>
-</div>
+</section>
 
-<div class="py-16 bg-background min-h-screen">
-    <div class="container mx-auto px-4">
-        <div class="grid lg:grid-cols-5 gap-10">
-
-            {{-- Formulário --}}
-            <div class="lg:col-span-3">
-                <div class="feature-card reveal"
-                     x-data="{
-                         form: { nome: '', email: '', telefone: '', assunto: '', mensagem: '' },
-                         loading: false,
-                         submitted: false,
-                         touched: {},
-                         errors: {},
-                         validEmail() { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.form.email); },
-                         touch(field) { this.touched[field] = true; },
-                         validate() {
-                             this.touched = { nome: true, email: true, assunto: true, mensagem: true };
-                             return this.form.nome.length >= 2 && this.validEmail()
-                                    && this.form.assunto && this.form.mensagem.length >= 10;
-                         },
-                         filledCount() {
-                             return [this.form.nome.length >= 2, this.validEmail(), !!this.form.assunto, this.form.mensagem.length >= 10].filter(Boolean).length;
-                         },
-                         async submitForm() {
-                             if (!this.validate()) {
-                                 showToast('Por favor preencha todos os campos obrigatórios.', 'error');
-                                 return;
-                             }
-                             this.loading = true;
-                             await new Promise(r => setTimeout(r, 1500));
-                             this.submitted = true;
-                             this.loading = false;
-                             showToast('Mensagem enviada com sucesso! Entraremos em contacto brevemente.', 'success');
-                         }
-                     }">
-
-                    {{-- Success --}}
-                    <div x-show="submitted" class="text-center py-12">
-                        <div class="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-5 animate-scale-in">
-                            <i data-lucide="check-circle-2" class="w-10 h-10 text-success"></i>
-                        </div>
-                        <h3 class="text-xl font-extrabold text-foreground mb-2">Mensagem Enviada!</h3>
-                        <p class="text-sm text-muted-foreground mb-6">A sua mensagem foi enviada com sucesso. Respondemos em até 24 horas úteis.</p>
-                        <button @click="submitted = false; form = { nome: '', email: '', telefone: '', assunto: '', mensagem: '' }; touched = {};"
-                                class="btn-ghost">
-                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>Enviar outra mensagem
-                        </button>
-                    </div>
-
-                    {{-- Form --}}
-                    <div x-show="!submitted">
-                        <div class="flex items-center gap-3 mb-8">
-                            <div class="icon-box icon-box-sm bg-accent/10">
-                                <i data-lucide="send" class="w-5 h-5 text-accent"></i>
-                            </div>
-                            <h3 class="text-xl font-extrabold text-foreground">Envie-nos uma mensagem</h3>
-                        </div>
-
-                        <form @submit.prevent="submitForm()" class="space-y-5">
-                            <div class="grid md:grid-cols-2 gap-5">
-                                <div>
-                                    <label class="text-sm font-bold text-foreground mb-2 block">
-                                        Nome Completo <span class="text-destructive">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <i data-lucide="user" class="input-icon"></i>
-                                        <input type="text" x-model="form.nome" @blur="touch('nome')" placeholder="Seu nome"
-                                               class="input-field pl-11"
-                                               :class="touched.nome && form.nome.length < 2 ? 'border-destructive focus:ring-destructive/30' : ''">
-                                    </div>
-                                    <p class="text-xs text-destructive mt-1" x-show="touched.nome && form.nome.length < 2">Nome muito curto</p>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-bold text-foreground mb-2 block">
-                                        Email <span class="text-destructive">*</span>
-                                    </label>
-                                    <div class="relative">
-                                        <i data-lucide="mail" class="input-icon"></i>
-                                        <input type="email" x-model="form.email" @blur="touch('email')" placeholder="email@exemplo.com"
-                                               class="input-field pl-11"
-                                               :class="touched.email && !validEmail() ? 'border-destructive focus:ring-destructive/30' : ''">
-                                    </div>
-                                    <p class="text-xs text-destructive mt-1" x-show="touched.email && !validEmail()">Email inválido</p>
-                                </div>
-                            </div>
-
-                            <div class="grid md:grid-cols-2 gap-5">
-                                <div>
-                                    <label class="text-sm font-bold text-foreground mb-2 block">Telefone <span class="text-muted-foreground font-normal">(opcional)</span></label>
-                                    <div class="relative">
-                                        <i data-lucide="phone" class="input-icon"></i>
-                                        <input type="text" x-model="form.telefone" placeholder="+244 9XX-XXX-XXX"
-                                               class="input-field pl-11">
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="text-sm font-bold text-foreground mb-2 block">
-                                        Assunto <span class="text-destructive">*</span>
-                                    </label>
-                                    <select x-model="form.assunto" @blur="touch('assunto')"
-                                            class="input-field"
-                                            :class="touched.assunto && !form.assunto ? 'border-destructive' : ''">
-                                        <option value="">Selecione um assunto</option>
-                                        <option value="geral">Informações Gerais</option>
-                                        <option value="cursos">Turmas e Inscrições</option>
-                                        <option value="produtos">Produtos</option>
-                                        <option value="servicos">Serviços</option>
-                                        <option value="parceria">Parcerias</option>
-                                    </select>
-                                    <p class="text-xs text-destructive mt-1" x-show="touched.assunto && !form.assunto">Selecione um assunto</p>
-                                </div>
-                            </div>
-
+<section class="section-tight">
+    <div class="container-wide">
+        <div class="grid lg:grid-cols-5 gap-12">
+            {{-- Contact Form --}}
+            <div class="lg:col-span-3 reveal">
+                <div class="card p-8">
+                    <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <i data-lucide="send" class="w-5 h-5 text-brand-600"></i>
+                        Envie-nos uma mensagem
+                    </h2>
+                    <form method="POST" action="#" class="space-y-5">
+                        @csrf
+                        <div class="grid sm:grid-cols-2 gap-5">
                             <div>
-                                <label class="text-sm font-bold text-foreground mb-2 flex items-center justify-between">
-                                    <span>Mensagem <span class="text-destructive">*</span></span>
-                                    <span class="text-xs text-muted-foreground font-normal tabular-nums" x-text="`${form.mensagem.length}/500`"></span>
-                                </label>
-                                <textarea x-model="form.mensagem" @blur="touch('mensagem')" rows="5" maxlength="500"
-                                          placeholder="Escreva a sua mensagem aqui... (mínimo 10 caracteres)"
-                                          class="input-field h-auto resize-none"
-                                          :class="touched.mensagem && form.mensagem.length < 10 ? 'border-destructive focus:ring-destructive/30' : ''"></textarea>
-                                <p class="text-xs text-destructive mt-1" x-show="touched.mensagem && form.mensagem.length < 10">Mínimo de 10 caracteres</p>
+                                <label class="form-label">Nome <span class="text-red-500">*</span></label>
+                                <input type="text" name="nome" class="form-input" placeholder="O seu nome" required>
                             </div>
-
-                            {{-- Progress dots --}}
-                            <div class="flex items-center gap-3 text-xs text-muted-foreground">
-                                <div class="flex gap-1.5">
-                                    <span class="w-2.5 h-2.5 rounded-full transition-colors duration-400" :class="form.nome.length >= 2 ? 'bg-success' : 'bg-muted'"></span>
-                                    <span class="w-2.5 h-2.5 rounded-full transition-colors duration-400" :class="validEmail() ? 'bg-success' : 'bg-muted'"></span>
-                                    <span class="w-2.5 h-2.5 rounded-full transition-colors duration-400" :class="form.assunto ? 'bg-success' : 'bg-muted'"></span>
-                                    <span class="w-2.5 h-2.5 rounded-full transition-colors duration-400" :class="form.mensagem.length >= 10 ? 'bg-success' : 'bg-muted'"></span>
-                                </div>
-                                <span x-text="`${filledCount()}/4 campos preenchidos`"></span>
+                            <div>
+                                <label class="form-label">Email <span class="text-red-500">*</span></label>
+                                <input type="email" name="email" class="form-input" placeholder="email@exemplo.com" required>
                             </div>
-
-                            <button type="submit"
-                                    class="btn-primary w-full h-13"
-                                    :class="loading ? 'opacity-80 cursor-wait' : ''">
-                                <span x-show="!loading" class="flex items-center gap-2">
-                                    <i data-lucide="send" class="w-4 h-4"></i>Enviar Mensagem
-                                </span>
-                                <span x-show="loading" class="flex items-center gap-2">
-                                    <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                                    </svg>
-                                    A enviar mensagem...
-                                </span>
-                            </button>
-                        </form>
-                    </div>
+                        </div>
+                        <div>
+                            <label class="form-label">Telefone</label>
+                            <input type="tel" name="telefone" class="form-input" placeholder="+244 9XX XXX XXX">
+                        </div>
+                        <div>
+                            <label class="form-label">Assunto <span class="text-red-500">*</span></label>
+                            <select name="assunto" class="form-input" required>
+                                <option value="">Selecione um assunto</option>
+                                <option value="informacoes">Informações sobre cursos</option>
+                                <option value="inscricao">Inscrição</option>
+                                <option value="empresarial">Formação empresarial</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">Mensagem <span class="text-red-500">*</span></label>
+                            <textarea name="mensagem" class="form-input h-32 resize-none" placeholder="Escreva a sua mensagem..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary btn-lg">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            Enviar Mensagem
+                        </button>
+                    </form>
                 </div>
             </div>
 
-            {{-- Info lateral --}}
-            <div class="lg:col-span-2 space-y-5">
-
-                <div class="feature-card reveal">
-                    <h3 class="font-extrabold text-foreground mb-3 flex items-center gap-2.5">
-                        <div class="icon-box icon-box-sm bg-accent/10">
-                            <i data-lucide="info" class="w-4 h-4 text-accent"></i>
-                        </div>
-                        Sobre a MC-COMERCIAL
-                    </h3>
-                    <p class="text-sm text-muted-foreground leading-relaxed">
-                        Com mais de 10 anos de experiência, a MC-COMERCIAL é um centro de formação de referência em Angola, dedicado à preparação de profissionais qualificados para o mercado de trabalho.
-                    </p>
+            {{-- Contact Info --}}
+            <div class="lg:col-span-2 space-y-6 reveal">
+                <div class="card p-6">
+                    <h3 class="text-base font-bold text-slate-900 mb-5">Informações de Contacto</h3>
+                    <div class="space-y-5">
+                        @foreach([
+                            ['icon' => 'mail',     'label' => 'Email',    'value' => 'mc-comercial@gmail.com', 'href' => 'mailto:mc-comercial@gmail.com'],
+                            ['icon' => 'phone',    'label' => 'Telefone', 'value' => '+244 926 861 700',      'href' => 'tel:+244926861700'],
+                            ['icon' => 'clock',    'label' => 'Horário',  'value' => 'Seg - Sex: 8h00 - 18h00', 'href' => null],
+                        ] as $info)
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center shrink-0">
+                                    <i data-lucide="{{ $info['icon'] }}" class="w-4 h-4 text-brand-600"></i>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-slate-400 block">{{ $info['label'] }}</span>
+                                    @if($info['href'])
+                                        <a href="{{ $info['href'] }}" class="text-sm font-medium text-slate-900 hover:text-brand-600 transition-colors">{{ $info['value'] }}</a>
+                                    @else
+                                        <span class="text-sm font-medium text-slate-900">{{ $info['value'] }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
 
-                <div class="feature-card reveal">
-                    <h3 class="font-extrabold text-foreground mb-5 flex items-center gap-2.5">
-                        <div class="icon-box icon-box-sm bg-accent/10">
-                            <i data-lucide="phone" class="w-4 h-4 text-accent"></i>
-                        </div>
-                        Informações de Contacto
-                    </h3>
-                    <div class="space-y-3">
+                <div class="card p-6">
+                    <h3 class="text-base font-bold text-slate-900 mb-4">Redes Sociais</h3>
+                    <div class="flex gap-2">
                         @foreach([
-                            ['icon' => 'phone', 'href' => 'tel:+244929643510', 'text' => '+244 929-643-510'],
-                            ['icon' => 'phone', 'href' => 'tel:+244928966002', 'text' => '+244 928-966-002'],
-                            ['icon' => 'mail',  'href' => 'mailto:mucuanha.chineva@gmail.com', 'text' => 'mucuanha.chineva@gmail.com'],
-                        ] as $contact)
-                            <a href="{{ $contact['href'] }}"
-                               class="flex items-center gap-3 text-sm text-muted-foreground hover:text-accent hover:translate-x-1 transition-all duration-300 group">
-                                <div class="icon-box icon-box-sm bg-accent/10 group-hover:bg-accent transition-colors duration-300">
-                                    <i data-lucide="{{ $contact['icon'] }}" class="w-3.5 h-3.5 text-accent group-hover:text-white transition-colors"></i>
-                                </div>
-                                {{ $contact['text'] }}
+                            ['icon' => 'facebook',  'href' => '#', 'label' => 'Facebook'],
+                            ['icon' => 'instagram', 'href' => '#', 'label' => 'Instagram'],
+                            ['icon' => 'linkedin',  'href' => '#', 'label' => 'LinkedIn'],
+                        ] as $social)
+                            <a href="{{ $social['href'] }}" aria-label="{{ $social['label'] }}"
+                               class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-brand-600 text-slate-500 hover:text-white flex items-center justify-center transition-all duration-200 hover:scale-110">
+                                <i data-lucide="{{ $social['icon'] }}" class="w-4 h-4"></i>
                             </a>
                         @endforeach
-                        <div class="flex items-start gap-3 text-sm text-muted-foreground pt-1">
-                            <div class="icon-box icon-box-sm bg-accent/10">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-accent"></i>
-                            </div>
-                            <span>Rua A, Bairro 1º de Maio Nº 05, 1º Andar, Luanda-Viana</span>
-                        </div>
                     </div>
                 </div>
 
-                <div class="feature-card reveal">
-                    <h3 class="font-extrabold text-foreground mb-5 flex items-center gap-2.5">
-                        <div class="icon-box icon-box-sm bg-accent/10">
-                            <i data-lucide="clock" class="w-4 h-4 text-accent"></i>
+                <div class="card p-6 bg-brand-50 border-brand-100">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#25D366] flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-5 h-5">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                            </svg>
                         </div>
-                        Horário de Funcionamento
-                    </h3>
-                    <div class="space-y-2">
-                        @foreach([
-                            ['day' => 'Segunda - Sexta', 'time' => '8h00 - 18h00', 'open' => true],
-                            ['day' => 'Sábado',          'time' => '9h00 - 16h00', 'open' => true],
-                            ['day' => 'Domingo',         'time' => 'Encerrado',    'open' => false],
-                        ] as $h)
-                            <div class="flex items-center justify-between py-2.5 border-b border-border last:border-0 text-sm rounded-lg px-2 hover:bg-muted/30 transition-colors">
-                                <span class="text-muted-foreground">{{ $h['day'] }}</span>
-                                <span class="{{ $h['open'] ? 'text-foreground font-bold' : 'text-destructive font-bold' }} tabular-nums">{{ $h['time'] }}</span>
-                            </div>
-                        @endforeach
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-900">WhatsApp</h4>
+                            <p class="text-xs text-slate-500">Resposta rápida</p>
+                        </div>
                     </div>
+                    <a href="https://wa.me/244929643510" target="_blank" class="btn-primary w-full justify-center btn-sm">
+                        Iniciar Conversa
+                    </a>
                 </div>
 
-                <div class="feature-card reveal">
-                    <h3 class="font-extrabold text-foreground mb-5 flex items-center gap-2.5">
-                        <div class="icon-box icon-box-sm bg-accent/10">
-                            <i data-lucide="zap" class="w-4 h-4 text-accent"></i>
-                        </div>
-                        Contacto Rápido
-                    </h3>
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <a href="https://wa.me/244929643510" target="_blank" rel="noopener noreferrer"
-                           class="flex items-center justify-center gap-2 rounded-xl p-3.5 text-sm font-bold hover:scale-105 transition-all duration-300"
-                           style="background-color: rgba(37,211,102,0.1); color:#25D366;">
-                            <i data-lucide="message-circle" class="w-4 h-4"></i>WhatsApp
-                        </a>
-                        <a href="tel:+244929643510"
-                           class="flex items-center justify-center gap-2 bg-accent/10 text-accent rounded-xl p-3.5 text-sm font-bold hover:bg-accent hover:text-white hover:scale-105 transition-all duration-300">
-                            <i data-lucide="phone" class="w-4 h-4"></i>Ligar
-                        </a>
-                        <a href="mailto:mucuanha.chineva@gmail.com"
-                           class="flex items-center justify-center gap-2 bg-primary/10 text-primary rounded-xl p-3.5 text-sm font-bold hover:bg-primary hover:text-white hover:scale-105 transition-all duration-300">
-                            <i data-lucide="mail" class="w-4 h-4"></i>Email
-                        </a>
-                        <a href="#"
-                           class="flex items-center justify-center gap-2 bg-blue-500/10 text-blue-600 rounded-xl p-3.5 text-sm font-bold hover:bg-blue-500 hover:text-white hover:scale-105 transition-all duration-300">
-                            <i data-lucide="facebook" class="w-4 h-4"></i>Facebook
-                        </a>
-                    </div>
+                {{-- Map --}}
+                <div class="card p-2 overflow-hidden">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125529.1950542!2d13.2!3d-8.84!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a51f15c36000001%3A0x3e34e0f5c6f7e7a8!2sLuanda%2C%20Angola!5e0!3m2!1spt-BR!2sao!4v1"
+                        width="100%" height="200" style="border:0; border-radius: var(--radius-lg);"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
 @endsection

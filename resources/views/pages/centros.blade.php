@@ -1,123 +1,117 @@
 @extends('layouts.public')
 
-@section('title', 'Centros de Formação - MC-COMERCIAL')
+@section('title', 'Centros de Formação — MC-COMERCIAL')
 
 @section('content')
 
-{{-- Page Hero --}}
-<div class="page-hero text-center">
-    <div class="container mx-auto px-4 relative z-10">
-        <span class="section-tag text-accent-foreground/80 justify-center before:bg-white/40">
-            <i data-lucide="building-2" class="w-3.5 h-3.5"></i> Nossa Rede
-        </span>
-        <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-5" style="letter-spacing: -0.03em;">Centros de Formação</h1>
-        <p class="text-lg text-white/65 max-w-2xl mx-auto">
-            Conheça os nossos espaços modernos —
-            <span class="font-bold text-white">{{ $centros->count() }} centro{{ $centros->count() !== 1 ? 's' : '' }}</span> disponíve{{ $centros->count() !== 1 ? 'is' : 'l' }}
-        </p>
+{{-- Header --}}
+<section class="relative pt-12 pb-16 bg-gradient-to-br from-brand-700 to-brand-900 text-white -mt-20 pt-32 overflow-hidden">
+    <div class="absolute inset-0 bg-grid opacity-5"></div>
+    <div class="container-wide relative">
+        <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4">
+            <a href="{{ route('site.home') }}" class="hover:text-white transition-colors">Início</a>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="text-white font-medium">Centros</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Centros de Formação</h1>
+        <p class="text-blue-100/70">Conheça os nossos centros espalhados por Angola.</p>
     </div>
-</div>
+</section>
 
-<div class="py-16 bg-background min-h-screen">
-    <div class="container mx-auto px-4">
+{{-- Grid + Map --}}
+<section class="section-tight">
+    <div class="container-wide">
+        <div class="grid lg:grid-cols-5 gap-8">
+            {{-- Cards --}}
+            <div class="lg:col-span-3">
+                @if(isset($centros) && $centros->count())
+                    <div class="grid sm:grid-cols-2 gap-5 reveal-stagger">
+                        @foreach($centros as $centro)
+                            <a href="{{ route('site.centro', $centro->id) }}"
+                               class="card card-interactive p-0 overflow-hidden reveal group">
+                                {{-- Image --}}
+                                <div class="h-36 bg-gradient-to-br from-brand-500 to-brand-700 overflow-hidden img-overlay-zoom relative">
+                                    @if($centro->imagem)
+                                        <img src="{{ asset('storage/' . $centro->imagem) }}" alt="{{ $centro->nome }}"
+                                             class="w-full h-full object-cover" loading="lazy">
+                                    @else
+                                        <img src="https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&w=500&q=60"
+                                             alt="{{ $centro->nome }}" class="w-full h-full object-cover opacity-40" loading="lazy">
+                                    @endif
+                                    <div class="absolute bottom-3 left-3 z-10">
+                                        <div class="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                                            <i data-lucide="building-2" class="w-5 h-5 text-brand-600"></i>
+                                        </div>
+                                    </div>
+                                </div>
 
-        {{-- Mapa --}}
-        <div class="rounded-2xl overflow-hidden mb-16 reveal" style="box-shadow: var(--shadow-lg);">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62587.26!2d13.35!3d-8.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwNTQnMDAuMCJTIDEzwrAyMScwMC4wIkU!5e0!3m2!1spt-PT!2sao!4v1700000000000"
-                    width="100%" height="350" style="border:0;" allowfullscreen loading="lazy" title="Mapa dos Centros"></iframe>
-        </div>
-
-        {{-- Grid de Centros --}}
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
-            @foreach($centros as $centro)
-                @php
-                    $turmasCentro = $turmas->where('centro_id', $centro->id);
-                    $cursoIds     = $turmasCentro->pluck('curso_id')->unique();
-                    $cursosCentro = $cursos->whereIn('id', $cursoIds);
-                    $vagasTotal   = $turmasCentro->sum('vagas_totais');
-                    $vagasLivres  = $vagasTotal - $turmasCentro->sum('vagas_preenchidas');
-                @endphp
-                <div class="feature-card group reveal">
-                    {{-- Header --}}
-                    <div class="flex items-start gap-4 mb-5">
-                        <div class="icon-box icon-box-lg bg-accent/10 group-hover:bg-accent transition-all duration-400 group-hover:scale-110 group-hover:rotate-3">
-                            <i data-lucide="building-2" class="w-7 h-7 text-accent group-hover:text-white transition-colors duration-300"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-lg font-extrabold text-foreground group-hover:text-accent transition-colors duration-300 truncate">{{ $centro->nome }}</h3>
-                            <p class="text-xs text-muted-foreground mt-0.5">Centro de Formação Profissional</p>
-                        </div>
-                    </div>
-
-                    {{-- Contacto --}}
-                    <div class="space-y-3 mb-5">
-                        <div class="flex items-start gap-2.5 text-sm text-muted-foreground">
-                            <i data-lucide="map-pin" class="w-4 h-4 mt-0.5 shrink-0 text-accent"></i>
-                            <span>{{ $centro->localizacao }}</span>
-                        </div>
-                        @foreach($centro->contactos as $tel)
-                            <a href="tel:{{ $tel }}" class="flex items-center gap-2.5 text-sm text-accent hover:underline hover:translate-x-1 transition-all duration-300">
-                                <i data-lucide="phone" class="w-4 h-4 shrink-0"></i>{{ $tel }}
+                                <div class="p-5">
+                                    <h3 class="text-base font-bold text-slate-900 mb-2 group-hover:text-brand-600 transition-colors">
+                                        {{ $centro->nome }}
+                                    </h3>
+                                    @if($centro->endereco)
+                                        <p class="text-sm text-slate-500 flex items-start gap-1.5 mb-2">
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 mt-0.5 shrink-0 text-brand-400"></i>
+                                            <span class="line-clamp-2">{{ $centro->endereco }}</span>
+                                        </p>
+                                    @endif
+                                    <div class="flex flex-wrap gap-3 mt-3">
+                                        @if($centro->telefone)
+                                            <span class="text-xs text-slate-400 flex items-center gap-1">
+                                                <i data-lucide="phone" class="w-3 h-3"></i> {{ $centro->telefone }}
+                                            </span>
+                                        @endif
+                                        @if($centro->email)
+                                            <span class="text-xs text-slate-400 flex items-center gap-1">
+                                                <i data-lucide="mail" class="w-3 h-3"></i> {{ $centro->email }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                    @if(isset($turmas))
+                                        @php $count = $turmas->where('centro_id', $centro->id)->count(); @endphp
+                                        @if($count > 0)
+                                            <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+                                                <span class="badge-success text-[10px]">
+                                                    <i data-lucide="graduation-cap" class="w-3 h-3"></i>
+                                                    {{ $count }} turma{{ $count > 1 ? 's' : '' }}
+                                                </span>
+                                                <span class="text-xs text-brand-600 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                                    Ver detalhes <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                                </span>
+                                            </div>
+                                        @endif
+                                    @endif
+                                </div>
                             </a>
                         @endforeach
-                        <a href="mailto:{{ $centro->email }}" class="flex items-center gap-2.5 text-sm text-accent hover:underline hover:translate-x-1 transition-all duration-300">
-                            <i data-lucide="mail" class="w-4 h-4 shrink-0"></i>{{ $centro->email }}
-                        </a>
                     </div>
-
-                    {{-- Horário --}}
-                    <div class="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-xl px-3 py-2.5 mb-5">
-                        <i data-lucide="clock" class="w-3.5 h-3.5 text-accent"></i>
-                        <span>Seg-Sex: 8h-18h &nbsp;|&nbsp; Sáb: 9h-16h</span>
+                @else
+                    <div class="text-center py-20 card p-10">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-100 flex items-center justify-center mx-auto mb-5">
+                            <i data-lucide="building-2" class="w-7 h-7 text-brand-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Sem centros disponíveis</h3>
+                        <p class="text-sm text-slate-500">Informação em breve.</p>
                     </div>
+                @endif
+            </div>
 
-                    {{-- Cursos --}}
-                    @if($cursosCentro->count() > 0)
-                        <div class="mb-5">
-                            <div class="flex items-center justify-between mb-2.5">
-                                <p class="text-xs font-bold text-foreground">Cursos neste centro:</p>
-                                <span class="text-xs text-accent font-bold tabular-nums">{{ $cursosCentro->count() }}</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1.5">
-                                @foreach($cursosCentro->take(4) as $curso)
-                                    <span class="badge-area text-xs">{{ $curso->nome }}</span>
-                                @endforeach
-                                @if($cursosCentro->count() > 4)
-                                    <span class="badge text-xs bg-muted text-muted-foreground">
-                                        +{{ $cursosCentro->count() - 4 }} mais
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Stats --}}
-                    <div class="flex items-center gap-4 mb-5 py-3 border-t border-border text-sm">
-                        <div class="text-center flex-1">
-                            <div class="font-extrabold text-foreground text-lg tabular-nums">{{ $turmasCentro->count() }}</div>
-                            <div class="text-xs text-muted-foreground">Turmas</div>
-                        </div>
-                        <div class="h-8 w-px bg-border"></div>
-                        <div class="text-center flex-1">
-                            <div class="font-extrabold text-foreground text-lg tabular-nums">{{ $cursosCentro->count() }}</div>
-                            <div class="text-xs text-muted-foreground">Cursos</div>
-                        </div>
-                        <div class="h-8 w-px bg-border"></div>
-                        <div class="text-center flex-1">
-                            <div class="font-extrabold text-success text-lg tabular-nums">{{ $vagasLivres }}</div>
-                            <div class="text-xs text-muted-foreground">Vagas livres</div>
-                        </div>
-                    </div>
-
-                    {{-- CTA --}}
-                    <a href="{{ route('site.cursos') }}?centro={{ $centro->id }}"
-                       class="btn-primary w-full h-11 text-sm rounded-xl">
-                        <i data-lucide="calendar-check" class="w-4 h-4"></i>
-                        Ver Turmas deste Centro
-                    </a>
+            {{-- Map --}}
+            <div class="lg:col-span-2 reveal">
+                <div class="card p-2 overflow-hidden sticky top-28">
+                    <h3 class="text-sm font-bold text-slate-900 px-4 pt-3 pb-2 flex items-center gap-2">
+                        <i data-lucide="map" class="w-4 h-4 text-brand-600"></i>
+                        Localização dos Centros
+                    </h3>
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125529.1950542!2d13.2!3d-8.84!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a51f15c36000001%3A0x3e34e0f5c6f7e7a8!2sLuanda%2C%20Angola!5e0!3m2!1spt-BR!2sao!4v1"
+                        width="100%" height="500" style="border:0; border-radius: var(--radius-lg);"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        class="w-full"></iframe>
                 </div>
-            @endforeach
+            </div>
         </div>
     </div>
-</div>
+</section>
+
 @endsection

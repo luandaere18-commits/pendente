@@ -1,226 +1,151 @@
-{{-- Modal de Pré-Inscrição --}}
+{{-- ═══════════════════════════════════════
+     PRÉ-INSCRIÇÃO MODAL
+     ═══════════════════════════════════════ --}}
 <div x-data="{
     open: false,
     turmaId: null,
     turmaNome: '',
     nome_completo: '', email: '', contactos: [''], observacoes: '', termos: false,
-    loading: false,
-    success: false,
-    errors: {},
+    loading: false, success: false, errors: {},
     validEmail() { return !this.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email); },
-    canSubmit() { 
-        const temContacto = this.contactos.some(c => c.trim().length > 0);
-        return this.nome_completo.trim().length >= 2 && temContacto && this.termos && !this.loading;
+    canSubmit() {
+        return this.nome_completo.trim().length >= 2 && this.contactos.some(c => c.trim().length > 0) && this.termos && !this.loading;
     },
     openModal(detail) {
-        this.turmaId = detail.turmaId;
-        this.turmaNome = detail.turmaNome;
+        this.turmaId = detail.turmaId; this.turmaNome = detail.turmaNome;
         this.nome_completo = ''; this.email = ''; this.contactos = [''];
-        this.observacoes = ''; this.termos = false; this.loading = false; this.success = false; this.errors = {};
-        this.open = true;
-        document.body.style.overflow = 'hidden';
+        this.observacoes = ''; this.termos = false; this.loading = false;
+        this.success = false; this.errors = {};
+        this.open = true; document.body.style.overflow = 'hidden';
     },
-    closeModal() {
-        this.open = false;
-        document.body.style.overflow = '';
-    },
-    adicionarContacto() {
-        this.contactos.push('');
-    },
-    removerContacto(index) {
-        if (this.contactos.length > 1) {
-            this.contactos.splice(index, 1);
-        }
-    },
-    async submitForm() {
-        if (!this.canSubmit()) return;
-        this.loading = true;
+    closeModal() { this.open = false; document.body.style.overflow = ''; },
+    addContact() { this.contactos.push(''); },
+    removeContact(i) { if (this.contactos.length > 1) this.contactos.splice(i, 1); },
+    async submit() {
+        this.loading = true; this.errors = {};
         try {
-            const contactosFiltrados = this.contactos.filter(c => c.trim().length > 0);
-            const payload = {
-                turma_id: this.turmaId,
-                nome_completo: this.nome_completo.trim(),
-                contactos: contactosFiltrados
-            };
-            
-            if (this.email.trim()) {
-                payload.email = this.email.trim();
-            }
-            if (this.observacoes.trim()) {
-                payload.observacoes = this.observacoes.trim();
-            }
-            
-            const r = await fetch('/api/pre-inscricoes', {
+            const res = await fetch('/api/pre-inscricoes', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']')?.content
-                },
-                body: JSON.stringify(payload)
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
+                body: JSON.stringify({
+                    turma_id: this.turmaId, nome_completo: this.nome_completo,
+                    email: this.email, contactos: this.contactos.filter(c => c.trim()),
+                    observacoes: this.observacoes
+                })
             });
-            if (r.ok) {
-                this.success = true;
-                setTimeout(() => this.closeModal(), 3000);
-                showToast('Pré-inscrição realizada com sucesso!', 'success');
-            } else {
-                const data = await r.json().catch(() => ({}));
-                showToast(data.message || 'Erro ao enviar. Tente novamente.', 'error');
-            }
-        } catch {
-            showToast('Erro de conexão. Verifique sua ligação.', 'error');
-        } finally {
-            this.loading = false;
-        }
+            if (!res.ok) { const d = await res.json(); this.errors = d.errors || {}; this.loading = false; return; }
+            this.success = true; this.loading = false;
+            setTimeout(() => this.closeModal(), 3000);
+            if (typeof showToast === 'function') showToast('Pré-inscrição enviada com sucesso!', 'success');
+        } catch(e) { this.loading = false; if (typeof showToast === 'function') showToast('Erro ao enviar. Tente novamente.', 'error'); }
     }
-}" x-show="open" x-cloak
-     @pre-inscricao.window="openModal($event.detail)"
-     @keydown.escape.window="closeModal()"
-     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-
-    {{-- Overlay --}}
-    <div @click="closeModal()"
-         class="absolute inset-0 bg-foreground/50 backdrop-blur-sm"
-         x-transition:enter="transition ease-out duration-300"
+}"
+@open-pre-inscricao.window="openModal($event.detail)"
+>
+    {{-- Backdrop --}}
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
+         x-transition:leave-end="opacity-0"
+         @click="closeModal()"
+         class="fixed inset-0 z-[150] bg-slate-950/50 backdrop-blur-sm"
+         x-cloak>
     </div>
 
-    {{-- Dialog --}}
-    <div class="relative z-10 w-full max-w-md bg-card rounded-2xl overflow-hidden"
-         style="box-shadow: var(--shadow-xl);"
-         x-transition:enter="transition ease-out duration-400"
-         x-transition:enter-start="opacity-0 scale-90 translate-y-6"
-         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+    {{-- Panel --}}
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
          x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-         x-transition:leave-end="opacity-0 scale-90 translate-y-6">
-
-        {{-- Header --}}
-        <div class="relative px-6 py-6 text-white overflow-hidden" style="background: var(--gradient-hero);">
-            <div class="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10" style="background: hsl(var(--accent)); filter: blur(40px);"></div>
-            <div class="relative flex items-start justify-between">
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[151] flex items-center justify-center p-4"
+         x-cloak>
+        <div @click.stop class="bg-white rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            {{-- Header --}}
+            <div class="flex items-center justify-between p-6 border-b border-slate-100">
                 <div>
-                    <div class="flex items-center gap-2.5 mb-1.5">
-                        <div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                            <i data-lucide="pen-line" class="w-4 h-4"></i>
-                        </div>
-                        <h2 class="text-lg font-extrabold">Pré-Inscrição</h2>
-                    </div>
-                    <p class="text-sm opacity-65 pl-10" x-text="turmaNome"></p>
+                    <h3 class="text-lg font-bold text-slate-900">Pré-Inscrição</h3>
+                    <p class="text-sm text-slate-500 mt-0.5" x-text="turmaNome"></p>
                 </div>
-                <button @click="closeModal()" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-                    <i data-lucide="x" class="w-4 h-4"></i>
+                <button @click="closeModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors">
+                    <i data-lucide="x" class="w-4 h-4 text-slate-500"></i>
                 </button>
             </div>
-        </div>
 
-        {{-- Success state --}}
-        <div x-show="success" class="px-6 py-14 text-center">
-            <div class="w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-5 animate-scale-in">
-                <i data-lucide="check-circle-2" class="w-10 h-10 text-success"></i>
-            </div>
-            <h3 class="text-xl font-extrabold text-foreground mb-2">Inscrição Recebida!</h3>
-            <p class="text-sm text-muted-foreground">Entraremos em contacto em breve para confirmar a sua inscrição.</p>
-        </div>
-
-        {{-- Form --}}
-        <div x-show="!success" class="px-6 py-6">
-            <form @submit.prevent="submitForm()" class="space-y-4">
-                <div>
-                    <label class="text-sm font-semibold text-foreground mb-1.5 block">
-                        Nome Completo <span class="text-destructive">*</span>
-                    </label>
-                    <div class="relative">
-                        <i data-lucide="user" class="input-icon left-4"></i>
-                        <input type="text" x-model="nome_completo" placeholder="Seu nome completo" required
-                               class="input-field pl-11"
-                               :class="nome_completo && nome_completo.length < 2 ? 'border-destructive focus:ring-destructive/30' : ''">
+            {{-- Success State --}}
+            <template x-if="success">
+                <div class="p-10 text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+                        <i data-lucide="check-circle-2" class="w-8 h-8 text-emerald-600"></i>
                     </div>
-                    <p class="text-xs text-destructive mt-1" x-show="nome_completo && nome_completo.length < 2">Nome muito curto</p>
+                    <h4 class="text-lg font-bold text-slate-900 mb-2">Inscrição Enviada!</h4>
+                    <p class="text-sm text-slate-500">Entraremos em contacto em breve.</p>
                 </div>
+            </template>
 
-                <div>
-                    <label class="text-sm font-semibold text-foreground mb-1.5 block">
-                        Email <span class="text-muted-foreground font-normal">(opcional)</span>
-                    </label>
-                    <div class="relative">
-                        <i data-lucide="mail" class="input-icon left-4"></i>
-                        <input type="email" x-model="email" placeholder="seuemail@exemplo.com"
-                               class="input-field pl-11"
-                               :class="email && !validEmail() ? 'border-destructive focus:ring-destructive/30' : ''">
+            {{-- Form --}}
+            <template x-if="!success">
+                <form @submit.prevent="submit()" class="p-6 space-y-5">
+                    {{-- Nome --}}
+                    <div>
+                        <label class="form-label">Nome Completo <span class="text-red-500">*</span></label>
+                        <input x-model="nome_completo" type="text" class="form-input" placeholder="O seu nome completo" required>
+                        <template x-if="errors.nome_completo"><p class="text-xs text-red-500 mt-1" x-text="errors.nome_completo[0]"></p></template>
                     </div>
-                    <p class="text-xs text-destructive mt-1" x-show="email && !validEmail()">Endereço de email inválido</p>
-                </div>
 
-                <div>
-                    <label class="text-sm font-semibold text-foreground mb-1.5 block">
-                        Contactos <span class="text-destructive">*</span>
-                    </label>
-                    <div id="contactos-container" class="space-y-2.5">
-                        <template x-for="(contacto, index) in contactos" :key="index">
-                            <div class="flex gap-2.5 contacto-item">
-                                <div class="relative flex-1">
-                                    <i data-lucide="phone" class="input-icon left-4"></i>
-                                    <input type="text" x-model="contactos[index]" placeholder="Ex: +244 923-456-789"
-                                           class="input-field pl-11" required>
-                                </div>
-                                <button type="button" 
-                                        @click="removerContacto(index)"
-                                        x-show="contactos.length > 1"
-                                        class="px-3 py-2 bg-destructive/10 text-destructive rounded-lg hover:bg-destructive/20 transition-all">
-                                    <i data-lucide="x" class="w-4 h-4"></i>
-                                </button>
-                                <button type="button" 
-                                        @click="adicionarContacto()"
-                                        x-show="index === contactos.length - 1"
-                                        class="px-3 py-2 bg-accent/10 text-accent rounded-lg hover:bg-accent/20 transition-all">
-                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    {{-- Email --}}
+                    <div>
+                        <label class="form-label">Email</label>
+                        <input x-model="email" type="email" class="form-input" placeholder="email@exemplo.com"
+                               :class="!validEmail() && 'border-red-400 focus:border-red-400 focus:ring-red-400/20'">
+                    </div>
+
+                    {{-- Contactos --}}
+                    <div>
+                        <label class="form-label">Contacto(s) <span class="text-red-500">*</span></label>
+                        <template x-for="(c, i) in contactos" :key="i">
+                            <div class="flex gap-2 mb-2">
+                                <input x-model="contactos[i]" type="tel" class="form-input" placeholder="+244 9XX XXX XXX">
+                                <button x-show="contactos.length > 1" @click="removeContact(i)" type="button"
+                                        class="w-10 h-10 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 flex items-center justify-center shrink-0 transition-colors">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
                         </template>
+                        <button @click="addContact()" type="button" class="text-xs text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
+                            <i data-lucide="plus" class="w-3 h-3"></i> Adicionar contacto
+                        </button>
                     </div>
-                    <p class="text-xs text-muted-foreground mt-1.5">Pode adicionar múltiplos contactos</p>
-                </div>
 
-                <div>
-                    <label class="text-sm font-semibold text-foreground mb-1.5 block">
-                        Observações <span class="text-muted-foreground font-normal">(opcional)</span>
+                    {{-- Observações --}}
+                    <div>
+                        <label class="form-label">Observações</label>
+                        <textarea x-model="observacoes" class="form-input h-20 resize-none" placeholder="Alguma informação adicional..."></textarea>
+                    </div>
+
+                    {{-- Termos --}}
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input x-model="termos" type="checkbox"
+                               class="mt-0.5 w-4 h-4 rounded border-slate-300 text-brand-600 focus:ring-brand-600/30">
+                        <span class="text-xs text-slate-500">Aceito os <a href="#" class="text-brand-600 underline">termos e condições</a> e a <a href="#" class="text-brand-600 underline">política de privacidade</a>.</span>
                     </label>
-                    <textarea x-model="observacoes" placeholder="Se tem alguma dúvida ou observação, deixe aqui..." 
-                              class="input-field" rows="3"></textarea>
-                </div>
 
-                <label class="flex items-start gap-3 cursor-pointer group p-3 rounded-xl hover:bg-muted/50 transition-colors border border-transparent hover:border-border">
-                    <input type="checkbox" x-model="termos" required
-                           class="h-4 w-4 rounded border border-input text-primary focus:ring-2 focus:ring-ring mt-0.5 shrink-0 cursor-pointer">
-                    <span class="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                        Concordo em receber informações sobre cursos e promoções da MC-COMERCIAL <span class="text-destructive">*</span>
-                    </span>
-                </label>
-
-                <div class="flex gap-3 pt-2">
-                    <button type="button" @click="closeModal()"
-                            class="btn-ghost flex-1 h-12 rounded-xl text-sm">
-                        Cancelar
-                    </button>
+                    {{-- Submit --}}
                     <button type="submit" :disabled="!canSubmit()"
-                            class="btn-primary flex-[2] h-12 rounded-xl text-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none">
-                        <span x-show="!loading" class="flex items-center gap-2">
-                            <i data-lucide="send" class="w-4 h-4"></i>Confirmar
-                        </span>
-                        <span x-show="loading" class="flex items-center gap-2">
-                            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                            </svg>
-                            A enviar...
-                        </span>
+                            class="btn-primary w-full justify-center btn-lg"
+                            :class="!canSubmit() && 'opacity-50 cursor-not-allowed'">
+                        <template x-if="loading">
+                            <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        </template>
+                        <span x-text="loading ? 'A enviar...' : 'Enviar Pré-Inscrição'"></span>
                     </button>
-                </div>
-            </form>
+                </form>
+            </template>
         </div>
     </div>
 </div>

@@ -1,123 +1,133 @@
 @extends('layouts.public')
 
-@section('title', 'Loja - MC-COMERCIAL')
+@section('title', 'Loja — MC-COMERCIAL')
 
 @section('content')
 
-{{-- Page Hero --}}
-<div class="page-hero text-center">
-    <div class="container mx-auto px-4 relative z-10">
-        <span class="section-tag text-accent-foreground/80 justify-center before:bg-white/40">
-            <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> Loja
-        </span>
-        <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-5" style="letter-spacing: -0.03em;">Loja MC-COMERCIAL</h1>
-        <p class="text-lg text-white/65 max-w-2xl mx-auto">Snackbar e Produtos — tudo num só lugar</p>
+{{-- Header --}}
+<section class="relative pt-12 pb-16 bg-gradient-to-br from-brand-700 to-brand-900 text-white -mt-20 pt-32 overflow-hidden">
+    <div class="absolute inset-0 bg-grid opacity-5"></div>
+    <div class="container-wide relative">
+        <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4">
+            <a href="{{ route('site.home') }}" class="hover:text-white transition-colors">Início</a>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span class="text-white font-medium">Loja</span>
+        </nav>
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Loja</h1>
+        <p class="text-blue-100/70">Material didático, fardamento e outros produtos.</p>
     </div>
-</div>
+</section>
 
-<div class="py-14 bg-background min-h-screen">
-    <div class="container mx-auto px-4">
+<section class="section-tight">
+    <div class="container-wide">
+        @if(isset($grupos) && $grupos->count())
+            @foreach($grupos as $grupo)
+                <div class="mb-16 reveal">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
+                            <i data-lucide="package" class="w-5 h-5 text-brand-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">{{ $grupo->nome }}</h2>
+                    </div>
 
-        @php
-            $gruposLoja = $grupos->filter(fn($g) => strtolower($g->nome) !== 'servicos');
-        @endphp
-
-        <div x-data="{
-            tab: '{{ $gruposLoja->first()->nome ?? '' }}',
-            search: '',
-            cartCount: 0,
-            notify(item) {
-                this.cartCount++;
-                showToast(`${item} adicionado ao pedido!`, 'success');
-            }
-        }">
-            {{-- Tabs + Busca --}}
-            <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
-                <div class="flex-1 flex flex-wrap gap-1 p-1.5 bg-muted rounded-2xl">
-                    @php
-                        $iconMap = ['snackbar' => 'utensils', 'produtos' => 'package'];
-                    @endphp
-                    @foreach($gruposLoja as $grupo)
-                        <button @click="tab = '{{ $grupo->nome }}'"
-                                class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300"
-                                :class="tab === '{{ $grupo->nome }}'
-                                    ? 'bg-primary text-primary-foreground shadow-md'
-                                    : 'text-muted-foreground hover:text-foreground hover:bg-background/60'">
-                            <i data-lucide="{{ $iconMap[$grupo->nome] ?? 'package' }}" class="w-4 h-4"></i>
-                            {{ $grupo->display_name }}
-                        </button>
-                    @endforeach
-                </div>
-                <div class="relative">
-                    <i data-lucide="search" class="input-icon"></i>
-                    <input type="text" x-model="search" placeholder="Buscar produto..."
-                           class="input-field pl-11 w-56 h-10 text-sm">
-                </div>
-            </div>
-
-            {{-- Banner --}}
-            <div class="mb-10 p-5 bg-accent/5 border border-accent/15 rounded-2xl flex items-center gap-3.5 reveal" style="box-shadow: var(--shadow-xs);">
-                <div class="icon-box icon-box-sm bg-accent/10">
-                    <i data-lucide="info" class="w-4 h-4 text-accent"></i>
-                </div>
-                <p class="text-sm text-muted-foreground">
-                    Procura os nossos serviços de formação?
-                    <a href="{{ route('site.servicos') }}" class="text-accent font-bold hover:underline">Consulte a página de Serviços</a>
-                </p>
-            </div>
-
-            {{-- Tab Contents --}}
-            @foreach($gruposLoja as $grupo)
-                <div x-show="tab === '{{ $grupo->nome }}'"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 translate-y-3"
-                     x-transition:enter-end="opacity-100 translate-y-0"
-                     x-transition:leave="transition ease-in duration-150"
-                     x-transition:leave-start="opacity-100"
-                     x-transition:leave-end="opacity-0">
                     @foreach($grupo->categorias as $categoria)
-                        @if($categoria->itens->count() > 0)
-                            <div class="mb-14">
-                                <h3 class="text-lg font-extrabold text-foreground mb-7 flex items-center gap-2.5">
-                                    <div class="icon-box icon-box-sm bg-accent/10">
-                                        <i data-lucide="tag" class="w-4 h-4 text-accent"></i>
-                                    </div>
+                        @if($categoria->itens->count())
+                            <div class="mb-10">
+                                <h3 class="text-lg font-semibold text-slate-700 mb-5 flex items-center gap-2">
+                                    <i data-lucide="tag" class="w-4 h-4 text-brand-500"></i>
                                     {{ $categoria->nome }}
                                 </h3>
-                                <div class="flex flex-wrap justify-center gap-5 reveal-stagger">
+
+                                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger">
                                     @foreach($categoria->itens as $item)
-                                        <div class="w-48 group relative bg-card border border-border rounded-2xl overflow-hidden hover:-translate-y-2 transition-all duration-400 reveal"
-                                             style="box-shadow: var(--shadow-sm);"
-                                             onmouseover="this.style.boxShadow='var(--shadow-lg)'"
-                                             onmouseout="this.style.boxShadow='var(--shadow-sm)'"
-                                             x-show="!search || '{{ strtolower($item->nome) }}'.includes(search.toLowerCase())">
-                                            @if($item->destaque)
-                                                <div class="absolute top-2.5 left-2.5 z-10">
-                                                    <span class="badge bg-warning text-warning-foreground text-[10px]">
-                                                        <i data-lucide="star" class="w-2.5 h-2.5"></i>Destaque
-                                                    </span>
-                                                </div>
-                                            @endif
-                                            <div class="aspect-square overflow-hidden bg-muted/30 img-overlay">
-                                                <img src="{{ $item->imagem_url }}" alt="{{ $item->nome }}"
-                                                     class="w-full h-full object-cover"
-                                                     loading="lazy"
-                                                     onerror="this.src='https://placehold.co/200x200/f1f5f9/94a3b8?text={{ urlencode($item->nome) }}'">
-                                            </div>
-                                            <div class="p-3.5">
-                                                <h4 class="font-bold text-sm text-foreground mb-1 line-clamp-1 group-hover:text-accent transition-colors duration-300">{{ $item->nome }}</h4>
-                                                @if($item->descricao)
-                                                    <p class="text-xs text-muted-foreground mb-2.5 line-clamp-2 leading-relaxed">{{ $item->descricao }}</p>
+                                        <div class="card card-interactive p-0 overflow-hidden group reveal"
+                                             x-data="{ showDetail: false }">
+                                            {{-- Image --}}
+                                            <div class="aspect-square bg-slate-100 overflow-hidden img-overlay-zoom relative">
+                                                @if($item->imagem)
+                                                    <img src="{{ asset('storage/' . $item->imagem) }}" alt="{{ $item->nome }}"
+                                                         class="w-full h-full object-cover"
+                                                         loading="lazy">
+                                                @else
+                                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100">
+                                                        <i data-lucide="package" class="w-12 h-12 text-brand-300"></i>
+                                                    </div>
                                                 @endif
-                                                <div class="flex items-center justify-between gap-1 flex-wrap">
-                                                    <span class="text-sm font-extrabold gradient-text tabular-nums">
-                                                        {{ $item->preco ? number_format($item->preco / 100, 2, ',', '.') . ' Kz' : 'Consultar' }}
-                                                    </span>
-                                                    <button @click="notify('{{ addslashes($item->nome) }}')"
-                                                            class="inline-flex items-center justify-center gap-1 rounded-lg text-[11px] font-bold border border-input bg-background h-7 px-2.5 hover:bg-accent hover:text-white hover:border-accent active:scale-95 transition-all duration-200">
-                                                        <i data-lucide="{{ $item->preco ? 'shopping-cart' : 'phone' }}" class="w-3 h-3"></i>
-                                                        {{ $item->preco ? 'Pedir' : 'Info' }}
+                                                @if($item->destaque ?? false)
+                                                    <div class="absolute top-3 left-3 z-10">
+                                                        <span class="badge bg-red-500 text-white text-[10px]">
+                                                            <i data-lucide="flame" class="w-3 h-3"></i> Destaque
+                                                        </span>
+                                                    </div>
+                                                @endif
+
+                                                {{-- Quick View Button --}}
+                                                <div class="absolute inset-0 flex items-center justify-center bg-brand-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                                                    <button @click="showDetail = true" class="btn bg-white text-brand-700 btn-sm shadow-lg hover:scale-105 transition-transform">
+                                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i> Ver Detalhes
                                                     </button>
+                                                </div>
+                                            </div>
+
+                                            {{-- Info --}}
+                                            <div class="p-4">
+                                                <h4 class="text-sm font-bold text-slate-900 mb-1 group-hover:text-brand-600 transition-colors line-clamp-1">
+                                                    {{ $item->nome }}
+                                                </h4>
+                                                @if($item->descricao)
+                                                    <p class="text-xs text-slate-500 line-clamp-2 mb-3">{{ $item->descricao }}</p>
+                                                @endif
+                                                <div class="flex items-center justify-between">
+                                                    @if($item->preco)
+                                                        <span class="text-lg font-black text-brand-700">
+                                                            {{ number_format($item->preco, 0, ',', '.') }} <span class="text-xs font-semibold">Kz</span>
+                                                        </span>
+                                                    @else
+                                                        <span class="text-sm text-slate-400 italic">Consultar</span>
+                                                    @endif
+                                                    @if($item->disponivel ?? true)
+                                                        <span class="badge-success text-[10px]">Disponível</span>
+                                                    @else
+                                                        <span class="badge-warning text-[10px]">Esgotado</span>
+                                                    @endif
+                                                </div>
+                                                @if($item->tamanhos ?? false)
+                                                    <div class="mt-2 flex gap-1">
+                                                        @foreach(explode(',', $item->tamanhos) as $tam)
+                                                            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-medium">{{ trim($tam) }}</span>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            {{-- Detail Modal --}}
+                                            <div x-show="showDetail" x-transition class="fixed inset-0 z-[200] flex items-center justify-center p-4" x-cloak>
+                                                <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showDetail = false"></div>
+                                                <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden" @click.stop>
+                                                    <div class="aspect-video bg-slate-100 overflow-hidden">
+                                                        @if($item->imagem)
+                                                            <img src="{{ asset('storage/' . $item->imagem) }}" alt="{{ $item->nome }}" class="w-full h-full object-cover">
+                                                        @else
+                                                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-50 to-brand-100">
+                                                                <i data-lucide="package" class="w-16 h-16 text-brand-300"></i>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                    <div class="p-6">
+                                                        <h3 class="text-xl font-bold text-slate-900 mb-2">{{ $item->nome }}</h3>
+                                                        @if($item->descricao)
+                                                            <p class="text-sm text-slate-500 leading-relaxed mb-4">{{ $item->descricao }}</p>
+                                                        @endif
+                                                        @if($item->preco)
+                                                            <span class="text-2xl font-black text-brand-700">{{ number_format($item->preco, 0, ',', '.') }} Kz</span>
+                                                        @endif
+                                                        <div class="mt-4 flex gap-3">
+                                                            <a href="https://wa.me/244929643510?text=Olá, quero encomendar: {{ urlencode($item->nome) }}" target="_blank" class="btn-primary flex-1 justify-center">
+                                                                <i data-lucide="shopping-cart" class="w-4 h-4"></i> Encomendar
+                                                            </a>
+                                                            <button @click="showDetail = false" class="btn-secondary">Fechar</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -128,7 +138,16 @@
                     @endforeach
                 </div>
             @endforeach
-        </div>
+        @else
+            <div class="text-center py-20">
+                <div class="w-16 h-16 rounded-2xl bg-brand-100 flex items-center justify-center mx-auto mb-5">
+                    <i data-lucide="shopping-bag" class="w-7 h-7 text-brand-400"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Loja em breve</h3>
+                <p class="text-sm text-slate-500">Estamos a preparar os nossos produtos.</p>
+            </div>
+        @endif
     </div>
-</div>
+</section>
+
 @endsection

@@ -1,396 +1,456 @@
 @extends('layouts.public')
 
-@section('title', 'MC-COMERCIAL - Centro de Formação Profissional')
-
-@push('styles')
-<link rel="preload" as="image"
-      href="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1400&q=60"
-      fetchpriority="high">
-@endpush
+@section('title', 'MC-COMERCIAL — Centro de Formação Profissional')
 
 @section('content')
 
 {{-- ═══════════════════════════════════════
-     HERO CAROUSEL
+     HERO — Full-Width Carousel with Overlay
      ═══════════════════════════════════════ --}}
-<section x-data="{
-    active: 0,
-    total: 4,
-    autoplay: null,
-    init() { this.autoplay = setInterval(() => this.next(), 6000); },
-    next() { this.active = (this.active + 1) % this.total; this.resetAutoplay(); },
-    prev() { this.active = (this.active - 1 + this.total) % this.total; this.resetAutoplay(); },
-    goTo(i) { this.active = i; this.resetAutoplay(); },
-    resetAutoplay() { clearInterval(this.autoplay); this.autoplay = setInterval(() => this.next(), 6000); }
-}" class="relative overflow-hidden h-[85vh] md:h-[90vh]" x-cloak>
+<section class="relative overflow-hidden bg-brand-950 text-white -mt-20 pt-20"
+         x-data="{
+             current: 0,
+             slides: [
+                 { img: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=80', title: 'Construa o seu futuro profissional', sub: 'Mais de 10 anos de experiência na preparação de profissionais qualificados.' },
+                 { img: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1600&q=80', title: 'Formação de Excelência', sub: 'Cursos certificados com formadores experientes e material de qualidade.' },
+                 { img: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1600&q=80', title: 'Certificados Reconhecidos', sub: 'Certificações válidas e reconhecidas pelo mercado de trabalho angolano.' },
+                 { img: 'https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&w=1600&q=80', title: 'Infraestrutura Moderna', sub: 'Centros de formação equipados com tecnologia de ponta.' }
+             ],
+             autoplay: null,
+             init() {
+                 this.autoplay = setInterval(() => { this.current = (this.current + 1) % this.slides.length; }, 5000);
+             },
+             goto(i) { this.current = i; clearInterval(this.autoplay); this.autoplay = setInterval(() => { this.current = (this.current + 1) % this.slides.length; }, 5000); },
+             next() { this.goto((this.current + 1) % this.slides.length); },
+             prev() { this.goto((this.current - 1 + this.slides.length) % this.slides.length); }
+         }">
 
-    @php
-        $slides = [
-            ['image' => 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1400&q=60', 'tag' => 'Formação Profissional',   'title' => 'Invista no seu',   'highlight' => 'Futuro Profissional',      'desc' => 'Formação de qualidade com mais de 10 anos de experiência na preparação de profissionais qualificados para o mercado de trabalho angolano.'],
-            ['image' => 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1400&q=60', 'tag' => 'Instrutores Experientes', 'title' => 'Aprenda com os',  'highlight' => 'Melhores Formadores',     'desc' => 'Salas equipadas com tecnologia de ponta e formadores experientes para garantir a melhor experiência de aprendizagem.'],
-            ['image' => 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&w=1400&q=60', 'tag' => 'Certificação Reconhecida','title' => 'Conquiste o seu', 'highlight' => 'Certificado Profissional', 'desc' => 'Certificações reconhecidas pelo mercado que abrem portas para novas oportunidades de carreira em Angola e no exterior.'],
-            ['image' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=60', 'tag' => 'Workshops & Práticas',   'title' => 'Workshops e',    'highlight' => 'Formações Práticas',      'desc' => 'Sessões práticas e intensivas que preparam você para os desafios reais do mercado de trabalho moderno.'],
-        ];
-    @endphp
+    {{-- Slides --}}
+    <div class="relative min-h-[85vh]">
+        <template x-for="(slide, i) in slides" :key="i">
+            <div class="absolute inset-0 transition-opacity duration-700"
+                 :class="current === i ? 'opacity-100 z-10' : 'opacity-0 z-0'">
+                <img :src="slide.img" :alt="slide.title" class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-950/90 via-brand-950/60 to-brand-950/30"></div>
+            </div>
+        </template>
 
-    @foreach($slides as $index => $slide)
-    <div x-show="active === {{ $index }}"
-         x-transition:enter="transition ease-out duration-700"
-         x-transition:enter-start="opacity-0 scale-105"
-         x-transition:enter-end="opacity-100 scale-100"
-         x-transition:leave="transition ease-in duration-400"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="absolute inset-0"
-         :class="{ 'z-10': active === {{ $index }} }">
+        {{-- Content --}}
+        <div class="container-wide relative z-20 flex items-center min-h-[85vh]">
+            <div class="max-w-2xl py-20">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm mb-8 animate-fade-up">
+                    <span class="w-2 h-2 bg-brand-400 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-semibold text-brand-200 uppercase tracking-wider">Formação Profissional em Angola</span>
+                </div>
 
-        {{-- Skeleton --}}
-        <div class="hero-skeleton absolute inset-0 animate-shimmer"></div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight mb-6"
+                    x-text="slides[current].title"
+                    style="animation: fade-up 0.6s ease forwards;">
+                </h1>
 
-        <img src="{{ $slide['image'] }}" alt="{{ $slide['desc'] }}"
-             loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
-             class="w-full h-full object-cover opacity-0"
-             style="transition: opacity 0.7s ease-out, transform 8s ease-out; {{ $index === 0 ? 'transform: scale(1.06)' : '' }}"
-             onload="this.style.opacity='1'; var s=this.previousElementSibling; if(s) s.style.opacity='0';"
-             onerror="this.src='https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=2070&q=80'; this.style.opacity='1';">
+                <p class="text-lg text-blue-100/80 leading-relaxed mb-10 max-w-lg"
+                   x-text="slides[current].sub"
+                   style="animation: fade-up 0.6s ease forwards; animation-delay: 100ms;">
+                </p>
 
-        {{-- Overlay with depth --}}
-        <div class="absolute inset-0" style="background: linear-gradient(100deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 50%, transparent 80%);">
-            <div class="absolute inset-0 flex items-center">
-                <div class="container mx-auto px-4">
-                    <div class="max-w-2xl">
-                        {{-- Tag --}}
-                        <span class="inline-flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.15em] text-accent mb-6 bg-accent/10 border border-accent/20 px-4 py-2 rounded-full backdrop-blur-sm">
-                            <span class="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
-                            {{ $slide['tag'] }}
-                        </span>
+                <div class="flex flex-wrap gap-4" style="animation: fade-up 0.6s ease forwards; animation-delay: 200ms;">
+                    <a href="{{ route('site.cursos') }}" class="btn-primary btn-lg">
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                        Explorar Cursos
+                    </a>
+                    <a href="{{ route('site.sobre') }}" class="btn-outline-white btn-lg">
+                        <i data-lucide="play-circle" class="w-5 h-5"></i>
+                        Saber Mais
+                    </a>
+                </div>
 
-                        {{-- Title --}}
-                        <h1 class="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white leading-[1.08] mb-6" style="letter-spacing: -0.03em;">
-                            {{ $slide['title'] }}<br>
-                            <span class="gradient-text">{{ $slide['highlight'] }}</span>
-                        </h1>
-
-                        {{-- Desc --}}
-                        <p class="text-base lg:text-lg text-white/70 mb-10 leading-relaxed max-w-xl">{{ $slide['desc'] }}</p>
-
-                        {{-- CTAs --}}
-                        <div class="flex flex-wrap gap-4">
-                            <a href="{{ route('site.cursos') }}" class="btn-accent">
-                                <i data-lucide="book-open" class="w-4 h-4"></i>
-                                Explorar Cursos
-                            </a>
-                            <a href="#sobre" class="btn-outline">
-                                <i data-lucide="play-circle" class="w-4 h-4"></i>
-                                Saber Mais
-                            </a>
+                {{-- Stats --}}
+                <div class="grid grid-cols-3 gap-6 mt-14 pt-8 border-t border-white/15" style="animation: fade-up 0.6s ease forwards; animation-delay: 300ms;">
+                    @foreach([
+                        ['500+', 'Alunos Formados'],
+                        [isset($cursos) ? $cursos->count() : '20+', 'Cursos Disponíveis'],
+                        [isset($centros) ? $centros->count() : '5+', 'Centros de Formação']
+                    ] as [$val, $label])
+                        <div>
+                            <span class="text-2xl sm:text-3xl font-black text-white">{{ $val }}</span>
+                            <span class="block text-xs text-blue-200/60 mt-1">{{ $label }}</span>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
-    </div>
-    @endforeach
 
-    {{-- Nav Arrows --}}
-    <button @click="prev()" x-show="active > 0"
-            class="absolute left-5 md:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/25 hover:scale-110 transition-all duration-300 z-20 border border-white/15"
-            aria-label="Slide anterior">
-        <i data-lucide="chevron-left" class="w-5 h-5"></i>
-    </button>
-    <button @click="next()" x-show="active < total - 1"
-            class="absolute right-5 md:right-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/25 hover:scale-110 transition-all duration-300 z-20 border border-white/15"
-            aria-label="Próximo slide">
-        <i data-lucide="chevron-right" class="w-5 h-5"></i>
-    </button>
-
-    {{-- Dots --}}
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20">
-        @for($i = 0; $i < count($slides); $i++)
-        <button @click="goTo({{ $i }})"
-                :class="active === {{ $i }} ? 'w-10 bg-accent' : 'w-2.5 bg-white/40 hover:bg-white/70'"
-                class="h-2.5 rounded-full transition-all duration-400"
-                :aria-label="'Slide ' + {{ $i + 1 }}">
+        {{-- Carousel Controls --}}
+        <button @click="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110 border border-white/10">
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
         </button>
-        @endfor
-    </div>
+        <button @click="next()" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110 border border-white/10">
+            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+        </button>
 
-    {{-- Counter --}}
-    <div class="absolute bottom-10 right-8 z-20 text-white/50 text-xs font-mono tabular-nums">
-        <span x-text="active + 1" class="text-white font-bold text-lg"></span> / {{ count($slides) }}
+        {{-- Dots --}}
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+            <template x-for="(_, i) in slides" :key="'dot-'+i">
+                <button @click="goto(i)" class="h-2.5 rounded-full transition-all duration-300"
+                        :class="current === i ? 'w-8 bg-brand-400' : 'w-2.5 bg-white/30 hover:bg-white/50'"></button>
+            </template>
+        </div>
     </div>
 </section>
 
 {{-- ═══════════════════════════════════════
-     STATISTICS
+     FEATURES STRIP
      ═══════════════════════════════════════ --}}
-<section class="py-20 bg-background relative" id="sobre">
-    {{-- Decorative grid --}}
-    <div class="absolute inset-0 dots-pattern opacity-30 pointer-events-none"></div>
-
-    <div class="container mx-auto px-4 relative">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger">
-            @php
-                $cursosCount = isset($cursos) ? $cursos->count() : 0;
-                $centrosCount = isset($centros) ? $centros->count() : 0;
-                $stats = [
-                    ['icon' => 'users',      'value' => '500', 'suffix' => '+', 'label' => 'Alunos Formados',    'gradient' => 'from-blue-500/15 to-blue-500/5',   'iconColor' => 'text-blue-500'],
-                    ['icon' => 'book-open',  'value' => $cursosCount, 'suffix' => '',  'label' => 'Cursos Disponíveis', 'gradient' => 'from-violet-500/15 to-violet-500/5', 'iconColor' => 'text-violet-500'],
-                    ['icon' => 'building-2', 'value' => $centrosCount, 'suffix' => '',  'label' => 'Centros de Formação','gradient' => 'from-emerald-500/15 to-emerald-500/5','iconColor' => 'text-emerald-500'],
-                    ['icon' => 'award',      'value' => '100', 'suffix' => '%', 'label' => 'Taxa de Sucesso',     'gradient' => 'from-amber-500/15 to-amber-500/5',  'iconColor' => 'text-amber-500'],
-                ];
-            @endphp
-            @foreach($stats as $stat)
-                <div class="glass-card text-center reveal group"
-                     x-data="{
-                         count: 0,
-                         target: {{ is_numeric($stat['value']) ? $stat['value'] : 0 }},
-                         started: false,
-                         start() {
-                             if (this.started) return;
-                             this.started = true;
-                             const duration = 1800;
-                             const step = this.target / (duration / 16);
-                             const timer = setInterval(() => {
-                                 this.count = Math.min(Math.round(this.count + step), this.target);
-                                 if (this.count >= this.target) clearInterval(timer);
-                             }, 16);
-                         }
-                     }"
-                     x-intersect.once="start()">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br {{ $stat['gradient'] }} flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform duration-500">
-                        <i data-lucide="{{ $stat['icon'] }}" class="w-7 h-7 {{ $stat['iconColor'] }}"></i>
+<section class="py-6 bg-white border-b border-slate-100 relative -mt-1">
+    <div class="container-wide">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            @foreach([
+                ['icon' => 'award',          'title' => 'Certificação Oficial', 'desc' => 'Certificados reconhecidos'],
+                ['icon' => 'users',          'title' => 'Formadores Experientes', 'desc' => 'Profissionais qualificados'],
+                ['icon' => 'book-open',      'title' => 'Material Incluído',    'desc' => 'Apostilas e recursos'],
+                ['icon' => 'briefcase',      'title' => 'Empregabilidade',      'desc' => 'Apoio na colocação'],
+            ] as $feat)
+                <div class="flex items-center gap-3 p-4 rounded-xl hover:bg-brand-50/50 transition-colors duration-200 reveal">
+                    <div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center shrink-0">
+                        <i data-lucide="{{ $feat['icon'] }}" class="w-5 h-5 text-brand-600"></i>
                     </div>
-                    <h3 class="text-4xl xl:text-5xl font-extrabold gradient-text mb-2 tabular-nums">
-                        @if(is_numeric($stat['value']))
-                            <span x-text="count"></span>{{ $stat['suffix'] }}
+                    <div>
+                        <span class="text-sm font-bold text-slate-900 block">{{ $feat['title'] }}</span>
+                        <span class="text-xs text-slate-500">{{ $feat['desc'] }}</span>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ═══════════════════════════════════════
+     FEATURED COURSES — Rich Cards with Carousel
+     ═══════════════════════════════════════ --}}
+@if(isset($turmas) && $turmas->count())
+<section class="section bg-slate-50/50">
+    <div class="container-wide">
+        <div class="section-header reveal">
+            <span class="badge-brand mb-4">
+                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                Turmas Disponíveis
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">Próximas Turmas</h2>
+            <p class="text-slate-500 max-w-lg mx-auto">Encontre a turma ideal e comece a sua jornada de formação profissional.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
+            @foreach($turmas->take(6) as $turma)
+                <div class="card card-interactive p-0 overflow-hidden reveal group">
+                    {{-- Card Image --}}
+                    <div class="relative h-48 bg-gradient-to-br from-brand-600 to-brand-800 overflow-hidden img-overlay-zoom">
+                        @if($turma->curso->imagem ?? false)
+                            <img src="{{ asset('storage/' . $turma->curso->imagem) }}" alt="{{ $turma->curso->nome ?? '' }}"
+                                 class="w-full h-full object-cover" loading="lazy">
                         @else
-                            {{ $stat['value'] }}{{ $stat['suffix'] }}
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i data-lucide="graduation-cap" class="w-16 h-16 text-white/20"></i>
+                            </div>
+                            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=60"
+                                 alt="{{ $turma->curso->nome ?? 'Curso' }}" class="w-full h-full object-cover opacity-60" loading="lazy">
                         @endif
-                    </h3>
-                    <p class="text-sm text-muted-foreground font-medium">{{ $stat['label'] }}</p>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-{{-- ═══════════════════════════════════════
-     CENTROS PREVIEW
-     ═══════════════════════════════════════ --}}
-<section class="py-20 bg-muted/30">
-    <div class="container mx-auto px-4">
-        <div class="mb-14 reveal">
-            <span class="section-tag">Nossa Rede</span>
-            <h2 class="section-title">Centros de Formação</h2>
-            <p class="section-subtitle">Espaços modernos e equipados para a sua formação profissional</p>
-        </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
-            @forelse($centros->take(3) as $centro)
-                <div class="feature-card group reveal">
-                    <div class="flex items-start gap-4 mb-5">
-                        <div class="icon-box icon-box-md bg-accent/10 group-hover:bg-accent transition-all duration-400 group-hover:scale-110 group-hover:rotate-3">
-                            <i data-lucide="building-2" class="w-6 h-6 text-accent group-hover:text-white transition-colors duration-300"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-foreground group-hover:text-accent transition-colors duration-300">{{ $centro->nome ?? 'Centro de Formação' }}</h3>
-                            <p class="text-xs text-muted-foreground mt-0.5">Centro de Formação Profissional</p>
-                        </div>
-                    </div>
-                    <div class="space-y-3 mb-6">
-                        <p class="text-sm text-muted-foreground flex items-start gap-2.5">
-                            <i data-lucide="map-pin" class="w-4 h-4 mt-0.5 shrink-0 text-accent"></i>
-                            {{ $centro->localizacao ?? 'Localização a definir' }}
-                        </p>
-                        @if(!empty($centro->contactos) && count($centro->contactos) > 0)
-                            <a href="tel:{{ $centro->contactos[0] }}" class="text-sm flex items-center gap-2.5 text-accent hover:underline group/link">
-                                <i data-lucide="phone" class="w-4 h-4 group-hover/link:scale-110 transition-transform"></i>{{ $centro->contactos[0] }}
-                            </a>
-                        @endif
-                    </div>
-                    <p class="text-xs text-muted-foreground mb-5 flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2.5">
-                        <i data-lucide="clock" class="w-3.5 h-3.5 text-accent"></i>
-                        Seg-Sex: 8h-18h | Sáb: 9h-16h
-                    </p>
-                    <a href="{{ route('site.centros') }}"
-                       class="btn-ghost w-full group/btn">
-                        Ver Turmas <i data-lucide="arrow-right" class="w-4 h-4 group-hover/btn:translate-x-1 transition-transform"></i>
-                    </a>
-                </div>
-            @empty
-                <div class="col-span-3 text-center py-16 text-muted-foreground">
-                    <div class="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="building" class="w-8 h-8 opacity-40"></i>
-                    </div>
-                    Nenhum centro disponível no momento.
-                </div>
-            @endforelse
-        </div>
-        <div class="text-center mt-12 reveal">
-            <a href="{{ route('site.centros') }}"
-               class="inline-flex items-center gap-2 rounded-xl text-sm font-bold border-2 border-primary/20 text-primary h-12 px-10 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300">
-                Ver Todos os Centros <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
-        </div>
-    </div>
-</section>
-
-{{-- ═══════════════════════════════════════
-     SERVIÇOS
-     ═══════════════════════════════════════ --}}
-<section class="py-20 bg-background">
-    <div class="container mx-auto px-4">
-        <div class="mb-14 reveal">
-            <span class="section-tag">O que Oferecemos</span>
-            <h2 class="section-title">Nossos Serviços</h2>
-            <p class="section-subtitle">Soluções completas para o seu desenvolvimento profissional</p>
-        </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
-            @php
-                $servicos = [
-                    ['icon' => 'graduation-cap', 'title' => 'Formação Profissional', 'desc' => 'Cursos especializados em diversas áreas com certificação reconhecida'],
-                    ['icon' => 'briefcase',      'title' => 'Projectos Académicos',  'desc' => 'Apoio na elaboração de trabalhos e dissertações académicas'],
-                    ['icon' => 'pen-tool',       'title' => 'Workshops',             'desc' => 'Sessões práticas intensivas com especialistas da indústria'],
-                    ['icon' => 'monitor',        'title' => 'Formação Online',       'desc' => 'Aprenda no seu ritmo com aulas gravadas e ao vivo'],
-                    ['icon' => 'target',         'title' => 'Consultoria',           'desc' => 'Consultoria empresarial especializada para organizações'],
-                    ['icon' => 'award',          'title' => 'Certificações',         'desc' => 'Certificados reconhecidos internacionalmente pelo mercado'],
-                ];
-            @endphp
-            @foreach($servicos as $servico)
-                <div class="feature-card group reveal">
-                    <div class="icon-box icon-box-md bg-accent/10 group-hover:bg-accent mb-5 transition-all duration-400 group-hover:scale-110 group-hover:-rotate-3">
-                        <i data-lucide="{{ $servico['icon'] }}" class="w-6 h-6 text-accent group-hover:text-white transition-colors duration-300"></i>
-                    </div>
-                    <h3 class="text-base font-extrabold text-foreground mb-2.5 group-hover:text-accent transition-colors duration-300">{{ $servico['title'] }}</h3>
-                    <p class="text-sm text-muted-foreground leading-relaxed">{{ $servico['desc'] }}</p>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-
-{{-- ═══════════════════════════════════════
-     TURMAS DISPONÍVEIS
-     ═══════════════════════════════════════ --}}
-<section class="py-20 bg-muted/30">
-    <div class="container mx-auto px-4">
-        <div class="mb-14 reveal">
-            <span class="section-tag">Próximas Turmas</span>
-            <h2 class="section-title">Turmas Disponíveis</h2>
-            <p class="section-subtitle">Inscreva-se já nas próximas turmas</p>
-        </div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
-            @forelse($turmas->take(6) as $turma)
-                @php
-                    $vagasDisp = isset($turma->vagas_totais) && isset($turma->vagas_preenchidas)
-                        ? $turma->vagas_totais - $turma->vagas_preenchidas : 0;
-                    $progress = isset($turma->vagas_totais) && $turma->vagas_totais > 0
-                        ? ($turma->vagas_preenchidas / $turma->vagas_totais) * 100 : 0;
-                    $cursoNome = $turma->curso->nome ?? 'Curso';
-                    $imagemUrl = $turma->curso->imagem_url ?? 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80';
-                    $area = $turma->curso->area ?? 'Geral';
-                    $modalidade = $turma->curso->modalidade ?? 'Presencial';
-                    $isAlmostFull = $vagasDisp < 5;
-                @endphp
-                <div class="feature-card overflow-hidden reveal group p-0">
-                    {{-- Image --}}
-                    <div class="relative h-48 overflow-hidden img-overlay">
-                        <img src="{{ $imagemUrl }}" alt="{{ $cursoNome }}"
-                             class="w-full h-full object-cover"
-                             loading="lazy">
-                        <div class="absolute bottom-3 left-4 flex gap-2 z-10">
-                            <span class="badge-area">{{ $area }}</span>
-                            <span class="badge-modalidade">{{ $modalidade }}</span>
-                        </div>
-                        @if($isAlmostFull && $vagasDisp > 0)
-                            <span class="absolute top-3 right-3 z-10 text-[10px] font-bold bg-destructive text-white px-3 py-1.5 rounded-full animate-pulse">
-                                Últimas {{ $vagasDisp }} vagas!
+                        {{-- Status Badge --}}
+                        <div class="absolute top-3 left-3 z-10">
+                            <span class="badge-brand backdrop-blur-sm bg-white/90 text-brand-700">
+                                {{ $turma->curso->area ?? 'Formação' }}
                             </span>
-                        @endif
-                    </div>
-
-                    {{-- Content --}}
-                    <div class="p-5">
-                        <h3 class="text-base font-extrabold text-foreground mb-1.5 group-hover:text-accent transition-colors duration-300">{{ $cursoNome }}</h3>
-                        <p class="text-xs text-muted-foreground mb-4 flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                            {{ isset($turma->data_arranque) ? \Carbon\Carbon::parse($turma->data_arranque)->format('d/m/Y') : 'Data a definir' }}
-                            @if(isset($turma->centro->nome))
-                                <span class="opacity-40">·</span>
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>{{ $turma->centro->nome }}
-                            @endif
-                        </p>
-
-                        @if(isset($turma->vagas_totais) && $turma->vagas_totais > 0)
-                            <div class="mb-5">
-                                <div class="flex justify-between text-xs mb-2">
-                                    <span class="text-muted-foreground flex items-center gap-1.5">
-                                        <i data-lucide="users" class="w-3 h-3"></i>Vagas
-                                    </span>
-                                    <span class="{{ $isAlmostFull ? 'text-destructive font-bold' : 'text-foreground font-semibold' }} tabular-nums">
-                                        {{ $vagasDisp }} disponíveis
-                                    </span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill {{ $progress > 80 ? 'bg-destructive' : 'bg-accent' }}"
-                                         style="width: {{ $progress }}%"></div>
-                                </div>
+                        </div>
+                        @if($turma->data_arranque)
+                            <div class="absolute top-3 right-3 z-10">
+                                <span class="badge bg-brand-600 text-white text-[10px]">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                                    {{ \Carbon\Carbon::parse($turma->data_arranque)->format('d M Y') }}
+                                </span>
                             </div>
                         @endif
+                    </div>
 
-                        <button onclick="window.dispatchEvent(new CustomEvent('pre-inscricao', { detail: { turmaId: {{ $turma->id }}, turmaNome: '{{ addslashes($cursoNome) }}' } }))"
-                                class="btn-primary w-full h-11 text-sm rounded-xl">
-                            <i data-lucide="pen-line" class="w-4 h-4"></i>
-                            Inscrever-se
-                        </button>
+                    {{-- Card Body --}}
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold text-slate-900 mb-2 group-hover:text-brand-600 transition-colors line-clamp-1">
+                            {{ $turma->curso->nome ?? 'Curso' }}
+                        </h3>
+
+                        <p class="text-sm text-slate-500 line-clamp-2 mb-4">
+                            {{ $turma->curso->descricao ?? 'Formação profissional de qualidade.' }}
+                        </p>
+
+                        {{-- Details Grid --}}
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            @if($turma->centro)
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    <span class="truncate">{{ $turma->centro->nome }}</span>
+                                </div>
+                            @endif
+                            @if($turma->horario)
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    {{ $turma->horario }}
+                                </div>
+                            @endif
+                            @if($turma->duracao)
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                                    <i data-lucide="timer" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    {{ $turma->duracao }}
+                                </div>
+                            @endif
+                            @if($turma->formador)
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                                    <i data-lucide="user" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    <span class="truncate">{{ $turma->formador->nome }}</span>
+                                </div>
+                            @endif
+                            @if($turma->periodo)
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                                    <i data-lucide="sun" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    {{ $turma->periodo }}
+                                </div>
+                            @endif
+                            @if($turma->vagas)
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500">
+                                    <i data-lucide="users" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    {{ $turma->vagas }} vagas
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Card Footer --}}
+                    <div class="px-5 py-4 bg-brand-50/30 border-t border-brand-100/50 flex items-center justify-between">
+                        <div>
+                            @if($turma->preco)
+                                <span class="text-xl font-black text-brand-700">
+                                    {{ number_format($turma->preco, 0, ',', '.') }} <span class="text-sm font-semibold">Kz</span>
+                                </span>
+                            @else
+                                <span class="text-sm text-slate-400 italic">Consultar preço</span>
+                            @endif
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{{ route('site.curso', $turma->curso->id ?? $turma->id) }}"
+                               class="btn-secondary btn-sm">
+                                <i data-lucide="eye" class="w-3 h-3"></i>
+                                Ver Detalhes
+                            </a>
+                            <button @click="$dispatch('open-pre-inscricao', { turmaId: {{ $turma->id }}, turmaNome: '{{ addslashes($turma->curso->nome ?? '') }}' })"
+                                    class="btn-primary btn-sm">
+                                Inscrever-se
+                            </button>
+                        </div>
                     </div>
                 </div>
-            @empty
-                <div class="col-span-3 text-center py-16 text-muted-foreground">
-                    <div class="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="calendar-x" class="w-8 h-8 opacity-30"></i>
-                    </div>
-                    <p>Nenhuma turma disponível no momento.</p>
-                </div>
-            @endforelse
+            @endforeach
         </div>
+
         @if($turmas->count() > 6)
-            <div class="text-center mt-12">
-                <a href="{{ route('site.cursos') }}" class="btn-primary">
-                    Ver Todas as Turmas <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            <div class="text-center mt-12 reveal">
+                <a href="{{ route('site.cursos') }}" class="btn-primary btn-lg">
+                    Ver Todas as Turmas
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </a>
             </div>
         @endif
     </div>
 </section>
+@endif
 
 {{-- ═══════════════════════════════════════
-     CTA BANNER
+     WHY CHOOSE US — With Images
      ═══════════════════════════════════════ --}}
-<section class="py-24 relative overflow-hidden" style="background: var(--gradient-hero);">
-    {{-- Decorative orbs --}}
-    <div class="absolute inset-0 pointer-events-none">
-        <div class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-10" style="background: hsl(var(--accent)); filter: blur(120px);"></div>
-        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-5" style="background: white; filter: blur(100px);"></div>
-    </div>
+<section class="section bg-white">
+    <div class="container-wide">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div class="reveal">
+                <span class="badge-brand mb-5">
+                    <i data-lucide="star" class="w-3 h-3"></i>
+                    Porquê Escolher-nos
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-6">Formação que transforma carreiras</h2>
+                <p class="text-slate-500 leading-relaxed mb-8">A MC-COMERCIAL distingue-se pela qualidade da formação, infraestruturas modernas e resultados comprovados no mercado de trabalho angolano.</p>
 
-    <div class="container mx-auto px-4 text-center text-white relative reveal">
-        <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-8 animate-float">
-            <i data-lucide="zap" class="w-8 h-8"></i>
+                <div class="space-y-4">
+                    @foreach([
+                        ['icon' => 'check-circle-2', 'title' => 'Formadores certificados e experientes', 'color' => 'text-emerald-500'],
+                        ['icon' => 'check-circle-2', 'title' => 'Material didático incluído em todos os cursos', 'color' => 'text-emerald-500'],
+                        ['icon' => 'check-circle-2', 'title' => 'Aulas práticas em laboratórios equipados', 'color' => 'text-emerald-500'],
+                        ['icon' => 'check-circle-2', 'title' => 'Certificados reconhecidos pelo mercado', 'color' => 'text-emerald-500'],
+                        ['icon' => 'check-circle-2', 'title' => 'Horários flexíveis: manhã, tarde e noite', 'color' => 'text-emerald-500'],
+                    ] as $item)
+                        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-brand-50/50 transition-colors">
+                            <i data-lucide="{{ $item['icon'] }}" class="w-5 h-5 {{ $item['color'] }} shrink-0"></i>
+                            <span class="text-sm font-medium text-slate-700">{{ $item['title'] }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="reveal relative">
+                <div class="grid grid-cols-2 gap-4">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=70"
+                         alt="Alunos em formação" class="rounded-2xl shadow-lg w-full aspect-[3/4] object-cover" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=70"
+                         alt="Formação prática" class="rounded-2xl shadow-lg w-full aspect-[3/4] object-cover mt-8" loading="lazy">
+                </div>
+                <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl p-5 shadow-xl animate-float border border-brand-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-brand-100 flex items-center justify-center">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-brand-600"></i>
+                        </div>
+                        <div>
+                            <span class="text-sm font-bold text-slate-900 block">95%</span>
+                            <span class="text-xs text-slate-500">Taxa de Sucesso</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <h2 class="text-3xl lg:text-5xl font-extrabold mb-5" style="letter-spacing: -0.03em;">Pronto para começar?</h2>
-        <p class="text-lg opacity-70 mb-10 max-w-xl mx-auto leading-relaxed">
-            Junte-se a mais de 500 profissionais que já transformaram as suas carreiras com a MC-COMERCIAL.
-        </p>
-        <div class="flex flex-wrap gap-4 justify-center">
-            <a href="{{ route('site.cursos') }}" class="btn-accent">
-                <i data-lucide="book-open" class="w-4 h-4"></i>
-                Ver Cursos Disponíveis
-            </a>
-            <a href="{{ route('site.contactos') }}" class="btn-outline">
-                <i data-lucide="mail" class="w-4 h-4"></i>
-                Falar Connosco
-            </a>
+    </div>
+</section>
+
+{{-- ═══════════════════════════════════════
+     CENTRES — Cards + Map
+     ═══════════════════════════════════════ --}}
+@if(isset($centros) && $centros->count())
+<section class="section bg-brand-50/30">
+    <div class="container-wide">
+        <div class="section-header reveal">
+            <span class="badge-brand mb-4">
+                <i data-lucide="map-pin" class="w-3 h-3"></i>
+                Nossos Centros
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">Centros de Formação</h2>
+            <p class="text-slate-500">Conheça os nossos centros espalhados por Angola.</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-8 items-start">
+            {{-- Centre Cards --}}
+            <div class="space-y-4 reveal-stagger">
+                @foreach($centros->take(4) as $centro)
+                    <a href="{{ route('site.centro', $centro->id) }}" class="card card-interactive p-5 flex items-start gap-4 reveal group">
+                        <div class="w-14 h-14 rounded-2xl bg-brand-100 flex items-center justify-center shrink-0
+                                    group-hover:bg-brand-600 group-hover:scale-110 transition-all duration-300">
+                            <i data-lucide="building-2" class="w-6 h-6 text-brand-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-base font-bold text-slate-900 mb-1 group-hover:text-brand-600 transition-colors">
+                                {{ $centro->nome }}
+                            </h3>
+                            @if($centro->endereco)
+                                <p class="text-sm text-slate-500 flex items-start gap-1.5 mb-1">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 mt-0.5 shrink-0"></i>
+                                    <span class="line-clamp-1">{{ $centro->endereco }}</span>
+                                </p>
+                            @endif
+                            <div class="flex items-center gap-4 mt-2">
+                                @if($centro->telefone)
+                                    <span class="text-xs text-slate-400 flex items-center gap-1">
+                                        <i data-lucide="phone" class="w-3 h-3"></i> {{ $centro->telefone }}
+                                    </span>
+                                @endif
+                                @if(isset($turmas))
+                                    @php $count = $turmas->where('centro_id', $centro->id)->count(); @endphp
+                                    @if($count > 0)
+                                        <span class="badge-success text-[10px]">{{ $count }} turma{{ $count > 1 ? 's' : '' }}</span>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300 group-hover:text-brand-500 group-hover:translate-x-1 transition-all shrink-0 mt-1"></i>
+                    </a>
+                @endforeach
+
+                @if($centros->count() > 4)
+                    <div class="text-center pt-2">
+                        <a href="{{ route('site.centros') }}" class="btn-secondary btn-sm">Ver todos os centros</a>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Map --}}
+            <div class="reveal">
+                <div class="card p-2 overflow-hidden">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125529.1950542!2d13.2!3d-8.84!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a51f15c36000001%3A0x3e34e0f5c6f7e7a8!2sLuanda%2C%20Angola!5e0!3m2!1spt-BR!2sao!4v1"
+                        width="100%" height="420" style="border:0; border-radius: var(--radius-lg);"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        class="w-full"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ═══════════════════════════════════════
+     TESTIMONIALS / CTA
+     ═══════════════════════════════════════ --}}
+<section class="section bg-gradient-to-br from-brand-700 via-brand-800 to-brand-950 text-white relative overflow-hidden">
+    <div class="absolute inset-0 bg-grid opacity-5"></div>
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-400/10 rounded-full blur-[140px]"></div>
+
+    <div class="container-tight relative text-center">
+        <div class="reveal">
+            <span class="badge bg-white/10 text-white border border-white/10 mb-6">
+                <i data-lucide="heart" class="w-3 h-3"></i>
+                Junte-se a Nós
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-6">Pronto para transformar a sua carreira?</h2>
+            <p class="text-blue-100/70 text-lg mb-10 max-w-xl mx-auto">
+                Inscreva-se numa das nossas turmas e dê o primeiro passo rumo ao sucesso profissional.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="{{ route('site.cursos') }}" class="btn bg-white text-brand-700 hover:bg-brand-50 btn-lg shadow-lg hover:shadow-xl transition-all">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                    Ver Cursos
+                </a>
+                <a href="{{ route('site.contactos') }}" class="btn-outline-white btn-lg">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                    Falar Connosco
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ═══════════════════════════════════════
+     GALLERY
+     ═══════════════════════════════════════ --}}
+<section class="section bg-white">
+    <div class="container-wide">
+        <div class="section-header reveal">
+            <span class="badge-brand mb-4">
+                <i data-lucide="camera" class="w-3 h-3"></i>
+                Galeria
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">Momentos na MC-COMERCIAL</h2>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 reveal-stagger">
+            @php
+                $galleryImages = [
+                    'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=500&q=60',
+                    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500&q=60',
+                    'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=500&q=60',
+                    'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=500&q=60',
+                    'https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&w=500&q=60',
+                    'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=500&q=60',
+                    'https://images.unsplash.com/photo-1573164574511-73c773193279?auto=format&fit=crop&w=500&q=60',
+                    'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?auto=format&fit=crop&w=500&q=60',
+                ];
+            @endphp
+            @foreach($galleryImages as $i => $img)
+                <div class="reveal img-overlay-zoom rounded-xl {{ $i === 0 || $i === 5 ? 'md:col-span-2 md:row-span-2' : '' }}">
+                    <img src="{{ $img }}" alt="MC-COMERCIAL Galeria"
+                         class="w-full h-full object-cover rounded-xl {{ $i === 0 || $i === 5 ? 'aspect-square' : 'aspect-video' }}"
+                         loading="lazy">
+                </div>
+            @endforeach
         </div>
     </div>
 </section>
