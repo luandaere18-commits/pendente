@@ -121,9 +121,7 @@
                                                     {{ number_format($turma->centro_preco, 0, ',', '.') }} <span class="text-sm font-semibold">Kz</span>
                                                 </div>
                                             @endif
-                                            @if($turma->vagas_disponiveis !== null)
-                                                <p class="text-xs text-green-600 mt-1">{{ $turma->vagas_disponiveis }} vagas</p>
-                                            @endif
+
                                             <button @click="$dispatch('open-pre-inscricao', { turmaId: {{ $turma->id }}, turmaNome: '{{ addslashes($curso->nome) }} — {{ addslashes($turma->centro->nome ?? '') }}' })"
                                                     class="btn-primary btn-sm mt-3 group">
                                                 <i data-lucide="send" class="w-3 h-3"></i> Inscrever

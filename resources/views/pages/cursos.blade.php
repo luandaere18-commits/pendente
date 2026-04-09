@@ -89,7 +89,7 @@
         </div>
     </section>
 
-    {{-- Turmas Grid — novo estilo de card tipo marketplace --}}
+    {{-- Turmas Grid — cards reorganizados --}}
     <section class="section bg-mesh" style="padding-top: 1rem;">
         <div class="container-wide">
             @if(isset($turmas) && $turmas->count())
@@ -111,7 +111,7 @@
                                          alt="{{ $turma->curso->nome ?? 'Curso' }}" loading="lazy">
                                 @endif
 
-                                {{-- Badge nível --}}
+                                {{-- Badge status --}}
                                 @if($turma->status)
                                     <span class="course-card-badge active">
                                         <i data-lucide="bar-chart-3" class="w-3 h-3"></i>
@@ -120,79 +120,81 @@
                                 @endif
                             </div>
 
-                            {{-- Body --}}
+                            {{-- Body — organizado e limpo --}}
                             <div class="course-card-body">
+                                {{-- Nome do curso --}}
                                 <h3 class="course-card-title">{{ $turma->curso->nome ?? 'Curso' }}</h3>
 
+                                {{-- Área (badge) --}}
                                 @if($turma->curso && $turma->curso->area)
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full mb-2" style="background: hsl(var(--brand-100)); color: hsl(var(--brand-700)); width: fit-content;">
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full mb-3" style="background: hsl(var(--brand-100)); color: hsl(var(--brand-700)); width: fit-content;">
                                         {{ $turma->curso->area }}
                                     </span>
                                 @endif
 
+                                {{-- Descrição curta --}}
                                 @if($turma->curso && $turma->curso->descricao)
-                                    <p class="text-xs text-slate-500 line-clamp-2 mb-2">{{ $turma->curso->descricao }}</p>
+                                    <p class="text-xs text-slate-500 line-clamp-2 mb-3">{{ $turma->curso->descricao }}</p>
                                 @endif
 
-                                {{-- Meta info completa --}}
-                                <div class="course-card-meta flex-wrap">
-                                    @if($turma->hora_inicio && $turma->hora_fim)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                                            {{ $turma->hora_inicio }} — {{ $turma->hora_fim }}
-                                        </span>
-                                    @endif
+                                {{-- Data de Início — destaque --}}
+                                @if($turma->data_arranque)
+                                    <div class="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg" style="background: hsl(var(--brand-50)); border: 1px solid hsl(var(--brand-200));">
+                                        <i data-lucide="calendar-check" class="w-4 h-4" style="color: hsl(var(--brand-600));"></i>
+                                        <div>
+                                            <span class="text-[10px] font-semibold uppercase tracking-wider" style="color: hsl(var(--brand-500));">Início da Turma</span>
+                                            <span class="block text-sm font-bold" style="color: hsl(var(--brand-800));">{{ $turma->data_arranque->format('d/m/Y') }}</span>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Info organizada em grid 2 colunas --}}
+                                <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-xs text-slate-500 mb-3">
                                     @if($turma->centro)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                                            {{ $turma->centro->nome }}
-                                        </span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                            <span class="truncate">{{ $turma->centro->nome }}</span>
+                                        </div>
+                                    @endif
+                                    @if($turma->hora_inicio && $turma->hora_fim)
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="clock" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                            <span>{{ $turma->hora_inicio }} — {{ $turma->hora_fim }}</span>
+                                        </div>
                                     @endif
                                     @if($turma->formador)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="user" class="w-3.5 h-3.5"></i>
-                                            {{ $turma->formador->nome }}
-                                        </span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="user" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                            <span class="truncate">{{ $turma->formador->nome }}</span>
+                                        </div>
                                     @endif
                                     @if($turma->duracao_semanas)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="timer" class="w-3.5 h-3.5"></i>
-                                            {{ $turma->duracao_semanas }} semanas
-                                        </span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="timer" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                            <span>{{ $turma->duracao_semanas }} semanas</span>
+                                        </div>
                                     @endif
                                     @if($turma->periodo)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="sun" class="w-3.5 h-3.5"></i>
-                                            {{ ucfirst($turma->periodo) }}
-                                        </span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="sun" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                            <span>{{ ucfirst($turma->periodo) }}</span>
+                                        </div>
                                     @endif
                                     @if($turma->modalidade)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
-                                            {{ ucfirst($turma->modalidade) }}
-                                        </span>
-                                    @endif
-                                    @if($turma->data_arranque)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                                            Início: {{ $turma->data_arranque->format('d/m/Y') }}
-                                        </span>
+                                        <div class="flex items-center gap-1.5">
+                                            <i data-lucide="monitor" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                            <span>{{ ucfirst($turma->modalidade) }}</span>
+                                        </div>
                                     @endif
                                     @if($turma->dia_semana && is_array($turma->dia_semana))
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>
-                                            {{ implode(', ', $turma->dia_semana) }}
-                                        </span>
-                                    @endif
-                                    @if($turma->vagas_disponiveis !== null)
-                                        <span class="course-card-meta-item text-green-600">
-                                            <i data-lucide="users" class="w-3.5 h-3.5"></i>
-                                            {{ $turma->vagas_disponiveis }} vagas
-                                        </span>
+                                        <div class="flex items-center gap-1.5 col-span-2">
+                                            <i data-lucide="calendar-days" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                            <span>{{ implode(', ', $turma->dia_semana) }}</span>
+                                        </div>
                                     @endif
                                 </div>
 
-                                {{-- Footer: rating + price --}}
+                                {{-- Footer: preço --}}
                                 <div class="course-card-footer">
                                     <div class="course-card-rating">
                                         <div class="stars">

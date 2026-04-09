@@ -156,26 +156,46 @@
                     </div>
                     <div class="course-card-body">
                         <h3 class="course-card-title">{{ $turma->curso->nome ?? 'Curso' }}</h3>
-                        <div class="course-card-meta">
-                            @if($turma->hora_inicio && $turma->hora_fim)
-                                <span class="course-card-meta-item">
-                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                                    {{ $turma->hora_inicio }} — {{ $turma->hora_fim }}
-                                </span>
-                            @endif
+
+                        {{-- Data de Início em destaque --}}
+                        @if($turma->data_arranque)
+                            <div class="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg" style="background: hsl(var(--brand-50)); border: 1px solid hsl(var(--brand-200));">
+                                <i data-lucide="calendar-check" class="w-4 h-4" style="color: hsl(var(--brand-600));"></i>
+                                <div>
+                                    <span class="text-[10px] font-semibold uppercase tracking-wider" style="color: hsl(var(--brand-500));">Início da Turma</span>
+                                    <span class="block text-sm font-bold" style="color: hsl(var(--brand-800));">{{ $turma->data_arranque->format('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Info organizada --}}
+                        <div class="grid grid-cols-2 gap-x-3 gap-y-2 text-xs text-slate-500 mb-3">
                             @if($turma->centro)
-                                <span class="course-card-meta-item">
-                                    <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                                    {{ $turma->centro->nome }}
-                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                    <span class="truncate">{{ $turma->centro->nome }}</span>
+                                </div>
+                            @endif
+                            @if($turma->hora_inicio && $turma->hora_fim)
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                    <span>{{ $turma->hora_inicio }} — {{ $turma->hora_fim }}</span>
+                                </div>
                             @endif
                             @if($turma->formador)
-                                <span class="course-card-meta-item">
-                                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
-                                    {{ $turma->formador->nome }}
-                                </span>
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="user" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                    <span class="truncate">{{ $turma->formador->nome }}</span>
+                                </div>
+                            @endif
+                            @if($turma->duracao_semanas)
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="timer" class="w-3.5 h-3.5 shrink-0" style="color: hsl(var(--brand-400));"></i>
+                                    <span>{{ $turma->duracao_semanas }} semanas</span>
+                                </div>
                             @endif
                         </div>
+
                         <div class="course-card-footer">
                             <div class="course-card-rating">
                                 <div class="stars">
