@@ -124,14 +124,19 @@
                             <div class="course-card-body">
                                 <h3 class="course-card-title">{{ $turma->curso->nome ?? 'Curso' }}</h3>
 
-                                {{-- Meta info --}}
-                                <div class="course-card-meta">
-                                    @if($turma->curso && $turma->curso->duracao_horas)
-                                        <span class="course-card-meta-item">
-                                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                                            {{ $turma->curso->duracao_horas }}h
-                                        </span>
-                                    @elseif($turma->hora_inicio && $turma->hora_fim)
+                                @if($turma->curso && $turma->curso->area)
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full mb-2" style="background: hsl(var(--brand-100)); color: hsl(var(--brand-700)); width: fit-content;">
+                                        {{ $turma->curso->area }}
+                                    </span>
+                                @endif
+
+                                @if($turma->curso && $turma->curso->descricao)
+                                    <p class="text-xs text-slate-500 line-clamp-2 mb-2">{{ $turma->curso->descricao }}</p>
+                                @endif
+
+                                {{-- Meta info completa --}}
+                                <div class="course-card-meta flex-wrap">
+                                    @if($turma->hora_inicio && $turma->hora_fim)
                                         <span class="course-card-meta-item">
                                             <i data-lucide="clock" class="w-3.5 h-3.5"></i>
                                             {{ $turma->hora_inicio }} — {{ $turma->hora_fim }}
@@ -147,6 +152,42 @@
                                         <span class="course-card-meta-item">
                                             <i data-lucide="user" class="w-3.5 h-3.5"></i>
                                             {{ $turma->formador->nome }}
+                                        </span>
+                                    @endif
+                                    @if($turma->duracao_semanas)
+                                        <span class="course-card-meta-item">
+                                            <i data-lucide="timer" class="w-3.5 h-3.5"></i>
+                                            {{ $turma->duracao_semanas }} semanas
+                                        </span>
+                                    @endif
+                                    @if($turma->periodo)
+                                        <span class="course-card-meta-item">
+                                            <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+                                            {{ ucfirst($turma->periodo) }}
+                                        </span>
+                                    @endif
+                                    @if($turma->modalidade)
+                                        <span class="course-card-meta-item">
+                                            <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
+                                            {{ ucfirst($turma->modalidade) }}
+                                        </span>
+                                    @endif
+                                    @if($turma->data_arranque)
+                                        <span class="course-card-meta-item">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                            Início: {{ $turma->data_arranque->format('d/m/Y') }}
+                                        </span>
+                                    @endif
+                                    @if($turma->dia_semana && is_array($turma->dia_semana))
+                                        <span class="course-card-meta-item">
+                                            <i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>
+                                            {{ implode(', ', $turma->dia_semana) }}
+                                        </span>
+                                    @endif
+                                    @if($turma->vagas_disponiveis !== null)
+                                        <span class="course-card-meta-item text-green-600">
+                                            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                                            {{ $turma->vagas_disponiveis }} vagas
                                         </span>
                                     @endif
                                 </div>

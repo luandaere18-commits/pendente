@@ -128,31 +128,31 @@
             <p class="text-slate-500">Passe o mouse para ver mais detalhes de cada formador.</p>
         </div>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 reveal-stagger">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 reveal-stagger">
             @foreach($formadores->take(8) as $formador)
-                <div class="team-card reveal" style="min-height: 300px;">
-                    <div class="team-card-inner" style="min-height: 300px;">
+                <div class="team-card reveal" style="min-height: 280px;">
+                    <div class="team-card-inner" style="min-height: 280px;">
                         {{-- Frente: fundo azul gradiente superior, branco inferior, foto circular --}}
-                        <div class="team-card-front flex flex-col" style="background: white;">
-                            <div class="h-28 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center relative">
-                                {{-- Foto circular posicionada na intersecção --}}
-                                <div class="absolute -bottom-8 left-1/2 -translate-x-1/2">
+                        <div class="team-card-front flex flex-col" style="background: white; box-shadow: 0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06); border-radius: 1.25rem;">
+                            <div class="h-24 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center relative" style="border-radius: 1.25rem 1.25rem 0 0;">
+                                {{-- Foto circular posicionada na intersecção — MAIOR --}}
+                                <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
                                     @if($formador->foto_url)
                                         <img src="{{ $formador->foto_url }}" alt="{{ $formador->nome }}"
-                                             class="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg">
+                                             class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl">
                                     @else
-                                        <div class="w-16 h-16 rounded-full bg-slate-100 border-4 border-white shadow-lg flex items-center justify-center">
-                                            <i data-lucide="user" class="w-8 h-8 text-slate-400"></i>
+                                        <div class="w-24 h-24 rounded-full bg-slate-100 border-4 border-white shadow-xl flex items-center justify-center">
+                                            <i data-lucide="user" class="w-10 h-10 text-slate-400"></i>
                                         </div>
                                     @endif
                                 </div>
                             </div>
-                            <div class="flex-1 flex flex-col items-center justify-center text-center pt-10 pb-4 px-4">
-                                <h3 class="text-base font-bold text-slate-900 font-heading">{{ $formador->nome }}</h3>
+                            <div class="flex-1 flex flex-col items-center justify-center text-center pt-14 pb-4 px-4">
+                                <h3 class="text-sm font-bold text-slate-900 font-heading">{{ $formador->nome }}</h3>
                                 @if($formador->especialidade)
                                     <p class="text-xs text-brand-600 mt-1">{{ $formador->especialidade }}</p>
                                 @endif
-                                <p class="text-[11px] text-slate-400 mt-3 flex items-center gap-1">
+                                <p class="text-[10px] text-slate-400 mt-2 flex items-center gap-1">
                                     <i data-lucide="rotate-cw" class="w-3 h-3"></i>
                                     Passe o mouse
                                 </p>
@@ -160,30 +160,30 @@
                         </div>
 
                         {{-- Verso: fundo azul escuro com detalhes --}}
-                        <div class="team-card-back flex flex-col justify-center items-center text-center text-white p-6"
-                             style="background: linear-gradient(135deg, hsl(221 83% 53%), hsl(226 57% 21%));">
+                        <div class="team-card-back flex flex-col justify-center items-center text-center text-white p-5"
+                             style="background: linear-gradient(135deg, hsl(221 83% 53%), hsl(226 57% 21%)); box-shadow: 0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06); border-radius: 1.25rem;">
                             @if($formador->foto_url)
                                 <img src="{{ $formador->foto_url }}" alt="{{ $formador->nome }}"
-                                     class="w-16 h-16 rounded-full object-cover border-3 border-white/30 shadow-lg mb-3">
+                                     class="w-20 h-20 rounded-full object-cover border-3 border-white/30 shadow-lg mb-3">
                             @else
-                                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-3 border-2 border-white/30">
-                                    <i data-lucide="user" class="w-7 h-7 text-white/70"></i>
+                                <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mb-3 border-2 border-white/30">
+                                    <i data-lucide="user" class="w-8 h-8 text-white/70"></i>
                                 </div>
                             @endif
-                            <h3 class="text-base font-bold mb-1 font-heading">{{ $formador->nome }}</h3>
+                            <h3 class="text-sm font-bold mb-1 font-heading">{{ $formador->nome }}</h3>
                             @if($formador->especialidade)
-                                <p class="text-xs text-blue-200 mb-3">{{ $formador->especialidade }}</p>
+                                <p class="text-xs text-blue-200 mb-2">{{ $formador->especialidade }}</p>
                             @endif
                             @if($formador->bio)
-                                <p class="text-xs text-blue-100/70 leading-relaxed mb-4 line-clamp-3">{{ $formador->bio }}</p>
+                                <p class="text-[11px] text-blue-100/70 leading-relaxed mb-3 line-clamp-3">{{ $formador->bio }}</p>
                             @endif
                             @if($formador->email)
-                                <p class="text-xs text-blue-200/80 flex items-center gap-1.5 mb-1">
+                                <p class="text-[11px] text-blue-200/80 flex items-center gap-1.5 mb-1">
                                     <i data-lucide="mail" class="w-3 h-3"></i> {{ $formador->email }}
                                 </p>
                             @endif
                             @if($formador->telefone)
-                                <p class="text-xs text-blue-200/80 flex items-center gap-1.5">
+                                <p class="text-[11px] text-blue-200/80 flex items-center gap-1.5">
                                     <i data-lucide="phone" class="w-3 h-3"></i> {{ $formador->telefone }}
                                 </p>
                             @endif

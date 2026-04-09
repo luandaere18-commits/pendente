@@ -52,7 +52,7 @@
                                 <div class="course-card-body">
                                     <h3 class="course-card-title">{{ $centro->nome }}</h3>
 
-                                    <div class="course-card-meta">
+                                    <div class="course-card-meta flex-wrap">
                                         @if($centro->localizacao)
                                             <span class="course-card-meta-item">
                                                 <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500"></i>
@@ -62,16 +62,31 @@
                                     </div>
 
                                     @if($centro->email)
-                                        <p class="text-xs text-slate-400 flex items-center gap-1 mb-1">
-                                            <i data-lucide="mail" class="w-3 h-3"></i> {{ $centro->email }}
+                                        <p class="text-xs text-slate-400 flex items-center gap-1.5 mb-1.5">
+                                            <i data-lucide="mail" class="w-3.5 h-3.5 text-brand-400"></i> {{ $centro->email }}
                                         </p>
                                     @endif
                                     @if($centro->contactos && is_array($centro->contactos))
-                                        @foreach(array_slice($centro->contactos, 0, 1) as $contacto)
-                                            <p class="text-xs text-slate-400 flex items-center gap-1 mb-2">
-                                                <i data-lucide="phone" class="w-3 h-3"></i> {{ $contacto }}
+                                        @foreach($centro->contactos as $contacto)
+                                            <p class="text-xs text-slate-400 flex items-center gap-1.5 mb-1">
+                                                <i data-lucide="phone" class="w-3.5 h-3.5 text-brand-400"></i> {{ $contacto }}
                                             </p>
                                         @endforeach
+                                    @endif
+
+                                    {{-- Cursos disponíveis neste centro --}}
+                                    @if($centro->cursos && $centro->cursos->count())
+                                        <div class="mt-2 mb-2">
+                                            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Cursos:</p>
+                                            <div class="flex flex-wrap gap-1">
+                                                @foreach($centro->cursos->take(3) as $curso)
+                                                    <span class="inline-flex text-[10px] font-medium px-2 py-0.5 rounded-full" style="background: hsl(var(--brand-100)); color: hsl(var(--brand-700));">{{ $curso->nome }}</span>
+                                                @endforeach
+                                                @if($centro->cursos->count() > 3)
+                                                    <span class="inline-flex text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">+{{ $centro->cursos->count() - 3 }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
                                     @endif
 
                                     <div class="course-card-footer">
