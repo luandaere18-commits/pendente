@@ -27,6 +27,20 @@
     @stack('head')
 
     <style>
+        /* Subtle geometric squares pattern on all public pages */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='10' width='25' height='25' rx='3' fill='none' stroke='rgba(30,64,175,0.04)' stroke-width='1'/%3E%3Crect x='50' y='45' width='15' height='15' rx='2' fill='rgba(30,64,175,0.02)'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0v60M0 30h60' stroke='rgba(30,64,175,0.02)' stroke-width='0.5'/%3E%3C/svg%3E");
+            opacity: 0.7;
+        }
+        body > * { position: relative; z-index: 1; }
+
         [x-cloak] { display: none !important; }
         h1, h2, h3, .font-heading { font-family: 'Sora', 'Inter', system-ui, sans-serif; }
     </style>

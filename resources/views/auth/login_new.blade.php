@@ -11,10 +11,44 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; background: #0f172a; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; overflow: hidden; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
         h1, h2, h3 { font-family: 'Sora', 'Inter', sans-serif; }
-        body::before { content: ''; position: absolute; top: -50%; right: -30%; width: 80vw; height: 80vw; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%); pointer-events: none; }
-        body::after { content: ''; position: absolute; bottom: -40%; left: -20%; width: 60vw; height: 60vw; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.1), transparent 70%); pointer-events: none; }
+
+        /* Geometric squares pattern on entire background */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M30 0v60M0 30h60' stroke='rgba(255,255,255,0.04)' stroke-width='1'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='120' height='120' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='10' width='30' height='30' rx='4' fill='none' stroke='rgba(59,130,246,0.06)' stroke-width='1'/%3E%3Crect x='70' y='60' width='20' height='20' rx='3' fill='none' stroke='rgba(59,130,246,0.04)' stroke-width='1'/%3E%3Crect x='50' y='20' width='15' height='15' rx='2' fill='rgba(59,130,246,0.03)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Radial glow accents */
+        .glow-top { position: absolute; top: -50%; right: -30%; width: 80vw; height: 80vw; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%); pointer-events: none; }
+        .glow-bottom { position: absolute; bottom: -40%; left: -20%; width: 60vw; height: 60vw; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.08), transparent 70%); pointer-events: none; }
+
+        /* Back to site link */
+        .back-link {
+            position: fixed; top: 1.5rem; left: 1.5rem; color: rgba(255,255,255,0.75); text-decoration: none;
+            font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; border-radius: 0.75rem; background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.12); transition: all 0.25s; z-index: 10;
+        }
+        .back-link:hover { color: white; background: rgba(255,255,255,0.18); transform: translateX(-3px); }
+
         .login-wrapper { position: relative; z-index: 1; width: 100%; max-width: 440px; }
         .login-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 80px rgba(59,130,246,0.1); overflow: hidden; animation: slideUp 0.6s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -41,12 +75,23 @@
         .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .alert { padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.8125rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
         .alert-danger { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-        .copyright { text-align: center; margin-top: 1.5rem; font-size: 0.75rem; color: #94a3b8; }
+        .site-link { text-align: center; margin-top: 1.25rem; }
+        .site-link a { color: #2563eb; font-size: 0.8125rem; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.2s; }
+        .site-link a:hover { color: #1e3a8a; }
+        .copyright { text-align: center; margin-top: 1rem; font-size: 0.75rem; color: #94a3b8; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
     </style>
 </head>
 <body>
+    <div class="glow-top"></div>
+    <div class="glow-bottom"></div>
+
+    <a href="{{ route('site.home') }}" class="back-link">
+        <i data-lucide="arrow-left" style="width:16px;height:16px;"></i>
+        Voltar ao Site
+    </a>
+
     <div class="login-wrapper">
         <div class="login-card">
             <div class="login-header">
@@ -98,6 +143,13 @@
                         Iniciar Sessão
                     </button>
                 </form>
+
+                <div class="site-link">
+                    <a href="{{ route('site.home') }}">
+                        <i data-lucide="globe" style="width:14px;height:14px;"></i>
+                        Ir para o site
+                    </a>
+                </div>
 
                 <div class="copyright">© {{ date('Y') }} MC-COMERCIAL. Todos os direitos reservados.</div>
             </div>
