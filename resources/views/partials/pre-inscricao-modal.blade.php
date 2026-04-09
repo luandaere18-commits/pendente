@@ -51,19 +51,40 @@
                 loading = true;
                 const fd = new FormData($el);
                 if (turmaId) fd.append('turma_id', turmaId);
+                
+                // Adicionar contactos como array (o telefone que foi enviado)
+                const telefone = fd.get('contactos_telefone');
+                if (telefone) {
+                    fd.delete('contactos_telefone');
+                    fd.append('contactos[]', telefone);
+                }
+                
                 fetch('{{ route('api.pre-inscricoes.store') }}', {
                     method: 'POST',
                     headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content, 'Accept': 'application/json' },
                     body: fd
                 })
                 .then(r => r.json())
-                .then(data => { loading = false; success = true; showToast('Pré-inscrição enviada com sucesso!', 'success'); })
-                .catch(err => { loading = false; showToast('Erro ao enviar. Tente novamente.', 'error'); });
+                .then(data => { 
+                    if (data.status === 'sucesso') {
+                        loading = false; 
+                        success = true; 
+                        showToast('Pré-inscrição enviada com sucesso!', 'success');
+                    } else {
+                        loading = false; 
+                        showToast(data.mensagem || 'Erro ao enviar. Tente novamente.', 'error');
+                    }
+                })
+                .catch(err => { 
+                    loading = false; 
+                    console.error('Erro:', err);
+                    showToast('Erro ao enviar. Tente novamente.', 'error'); 
+                });
             " class="px-8 pb-8 space-y-4">
 
                 <div>
                     <label class="form-label">Nome Completo *</label>
-                    <input type="text" name="nome" required class="form-input" placeholder="Insira o seu nome completo">
+                    <input type="text" name="nome_completo" required class="form-input" placeholder="Insira o seu nome completo">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -72,7 +93,7 @@
                     </div>
                     <div>
                         <label class="form-label">Telefone *</label>
-                        <input type="tel" name="telefone" required class="form-input" placeholder="+244 ...">
+                        <input type="tel" name="contactos_telefone" required class="form-input" placeholder="+244 ...">
                     </div>
                 </div>
                 <div>

@@ -36,8 +36,8 @@ class PreInscricaoController extends Controller
         $validated = $request->validate([
             'turma_id'      => 'required|exists:turmas,id',
             'nome_completo' => 'required|string|max:100',
-            'contactos'     => 'nullable|array',
-            'contactos.*'   => 'nullable|string|max:100',
+            'contactos'     => 'required|array|min:1',
+            'contactos.*'   => 'required|string|max:100',
             'email'         => 'nullable|email|max:100',
             'status'        => 'nullable|in:pendente,confirmado,cancelado',
             'observacoes'   => 'nullable|string|max:500',
@@ -53,9 +53,17 @@ class PreInscricaoController extends Controller
             ], 404);
         }
 
-        // Garantir que contactos é sempre um array (nunca null na BD)
+        // Garante que contactos é um array sem valores vazios
         $validated['contactos'] = array_filter($validated['contactos'] ?? [], fn($c) => !empty(trim($c)));
         $validated['contactos'] = array_values($validated['contactos']);
+
+        // Validação adicional: deve haver pelo menos 1 contacto após filtro
+        if (empty($validated['contactos'])) {
+            return response()->json([
+                'status'   => 'erro',
+                'mensagem' => 'Pelo menos um contacto é necessário.',
+            ], 422);
+        }
 
         $validated['status'] = $validated['status'] ?? 'pendente';
         
@@ -71,7 +79,7 @@ class PreInscricaoController extends Controller
 
         return response()->json([
             'status'   => 'sucesso',
-            'mensagem' => 'Pré-inscrição realizada!',
+            'mensagem' => 'Pré-inscrição realizada com sucesso!',
             'dados'    => $preInscricao,
         ], 201);
     }
