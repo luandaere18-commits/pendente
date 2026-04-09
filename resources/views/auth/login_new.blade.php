@@ -1,135 +1,145 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-AO">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MC-COMERCIAL - Login</title>
+    <title>MC-COMERCIAL — Login</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
-        body {
-            background: linear-gradient(135deg, #334155 0%, #475569 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        
-        .login-card {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            max-width: 420px;
-            width: 100%;
-        }
-        
-        .login-header {
-            background: linear-gradient(135deg, #1e3a8a, #1e40af);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            color: white;
-            position: relative;
-        }
-        
-        .login-header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-        
-        .login-body {
-            padding: 2.5rem 2rem;
-        }
-        
-        .form-control {
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-        }
-        
-        .btn-login {
-            background: linear-gradient(135deg, #1e3a8a, #1e40af);
-            border: none;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-            color: white;
-            font-weight: 500;
-            width: 100%;
-        }
-        
-        .btn-login:hover {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, sans-serif; min-height: 100vh; background: #0f172a; display: flex; align-items: center; justify-content: center; padding: 1rem; position: relative; overflow: hidden; }
+        h1, h2, h3 { font-family: 'Sora', 'Inter', sans-serif; }
+        body::before { content: ''; position: absolute; top: -50%; right: -30%; width: 80vw; height: 80vw; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%); pointer-events: none; }
+        body::after { content: ''; position: absolute; bottom: -40%; left: -20%; width: 60vw; height: 60vw; border-radius: 50%; background: radial-gradient(circle, rgba(59,130,246,0.1), transparent 70%); pointer-events: none; }
+        .login-wrapper { position: relative; z-index: 1; width: 100%; max-width: 440px; }
+        .login-card { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25), 0 0 80px rgba(59,130,246,0.1); overflow: hidden; animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .login-header { background: linear-gradient(135deg, #1e3a8a, #2563eb); padding: 2.5rem 2rem; text-align: center; color: white; position: relative; overflow: hidden; }
+        .login-header::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M30 0v60M0 30h60' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E"); }
+        .login-header .content { position: relative; z-index: 1; }
+        .login-header img { height: 56px; width: auto; margin: 0 auto 0.75rem; display: block; filter: brightness(0) invert(1); }
+        .login-header h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+        .login-header p { font-size: 0.875rem; opacity: 0.7; margin-top: 0.25rem; }
+        .login-body { padding: 2rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.8125rem; font-weight: 600; color: #1e293b; margin-bottom: 0.5rem; }
+        .input-wrap { position: relative; }
+        .input-wrap i { position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #94a3b8; pointer-events: none; }
+        .input-wrap input { width: 100%; padding: 0.75rem 0.875rem 0.75rem 2.75rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; font-size: 0.9375rem; color: #1e293b; background: #f8fafc; transition: all 0.2s; font-family: inherit; }
+        .input-wrap input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 4px rgba(59,130,246,0.12); background: #fff; }
+        .input-wrap input::placeholder { color: #94a3b8; }
+        .checkbox-wrap { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .checkbox-wrap input[type="checkbox"] { width: 1rem; height: 1rem; accent-color: #2563eb; cursor: pointer; }
+        .checkbox-wrap label { font-size: 0.8125rem; color: #64748b; cursor: pointer; }
+        .btn-login { width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; border: none; border-radius: 0.75rem; font-size: 1rem; font-weight: 700; font-family: 'Sora', sans-serif; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(37,99,235,0.3); }
+        .btn-login:active { transform: translateY(0); }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .alert { padding: 0.75rem 1rem; border-radius: 0.75rem; font-size: 0.8125rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert-danger { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .copyright { text-align: center; margin-top: 1.5rem; font-size: 0.75rem; color: #94a3b8; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="login-wrapper">
         <div class="login-card">
             <div class="login-header">
-                <div class="text-center mb-3">
-                    <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL" style="height: 60px; max-height: 60px; width: auto; display: block; margin: 0 auto;">
-                    <h1 style="margin-top: 0.5rem; margin-bottom: 0;">MC-COMERCIAL</h1>
+                <div class="content">
+                    <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL"
+                         onerror="this.style.display='none'">
+                    <h1>MC-COMERCIAL</h1>
+                    <p>Sistema de Gestão</p>
                 </div>
-                <p>Sistema de Gestão</p>
             </div>
-            
             <div class="login-body">
                 @if ($errors->any())
                     <div class="alert alert-danger">
-                        @foreach ($errors->all() as $error)
-                            <div>{{ $error }}</div>
-                        @endforeach
+                        <i data-lucide="alert-circle" style="width:16px;height:16px;flex-shrink:0;"></i>
+                        <div>
+                            @foreach ($errors->all() as $error)
+                                <div>{{ $error }}</div>
+                            @endforeach
+                        </div>
                     </div>
                 @endif
-                
-                <form method="POST" action="{{ route('login.store') }}">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
+
+                <form id="loginForm" onsubmit="return false;">
+                    <div id="loginError" class="alert alert-danger" style="display:none;"></div>
+
+                    <div class="form-group">
+                        <label for="email">Endereço de Email</label>
+                        <div class="input-wrap">
+                            <i data-lucide="mail"></i>
+                            <input type="email" id="email" name="email" required autofocus placeholder="Digite seu email">
                         </div>
-                        @error('email')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Senha</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
+
+                    <div class="form-group">
+                        <label for="password">Palavra-passe</label>
+                        <div class="input-wrap">
+                            <i data-lucide="lock"></i>
+                            <input type="password" id="password" name="password" required placeholder="Digite sua palavra-passe">
                         </div>
-                        @error('password')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
                     </div>
-                    
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                        <label class="form-check-label" for="remember">Manter sessão iniciada</label>
+
+                    <div class="checkbox-wrap">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Manter sessão iniciada</label>
                     </div>
-                    
-                    <button type="submit" class="btn btn-login">
-                        <i class="fas fa-sign-in-alt me-2"></i>Entrar
+
+                    <button type="submit" class="btn-login" id="btnLogin">
+                        <i data-lucide="log-in" style="width:18px;height:18px;"></i>
+                        Iniciar Sessão
                     </button>
                 </form>
+
+                <div class="copyright">© {{ date('Y') }} MC-COMERCIAL. Todos os direitos reservados.</div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+        $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+
+        $('#loginForm').on('submit', function(e) {
+            e.preventDefault();
+            const btn = $('#btnLogin');
+            const errDiv = $('#loginError');
+            errDiv.hide();
+            btn.prop('disabled', true).html('<div class="spinner"></div> A entrar...');
+
+            $.ajax({
+                url: '/api/login',
+                method: 'POST',
+                data: { email: $('#email').val(), password: $('#password').val(), remember: $('#remember').is(':checked') },
+                success: function(res) {
+                    if (res.token) {
+                        localStorage.setItem('api_token', res.token);
+                        if (res.user) localStorage.setItem('user', JSON.stringify(res.user));
+                    }
+                    window.location.href = '/dashboard';
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).html('<i data-lucide="log-in" style="width:18px;height:18px;"></i> Iniciar Sessão');
+                    lucide.createIcons();
+                    let msg = 'Credenciais inválidas.';
+                    if (xhr.responseJSON) {
+                        if (xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                        else if (xhr.responseJSON.errors) msg = Object.values(xhr.responseJSON.errors).flat().join('<br>');
+                    }
+                    errDiv.html('<i data-lucide="alert-circle" style="width:16px;height:16px;flex-shrink:0;"></i><span>' + msg + '</span>').show();
+                    lucide.createIcons();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

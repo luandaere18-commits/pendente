@@ -13,7 +13,7 @@
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -25,6 +25,11 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
     @stack('head')
+
+    <style>
+        [x-cloak] { display: none !important; }
+        h1, h2, h3, .font-heading { font-family: 'Sora', 'Inter', system-ui, sans-serif; }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased"
       x-data="{
@@ -39,14 +44,21 @@
               window.addEventListener('scroll', onScroll, { passive: true });
               onScroll();
 
-              // Scroll reveal
+              // Scroll reveal — observe all .reveal, .reveal-left, .reveal-right, .reveal-scale
+              const revealClasses = ['.reveal', '.reveal-left', '.reveal-right', '.reveal-scale'];
               const obs = new IntersectionObserver((entries) => {
                   entries.forEach(e => {
                       if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); }
                   });
               }, { threshold: 0.06, rootMargin: '0px 0px -60px 0px' });
-              document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-              this.$nextTick(() => document.querySelectorAll('.reveal:not(.revealed)').forEach(el => obs.observe(el)));
+
+              const observeAll = () => {
+                  revealClasses.forEach(cls => {
+                      document.querySelectorAll(cls + ':not(.revealed)').forEach(el => obs.observe(el));
+                  });
+              };
+              observeAll();
+              this.$nextTick(() => observeAll());
           }
       }"
       x-cloak
@@ -61,7 +73,7 @@
     @include('partials.whatsapp')
     @include('partials.pre-inscricao-modal')
 
-    {{-- Toast --}}
+    {{-- Toast Container --}}
     <div id="toast-container" class="fixed top-5 right-5 z-[200] space-y-3 pointer-events-none"></div>
 
     {{-- Scroll to Top --}}
@@ -74,10 +86,10 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0 translate-y-3"
-        class="fixed bottom-28 right-6 z-50 w-11 h-11 rounded-xl bg-brand-700 text-white flex items-center justify-center shadow-lg hover:bg-brand-800 hover:scale-110 transition-all duration-200"
+        class="fixed bottom-28 right-6 z-50 w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-700 text-white flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 group"
         aria-label="Voltar ao topo"
     >
-        <i data-lucide="arrow-up" class="w-4 h-4"></i>
+        <i data-lucide="arrow-up" class="w-5 h-5 group-hover:-translate-y-0.5 transition-transform"></i>
     </button>
 
     {{-- Toast JS --}}
@@ -87,16 +99,43 @@
         const t = document.createElement('div');
         const colors = { success: 'bg-emerald-600', error: 'bg-red-600', info: 'bg-blue-600' };
         const icons = { success: 'check-circle-2', error: 'alert-circle', info: 'info' };
-        t.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-white shadow-lg ${colors[type] || colors.info} animate-fade-up`;
-        t.innerHTML = `<i data-lucide="${icons[type]}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+        t.className = `pointer-events-auto flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-medium text-white shadow-2xl ${colors[type] || colors.info} animate-fade-up backdrop-blur-sm`;
+        t.innerHTML = `<i data-lucide="${icons[type]}" class="w-5 h-5 shrink-0"></i><span>${msg}</span>`;
         c.appendChild(t);
         lucide.createIcons({ nodes: [t] });
-        setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(16px)'; t.style.transition='all .3s'; setTimeout(() => t.remove(), 300); }, 4000);
+        setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(16px)'; t.style.transition='all .4s'; setTimeout(() => t.remove(), 400); }, 4000);
     }
     </script>
 
     {{-- Init Lucide --}}
     <script>document.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+
+    {{-- Counter Animation --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const counters = document.querySelectorAll('[data-counter]');
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const el = e.target;
+                    const target = parseInt(el.dataset.counter);
+                    const duration = 2000;
+                    const start = performance.now();
+                    const step = (now) => {
+                        const progress = Math.min((now - start) / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        el.textContent = Math.floor(eased * target);
+                        if (progress < 1) requestAnimationFrame(step);
+                        else el.textContent = target;
+                    };
+                    requestAnimationFrame(step);
+                    obs.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(c => obs.observe(c));
+    });
+    </script>
 
     @stack('scripts')
 </body>

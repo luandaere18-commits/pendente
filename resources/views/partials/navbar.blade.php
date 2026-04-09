@@ -1,30 +1,30 @@
 {{-- ═══════════════════════════════════════
-     NAVBAR — Blue & White with Login
+     NAVBAR — Glassmorphism + Animated
      ═══════════════════════════════════════ --}}
-<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-        :class="scrolled ? 'py-2' : 'py-4'">
+<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+        :class="scrolled ? 'py-2' : 'py-3'">
     <nav class="container-wide">
-        <div class="flex items-center justify-between rounded-2xl px-5 py-3 transition-all duration-300"
+        <div class="flex items-center justify-between rounded-2xl px-5 py-3 transition-all duration-500"
              :class="scrolled
-                ? 'bg-white/95 backdrop-blur-xl shadow-lg border border-blue-100/60'
-                : 'bg-white/70 backdrop-blur-md border border-transparent'">
+                ? 'bg-white/90 backdrop-blur-2xl shadow-xl border border-blue-100/60'
+                : 'bg-white/60 backdrop-blur-xl border border-white/30'">
 
             {{-- Logo --}}
             <a href="{{ route('site.home') }}" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center shadow-sm
-                            group-hover:scale-105 transition-transform duration-200">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center shadow-md
+                            group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                     <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL"
                          class="h-7 w-7 object-contain"
                          onerror="this.parentElement.innerHTML='<span class=\'text-white font-black text-sm\'>MC</span>'">
                 </div>
                 <div class="hidden sm:block leading-tight">
-                    <span class="text-base font-bold text-slate-900 block tracking-tight">MC-COMERCIAL</span>
-                    <span class="text-[10px] text-brand-600 font-medium uppercase tracking-widest">Formação Profissional</span>
+                    <span class="text-base font-extrabold text-slate-900 block tracking-tight font-heading">MC-COMERCIAL</span>
+                    <span class="text-[10px] text-brand-600 font-semibold uppercase tracking-[0.2em]">Formação Profissional</span>
                 </div>
             </a>
 
             {{-- Desktop Nav --}}
-            <div class="hidden lg:flex items-center gap-1">
+            <div class="hidden lg:flex items-center gap-0.5">
                 @php
                     $links = [
                         ['label' => 'Início',     'route' => 'site.home',     'icon' => 'home'],
@@ -38,19 +38,22 @@
                 @endphp
                 @foreach($links as $link)
                     <a href="{{ route($link['route']) }}"
-                       class="relative px-3.5 py-2 text-sm font-medium rounded-lg transition-all duration-200
+                       class="relative px-3.5 py-2 text-sm font-medium rounded-xl transition-all duration-300
                               {{ request()->routeIs($link['route']) || request()->routeIs($link['route'].'.*')
-                                 ? 'text-brand-700 bg-brand-50'
-                                 : 'text-slate-600 hover:text-brand-700 hover:bg-brand-50/50' }}">
+                                 ? 'text-brand-700 bg-brand-50 shadow-sm'
+                                 : 'text-slate-600 hover:text-brand-700 hover:bg-brand-50/60' }}">
                         {{ $link['label'] }}
+                        @if(request()->routeIs($link['route']))
+                            <span class="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-brand-600 rounded-full"></span>
+                        @endif
                     </a>
                 @endforeach
             </div>
 
             {{-- Desktop CTA + Login --}}
             <div class="hidden lg:flex items-center gap-3">
-                <a href="{{ route('login') }}" class="btn-ghost btn-sm">
-                    <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+                <a href="{{ route('login') }}" class="btn-ghost btn-sm group">
+                    <i data-lucide="log-in" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
                     Entrar
                 </a>
                 <a href="{{ route('site.contactos') }}" class="btn-primary btn-sm">
@@ -61,7 +64,7 @@
 
             {{-- Mobile Toggle --}}
             <button @click="mobileMenu = !mobileMenu"
-                    class="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center hover:bg-brand-50 transition-colors"
+                    class="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center hover:bg-brand-50 transition-all duration-200"
                     :aria-expanded="mobileMenu"
                     aria-label="Menu">
                 <i x-show="!mobileMenu" data-lucide="menu" class="w-5 h-5 text-slate-700"></i>
@@ -71,25 +74,26 @@
 
         {{-- Mobile Menu --}}
         <div x-show="mobileMenu"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 -translate-y-2"
-             x-transition:enter-end="opacity-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 -translate-y-4 scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0 -translate-y-2"
+             x-transition:leave-end="opacity-0 -translate-y-4 scale-95"
              @click.outside="mobileMenu = false"
-             class="lg:hidden mt-2 rounded-2xl bg-white/95 backdrop-blur-xl border border-blue-100 shadow-xl p-4 space-y-1"
+             class="lg:hidden mt-2 rounded-2xl bg-white/95 backdrop-blur-2xl border border-blue-100 shadow-2xl p-4 space-y-1"
              x-cloak>
-            @foreach($links as $link)
+            @foreach($links as $i => $link)
                 <a href="{{ route($link['route']) }}"
                    @click="mobileMenu = false"
-                   class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
-                          {{ request()->routeIs($link['route']) ? 'text-brand-700 bg-brand-50' : 'text-slate-600 hover:bg-brand-50' }}">
+                   class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-200
+                          {{ request()->routeIs($link['route']) ? 'text-brand-700 bg-brand-50' : 'text-slate-600 hover:bg-brand-50' }}"
+                   style="animation: fade-up 0.4s ease-out forwards; animation-delay: {{ $i * 50 }}ms; opacity: 0;">
                     <i data-lucide="{{ $link['icon'] }}" class="w-4 h-4"></i>
                     {{ $link['label'] }}
                 </a>
             @endforeach
-            <div class="pt-3 border-t border-slate-200 space-y-2">
+            <div class="pt-4 border-t border-slate-200 space-y-2">
                 <a href="{{ route('login') }}" class="btn-secondary w-full justify-center">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
                     Entrar
@@ -103,5 +107,5 @@
     </nav>
 </header>
 
-{{-- Spacer for fixed nav --}}
+{{-- Spacer --}}
 <div class="h-20"></div>
