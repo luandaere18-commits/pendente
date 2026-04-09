@@ -122,7 +122,10 @@
         <template x-if="success">
             <div class="px-8 pb-8 text-center py-8">
                 <div class="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style="background: hsl(152 76% 94%);">
-                    <i data-lucide="check-circle-2" class="w-8 h-8" style="color: hsl(152 60% 42%);"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: hsl(152 60% 42%);">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
                 </div>
                 <h4 class="text-lg font-bold mb-2" style="color: hsl(224 30% 12%); font-family: Outfit;">Inscrição Enviada!</h4>
                 <p class="text-sm mb-6" style="color: hsl(215 12% 55%);">Entraremos em contacto em breve. Obrigado pelo seu interesse!</p>
