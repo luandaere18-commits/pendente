@@ -5,245 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MC-COMERCIAL - Login</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
         }
-        
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+        .login-container { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; }
+        .back-link {
+            position: fixed; top: 1.5rem; left: 1.5rem; color: rgba(255,255,255,0.85); text-decoration: none;
+            font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1rem; border-radius: 0.75rem; background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s; z-index: 10;
         }
-        
-        .login-card {
-            background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            max-width: 420px;
-            width: 100%;
-        }
-        
-        .login-header {
-            background: linear-gradient(135deg, #1e3a8a, #1e40af);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            color: white;
-            position: relative;
-        }
-        
-        .login-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="white" opacity="0.1"><circle cx="20" cy="20" r="2"/><circle cx="80" cy="20" r="2"/><circle cx="20" cy="80" r="2"/><circle cx="80" cy="80" r="2"/><circle cx="50" cy="50" r="3"/></svg>');
-        }
-        
-        .login-header .content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .login-header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-        
-        .login-header p {
-            margin: 0.5rem 0 0 0;
-            opacity: 0.85;
-            font-size: 0.95rem;
-        }
-        
-        .login-body {
-            padding: 2.5rem 2rem;
-        }
-        
-        .form-label {
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
-        }
-        
-        .form-control {
-            border-radius: 0.5rem;
-            border: 1px solid #d1d5db;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-            background-color: #f9fafb;
-        }
-        
-        .form-control:focus {
-            border-color: #1e40af;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-            background-color: white;
-        }
-        
-        .input-group-text {
-            background-color: #f3f4f6;
-            border: 1px solid #d1d5db;
-            border-right: none;
-            border-radius: 0.5rem 0 0 0.5rem;
-            color: #6b7280;
-        }
-        
-        .input-group .form-control {
-            border-left: none;
-            border-radius: 0 0.5rem 0.5rem 0;
-        }
-        
-        .btn-login {
-            background: linear-gradient(135deg, #1e3a8a, #1e40af);
-            border: none;
-            border-radius: 0.5rem;
-            padding: 0.875rem 2rem;
-            font-weight: 600;
-            font-size: 1rem;
-            width: 100%;
-            transition: all 0.2s ease;
-            letter-spacing: 0.25px;
-        }
-        
-        .btn-login:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(30, 64, 175, 0.2);
-            background: linear-gradient(135deg, #1e40af, #2563eb);
-        }
-        
-        .form-check-input:checked {
-            background-color: #1e40af;
-            border-color: #1e40af;
-        }
-        
-        .form-check-label {
-            color: #374151;
-            font-size: 0.9rem;
-        }
-        
-        .alert {
-            border: none;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .logo-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            opacity: 0.9;
-        }
-        
-        .copyright {
-            color: #6b7280;
-            font-size: 0.85rem;
-        }
-        
-        .is-invalid {
-            border-color: #dc2626;
-        }
-        
-        .text-danger {
-            color: #dc2626 !important;
-            font-size: 0.85rem;
-        }
+        .back-link:hover { color: white; background: rgba(255,255,255,0.25); transform: translateX(-3px); }
+        .login-card { background: white; border-radius: 1rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden; max-width: 420px; width: 100%; }
+        .login-header { background: white; padding: 2.5rem 2rem 1.5rem; text-align: center; }
+        .login-header h1 { margin: 0.75rem 0 0; font-size: 1.5rem; font-weight: 700; color: #1e3a8a; }
+        .login-header p { margin: 0.25rem 0 0; color: #64748b; font-size: 0.9rem; }
+        .login-body { padding: 1.5rem 2rem 2.5rem; }
+        .form-label { font-weight: 500; color: #374151; margin-bottom: 0.5rem; }
+        .form-control { border-radius: 0.5rem; border: 1px solid #d1d5db; padding: 0.75rem 1rem; font-size: 0.95rem; transition: all 0.2s; background: #f9fafb; }
+        .form-control:focus { border-color: #1e40af; box-shadow: 0 0 0 3px rgba(30,64,175,0.1); background: white; }
+        .input-group-text { background: #f3f4f6; border: 1px solid #d1d5db; border-right: none; border-radius: 0.5rem 0 0 0.5rem; color: #6b7280; }
+        .input-group .form-control { border-left: none; border-radius: 0 0.5rem 0.5rem 0; }
+        .btn-login { background: linear-gradient(135deg, #1e3a8a, #1e40af); border: none; border-radius: 0.5rem; padding: 0.875rem 2rem; font-weight: 600; font-size: 1rem; width: 100%; color: white; transition: all 0.2s; }
+        .btn-login:hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(30,64,175,0.3); background: linear-gradient(135deg, #1e40af, #2563eb); color: white; }
+        .form-check-input:checked { background-color: #1e40af; border-color: #1e40af; }
+        .form-check-label { color: #374151; font-size: 0.9rem; }
+        .alert { border: none; border-radius: 0.5rem; margin-bottom: 1.5rem; }
     </style>
 </head>
 <body>
+    <a href="{{ route('site.home') }}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Voltar ao Site
+    </a>
+
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <div class="content">
-                    <div class="text-center mb-3">
-                        <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL" style="height: 60px; max-height: 60px; width: auto; display: block; margin: 0 auto;">
-                        <h1 style="margin-top: 0.5rem; margin-bottom: 0;">MC-COMERCIAL</h1>
-                    </div>
-                    <p>Sistema de Gestão</p>
-                </div>
+                <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL" style="height: 70px; width: auto; display: block; margin: 0 auto;">
+                <h1>MC-COMERCIAL</h1>
+                <p>Sistema de Gestão</p>
             </div>
-            
             <div class="login-body">
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-exclamation-triangle me-2"></i>
-                            <div>
-                                @foreach ($errors->all() as $error)
-                                    <div>{{ $error }}</div>
-                                @endforeach
-                            </div>
+                            <div>@foreach ($errors->all() as $error)<div>{{ $error }}</div>@endforeach</div>
                         </div>
                     </div>
                 @endif
-                
                 <form id="loginForm" onsubmit="return false;">
                     <div id="loginError" class="alert alert-danger d-none"></div>
-                    
                     <div class="mb-3">
                         <label for="email" class="form-label">Endereço de Email</label>
                         <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-envelope"></i>
-                            </span>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   required 
-                                   autofocus 
-                                   placeholder="Digite seu email">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" name="email" required autofocus placeholder="Digite seu email">
                         </div>
                     </div>
-                    
                     <div class="mb-3">
                         <label for="password" class="form-label">Palavra-passe</label>
                         <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-lock"></i>
-                            </span>
-                            <input type="password" 
-                                   class="form-control @error('password') is-invalid @enderror" 
-                                   id="password" 
-                                   name="password" 
-                                   required 
-                                   placeholder="Digite sua palavra-passe">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required placeholder="Digite sua palavra-passe">
                         </div>
-                        @error('password')
-                            <div class="text-danger mt-1">{{ $message }}</div>
-                        @enderror
+                        @error('password')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                     </div>
-                    
                     <div class="mb-4 form-check">
                         <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                        <label class="form-check-label" for="remember">
-                            Manter sessão iniciada
-                        </label>
+                        <label class="form-check-label" for="remember">Manter sessão iniciada</label>
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-login">
-                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sessão
-                    </button>
+                    <button type="submit" class="btn btn-login"><i class="fas fa-sign-in-alt me-2"></i>Iniciar Sessão</button>
                 </form>
-                
                 <div class="text-center mt-4">
-                    <small class="copyright">
-                        © 2025 MC-COMERCIAL. Todos os direitos reservados.
-                    </small>
+                    <a href="{{ route('site.home') }}" style="color: #1e40af; font-size: 0.9rem; text-decoration: none; font-weight: 500;">
+                        <i class="fas fa-globe me-1"></i> Ir para o site
+                    </a>
+                </div>
+                <div class="text-center mt-3">
+                    <small style="color: #6b7280; font-size: 0.85rem;">© {{ date('Y') }} MC-COMERCIAL. Todos os direitos reservados.</small>
                 </div>
             </div>
         </div>
@@ -252,120 +98,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script>
-        // Remover qualquer token antigo ao carregar a página de login
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        // Função para verificar o token
-        function verificarToken(token) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url: '/api/user',
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Accept': 'application/json'
-                    },
-                    success: function(response) {
-                        resolve(response);
-                    },
-                    error: function(xhr) {
-                        reject(xhr);
-                    }
-                });
-            });
-        }
-
+        $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
         $(document).ready(function() {
-            // Flag para controlar se já verificamos o token
-            let tokenVerificado = false;
-
             $('#loginForm').on('submit', function(e) {
                 e.preventDefault();
-                
-                const email = $('#email').val();
-                const password = $('#password').val();
-                const $submitBtn = $('button[type="submit"]');
-                
-                // Validação básica
-                if (!email || !password) {
-                    $('#loginError').removeClass('d-none').html('<i class="fas fa-exclamation-circle me-2"></i>Por favor, preencha todos os campos.');
-                    return;
-                }
-                
-                // Limpar mensagem de erro
-                $('#loginError').addClass('d-none').text('');
-                
-                // Desabilitar botão e mostrar loading
-                $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Conectando...');
-                
+                const btn = $(this).find('button[type="submit"]');
+                const originalText = btn.html();
+                btn.html('<i class="fas fa-spinner fa-spin me-2"></i>A entrar...').prop('disabled', true);
+                $('#loginError').addClass('d-none');
                 $.ajax({
-                    url: '/login',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        email: email,
-                        password: password,
-                        remember: $('#remember').is(':checked')
-                    }),
+                    url: '/api/login', method: 'POST',
+                    data: { email: $('#email').val(), password: $('#password').val(), remember: $('#remember').is(':checked') },
                     success: function(response) {
-                        if (response.success) {
-                            // Se houver token, armazena no localStorage
-                            if (response.token) {
-                                localStorage.setItem('auth_token', response.token);
-                            }
-                            // Redireciona para o dashboard
-                            window.location.href = response.redirect || '/dashboard';
-                        } else {
-                            // Se não for sucesso, mostra mensagem de erro
-                            const msg = response.message || 'Erro ao autenticar. Tente novamente.';
-                            $('#loginError').removeClass('d-none').html('<i class="fas fa-exclamation-circle me-2"></i>' + msg);
-                            // Reabilitar botão
-                            $submitBtn.prop('disabled', false).html('<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sessão');
+                        if (response.token) {
+                            localStorage.setItem('auth_token', response.token);
+                            if (response.user) localStorage.setItem('auth_user', JSON.stringify(response.user));
+                            window.location.href = '/dashboard';
                         }
                     },
                     error: function(xhr) {
-                        let msg = 'Erro ao conectar ao servidor.';
-                        
-                        if (xhr.status === 401) {
-                            msg = 'Email ou palavra-passe inválidos.';
-                        } else if (xhr.status === 422) {
-                            const errors = xhr.responseJSON?.errors || {};
-                            const errorMessages = Object.values(errors).flat();
-                            msg = errorMessages.length > 0 ? errorMessages.join(', ') : 'Por favor, preencha todos os campos corretamente.';
-                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                            msg = xhr.responseJSON.message;
-                        }
-                        
-                        $('#loginError').removeClass('d-none').html('<i class="fas fa-exclamation-circle me-2"></i>' + msg);
-                        // Reabilitar botão
-                        $submitBtn.prop('disabled', false).html('<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sessão');
+                        let msg = 'Credenciais inválidas.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                        $('#loginError').html('<i class="fas fa-exclamation-circle me-2"></i>' + msg).removeClass('d-none');
+                        btn.html(originalText).prop('disabled', false);
                     }
                 });
             });
-            
-            // Verificar token apenas uma vez ao carregar a página
-            if (!tokenVerificado) {
-                tokenVerificado = true;
-                const token = localStorage.getItem('auth_token');
-                
-                if (token) {
-                    verificarToken(token)
-                        .then(response => {
-                            if (response && response.id) {
-                                window.location.href = '/dashboard';
-                            } else {
-                                localStorage.removeItem('auth_token');
-                            }
-                        })
-                        .catch(() => {
-                            localStorage.removeItem('auth_token');
-                        });
-                }
-            }
         });
     </script>
 </body>

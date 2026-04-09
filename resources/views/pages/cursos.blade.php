@@ -4,18 +4,18 @@
 
 @section('content')
 
-{{-- Header with Image --}}
+{{-- Header com fundo_imagem.jpg --}}
 <section class="section-hero text-white">
     <div class="section-hero-bg">
-        <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=80" alt="Turmas">
+        <img src="{{ asset('images/fundo_imagem.jpg') }}" alt="Turmas">
     </div>
     <div class="container-wide">
         <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4 reveal">
             <a href="{{ route('site.home') }}" class="hover:text-white transition-colors">Início</a>
             <i data-lucide="chevron-right" class="w-3 h-3"></i>
-            <span class="text-white font-medium">Turmas</span>
+            <span class="text-white font-medium">Cursos</span>
         </nav>
-        <h1 class="text-3xl sm:text-5xl font-black tracking-tight mb-4 font-heading reveal">Turmas Disponíveis</h1>
+        <h1 class="text-3xl sm:text-5xl font-black tracking-tight mb-4 font-heading reveal">Cursos Disponíveis</h1>
         <p class="text-blue-100/60 max-w-lg reveal">Passe o mouse nos cards para ver detalhes completos.</p>
     </div>
 </section>
@@ -53,7 +53,7 @@
     </div>
 </section>
 
-{{-- Turmas Grid --}}
+{{-- Turmas Grid — Cards com imagem real e hover detail --}}
 <section class="section bg-mesh">
     <div class="container-wide">
         @if(isset($turmas) && $turmas->count())
@@ -117,22 +117,10 @@
                                             <span>{{ ucfirst($turma->periodo) }}</span>
                                         </div>
                                     @endif
-                                    @if($turma->modalidade)
-                                        <div class="flex items-center gap-2 text-blue-200">
-                                            <i data-lucide="monitor" class="w-3.5 h-3.5 shrink-0"></i>
-                                            <span>{{ ucfirst($turma->modalidade) }}</span>
-                                        </div>
-                                    @endif
                                     @if($turma->formador)
                                         <div class="flex items-center gap-2 text-blue-200">
                                             <i data-lucide="user" class="w-3.5 h-3.5 shrink-0"></i>
                                             <span>{{ $turma->formador->nome }}</span>
-                                        </div>
-                                    @endif
-                                    @if($turma->duracao_semanas)
-                                        <div class="flex items-center gap-2 text-blue-200">
-                                            <i data-lucide="timer" class="w-3.5 h-3.5 shrink-0"></i>
-                                            <span>{{ $turma->duracao_semanas }} semanas</span>
                                         </div>
                                     @endif
                                     @if($turma->vagas_disponiveis !== null)
@@ -159,7 +147,6 @@
                 @endforeach
             </div>
 
-            {{-- Pagination --}}
             @if($turmas->hasPages())
                 <div class="mt-12 flex justify-center reveal">
                     {{ $turmas->links() }}
@@ -168,7 +155,7 @@
         @else
             <div class="text-center py-20 card p-10 max-w-md mx-auto reveal">
                 <div class="w-16 h-16 rounded-2xl bg-brand-100 flex items-center justify-center mx-auto mb-5">
-                    <i data-lucide="inbox" class="w-7 h-7 text-brand-400"></i>
+                    <i data-lucide="graduation-cap" class="w-7 h-7 text-brand-400"></i>
                 </div>
                 <h3 class="text-lg font-bold text-slate-900 mb-2 font-heading">Sem turmas disponíveis</h3>
                 <p class="text-sm text-slate-500">Novas turmas em breve.</p>

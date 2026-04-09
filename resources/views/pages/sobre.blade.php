@@ -4,10 +4,10 @@
 
 @section('content')
 
-{{-- Header with Image --}}
+{{-- Header com fundo_imagem.jpg --}}
 <section class="section-hero text-white">
     <div class="section-hero-bg">
-        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1600&q=80" alt="Sobre">
+        <img src="{{ asset('images/fundo_imagem.jpg') }}" alt="Sobre">
     </div>
     <div class="container-wide">
         <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4 reveal">
@@ -31,7 +31,6 @@
                     <p>A MC-COMERCIAL é um centro de formação profissional com mais de 10 anos de experiência, dedicado a preparar profissionais qualificados e competentes para os desafios do mercado de trabalho em Angola.</p>
                     <p>A nossa abordagem combina formação teórica sólida com experiência prática, garantindo que os nossos formandos estejam prontos para contribuir imediatamente nas suas áreas de atuação.</p>
                 </div>
-
                 <div class="grid grid-cols-2 gap-4 mt-8">
                     @foreach([
                         ['icon' => 'target',   'title' => 'Missão',  'desc' => 'Formar profissionais qualificados para o mercado'],
@@ -49,7 +48,6 @@
                     @endforeach
                 </div>
             </div>
-
             <div class="reveal-right relative">
                 <div class="grid grid-cols-2 gap-4">
                     <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=70"
@@ -57,7 +55,6 @@
                     <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=70"
                          alt="Formação" class="rounded-2xl shadow-2xl w-full aspect-[3/4] object-cover mt-8 animate-float-reverse" loading="lazy">
                 </div>
-                {{-- Floating Badge --}}
                 <div class="absolute -bottom-6 -left-6 p-5 rounded-2xl bg-white shadow-2xl border border-slate-100 animate-float-slow">
                     <div class="text-3xl font-black text-brand-700 font-heading">10+</div>
                     <div class="text-xs text-slate-500 font-medium">Anos de<br>Experiência</div>
@@ -67,40 +64,58 @@
     </div>
 </section>
 
-{{-- Timeline --}}
+{{-- Timeline — Nossa Jornada (estilo alternado esquerda/direita com linha central) --}}
 <section class="section bg-slate-50">
     <div class="container-tight">
         <div class="section-header reveal">
-            <span class="badge-gold mb-4">
-                <i data-lucide="clock" class="w-3 h-3"></i>
-                Nossa Jornada
-            </span>
-            <h2 class="text-3xl font-bold text-slate-900 tracking-tight mb-4 font-heading">Marcos Históricos</h2>
+            <span class="badge-gold mb-4">A NOSSA HISTÓRIA</span>
+            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4 font-heading">Uma jornada de excelência</h2>
+            <p class="text-slate-500 max-w-lg mx-auto">Conheça os marcos importantes da nossa trajetória.</p>
         </div>
-        <div class="max-w-2xl mx-auto">
-            <div class="timeline">
-                @foreach([
-                    ['year' => '2012', 'title' => 'Fundação', 'desc' => 'Início das actividades com 2 salas de formação em Luanda.'],
-                    ['year' => '2014', 'title' => 'Primeiro Centro', 'desc' => 'Inauguração do primeiro centro equipado com 5 cursos.'],
-                    ['year' => '2016', 'title' => 'Expansão', 'desc' => 'Ampliação para 15 cursos em diversas áreas profissionais.'],
-                    ['year' => '2018', 'title' => 'Reconhecimento', 'desc' => 'Certificação oficial como centro de formação de referência.'],
-                    ['year' => '2020', 'title' => 'Inovação Digital', 'desc' => 'Implementação de formação híbrida e plataformas digitais.'],
-                    ['year' => '2022', 'title' => 'Múltiplos Centros', 'desc' => 'Abertura de novos centros em diferentes províncias.'],
-                    ['year' => '2024', 'title' => 'Parcerias', 'desc' => 'Parcerias internacionais para certificações globais.'],
-                    ['year' => '2026', 'title' => 'Presente', 'desc' => '+500 alunos, +20 cursos, presença em várias províncias.'],
-                ] as $i => $event)
-                    <div class="timeline-item reveal" style="transition-delay: {{ $i * 80 }}ms;">
-                        <div class="timeline-year">{{ $event['year'] }}</div>
-                        <div class="timeline-title font-heading">{{ $event['title'] }}</div>
-                        <div class="timeline-desc">{{ $event['desc'] }}</div>
+
+        <div class="relative max-w-4xl mx-auto">
+            {{-- Linha central --}}
+            <div class="absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-200 via-brand-400 to-brand-200"></div>
+
+            @foreach([
+                ['year' => '2013', 'title' => 'Fundação', 'desc' => 'A MC-COMERCIAL foi fundada em Luanda com a missão de formar profissionais qualificados para o mercado angolano.'],
+                ['year' => '2015', 'title' => 'Primeiro Certificado', 'desc' => 'Obtenção do primeiro certificado de reconhecimento oficial como centro de formação profissional.'],
+                ['year' => '2017', 'title' => 'Expansão para Viana', 'desc' => 'Abertura do segundo centro de formação no município de Viana, expandindo o alcance para mais comunidades.'],
+                ['year' => '2019', 'title' => 'Inovação Digital', 'desc' => 'Implementação de plataformas digitais de ensino e formação híbrida para maior acessibilidade.'],
+                ['year' => '2021', 'title' => 'Parcerias Estratégicas', 'desc' => 'Estabelecimento de parcerias com empresas e instituições para certificações reconhecidas.'],
+                ['year' => '2023', 'title' => 'Múltiplos Centros', 'desc' => 'Presença consolidada em várias províncias de Angola com centros de formação modernos.'],
+                ['year' => '2025', 'title' => 'Referência Nacional', 'desc' => 'Mais de 500 alunos formados e reconhecimento como centro de formação de referência em Angola.'],
+            ] as $i => $event)
+                <div class="relative flex items-start mb-12 last:mb-0 reveal" style="transition-delay: {{ $i * 100 }}ms;">
+                    {{-- Dot central --}}
+                    <div class="absolute left-1/2 transform -translate-x-1/2 top-2 z-10">
+                        <div class="w-4 h-4 rounded-full bg-brand-500 border-4 border-white shadow-md"></div>
                     </div>
-                @endforeach
-            </div>
+
+                    @if($i % 2 === 0)
+                        {{-- Lado esquerdo --}}
+                        <div class="w-1/2 pr-12 text-right">
+                            <span class="inline-block px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-xs font-bold mb-2 border border-brand-200">{{ $event['year'] }}</span>
+                            <h3 class="text-lg font-bold text-slate-900 mb-1 font-heading">{{ $event['title'] }}</h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">{{ $event['desc'] }}</p>
+                        </div>
+                        <div class="w-1/2"></div>
+                    @else
+                        {{-- Lado direito --}}
+                        <div class="w-1/2"></div>
+                        <div class="w-1/2 pl-12">
+                            <span class="inline-block px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-xs font-bold mb-2 border border-brand-200">{{ $event['year'] }}</span>
+                            <h3 class="text-lg font-bold text-slate-900 mb-1 font-heading">{{ $event['title'] }}</h3>
+                            <p class="text-sm text-slate-500 leading-relaxed">{{ $event['desc'] }}</p>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
         </div>
     </div>
 </section>
 
-{{-- Team --}}
+{{-- Team — Formadores com flip card circular --}}
 @if(isset($formadores) && $formadores->count())
 <section class="section bg-white">
     <div class="container-wide">
@@ -115,46 +130,61 @@
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 reveal-stagger">
             @foreach($formadores->take(8) as $formador)
-                <div class="team-card reveal">
-                    <div class="team-card-inner" style="min-height: 340px;">
-                        {{-- Front --}}
-                        <div class="team-card-front card p-0 overflow-hidden flex flex-col">
-                            <div class="h-52 bg-gradient-to-br from-brand-500 to-brand-700 overflow-hidden relative">
-                                @if($formador->foto_url)
-                                    <img src="{{ $formador->foto_url }}" alt="{{ $formador->nome }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <div class="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-3xl font-black text-white">
-                                            {{ substr($formador->nome, 0, 1) }}
+                <div class="team-card reveal" style="min-height: 380px;">
+                    <div class="team-card-inner" style="min-height: 380px;">
+                        {{-- Frente: fundo azul gradiente superior, branco inferior, foto circular --}}
+                        <div class="team-card-front flex flex-col" style="background: white;">
+                            <div class="h-40 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center relative">
+                                {{-- Foto circular posicionada na intersecção --}}
+                                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2">
+                                    @if($formador->foto_url)
+                                        <img src="{{ $formador->foto_url }}" alt="{{ $formador->nome }}"
+                                             class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg">
+                                    @else
+                                        <div class="w-20 h-20 rounded-full bg-slate-100 border-4 border-white shadow-lg flex items-center justify-center">
+                                            <i data-lucide="user" class="w-8 h-8 text-slate-400"></i>
                                         </div>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
                             </div>
-                            <div class="p-5 flex-1 flex flex-col justify-center text-center">
+                            <div class="flex-1 flex flex-col items-center justify-center text-center pt-14 pb-6 px-4">
                                 <h3 class="text-base font-bold text-slate-900 font-heading">{{ $formador->nome }}</h3>
                                 @if($formador->especialidade)
                                     <p class="text-xs text-brand-600 mt-1">{{ $formador->especialidade }}</p>
                                 @endif
+                                <p class="text-[11px] text-slate-400 mt-3 flex items-center gap-1">
+                                    <i data-lucide="rotate-cw" class="w-3 h-3"></i>
+                                    Passe o mouse
+                                </p>
                             </div>
                         </div>
 
-                        {{-- Back --}}
-                        <div class="team-card-back card bg-gradient-to-br from-brand-700 to-brand-900 p-6 flex flex-col justify-center text-white">
-                            <h3 class="text-base font-bold mb-2 font-heading">{{ $formador->nome }}</h3>
+                        {{-- Verso: fundo azul escuro com detalhes --}}
+                        <div class="team-card-back flex flex-col justify-center items-center text-center text-white p-6"
+                             style="background: linear-gradient(135deg, hsl(221 83% 53%), hsl(226 57% 21%));">
+                            @if($formador->foto_url)
+                                <img src="{{ $formador->foto_url }}" alt="{{ $formador->nome }}"
+                                     class="w-16 h-16 rounded-full object-cover border-3 border-white/30 shadow-lg mb-3">
+                            @else
+                                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-3 border-2 border-white/30">
+                                    <i data-lucide="user" class="w-7 h-7 text-white/70"></i>
+                                </div>
+                            @endif
+                            <h3 class="text-base font-bold mb-1 font-heading">{{ $formador->nome }}</h3>
                             @if($formador->especialidade)
-                                <p class="text-xs text-brand-200 mb-3">{{ $formador->especialidade }}</p>
+                                <p class="text-xs text-blue-200 mb-3">{{ $formador->especialidade }}</p>
                             @endif
                             @if($formador->bio)
-                                <p class="text-xs text-blue-100/70 leading-relaxed mb-4 line-clamp-4">{{ $formador->bio }}</p>
+                                <p class="text-xs text-blue-100/70 leading-relaxed mb-4 line-clamp-3">{{ $formador->bio }}</p>
                             @endif
                             @if($formador->email)
-                                <p class="text-xs text-blue-200/60 flex items-center gap-1.5">
+                                <p class="text-xs text-blue-200/80 flex items-center gap-1.5 mb-1">
                                     <i data-lucide="mail" class="w-3 h-3"></i> {{ $formador->email }}
                                 </p>
                             @endif
-                            @if($formador->contactos && count($formador->contactos) > 0)
-                                <p class="text-xs text-blue-200/60 flex items-center gap-1.5 mt-1">
-                                    <i data-lucide="phone" class="w-3 h-3"></i> {{ $formador->contactos[0] ?? '' }}
+                            @if($formador->telefone)
+                                <p class="text-xs text-blue-200/80 flex items-center gap-1.5">
+                                    <i data-lucide="phone" class="w-3 h-3"></i> {{ $formador->telefone }}
                                 </p>
                             @endif
                         </div>
@@ -165,22 +195,5 @@
     </div>
 </section>
 @endif
-
-{{-- CTA --}}
-<section class="py-20 bg-gradient-to-br from-brand-700 via-brand-800 to-brand-950 text-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-grid opacity-5"></div>
-    <div class="container-tight text-center relative z-10 reveal">
-        <h2 class="text-3xl font-bold tracking-tight mb-4 font-heading">Junte-se à nossa comunidade</h2>
-        <p class="text-blue-100/60 mb-8 max-w-lg mx-auto">Faça parte da nossa história de sucesso.</p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="{{ route('site.cursos') }}" class="btn bg-white text-brand-700 hover:bg-brand-50 btn-lg shadow-xl group">
-                <i data-lucide="graduation-cap" class="w-5 h-5"></i> Ver Cursos
-            </a>
-            <a href="{{ route('site.contactos') }}" class="btn-outline-white btn-lg">
-                <i data-lucide="phone" class="w-5 h-5"></i> Contactar
-            </a>
-        </div>
-    </div>
-</section>
 
 @endsection

@@ -4,10 +4,10 @@
 
 @section('content')
 
-{{-- Header with Image --}}
+{{-- Header com fundo_imagem.jpg --}}
 <section class="section-hero text-white">
     <div class="section-hero-bg">
-        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1600&q=80" alt="Loja">
+        <img src="{{ asset('images/fundo_imagem.jpg') }}" alt="Loja">
     </div>
     <div class="container-wide">
         <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4 reveal">
@@ -15,17 +15,41 @@
             <i data-lucide="chevron-right" class="w-3 h-3"></i>
             <span class="text-white font-medium">Loja</span>
         </nav>
-        <h1 class="text-3xl sm:text-5xl font-black tracking-tight mb-4 font-heading reveal">Loja MC-COMERCIAL</h1>
-        <p class="text-blue-100/60 max-w-lg reveal">Material de apoio, equipamentos e artigos para a sua formação.</p>
+        <h1 class="text-3xl sm:text-5xl font-black tracking-tight mb-4 font-heading reveal">Loja</h1>
+        <p class="text-blue-100/60 max-w-lg reveal">Material didático, fardamento e outros produtos.</p>
     </div>
 </section>
 
-{{-- Products --}}
-<section class="section bg-mesh">
+{{-- Loja com submenus/tabs por grupo --}}
+<section class="section bg-mesh" x-data="{ activeTab: 'todos' }">
     <div class="container-wide">
+
+        {{-- Tabs de filtro --}}
+        <div class="flex flex-wrap gap-2 mb-12 reveal">
+            <button @click="activeTab = 'todos'"
+                    class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
+                    :class="activeTab === 'todos' ? 'bg-brand-600 text-white shadow-lg' : 'bg-white text-slate-600 border border-slate-200 hover:border-brand-300 hover:text-brand-600'">
+                Todos
+            </button>
+            @if(isset($grupos) && $grupos->count())
+                @foreach($grupos as $grupo)
+                    <button @click="activeTab = '{{ Str::slug($grupo->nome) }}'"
+                            class="px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300"
+                            :class="activeTab === '{{ Str::slug($grupo->nome) }}' ? 'bg-brand-600 text-white shadow-lg' : 'bg-white text-slate-600 border border-slate-200 hover:border-brand-300 hover:text-brand-600'">
+                        {{ $grupo->nome }}
+                    </button>
+                @endforeach
+            @endif
+        </div>
+
         @if(isset($grupos) && $grupos->count())
             @foreach($grupos as $grupo)
-                <div class="mb-16 last:mb-0 reveal">
+                <div x-show="activeTab === 'todos' || activeTab === '{{ Str::slug($grupo->nome) }}'"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="mb-16 last:mb-0 reveal">
+
                     <div class="flex items-center gap-3 mb-8">
                         <div class="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center">
                             <i data-lucide="package" class="w-5 h-5 text-brand-600"></i>

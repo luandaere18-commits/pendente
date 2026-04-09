@@ -1,25 +1,23 @@
 {{-- ═══════════════════════════════════════
      NAVBAR — Glassmorphism + Animated
+     Logo azul em fundo branco
      ═══════════════════════════════════════ --}}
 <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         :class="scrolled ? 'py-2' : 'py-3'">
     <nav class="container-wide">
-        <div class="flex items-center justify-between rounded-2xl px-5 py-3 transition-all duration-500"
-             :class="scrolled
-                ? 'bg-white/90 backdrop-blur-2xl shadow-xl border border-blue-100/60'
-                : 'bg-white/60 backdrop-blur-xl border border-white/30'">
+        <div class="flex items-center justify-between rounded-2xl px-5 py-3 transition-all duration-500 bg-white/95 backdrop-blur-2xl shadow-lg border border-blue-100/60">
 
-            {{-- Logo --}}
+            {{-- Logo — fundo branco --}}
             <a href="{{ route('site.home') }}" class="flex items-center gap-3 group">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center shadow-md
+                <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-sm border border-slate-100
                             group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                     <img src="{{ asset('images/logo.png') }}" alt="MC-COMERCIAL"
-                         class="h-7 w-7 object-contain"
-                         onerror="this.parentElement.innerHTML='<span class=\'text-white font-black text-sm\'>MC</span>'">
+                         class="h-8 w-8 object-contain"
+                         onerror="this.parentElement.innerHTML='<span class=\'text-brand-700 font-black text-sm\'>MC</span>'">
                 </div>
                 <div class="hidden sm:block leading-tight">
                     <span class="text-base font-extrabold text-slate-900 block tracking-tight font-heading">MC-COMERCIAL</span>
-                    <span class="text-[10px] text-brand-600 font-semibold uppercase tracking-[0.2em]">Formação Profissional</span>
+                    <span class="text-[10px] text-brand-600 font-semibold uppercase tracking-[0.2em]">Centro de Formação</span>
                 </div>
             </a>
 
@@ -29,7 +27,7 @@
                     $links = [
                         ['label' => 'Início',     'route' => 'site.home',     'icon' => 'home'],
                         ['label' => 'Centros',     'route' => 'site.centros',  'icon' => 'map-pin'],
-                        ['label' => 'Turmas',      'route' => 'site.cursos',   'icon' => 'graduation-cap'],
+                        ['label' => 'Cursos',      'route' => 'site.cursos',   'icon' => 'graduation-cap'],
                         ['label' => 'Serviços',    'route' => 'site.servicos', 'icon' => 'briefcase'],
                         ['label' => 'Loja',        'route' => 'site.loja',     'icon' => 'shopping-bag'],
                         ['label' => 'Sobre',       'route' => 'site.sobre',    'icon' => 'users'],
@@ -54,7 +52,7 @@
             <div class="hidden lg:flex items-center gap-3">
                 <a href="{{ route('login') }}" class="btn-ghost btn-sm group">
                     <i data-lucide="log-in" class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"></i>
-                    Entrar
+                    Login
                 </a>
                 <a href="{{ route('site.contactos') }}" class="btn-primary btn-sm">
                     <i data-lucide="phone" class="w-3.5 h-3.5"></i>
@@ -96,7 +94,7 @@
             <div class="pt-4 border-t border-slate-200 space-y-2">
                 <a href="{{ route('login') }}" class="btn-secondary w-full justify-center">
                     <i data-lucide="log-in" class="w-4 h-4"></i>
-                    Entrar
+                    Login
                 </a>
                 <a href="{{ route('site.contactos') }}" class="btn-primary w-full justify-center">
                     <i data-lucide="phone" class="w-4 h-4"></i>

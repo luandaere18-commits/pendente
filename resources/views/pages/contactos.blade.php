@@ -7,7 +7,7 @@
 {{-- Header with Image --}}
 <section class="section-hero text-white">
     <div class="section-hero-bg">
-        <img src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=1600&q=80" alt="Contactos">
+        <img src="{{ asset('images/fundo_imagem.jpg') }}" alt="Contactos">
     </div>
     <div class="container-wide">
         <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4 reveal">

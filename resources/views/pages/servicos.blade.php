@@ -4,10 +4,10 @@
 
 @section('content')
 
-{{-- Header with Image --}}
+{{-- Header com fundo_imagem.jpg --}}
 <section class="section-hero text-white">
     <div class="section-hero-bg">
-        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80" alt="Serviços">
+        <img src="{{ asset('images/fundo_imagem.jpg') }}" alt="Serviços">
     </div>
     <div class="container-wide">
         <nav class="flex items-center gap-2 text-xs text-blue-200/60 mb-4 reveal">
@@ -20,7 +20,7 @@
     </div>
 </section>
 
-{{-- Services Grid --}}
+{{-- Services Grid — com imagem real e info visível --}}
 <section class="section bg-mesh">
     <div class="container-wide">
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 reveal-stagger">
@@ -37,9 +37,9 @@
 
             @foreach($services as $s)
                 <div class="card p-0 overflow-hidden reveal group hover-lift">
-                    <div class="h-48 overflow-hidden img-overlay-zoom relative">
-                        <img src="{{ $s['img'] }}" alt="{{ $s['title'] }}" class="w-full h-full object-cover" loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="{{ $s['img'] }}" alt="{{ $s['title'] }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
                     </div>
                     <div class="p-6">
                         <div class="w-14 h-14 rounded-2xl bg-brand-100 flex items-center justify-center -mt-12 relative z-10 shadow-lg border-4 border-white group-hover:bg-brand-600 group-hover:scale-110 transition-all duration-300">
