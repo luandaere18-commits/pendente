@@ -383,7 +383,7 @@
                 ['year' => '2023', 'title' => 'Múltiplos Centros', 'desc' => 'Presença consolidada em várias províncias de Angola com centros modernos.'],
                 ['year' => '2025', 'title' => 'Referência Nacional', 'desc' => 'Mais de 500 alunos formados e reconhecimento como centro de referência em Angola.'],
             ] as $i => $event)
-                <div class="relative flex items-start mb-12 last:mb-0 reveal" style="transition-delay: {{ $i * 100 }}ms;">
+                <div class="relative flex items-start mb-6 last:mb-0 reveal" style="transition-delay: {{ $i * 100 }}ms;">
                     <div class="absolute left-1/2 transform -translate-x-1/2 top-2 z-10">
                         <div class="w-4 h-4 rounded-full bg-brand-500 border-4 border-white shadow-md"></div>
                     </div>
@@ -417,21 +417,21 @@
             <p class="text-slate-500 max-w-lg mx-auto">Momentos especiais da nossa jornada de formação.</p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 reveal-stagger">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal-stagger" style="grid-auto-rows: 180px;">
             @php
                 $gallery = [
-                    ['img' => asset('images/carousel-1.jpg'), 'title' => 'Formação em sala'],
-                    ['img' => asset('images/carousel-2.jpg'), 'title' => 'Atividades práticas'],
-                    ['img' => asset('images/carousel-4.jpg'), 'title' => 'Certificação'],
-                    ['img' => asset('images/about1.jpg'), 'title' => 'Nossa equipa'],
-                    ['img' => 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=400&q=60', 'title' => 'Aula de formação'],
-                    ['img' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=400&q=60', 'title' => 'Trabalho em equipa'],
-                    ['img' => 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=400&q=60', 'title' => 'Workshop'],
-                    ['img' => 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=60', 'title' => 'Colaboração'],
+                    ['img' => asset('images/carousel-1.jpg'), 'title' => 'Formação em sala', 'span' => 'md:col-span-2 md:row-span-2'],
+                    ['img' => asset('images/carousel-2.jpg'), 'title' => 'Atividades práticas', 'span' => ''],
+                    ['img' => asset('images/carousel-4.jpg'), 'title' => 'Certificação', 'span' => ''],
+                    ['img' => asset('images/about1.jpg'), 'title' => 'Nossa equipa', 'span' => 'md:row-span-2'],
+                    ['img' => 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=400&q=60', 'title' => 'Aula de formação', 'span' => ''],
+                    ['img' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=400&q=60', 'title' => 'Trabalho em equipa', 'span' => 'md:col-span-2'],
+                    ['img' => 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=400&q=60', 'title' => 'Workshop', 'span' => ''],
+                    ['img' => 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=60', 'title' => 'Colaboração', 'span' => ''],
                 ];
             @endphp
             @foreach($gallery as $photo)
-                <div class="relative rounded-2xl overflow-hidden group reveal aspect-square cursor-pointer">
+                <div class="relative rounded-2xl overflow-hidden group reveal cursor-pointer {{ $photo['span'] }}">
                     <img src="{{ $photo['img'] }}" alt="{{ $photo['title'] }}"
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">

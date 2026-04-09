@@ -13,7 +13,20 @@
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
             min-height: 100vh;
             font-family: 'Inter', 'Segoe UI', sans-serif;
+            position: relative;
         }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                url("data:image/svg+xml,%3Csvg width='80' height='80' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='10' width='25' height='25' rx='3' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'/%3E%3Crect x='50' y='45' width='15' height='15' rx='2' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0v60M0 30h60' stroke='rgba(255,255,255,0.02)' stroke-width='0.5'/%3E%3C/svg%3E");
+            opacity: 0.8;
+        }
+        body > * { position: relative; z-index: 1; }
         .login-container { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; }
         .back-link {
             position: fixed; top: 1.5rem; left: 1.5rem; color: rgba(255,255,255,0.85); text-decoration: none;

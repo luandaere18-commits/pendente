@@ -86,7 +86,7 @@
                 ['year' => '2023', 'title' => 'Múltiplos Centros', 'desc' => 'Presença consolidada em várias províncias de Angola com centros de formação modernos.'],
                 ['year' => '2025', 'title' => 'Referência Nacional', 'desc' => 'Mais de 500 alunos formados e reconhecimento como centro de formação de referência em Angola.'],
             ] as $i => $event)
-                <div class="relative flex items-start mb-12 last:mb-0 reveal" style="transition-delay: {{ $i * 100 }}ms;">
+                <div class="relative flex items-start mb-6 last:mb-0 reveal" style="transition-delay: {{ $i * 100 }}ms;">
                     {{-- Dot central --}}
                     <div class="absolute left-1/2 transform -translate-x-1/2 top-2 z-10">
                         <div class="w-4 h-4 rounded-full bg-brand-500 border-4 border-white shadow-md"></div>
@@ -130,24 +130,24 @@
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 reveal-stagger">
             @foreach($formadores->take(8) as $formador)
-                <div class="team-card reveal" style="min-height: 380px;">
-                    <div class="team-card-inner" style="min-height: 380px;">
+                <div class="team-card reveal" style="min-height: 300px;">
+                    <div class="team-card-inner" style="min-height: 300px;">
                         {{-- Frente: fundo azul gradiente superior, branco inferior, foto circular --}}
                         <div class="team-card-front flex flex-col" style="background: white;">
-                            <div class="h-40 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center relative">
+                            <div class="h-28 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center relative">
                                 {{-- Foto circular posicionada na intersecção --}}
-                                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2">
+                                <div class="absolute -bottom-8 left-1/2 -translate-x-1/2">
                                     @if($formador->foto_url)
                                         <img src="{{ $formador->foto_url }}" alt="{{ $formador->nome }}"
-                                             class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg">
+                                             class="w-16 h-16 rounded-full object-cover border-4 border-white shadow-lg">
                                     @else
-                                        <div class="w-20 h-20 rounded-full bg-slate-100 border-4 border-white shadow-lg flex items-center justify-center">
+                                        <div class="w-16 h-16 rounded-full bg-slate-100 border-4 border-white shadow-lg flex items-center justify-center">
                                             <i data-lucide="user" class="w-8 h-8 text-slate-400"></i>
                                         </div>
                                     @endif
                                 </div>
                             </div>
-                            <div class="flex-1 flex flex-col items-center justify-center text-center pt-14 pb-6 px-4">
+                            <div class="flex-1 flex flex-col items-center justify-center text-center pt-10 pb-4 px-4">
                                 <h3 class="text-base font-bold text-slate-900 font-heading">{{ $formador->nome }}</h3>
                                 @if($formador->especialidade)
                                     <p class="text-xs text-brand-600 mt-1">{{ $formador->especialidade }}</p>
