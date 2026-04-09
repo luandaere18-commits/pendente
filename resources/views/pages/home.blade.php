@@ -134,69 +134,65 @@
                 Turmas Disponíveis
             </span>
             <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4 font-heading">Próximas Turmas</h2>
-            <p class="text-slate-500 max-w-lg mx-auto">Passe o mouse nos cards para ver mais detalhes.</p>
+            <p class="text-slate-500 max-w-lg mx-auto">Explore os cursos disponíveis e inscreva-se.</p>
         </div>
 
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal-stagger">
             @foreach($turmas->take(6) as $turma)
-                <div class="card card-hover-detail overflow-hidden reveal group" style="height: 380px;">
-                    <div class="absolute inset-0 img-overlay-zoom">
+                <div class="course-card reveal">
+                    <div class="course-card-img">
                         @if($turma->curso && $turma->curso->imagem_url)
-                            <img src="{{ $turma->curso->imagem_url }}" alt="{{ $turma->curso->nome ?? '' }}"
-                                 class="w-full h-full object-cover" loading="lazy">
+                            <img src="{{ $turma->curso->imagem_url }}" alt="{{ $turma->curso->nome ?? '' }}" loading="lazy">
                         @else
                             <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=60"
-                                 alt="{{ $turma->curso->nome ?? 'Curso' }}" class="w-full h-full object-cover" loading="lazy">
+                                 alt="{{ $turma->curso->nome ?? 'Curso' }}" loading="lazy">
                         @endif
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
-                    </div>
-
-                    <div class="absolute bottom-0 left-0 right-0 p-5 z-10 transition-opacity duration-300 group-hover:opacity-0">
                         @if($turma->status)
-                            <span class="badge-success text-[10px] mb-2">{{ $turma->status }}</span>
-                        @endif
-                        <h3 class="text-lg font-bold text-white font-heading">{{ $turma->curso->nome ?? 'Curso' }}</h3>
-                        @if($turma->centro)
-                            <p class="text-sm text-white/60 flex items-center gap-1 mt-1">
-                                <i data-lucide="map-pin" class="w-3 h-3"></i> {{ $turma->centro->nome }}
-                            </p>
-                        @endif
-                        @if($turma->centro_preco)
-                            <p class="text-lg font-black text-white mt-2">{{ number_format($turma->centro_preco, 0, ',', '.') }} <span class="text-xs">Kz</span></p>
+                            <span class="course-card-badge active">
+                                <i data-lucide="bar-chart-3" class="w-3 h-3"></i>
+                                {{ $turma->status }}
+                            </span>
                         @endif
                     </div>
-
-                    <div class="card-detail-overlay z-20">
-                        <div>
-                            <h3 class="text-lg font-bold text-white mb-3 font-heading">{{ $turma->curso->nome ?? 'Curso' }}</h3>
-                            <div class="space-y-2 text-sm">
-                                @if($turma->centro)
-                                    <div class="flex items-center gap-2 text-blue-200"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>{{ $turma->centro->nome }}</span></div>
-                                @endif
-                                @if($turma->data_arranque)
-                                    <div class="flex items-center gap-2 text-blue-200"><i data-lucide="calendar" class="w-3.5 h-3.5 shrink-0"></i><span>Início: {{ $turma->data_arranque->format('d/m/Y') }}</span></div>
-                                @endif
-                                @if($turma->hora_inicio && $turma->hora_fim)
-                                    <div class="flex items-center gap-2 text-blue-200"><i data-lucide="clock" class="w-3.5 h-3.5 shrink-0"></i><span>{{ $turma->hora_inicio }} — {{ $turma->hora_fim }}</span></div>
-                                @endif
-                                @if($turma->formador)
-                                    <div class="flex items-center gap-2 text-blue-200"><i data-lucide="user" class="w-3.5 h-3.5 shrink-0"></i><span>{{ $turma->formador->nome }}</span></div>
-                                @endif
-                                @if($turma->vagas_disponiveis !== null)
-                                    <div class="flex items-center gap-2 text-green-300"><i data-lucide="users" class="w-3.5 h-3.5 shrink-0"></i><span>{{ $turma->vagas_disponiveis }} vagas</span></div>
-                                @endif
+                    <div class="course-card-body">
+                        <h3 class="course-card-title">{{ $turma->curso->nome ?? 'Curso' }}</h3>
+                        <div class="course-card-meta">
+                            @if($turma->hora_inicio && $turma->hora_fim)
+                                <span class="course-card-meta-item">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                    {{ $turma->hora_inicio }} — {{ $turma->hora_fim }}
+                                </span>
+                            @endif
+                            @if($turma->centro)
+                                <span class="course-card-meta-item">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+                                    {{ $turma->centro->nome }}
+                                </span>
+                            @endif
+                            @if($turma->formador)
+                                <span class="course-card-meta-item">
+                                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                                    {{ $turma->formador->nome }}
+                                </span>
+                            @endif
+                        </div>
+                        <div class="course-card-footer">
+                            <div class="course-card-rating">
+                                <div class="stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <svg class="star {{ $i <= 4 ? '' : 'empty' }}" viewBox="0 0 20 20" fill="currentColor" style="width:14px;height:14px;">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.075 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z"/>
+                                        </svg>
+                                    @endfor
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between mt-4 pt-3 border-t border-white/15">
-                                @if($turma->centro_preco)
-                                    <span class="text-xl font-black text-white">{{ number_format($turma->centro_preco, 0, ',', '.') }} <span class="text-xs">Kz</span></span>
-                                @else
-                                    <span class="text-sm text-white/50 italic">Consultar preço</span>
-                                @endif
-                                <button @click="$dispatch('open-pre-inscricao', { turmaId: {{ $turma->id }}, turmaNome: '{{ addslashes($turma->curso->nome ?? '') }} — {{ addslashes($turma->centro->nome ?? '') }}' })"
-                                        class="btn-primary btn-sm">
-                                    <i data-lucide="send" class="w-3 h-3"></i> Inscrever
-                                </button>
-                            </div>
+                            @if($turma->centro_preco)
+                                <span class="course-card-price">
+                                    {{ number_format($turma->centro_preco, 0, ',', '.') }} <span class="currency">Kz</span>
+                                </span>
+                            @else
+                                <span class="text-sm text-slate-400 italic">Consultar</span>
+                            @endif
                         </div>
                     </div>
                 </div>

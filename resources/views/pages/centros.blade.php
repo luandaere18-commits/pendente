@@ -4,7 +4,7 @@
 
 @section('content')
 
-{{-- Header com fundo_imagem.jpg --}}
+{{-- Header com fundo_imagem.jpg + squares pattern --}}
 <section class="section-hero text-white">
     <div class="section-hero-bg">
         <img src="{{ asset('images/fundo_imagem.jpg') }}" alt="Centros">
@@ -28,35 +28,39 @@
                 @if(isset($centros) && $centros->count())
                     <div class="grid sm:grid-cols-2 gap-6 reveal-stagger">
                         @foreach($centros as $centro)
-                            <div id="centro-{{ $centro->id }}" class="card overflow-hidden reveal group hover-lift" style="height: 380px;">
-                                {{-- Imagem real --}}
-                                <div class="h-48 overflow-hidden relative">
+                            <div id="centro-{{ $centro->id }}" class="course-card reveal group">
+                                {{-- Imagem --}}
+                                <div class="course-card-img">
                                     @if($centro->imagem)
-                                        <img src="{{ asset('storage/' . $centro->imagem) }}" alt="{{ $centro->nome }}"
-                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
+                                        <img src="{{ asset('storage/' . $centro->imagem) }}" alt="{{ $centro->nome }}" loading="lazy">
                                     @else
                                         <img src="https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&w=500&q=60"
-                                             alt="{{ $centro->nome }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
+                                             alt="{{ $centro->nome }}" loading="lazy">
                                     @endif
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
                                     @if(isset($turmas))
                                         @php $count = $turmas->where('centro_id', $centro->id)->count(); @endphp
                                         @if($count > 0)
-                                            <span class="absolute top-3 right-3 badge-success text-[10px]">
+                                            <span class="course-card-badge active">
+                                                <i data-lucide="bar-chart-3" class="w-3 h-3"></i>
                                                 {{ $count }} turma{{ $count > 1 ? 's' : '' }}
                                             </span>
                                         @endif
                                     @endif
                                 </div>
 
-                                {{-- Info sempre visível --}}
-                                <div class="p-5">
-                                    <h3 class="text-base font-bold text-slate-900 font-heading mb-1">{{ $centro->nome }}</h3>
-                                    @if($centro->localizacao)
-                                        <p class="text-sm text-slate-500 flex items-center gap-1 mb-2">
-                                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500"></i> {{ $centro->localizacao }}
-                                        </p>
-                                    @endif
+                                {{-- Body --}}
+                                <div class="course-card-body">
+                                    <h3 class="course-card-title">{{ $centro->nome }}</h3>
+
+                                    <div class="course-card-meta">
+                                        @if($centro->localizacao)
+                                            <span class="course-card-meta-item">
+                                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500"></i>
+                                                {{ $centro->localizacao }}
+                                            </span>
+                                        @endif
+                                    </div>
+
                                     @if($centro->email)
                                         <p class="text-xs text-slate-400 flex items-center gap-1 mb-1">
                                             <i data-lucide="mail" class="w-3 h-3"></i> {{ $centro->email }}
@@ -64,12 +68,13 @@
                                     @endif
                                     @if($centro->contactos && is_array($centro->contactos))
                                         @foreach(array_slice($centro->contactos, 0, 1) as $contacto)
-                                            <p class="text-xs text-slate-400 flex items-center gap-1">
+                                            <p class="text-xs text-slate-400 flex items-center gap-1 mb-2">
                                                 <i data-lucide="phone" class="w-3 h-3"></i> {{ $contacto }}
                                             </p>
                                         @endforeach
                                     @endif
-                                    <div class="mt-3">
+
+                                    <div class="course-card-footer">
                                         <a href="{{ route('site.cursos') }}?centro={{ $centro->id }}"
                                            class="text-xs text-brand-600 font-semibold hover:text-brand-800 flex items-center gap-1 transition-colors">
                                             Ver Turmas <i data-lucide="arrow-right" class="w-3 h-3"></i>

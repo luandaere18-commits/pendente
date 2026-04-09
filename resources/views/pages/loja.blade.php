@@ -4,7 +4,7 @@
 
 @section('content')
 
-{{-- Header com fundo_imagem.jpg --}}
+{{-- Header com fundo_imagem.jpg + squares pattern --}}
 <section class="section-hero text-white">
     <div class="section-hero-bg">
         <img src="{{ asset('images/fundo_imagem.jpg') }}" alt="Loja">
@@ -68,24 +68,42 @@
                                 @if($categoria->itens && $categoria->itens->count())
                                     <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 reveal-stagger">
                                         @foreach($categoria->itens as $item)
-                                            <div class="card p-5 reveal hover-lift group">
-                                                <div class="w-full aspect-square rounded-xl bg-gradient-to-br from-brand-50 to-brand-100 flex items-center justify-center mb-4 overflow-hidden">
+                                            <div class="course-card reveal group">
+                                                {{-- Imagem --}}
+                                                <div class="course-card-img">
                                                     @if($item->imagem)
-                                                        <img src="{{ asset('storage/' . $item->imagem) }}" alt="{{ $item->nome }}"
-                                                             class="w-full h-full object-cover rounded-xl group-hover:scale-110 transition-transform duration-300" loading="lazy">
+                                                        <img src="{{ asset('storage/' . $item->imagem) }}" alt="{{ $item->nome }}" loading="lazy">
                                                     @else
-                                                        <i data-lucide="package" class="w-12 h-12 text-brand-300 group-hover:scale-110 transition-transform"></i>
+                                                        <div class="w-full h-full bg-gradient-to-br from-brand-50 to-brand-100 flex items-center justify-center">
+                                                            <i data-lucide="package" class="w-12 h-12 text-brand-300"></i>
+                                                        </div>
                                                     @endif
                                                 </div>
-                                                <h4 class="text-sm font-bold text-slate-900 mb-1 group-hover:text-brand-600 transition-colors font-heading">{{ $item->nome }}</h4>
-                                                @if($item->descricao)
-                                                    <p class="text-xs text-slate-500 line-clamp-2 mb-3">{{ $item->descricao }}</p>
-                                                @endif
-                                                @if($item->preco)
-                                                    <span class="text-lg font-black text-brand-700 font-heading">
-                                                        {{ number_format($item->preco, 0, ',', '.') }} <span class="text-xs font-semibold">Kz</span>
-                                                    </span>
-                                                @endif
+
+                                                {{-- Body --}}
+                                                <div class="course-card-body">
+                                                    <h4 class="course-card-title">{{ $item->nome }}</h4>
+                                                    @if($item->descricao)
+                                                        <p class="text-xs text-slate-500 line-clamp-2 mb-3">{{ $item->descricao }}</p>
+                                                    @endif
+
+                                                    <div class="course-card-footer">
+                                                        <div class="course-card-rating">
+                                                            <div class="stars">
+                                                                @for($i = 1; $i <= 5; $i++)
+                                                                    <svg class="star {{ $i <= 4 ? '' : 'empty' }}" viewBox="0 0 20 20" fill="currentColor" style="width:14px;height:14px;">
+                                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.075 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z"/>
+                                                                    </svg>
+                                                                @endfor
+                                                            </div>
+                                                        </div>
+                                                        @if($item->preco)
+                                                            <span class="course-card-price">
+                                                                {{ number_format($item->preco, 0, ',', '.') }} <span class="currency">Kz</span>
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
